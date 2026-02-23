@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules", 
+    "test", 
+    "dist", 
+    "**/*spec.ts", 
+    "public", 
+    "**/mikro-orm.*.cli-config.*",
+    "views",
+    "**/playwright.config.ts",
+  ]
+}

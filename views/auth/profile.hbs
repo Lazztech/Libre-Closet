@@ -1,0 +1,10 @@
+{{>navbar}}
+<main class="flex flex-col justify-center items-center h-full gap-3">
+  <h1 class="text-2xl">{{user.email}}</h1>
+  <a class="link" href="/auth/update-email">{{t 'lang.UPDATE_EMAIL'}}</a>
+  <a class="link" href="/auth/reset?email={{user.email}}"
+    >{{t 'lang.CHANGE_PASSWORD'}}</a
+  >
+  <a class="link" href="/auth/delete-account">{{t 'lang.DELETE_ACCOUNT'}}</a>
+</main>
+{{>dock}}

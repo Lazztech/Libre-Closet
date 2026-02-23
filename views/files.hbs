@@ -1,0 +1,77 @@
+{{>navbar}}
+<main class="p-20">
+  <div class="flex flex-wrap gap-4 p-4 items-center justify-center">
+    {{#each files}}
+    <div class="card bg-base-100 w-96 shadow-sm">
+      <figure>
+        <img src="/file/{{this.fileName}}" alt="File upload" />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title">{{this.fileName}}</h2>
+        <p>{{this.mimetype}}</p>
+        <div class="card-actions justify-end">
+          <button
+            class="btn btn-primary"
+            onclick="navigator.clipboard.writeText('{{../siteUrl}}/share?shareableId={{this.shareableId}}&type=file'); alert('{{t 'lang.COPIED'}}')"
+          >
+            {{t 'lang.COPY_TEXT'}}
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="shareFile('{{this.fileName}}', '/share?shareableId={{this.shareableId}}&type=file')"
+          >
+            {{t 'lang.SHARE'}}
+          </button>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <div
+    class="fixed bottom-15 left-0 right-0 p-4 shadow-lg bg-gradient-to-t from-base-100 via-base-100/50 to-transparent"
+  >
+    <form
+      id="form"
+      hx-encoding="multipart/form-data"
+      hx-post="/file/upload"
+      hx-indicator="#loading"
+      hx-target="main"
+      hx-select="main"
+      hx-swap="outerHTML"
+      class="flex gap-2 items-center justify-center"
+    >
+      <input
+        type="file"
+        name="file"
+        class="file-input"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+      />
+      <button class="btn btn-neutral">{{t 'lang.UPLOAD'}}</button>
+      <span
+        id="loading"
+        class="htmx-indicator loading loading-ring loading-sm"
+      ></span>
+    </form>
+  </div>
+</main>
+{{>dock}}
+<script>
+  async function shareFile(title, url) {
+    if (!navigator.share) {
+      alert('{{t 'lang.SHARING_NOT_SUPPORTED'}}');
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title,
+        url,
+      });
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error('Share failed:', err);
+      }
+    }
+  }
+</script>

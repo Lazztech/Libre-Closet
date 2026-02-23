@@ -1,0 +1,66 @@
+{{>navbar}}
+
+<main class="flex flex-col justify-center items-center h-full">
+  <form hx-post="/auth/register" hx-indicator="#loading" hx-trigger="submit" hx-target="body">
+    <fieldset
+      class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
+      hx-post="/auth/validate/register"
+      hx-indicator="#loading"
+      hx-trigger="change, blur delay:500ms"
+      hx-include="input"
+      hx-target="body"
+    >
+      <legend class="fieldset-legend">{{t 'lang.REGISTER'}}</legend>
+
+      <label class="label">{{t 'lang.EMAIL'}}</label>
+      <label class="input {{#if (filterErrors validationErrors "email")}}input-error{{/if}}">
+        <input
+          id="email"
+          name="email"
+          type="email"
+          value="{{input.email}}"
+          placeholder="{{t 'lang.EMAIL'}}"
+          required
+        />
+      </label>
+      {{#each (filterErrors validationErrors "email")}}
+      <p class="text-error">{{this}}</p>
+      {{/each}}
+
+      <label class="label">{{t 'lang.PASSWORD'}}</label>
+      <label class="input {{#if (filterErrors validationErrors "password")}}input-error{{/if}}">
+        <input
+          id="password"
+          name="password"
+          type="password"
+          value="{{input.password}}"
+          required
+          placeholder="{{t 'lang.PASSWORD'}}"
+          autocomplete="new-password"
+        />
+      </label>
+      {{#each (filterErrors validationErrors "password")}}
+      <p class="text-error">{{this}}</p>
+      {{/each}}
+
+      <label class="label">{{t 'lang.CONFIRM_PASSWORD'}}</label>
+      <label class="input {{#if (filterErrors validationErrors "confirmPassword")}}input-error{{/if}}">
+        <input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          value="{{input.confirmPassword}}"
+          required
+          placeholder="{{t 'lang.PASSWORD'}}"
+        />
+      </label>
+      {{#each (filterErrors validationErrors "confirmPassword")}}
+      <p class="text-error">{{this}}</p>
+      {{/each}}
+
+      <button type="submit" id="submit" class="btn btn-neutral mt-4 {{#if validationErrors}}btn-disabled{{/if}}">{{t 'lang.REGISTER'}}</button>
+    </fieldset>
+  </form>
+</main>
+
+{{>dock}}

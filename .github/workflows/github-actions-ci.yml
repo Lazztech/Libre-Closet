@@ -1,0 +1,104 @@
+name: Github Actions CI
+on: [push]
+
+env:
+  NODE_VERSION: "22.x" # set this to the node version to use
+
+jobs:
+  back-end-ci:
+    name: back-end-ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: npm install & build
+        run: |
+          npm install
+          npm run build
+
+      - name: npm format:check
+        run: |
+          npm run format:check
+
+      - name: npm lint
+        run: |
+          npm run lint
+
+      - name: npm test:cov
+        run: |
+          npm run test:cov
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: npm test:e2e:smoke local
+        run: |
+          npm run test:e2e:smoke
+        env:
+          CI: true
+          APP_NAME: Lazztech.Boilerplate
+          ACCESS_TOKEN_SECRET: SecretKey
+          PUSH_NOTIFICATION_ENDPOINT: test
+          EMAIL_FROM_ADDRESS: test
+          EMAIL_PASSWORD: test
+          DATABASE_TYPE: sqlite
+          FILE_STORAGE_TYPE: local
+
+      - name: start postgresql db
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: "11" # See https://hub.docker.com/_/postgres for available versions
+          postgresql db: "postgres-test"
+          postgresql user: "test"
+          postgresql password: "Password123"
+
+      - name: start minio s3 object storage
+        run: |
+          docker run -d -p 9000:9000 --name minio \
+                      -e "MINIO_ACCESS_KEY=minioadmin" \
+                      -e "MINIO_SECRET_KEY=minioadmin" \
+                      -v /tmp/data:/data \
+                      -v /tmp/config:/root/.minio \
+                      minio/minio server /data
+
+          export AWS_ACCESS_KEY_ID=minioadmin
+          export AWS_SECRET_ACCESS_KEY=minioadmin
+          export AWS_EC2_METADATA_DISABLED=true
+
+          aws --endpoint-url http://127.0.0.1:9000/ s3 mb s3://test-lazztech-boilerplate
+
+      - name: npm test:e2e:smoke remote
+        run: |
+          npm run test:e2e:smoke
+        env:
+          CI: true
+          APP_NAME: Lazztech.Boilerplate
+          ACCESS_TOKEN_SECRET: SecretKey
+          PUSH_NOTIFICATION_ENDPOINT: test
+          EMAIL_FROM_ADDRESS: test
+          EMAIL_PASSWORD: test
+          DATABASE_TYPE: postgres
+          DATABASE_HOST: localhost
+          DATABASE_PORT: "5432"
+          DATABASE_USER: "test"
+          DATABASE_PASS: "Password123"
+          DATABASE_SCHEMA: "postgres-test"
+          DATABASE_SSL: "false"
+          FILE_STORAGE_TYPE: object
+          OBJECT_STORAGE_BUCKET_NAME: test-lazztech-boilerplate
+          OBJECT_STORAGE_ACCESS_KEY_ID: minioadmin
+          OBJECT_STORAGE_SECRET_ACCESS_KEY: minioadmin
+          OBJECT_STORAGE_ENDPOINT: http://127.0.0.1:9000
+
+      # Performance, best practices, and health check
+      - name: run lighthouse
+        run: npm run lighthouse
+
+      - name: check for dependency updates
+        run: npx npm-check-updates

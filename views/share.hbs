@@ -1,0 +1,23 @@
+{{>navbar}}
+
+<main class="p-20 flex flex-col justify-center items-center h-full">
+  <div class="card bg-base-100 w-96 shadow-sm">
+    <figure>
+      <img src="/file/{{file.fileName}}" alt="File upload" />
+    </figure>
+    <div class="card-body">
+      <h2 class="card-title">{{file.fileName}}</h2>
+      <p>{{file.mimetype}}</p>
+    </div>
+  </div>
+
+  <div
+    class="fixed bottom-15 left-0 right-0 p-4 shadow-lg bg-gradient-to-t from-base-100 via-base-100/50 to-transparent"
+  >
+    <div class="flex flex-row gap-2 items-center justify-center">
+      <p>Shared by {{createdBy.email}}</p>
+    </div>
+  </div>
+</main>
+
+{{>dock}}

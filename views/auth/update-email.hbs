@@ -1,0 +1,48 @@
+{{>navbar}}
+<main class="flex flex-col justify-center items-center h-full gap-3">  
+    <form hx-post="/auth/update-email" hx-trigger="submit" hx-target="body">
+        <fieldset
+        class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
+        hx-post="/auth/validate/update-email"
+        hx-indicator="#loading"
+        hx-trigger="change, blur delay:500ms"
+        hx-include="input"
+        hx-target="body"
+        >
+        <legend class="fieldset-legend">{{t 'lang.UPDATE_EMAIL'}}</legend>
+
+        <label class="label">{{t 'lang.NEW_EMAIL'}}</label>
+        <label class="input {{#if (filterErrors validationErrors "email")}}input-error{{/if}}">
+            <input
+            id="email"
+            name="email"
+            type="email"
+            value="{{input.email}}"
+            placeholder="{{t 'lang.NEW_EMAIL'}}"
+            required
+            />
+        </label>
+        {{#each (filterErrors validationErrors "email")}}
+        <p class="text-error">{{this}}</p>
+        {{/each}}
+
+        <label class="label">{{t 'lang.CONFIRM_EMAIL'}}</label>
+        <label class="input {{#if (filterErrors validationErrors "confirmEmail")}}input-error{{/if}}">
+            <input
+            id="confirmEmail"
+            name="confirmEmail"
+            type="email"
+            value="{{input.confirmEmail}}"
+            placeholder="{{t 'lang.CONFIRM_EMAIL'}}"
+            required
+            />
+        </label>
+        {{#each (filterErrors validationErrors "confirmEmail")}}
+        <p class="text-error">{{this}}</p>
+        {{/each}}
+
+        <button type="submit" id="submit-email" class="btn btn-neutral mt-4 {{#if validationErrors}}btn-disabled{{/if}}">{{t 'lang.UPDATE'}}</button>
+        </fieldset>
+    </form>
+</main>
+{{>dock}}

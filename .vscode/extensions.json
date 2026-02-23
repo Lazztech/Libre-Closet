@@ -1,0 +1,18 @@
+{
+    "recommendations": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "hbenl.vscode-test-explorer",
+        "bradlc.vscode-tailwindcss",
+        "otovo-oss.htmx-tags",
+        "eamodio.gitlens",
+        "hediet.vscode-drawio",
+        "ms-azuretools.vscode-docker",
+        "cweijan.vscode-database-client2",
+        "ms-azuretools.vscode-containers",
+        "bierner.markdown-mermaid",
+        "streetsidesoftware.code-spell-checker",
+        "ms-playwright.playwright",
+        "orta.vscode-jest"
+    ]
+}

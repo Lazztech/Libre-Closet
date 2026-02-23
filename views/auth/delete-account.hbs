@@ -1,0 +1,62 @@
+{{>navbar}}
+<main class="flex flex-col justify-center items-center h-full">
+  {{#if error}}
+  <div
+    role="alert"
+    class="alert alert-error fixed top-20 left-1/2 -translate-x-1/2 w-[80%] z-50 shadow-lg"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6 shrink-0 stroke-current"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <span>{{t 'lang.ERROR'}}</span>
+  </div>
+  {{/if}}
+
+  <form
+    hx-post="/auth/delete-account"
+    hx-indicator="#loading"
+    hx-trigger="submit"
+    hx-target="body"
+    hx-confirm="{{t 'lang.DELETE_ACCOUNT_CONFIRMATION'}}"
+  >
+    <fieldset
+      class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
+    >
+      <legend class="fieldset-legend">{{t 'lang.DELETE_ACCOUNT'}}</legend>
+
+      <label class="label">{{t 'lang.EMAIL'}}</label>
+      <label class="input">
+        <input
+          name="email"
+          type="email"
+          placeholder="{{t 'lang.EMAIL'}}"
+          required
+        />
+      </label>
+
+      <label class="label">{{t 'lang.PASSWORD'}}</label>
+      <label class="input">
+        <input
+          name="password"
+          type="password"
+          required
+          placeholder="{{t 'lang.PASSWORD'}}"
+        />
+      </label>
+      <button type="submit" class="btn btn-error mt-4">
+        {{t 'lang.DELETE_ACCOUNT'}}
+      </button>
+    </fieldset>
+  </form>
+</main>
+{{>dock}}

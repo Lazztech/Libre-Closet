@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+{{!-- locale value is for internationalization comes from the nest-i18n module
+and is provided globally in the ViewContextMiddleware
+https://nestjs-i18n.com/quick-start --}}
+<html lang="{{locale}}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0"
+    />
+    {{! https://developer.chrome.com/docs/lighthouse/seo/meta-description }}
+    <meta name="description" content="{{t 'lang.APP_DESCRIPTION'}}" />
+    {{!-- Facebook Open Graph Meta Tags https://ogp.me/ --}}
+    <meta property="og:url" content="{{ogUrl}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ogTitle}}" />
+    <meta property="og:description" content="{{ogDescription}}" />
+    <meta property="og:image" content="{{ogImage}}" />
+    {{!-- Twitter Open Graph Meta Tags https://ogp.me/ --}}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="{{siteUrl}}" />
+    <meta property="twitter:url" content="{{ogUrl}}" />
+    <meta name="twitter:title" content="{{ogTitle}}" />
+    <meta name="twitter:description" content="{{ogDescription}}" />
+    <meta name="twitter:image" content="{{ogImage}}" />
+
+    {{!--
+    https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+    https://developer.chrome.com/docs/lighthouse/pwa/apple-touch-icon --}}
+    <link rel="apple-touch-icon" href="assets/lazztech_icon.png" />
+
+    {{!-- https://htmx.org/reference/#config --}} {{!--
+    https://htmx.org/attributes/hx-swap/#modifiers --}}
+    <meta name="htmx-config" content='{"globalViewTransitions": "true"}' />
+
+    <title>{{appName}}</title>
+    {{! Used inconjunction with service worker sw.js to enable PWA (Progressive
+    Web App) functionality. }}
+    <link rel="manifest" href="/manifest.json" />
+    {{! Served modules from node_modules, look to main.ts to see how this is
+    performed. https://htmx.org/docs/#installing
+    https://blog.wesleyac.com/posts/why-not-javascript-cdn }}
+    <script src="/modules/htmx.min.js"></script>
+    <script src="/modules/_hyperscript.min.js"></script>
+    <script src="/modules/sse.js"></script>
+    {{#if pwaEnabled}}
+    <script type="module" src="/modules/pwa-install.bundle.js"></script>
+    {{/if}} {{! Include assets/main.css and build output from
+    TailwindCSS/DaisyUI }}
+    <link href="/bundle.css" rel="stylesheet" />
+  </head>
+
+  {{! hx-boost 'automagically' replaces all anchor tags with htmx logic that
+  swaps out the body of the html with the response. This results in a smoother
+  user experience where the body gets swapped out without a full page reload
+  similar to a SPA. https://htmx.org/attributes/hx-boost/
+  https://htmx.org/quirks/#some-people-don-t-like-hx-boost }}
+  <body hx-boost="true" hx-ext="sse" class="touch-none h-screen flex flex-col">
+    {{! Caution: Triple brackets in handlebarsjs disables auto-escaping and may
+    pose a XSS risk with HTMX. However the exception to this rule is when
+    loading hbs rendered content which is pre-santized by the handlebars
+    templatinng engine as it get's rendered.
+    https://handlebarsjs.com/guide/expressions.html#literal-segments
+    https://htmx.org/essays/web-security-basics-with-htmx/ }} {{{body}}} {{! The
+    service worker is used in conjunction with the manifest.json to enable PWA
+    (Progressive Web App) functionality. This script tag uses JavaScript
+    modules, so the proper `type` attribute value is required.
+    https://developer.chrome.com/docs/workbox/handling-service-worker-updates }}
+    {{#if pwaEnabled}}
+    <script type="module">
+      // This code sample uses features introduced in Workbox v6.
+      import { Workbox } from '/modules/workbox-window.prod.mjs';
+
+      if ('serviceWorker' in navigator) {
+        const wb = new Workbox('/sw.js');
+
+        // Add an event listener to detect when the registered
+        // service worker has installed but is waiting to activate.
+        wb.addEventListener('waiting', () => {
+          // When a new service worker is waiting, set up a listener that
+          // reloads the page as soon as the new SW takes control, then
+          // immediately send the skip-waiting message so the update applies
+          // without requiring any user interaction.
+          wb.addEventListener('controlling', () => {
+            window.location.reload();
+          });
+          wb.messageSkipWaiting();
+        });
+
+        // Register the service worker
+        wb.register().then(() => {
+          console.log('Service Worker registered');
+
+          // Check for access_token cookie first
+          if (
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('access_token='))
+          ) {
+            // If authenticated set up web push notifications
+            import('/js/webPush.js').then((module) => {
+              module.default
+                .subscribe()
+                .catch((err) =>
+                  console.warn('Web push subscription failed:', err),
+                );
+            });
+          } else {
+            console.log('Not authenticated - skipping web push subscription');
+          }
+        });
+      }
+    </script>
+    {{/if}} {{#if pwaEnabled}}
+    <pwa-install id="pwa-install" manifest-url="/manifest.json"></pwa-install>
+    <script type="text/javascript">
+      var pwaInstall = document.getElementById('pwa-install');
+    </script>
+    {{/if}}
+  </body>
+</html>

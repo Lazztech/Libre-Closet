@@ -1,0 +1,11 @@
+{{>navbar}}
+
+<main class="p-20 flex flex-col justify-center items-center h-full">
+  <h1>{{t 'lang.ERROR'}} {{statusCode}}</h1>
+  <p>{{message}}</p>
+  <p><small>{{t 'lang.PATH'}}: {{path}}</small></p>
+  <p><small>{{t 'lang.TIME'}}: {{timestamp}}</small></p>
+  <a href="/" class="btn">{{t 'lang.RETURN_TO_HOME'}}</a>
+</main>
+
+{{>dock}}

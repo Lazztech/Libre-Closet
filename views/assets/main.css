@@ -1,0 +1,26 @@
+/* Used by the npm run build:tailwind script to "compile" tailwind usage into a static, pruned down css output
+that only contains the relivant tailwind code used in the application source. This is to minimize the bundle size
+and response bandwidth/latency. */
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */
+@supports (-webkit-overflow-scrolling: touch) {
+    input {
+        font-size: 16px;
+    }
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* Prevent iOS from resizing the viewport */
+body {
+  height: 100vh;
+  height: 100dvh; /* Use dynamic viewport height */
+}

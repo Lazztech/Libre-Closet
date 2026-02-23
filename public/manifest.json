@@ -1,0 +1,19 @@
+{
+  "short_name": "Lazztech Boilerplate",
+  "name": "Lazztech Boilerplate",
+  "icons": [
+    {
+        "src": "/assets/lazztech_icon.webp",
+        "sizes": "1000x1000"
+    }
+  ],
+  "id": "/",
+  "start_url": "/",
+  "theme_color": "#222428",
+  "background_color": "#fafafa",
+  "display": "standalone",
+  "scope": "/",
+  "shortcuts": [],
+  "description": "Lazztech Boilerplate",
+  "screenshots": []
+}
