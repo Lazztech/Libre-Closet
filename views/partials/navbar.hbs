@@ -49,8 +49,6 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
       <div class="hidden flex-none ml-auto lg:block pt-1">
         <ul class="menu menu-horizontal">
           <!-- Navbar menu content here -->
-          <li><a href="/wardrobe">{{t 'lang.WARDROBE'}}</a></li>
-          <li><a href="/outfits">{{t 'lang.OUTFITS'}}</a></li>
           {{#if authEnabled}} {{#if user}}
           <li><a href="/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
           <li><a href="/auth/profile">{{user.email}}</a></li>
@@ -70,8 +68,6 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
     ></label>
     <ul class="menu bg-base-200 min-h-full w-80 p-4 pt-8">
       <!-- Sidebar content here -->
-      <li><a href="/wardrobe">{{t 'lang.WARDROBE'}}</a></li>
-      <li><a href="/outfits">{{t 'lang.OUTFITS'}}</a></li>
       {{#if authEnabled}} {{#if user}}
       <li><a href="/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
       <li><a href="/auth/profile">{{user.email}}</a></li>
