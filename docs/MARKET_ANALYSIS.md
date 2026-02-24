@@ -114,6 +114,34 @@ The cooperative/bootstrapped model means growth must be organic and community-le
 - **Independent stylist communities** — for the B2B tier
 - **Product Hunt / Hacker News "Show HN"** — standard indie SaaS launch channels
 
+### Post-MVP Launch Sequence
+
+The step immediately after a working v0.1 is a **community launch, not more features**. More building before validation risks wasting effort on the wrong things.
+
+1. **Post to r/selfhosted** — fastest path to the first 100 self-hosters. The post needs a Docker one-liner, a screenshot, and a clear "privacy-first, no ads, open source" hook.
+2. **Post to a slow-fashion community** (r/capsulewardrobe or similar) — reaches the non-technical consumer half of the audience.
+3. **Watch where users get stuck** — cataloging friction (the upfront effort of photographing every garment) is the #1 cause of churn in this category. Real users will surface this within days.
+4. **Let usage patterns drive v0.2** — don't guess the next feature; let drop-off points and user requests decide.
+
+---
+
+## Monetization Decisions
+
+### Payment Processing — Stripe ✅
+
+Stripe is the right choice for the hosted cloud tier when ready:
+
+- First-class Node.js/NestJS support with a well-documented webhook and subscription API
+- Handles the full freemium upgrade flow: free → premium → B2B tier in a single integration
+- Issues 1099s to contractors, which is directly relevant to the cooperative contributor payout model defined in the business agreement
+- Clean implementation path: a `Subscription` entity tied to `User`, checked in a guard or middleware before allowing access to premium features
+
+### Advertising — No ❌
+
+Ads are **incompatible with the core differentiator** of this product. The entire reason a privacy-conscious user chooses a self-hostable open-source wardrobe app over OpenWardrobe or Whering is specifically to avoid having a company monetize their fashion data or push them toward buying more clothes. Running ads — particularly fashion or retail ads — would be perceived as a direct betrayal of that premise and would discredit the project in the exact communities (r/selfhosted, slow-fashion) needed to grow it.
+
+Whering already owns the "free with brand partnerships" position. Competing there is a race to the bottom on both trust and margin. The subscription model is the only monetization path consistent with the project's positioning.
+
 ---
 
 ## Bottom Line
