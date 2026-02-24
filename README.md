@@ -153,7 +153,7 @@ volumes:
 ```bash
 git clone https://github.com/lazztech/libre-closet
 cd libre-closet
-cp .env.example .env   # edit as needed
+cp .env .env.local     # override defaults locally (gitignored)
 npm install
 npm run start:prod
 ```
@@ -161,6 +161,8 @@ npm run start:prod
 ---
 
 ## Configuration
+
+`.env` contains committed defaults. Override any value via a `.env.local` file (gitignored) or by passing real environment variables to Docker.
 
 | Variable | Description | Default |
 |---|---|---|
@@ -203,7 +205,7 @@ npx web-push generate-vapid-keys
 ```bash
 nvm install && nvm use
 npm install
-cp .env.example .env
+cp .env .env.local     # override defaults locally (gitignored)
 npm run start:dev
 ```
 
