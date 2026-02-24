@@ -1,68 +1,117 @@
-{{!-- Load navbar partial --}} {{>navbar}}
-<main class="flex flex-col h-screen">
-  <div class="w-full p-2 gap-2 pt-20 shadow-md bg-base-200 flex justify-center">
-    {{#if pwaEnabled}}
-    <button
-      onclick="pwaInstall.showDialog(true)"
-      class="btn btn-neutral btn-sm"
-    >
-      {{t 'lang.FORCE_PWA'}}
-    </button>
-    {{/if}} {{#if user}}
-    <button
-      hx-post="/notification/test"
-      hx-indicator="#loading"
-      hx-swap="none"
-      class="btn btn-neutral btn-sm"
-    >
-      {{t 'lang.TEST_WEB_PUSH'}}
-    </button>
-    {{/if}}
-  </div>
+{{>navbar}}
 
-  <div class="flex-1 overflow-y-auto p-20">
-    <div id="chat" class="flex flex-col justify-center items-center">
-      <!-- Chat messages will be displayed here -->
+<main>
+  {{!-- Hero --}}
+  <section class="hero min-h-screen bg-base-200">
+    <div class="hero-content text-center flex-col gap-8 py-24 px-4">
+      <div class="flex justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-24 text-primary">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+        </svg>
+      </div>
+      <div class="max-w-2xl">
+        <div class="badge badge-primary badge-outline mb-4">{{t 'lang.OPEN_SOURCE_BADGE'}}</div>
+        <h1 class="text-5xl font-bold mb-4">{{t 'lang.TAGLINE'}}</h1>
+        <p class="text-lg text-base-content/70 mb-8">{{t 'lang.HERO_DESCRIPTION'}}</p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <a href="/wardrobe" class="btn btn-primary btn-lg">{{t 'lang.GET_STARTED'}}</a>
+          {{#if authEnabled}}
+            {{#unless user}}
+            <a href="/auth/register" class="btn btn-outline btn-lg">{{t 'lang.REGISTER'}}</a>
+            {{/unless}}
+          {{/if}}
+          <a href="https://github.com/lazztech/libre-closet" target="_blank" rel="noopener" hx-boost="false" class="btn btn-ghost btn-lg gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+              <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+        </div>
+      </div>
     </div>
-  </div>
-  <div
-    id="sse-listener"
-    hx-ext="sse"
-    sse-connect="/sse"
-    sse-swap="message"
-    hx-swap="beforeend"
-    hx-target="#chat"
-  ></div>
+  </section>
 
-  <div
-    class="fixed bottom-15 left-0 right-0 p-4 shadow-lg bg-gradient-to-t from-base-100 via-base-100/50 to-transparent"
-  >
-    <div class="flex flex-row gap-2 items-center justify-center">
-      <form
-        id="messageForm"
-        hx-post="/message"
-        hx-indicator="#loading"
-        hx-trigger="submit"
-        hx-swap="beforeend"
-        hx-target="#chat"
-        class="flex flex-row gap-2 items-center"
-      >
-        <input
-          type="text"
-          id="message"
-          name="message"
-          class="input"
-          placeholder="{{t 'lang.YOUR_MESSAGE'}}"
-          required
-        />
-        <button type="submit" class="btn btn-neutral">{{t 'lang.SEND'}}</button>
-      </form>
+  {{!-- Features --}}
+  <section class="py-20 px-4 bg-base-100">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">{{t 'lang.FEATURES_TITLE'}}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="card bg-base-200 shadow-sm">
+          <div class="card-body items-center text-center gap-3">
+            <div class="text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+              </svg>
+            </div>
+            <h3 class="card-title text-base">{{t 'lang.FEATURE_PRIVACY_TITLE'}}</h3>
+            <p class="text-sm text-base-content/70">{{t 'lang.FEATURE_PRIVACY_DESC'}}</p>
+          </div>
+        </div>
+        <div class="card bg-base-200 shadow-sm">
+          <div class="card-body items-center text-center gap-3">
+            <div class="text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3.75h3m-3 3.75h3" />
+              </svg>
+            </div>
+            <h3 class="card-title text-base">{{t 'lang.FEATURE_PWA_TITLE'}}</h3>
+            <p class="text-sm text-base-content/70">{{t 'lang.FEATURE_PWA_DESC'}}</p>
+          </div>
+        </div>
+        <div class="card bg-base-200 shadow-sm">
+          <div class="card-body items-center text-center gap-3">
+            <div class="text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+              </svg>
+            </div>
+            <h3 class="card-title text-base">{{t 'lang.FEATURE_OUTFITS_TITLE'}}</h3>
+            <p class="text-sm text-base-content/70">{{t 'lang.FEATURE_OUTFITS_DESC'}}</p>
+          </div>
+        </div>
+        <div class="card bg-base-200 shadow-sm">
+          <div class="card-body items-center text-center gap-3">
+            <div class="text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v.75a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25v-.75m16.5-8.25h-15A2.25 2.25 0 0 0 2.25 11.25v4.5A2.25 2.25 0 0 0 4.5 18h15a2.25 2.25 0 0 0 2.25-2.25v-4.5A2.25 2.25 0 0 0 19.5 9Zm-16.5 0V6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25V9" />
+              </svg>
+            </div>
+            <h3 class="card-title text-base">{{t 'lang.FEATURE_DOCKER_TITLE'}}</h3>
+            <p class="text-sm text-base-content/70">{{t 'lang.FEATURE_DOCKER_DESC'}}</p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
+
+  {{!-- Self-host section --}}
+  <section class="py-20 px-4 bg-base-200">
+    <div class="max-w-2xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4">{{t 'lang.SELF_HOST_TITLE'}}</h2>
+      <p class="text-base-content/70 mb-8">{{t 'lang.SELF_HOST_DESC'}}</p>
+      <div class="mockup-code text-left text-sm">
+        <pre data-prefix="$"><code>docker run -d \
+  -p 3000:3000 \
+  -v librecloset_data:/app/data \
+  ghcr.io/lazztech/libre-closet</code></pre>
+      </div>
+      <p class="text-xs text-base-content/40 mt-4">{{t 'lang.SELF_HOST_NOTE'}}</p>
+    </div>
+  </section>
+
+  {{!-- Footer --}}
+  <footer class="footer footer-center py-8 bg-base-100 text-base-content/60 text-sm pb-28">
+    <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+        </svg>
+        <span class="font-semibold">Libre Closet</span>
+      </div>
+      <p>{{t 'lang.OPEN_SOURCE_BADGE'}} &middot; <a href="https://github.com/lazztech/libre-closet" target="_blank" rel="noopener" hx-boost="false" class="link link-hover">GitHub</a></p>
+      <p>Made with ♥ by <a href="https://lazztech.com" target="_blank" rel="noopener" hx-boost="false" class="link link-hover">Lazztech LLC</a></p>
+    </div>
+  </footer>
 </main>
 
-{{!-- Load dock partial --}} {{>dock}}
-
-<script type="text/javascript">
-  var pwaInstall = document.getElementById('pwa-install');
-</script>
+{{>dock}}
