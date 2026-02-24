@@ -1,0 +1,42 @@
+{{>navbar}}
+
+<main class="p-4 pt-20 pb-24">
+  <div class="flex items-center justify-between mb-6 px-2">
+    <h1 class="text-2xl font-bold">{{t 'lang.WARDROBE'}}</h1>
+    <a href="/wardrobe/new" class="btn btn-primary btn-sm">+ {{t 'lang.NEW_GARMENT'}}</a>
+  </div>
+
+  {{#if garments.length}}
+  <div class="flex flex-wrap gap-4 justify-center">
+    {{#each garments}}
+    <a href="/wardrobe/{{this.id}}" class="card bg-base-100 w-44 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+      <figure class="aspect-square bg-base-200">
+        {{#if this.photo}}
+        <img src="/file/{{this.photo.fileName}}" alt="{{this.name}}" class="object-cover w-full h-full" />
+        {{else}}
+        <div class="flex items-center justify-center w-full h-full text-base-content/30">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-12">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+          </svg>
+        </div>
+        {{/if}}
+      </figure>
+      <div class="card-body p-3">
+        <h2 class="card-title text-sm">{{this.name}}</h2>
+        <p class="text-xs text-base-content/60 capitalize">{{this.category}}</p>
+      </div>
+    </a>
+    {{/each}}
+  </div>
+  {{else}}
+  <div class="flex flex-col items-center justify-center gap-4 pt-20 text-base-content/40">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-16">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+    </svg>
+    <p>{{t 'lang.NO_GARMENTS'}}</p>
+    <a href="/wardrobe/new" class="btn btn-primary btn-sm">{{t 'lang.ADD_FIRST_GARMENT'}}</a>
+  </div>
+  {{/if}}
+</main>
+
+{{>dock}}

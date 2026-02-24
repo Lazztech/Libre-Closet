@@ -7,6 +7,8 @@ import { FileModule } from '../file/file.module';
 import { AuthModule } from '../auth/auth.module';
 import { GarmentService } from './garment.service';
 import { OutfitService } from './outfit.service';
+import { WardrobeController } from './wardrobe.controller';
+import { OutfitController } from './outfit.controller';
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { OutfitService } from './outfit.service';
     FileModule,
     MikroOrmModule.forFeature([Garment, Outfit, User]),
   ],
+  controllers: [WardrobeController, OutfitController],
   providers: [GarmentService, OutfitService],
   exports: [GarmentService, OutfitService],
 })

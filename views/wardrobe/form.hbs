@@ -1,0 +1,95 @@
+{{>navbar}}
+
+<main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{{#if garment}}/wardrobe/{{garment.id}}{{else}}/wardrobe{{/if}}" class="btn btn-ghost btn-sm btn-circle">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      </svg>
+    </a>
+    <h1 class="text-2xl font-bold">
+      {{#if garment}}{{t 'lang.EDIT_GARMENT'}}{{else}}{{t 'lang.NEW_GARMENT'}}{{/if}}
+    </h1>
+  </div>
+
+  <form
+    method="POST"
+    action="{{#if garment}}/wardrobe/{{garment.id}}{{else}}/wardrobe{{/if}}"
+    class="flex flex-col gap-4"
+  >
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.NAME'}} *</span></label>
+      <input
+        type="text"
+        name="name"
+        class="input input-bordered"
+        value="{{#if garment}}{{garment.name}}{{/if}}"
+        required
+        placeholder="e.g. Black Linen Blazer"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.CATEGORY'}} *</span></label>
+      <select name="category" class="select select-bordered" required>
+        <option value="" disabled {{#unless garment}}selected{{/unless}}>Select a category</option>
+        {{#each categories}}
+        <option value="{{this}}" {{#ifEquals this ../garment.category}}selected{{/ifEquals}} class="capitalize">{{this}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.BRAND'}}</span></label>
+      <input
+        type="text"
+        name="brand"
+        class="input input-bordered"
+        value="{{#if garment}}{{garment.brand}}{{/if}}"
+        placeholder="e.g. Levi's"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">{{t 'lang.COLORS'}}</span>
+        <span class="label-text-alt text-base-content/50">{{t 'lang.COLORS_HINT'}}</span>
+      </label>
+      <input
+        type="text"
+        name="colors"
+        class="input input-bordered"
+        value="{{#if garment}}{{join garment.colors ', '}}{{/if}}"
+        placeholder="black, white"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.SIZE'}}</span></label>
+      <input
+        type="text"
+        name="size"
+        class="input input-bordered"
+        value="{{#if garment}}{{garment.size}}{{/if}}"
+        placeholder="M, 32, One Size…"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.NOTES'}}</span></label>
+      <textarea
+        name="notes"
+        class="textarea textarea-bordered"
+        rows="3"
+        placeholder="Any notes about this garment…"
+      >{{#if garment}}{{garment.notes}}{{/if}}</textarea>
+    </div>
+
+    <div class="flex gap-2 mt-2">
+      <a href="{{#if garment}}/wardrobe/{{garment.id}}{{else}}/wardrobe{{/if}}" class="btn btn-ghost flex-1">{{t 'lang.CANCEL'}}</a>
+      <button type="submit" class="btn btn-primary flex-1">{{t 'lang.SAVE'}}</button>
+    </div>
+  </form>
+</main>
+
+{{>dock}}

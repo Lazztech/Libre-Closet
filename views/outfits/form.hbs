@@ -1,0 +1,81 @@
+{{>navbar}}
+
+<main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{{#if outfit}}/outfits/{{outfit.id}}{{else}}/outfits{{/if}}" class="btn btn-ghost btn-sm btn-circle">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      </svg>
+    </a>
+    <h1 class="text-2xl font-bold">
+      {{#if outfit}}{{t 'lang.EDIT_OUTFIT'}}{{else}}{{t 'lang.NEW_OUTFIT'}}{{/if}}
+    </h1>
+  </div>
+
+  <form
+    method="POST"
+    action="{{#if outfit}}/outfits/{{outfit.id}}{{else}}/outfits{{/if}}"
+    class="flex flex-col gap-4"
+  >
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.NAME'}} *</span></label>
+      <input
+        type="text"
+        name="name"
+        class="input input-bordered"
+        value="{{#if outfit}}{{outfit.name}}{{/if}}"
+        required
+        placeholder="e.g. Summer Date Night"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.NOTES'}}</span></label>
+      <textarea
+        name="notes"
+        class="textarea textarea-bordered"
+        rows="3"
+        placeholder="Occasion, weather, etc."
+      >{{#if outfit}}{{outfit.notes}}{{/if}}</textarea>
+    </div>
+
+    {{#if garments.length}}
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.GARMENTS_IN_OUTFIT'}}</span></label>
+      <div class="flex flex-col gap-2 max-h-80 overflow-y-auto rounded-box border border-base-300 p-3">
+        {{#each garments}}
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-base-200 rounded-lg p-2 transition-colors">
+          <input
+            type="checkbox"
+            name="garmentIds"
+            value="{{this.id}}"
+            class="checkbox checkbox-sm"
+            {{#ifContains ../selectedGarmentIds this.id}}checked{{/ifContains}}
+          />
+          {{#if this.photo}}
+          <img src="/file/{{this.photo.fileName}}" alt="{{this.name}}" class="size-10 rounded object-cover flex-shrink-0" />
+          {{else}}
+          <div class="size-10 rounded bg-base-200 flex items-center justify-center flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 text-base-content/30">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+            </svg>
+          </div>
+          {{/if}}
+          <div class="flex flex-col flex-1 min-w-0">
+            <span class="text-sm font-medium truncate">{{this.name}}</span>
+            <span class="text-xs text-base-content/50 capitalize">{{this.category}}</span>
+          </div>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <div class="flex gap-3 pt-2">
+      <button type="submit" class="btn btn-primary flex-1">{{t 'lang.SAVE'}}</button>
+      <a href="{{#if outfit}}/outfits/{{outfit.id}}{{else}}/outfits{{/if}}" class="btn btn-ghost flex-1">{{t 'lang.CANCEL'}}</a>
+    </div>
+  </form>
+</main>
+
+{{>dock}}
