@@ -151,7 +151,8 @@ export class WardrobeController {
     @Res() res: Response,
   ) {
     await this.garmentService.update(id, { photo$: photo$ }, this.userId(req));
-    return res.redirect(`/wardrobe/${id}`);
+    res.setHeader('HX-Redirect', `/wardrobe/${id}`);
+    return res.send();
   }
 
   @Delete(':id')

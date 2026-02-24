@@ -53,9 +53,8 @@ export class Garment extends ShareableId {
   @OneToOne({
     entity: () => File,
     nullable: true,
-    ref: true,
   })
-  public photo?: Ref<File>;
+  public photo?: File;
 
   @ManyToOne({
     entity: () => User,
