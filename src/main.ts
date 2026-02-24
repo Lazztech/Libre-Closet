@@ -47,6 +47,17 @@ async function bootstrap() {
   hbs.registerHelper('ifEquals', function (arg1, arg2, options) {
     return arg1 == arg2 ? options.fn(this) : options.inverse(this);
   });
+  hbs.registerHelper('join', function (arr: unknown[], separator: string) {
+    if (!Array.isArray(arr)) return '';
+    return arr.join(separator ?? ', ');
+  });
+  hbs.registerHelper(
+    'ifContains',
+    function (arr: unknown[], value: unknown, options) {
+      if (!Array.isArray(arr)) return options.inverse(this);
+      return arr.includes(value) ? options.fn(this) : options.inverse(this);
+    },
+  );
 
   /** Serve htmx and other libraries from node_modules
    * https://htmx.org/docs/#installing

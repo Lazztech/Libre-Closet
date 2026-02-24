@@ -1,19 +1,49 @@
 {
-  "short_name": "Lazztech Boilerplate",
-  "name": "Lazztech Boilerplate",
+  "short_name": "Libre Closet",
+  "name": "Libre Closet",
   "icons": [
     {
-        "src": "/assets/lazztech_icon.webp",
-        "sizes": "1000x1000"
+      "src": "/assets/lazztech_icon.webp",
+      "sizes": "1000x1000",
+      "type": "image/webp"
+    },
+    {
+      "src": "/assets/lazztech_icon.png",
+      "sizes": "1000x1000",
+      "type": "image/png",
+      "purpose": "maskable any"
     }
   ],
-  "id": "/",
-  "start_url": "/",
+  "id": "/wardrobe",
+  "start_url": "/wardrobe",
   "theme_color": "#222428",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "/",
-  "shortcuts": [],
-  "description": "Lazztech Boilerplate",
-  "screenshots": []
+  "shortcuts": [
+    {
+      "name": "My Wardrobe",
+      "short_name": "Wardrobe",
+      "description": "Browse your clothing items",
+      "url": "/wardrobe"
+    },
+    {
+      "name": "My Outfits",
+      "short_name": "Outfits",
+      "description": "Browse your saved outfits",
+      "url": "/outfits"
+    },
+    {
+      "name": "Add Garment",
+      "short_name": "Add Garment",
+      "description": "Catalog a new clothing item",
+      "url": "/wardrobe/new"
+    }
+  ],
+  "description": "A free, open-source digital wardrobe organizer. Catalog your clothing, build outfits, and share looks — self-hostable and privacy-first.",
+  "screenshots": [],
+  "categories": [
+    "lifestyle",
+    "utilities"
+  ]
 }
