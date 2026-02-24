@@ -6,7 +6,6 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Observable } from 'rxjs';
 import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 import { Garment, GarmentCategory } from '../dal/entity/garment.entity';
@@ -44,22 +43,20 @@ export class GarmentService {
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
     private readonly fileService: FileService,
-    private readonly configService: ConfigService,
   ) {}
 
-  private get authEnabled(): boolean {
-    return this.configService.get<boolean>('AUTH_ENABLED') ?? false;
-  }
-
   async findAll(userId?: number): Promise<Garment[]> {
-    if (this.authEnabled && userId != null) {
+    if (userId != null) {
       return this.garmentRepository.find(
         { owner: { id: userId } },
         { populate: ['photo'] },
       );
     }
-    // AUTH_ENABLED=false: return all garments
-    return this.garmentRepository.findAll({ populate: ['photo'] });
+    // AUTH_ENABLED=false: only return garments that belong to no user
+    return this.garmentRepository.find(
+      { owner: null },
+      { populate: ['photo'] },
+    );
   }
 
   async findOne(id: number, userId?: number): Promise<Garment> {
@@ -67,10 +64,12 @@ export class GarmentService {
       populate: ['photo', 'outfits'],
     });
     if (!garment) throw new NotFoundException('Garment not found');
-    if (this.authEnabled && userId != null) {
-      if (garment.owner?.id !== userId) {
-        throw new ForbiddenException();
-      }
+    if (userId != null) {
+      // auth mode: must be the owner
+      if (garment.owner?.id !== userId) throw new ForbiddenException();
+    } else {
+      // no-auth mode: only allow ownerless garments
+      if (garment.owner != null) throw new ForbiddenException();
     }
     return garment;
   }
@@ -103,7 +102,7 @@ export class GarmentService {
       photo: photo ?? undefined,
     });
 
-    if (this.authEnabled && userId != null) {
+    if (userId != null) {
       const user = await this.userRepository.findOneOrFail(userId);
       garment.owner = user as any;
     }

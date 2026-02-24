@@ -15,12 +15,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type Request, type Response } from 'express';
-import { OptionalAuthGuard } from '../auth/optional-auth.guard';
+import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { OutfitService } from './outfit.service';
 import { GarmentService } from './garment.service';
 
-@UseGuards(OptionalAuthGuard)
+@UseGuards(ConditionalAuthGuard)
 @Controller('outfits')
 export class OutfitController {
   private readonly logger = new Logger(OutfitController.name);

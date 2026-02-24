@@ -16,7 +16,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { type Request, type Response } from 'express';
-import { OptionalAuthGuard } from '../auth/optional-auth.guard';
+import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { GarmentCategory } from '../dal/entity/garment.entity';
 import { GarmentService } from './garment.service';
@@ -27,7 +27,7 @@ import {
 } from '@proventuslabs/nestjs-multipart-form';
 import { Observable } from 'rxjs';
 
-@UseGuards(OptionalAuthGuard)
+@UseGuards(ConditionalAuthGuard)
 @Controller('wardrobe')
 export class WardrobeController {
   private readonly logger = new Logger(WardrobeController.name);
