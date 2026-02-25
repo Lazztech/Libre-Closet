@@ -19,8 +19,8 @@ and response bandwidth/latency. */
   z-index: 1000;
 }
 
-/* Prevent iOS from resizing the viewport */
+/* Prevent iOS from collapsing the viewport on scroll */
 body {
-  height: 100vh;
-  height: 100dvh; /* Use dynamic viewport height */
+  min-height: 100vh;
+  min-height: 100dvh; /* Use dynamic viewport height */
 }
