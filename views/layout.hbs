@@ -56,7 +56,7 @@ https://nestjs-i18n.com/quick-start --}}
   user experience where the body gets swapped out without a full page reload
   similar to a SPA. https://htmx.org/attributes/hx-boost/
   https://htmx.org/quirks/#some-people-don-t-like-hx-boost }}
-  <body hx-boost="true" hx-ext="sse" class="flex flex-col">
+  <body hx-boost="true" hx-ext="sse" class="h-screen flex flex-col">
     {{! Caution: Triple brackets in handlebarsjs disables auto-escaping and may
     pose a XSS risk with HTMX. However the exception to this rule is when
     loading hbs rendered content which is pre-santized by the handlebars
