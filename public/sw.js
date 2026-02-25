@@ -2631,7 +2631,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
 
   // views/assets/src-sw.ts
   clientsClaim();
-  precacheAndRoute([{"revision":"e4cb185b2e80d1080505613a40f431fc","url":"assets/lazztech_icon.png"},{"revision":"f0598a10b39d3b5a995d9ef85ede09c4","url":"assets/lazztech_icon.webp"},{"revision":"cf16700c276567561449989eb1dc6971","url":"bundle.css"},{"revision":"0609c12e87f501b8192828ad3f74c84f","url":"favicon.ico"},{"revision":"67f0c6927b568b4c2d310fbe10f10f70","url":"js/webPush.js"},{"revision":"dd284d5fd9d141740063d324844de705","url":"manifest.json"},{"revision":"ca121b5d03245bf82db00d14cee04e22","url":"robots.txt"}]);
+  precacheAndRoute([{"revision":"e4cb185b2e80d1080505613a40f431fc","url":"assets/lazztech_icon.png"},{"revision":"f0598a10b39d3b5a995d9ef85ede09c4","url":"assets/lazztech_icon.webp"},{"revision":"c8074c19a6adc24af8acf729df6d706f","url":"bundle.css"},{"revision":"0609c12e87f501b8192828ad3f74c84f","url":"favicon.ico"},{"revision":"67f0c6927b568b4c2d310fbe10f10f70","url":"js/webPush.js"},{"revision":"dd284d5fd9d141740063d324844de705","url":"manifest.json"},{"revision":"ca121b5d03245bf82db00d14cee04e22","url":"robots.txt"}]);
   var CACHE_STRATEGY = new NetworkFirst();
   var FALLBACK_HTML_URL = "/offline.html";
   warmStrategyCache({
