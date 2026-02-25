@@ -108,6 +108,11 @@ npm run start:prod
 | `PUBLIC_VAPID_KEY` | Web push — generate for production | — |
 | `PRIVATE_VAPID_KEY` | Web push — generate for production | — |
 
+Generate JWT secret:
+```bash
+openssl rand -base64 60
+```
+
 Generate VAPID keys:
 ```bash
 npx web-push generate-vapid-keys
