@@ -61,7 +61,7 @@
 
   <div class="fixed bottom-15 left-0 right-0 p-4 shadow-lg bg-gradient-to-t from-base-100 via-base-100/50 to-transparent">
     <div class="flex flex-row gap-2 items-center justify-center">
-      <p>Shared by {{createdBy.email}}</p>
+      {{#if createdBy}}<p>Shared by {{createdBy.email}}</p>{{/if}}
     </div>
   </div>
 </main>
