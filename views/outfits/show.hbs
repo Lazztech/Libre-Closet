@@ -42,7 +42,7 @@
   <div class="divider"></div>
   <div class="flex gap-3 justify-between items-center">
     <button
-      onclick="navigator.clipboard.writeText('{{siteUrl}}/share/outfit/{{outfit.shareableId}}'); alert('{{t 'lang.COPIED'}}')"
+      onclick="navigator.clipboard.writeText('{{siteUrl}}/share?shareableId={{outfit.shareableId}}&type=outfit'); alert('{{t 'lang.COPIED'}}')"
       class="btn btn-outline btn-sm"
     >
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
