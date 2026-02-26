@@ -6,9 +6,14 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { PasswordReset } from '../dal/entity/passwordReset.entity';
 import { User } from '../dal/entity/user.entity';
 import { File } from '../dal/entity/file.entity';
+import { Garment } from '../dal/entity/garment.entity';
+import { Outfit } from '../dal/entity/outfit.entity';
 
 @Module({
-  imports: [FileModule, MikroOrmModule.forFeature([PasswordReset, User, File])],
+  imports: [
+    FileModule,
+    MikroOrmModule.forFeature([PasswordReset, User, File, Garment, Outfit]),
+  ],
   controllers: [OpenGraphController],
   providers: [OpenGraphService],
 })

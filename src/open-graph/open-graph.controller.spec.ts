@@ -2,6 +2,8 @@ import { EntityManager } from '@mikro-orm/core';
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { File } from '../dal/entity/file.entity';
+import { Garment } from '../dal/entity/garment.entity';
+import { Outfit } from '../dal/entity/outfit.entity';
 import { FileUrlService } from '../file/file-url/file-url.service';
 import { OpenGraphController } from './open-graph.controller';
 import { OpenGraphService } from './open-graph.service';
@@ -21,6 +23,20 @@ describe('OpenGraphController', () => {
             findOne: jest.fn(),
             find: jest.fn(),
             persistAndFlush: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Garment),
+          useValue: {
+            findOne: jest.fn(),
+            find: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Outfit),
+          useValue: {
+            findOne: jest.fn(),
+            find: jest.fn(),
           },
         },
         {
