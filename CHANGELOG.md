@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.1]
 
-### Added
+### Fixed
 
 - Bug fix for sharing outfits or wardrobes
 - Validation to prevent user from submitting image before one is selected
