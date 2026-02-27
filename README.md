@@ -22,6 +22,14 @@ Open [http://localhost:3000](http://localhost:3000). No account required by defa
 
 ---
 
+## Screenshots
+
+| Wardrobe | Garment detail | Outfit builder | Outfit detail |
+|---|---|---|---|
+| ![Wardrobe grid](screenshots/Screenshot_1.png) | ![Garment detail](screenshots/Screenshot_2.png) | ![Outfit builder](screenshots/Screenshot_3.png) | ![Outfit detail](screenshots/Screenshot_4.png) |
+
+---
+
 ## Features
 
 - **Garment catalog** — name, category, brand, size, colors, notes, photo
