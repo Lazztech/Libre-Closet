@@ -5,8 +5,7 @@
 A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, upload photos, build outfits, and access everything from your phone as an offline-ready PWA — all on your own server.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/lazztech/libre-closet/releases)
-
+[![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/lazztech/libre-closet/tags)
 ---
 
 ## Quick start
