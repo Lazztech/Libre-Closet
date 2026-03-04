@@ -40,7 +40,7 @@ The goal of v0.1 is the smallest usable, self-hostable release worth sharing pub
 - Cost-per-wear analytics
 - Packing list / capsule wardrobe builder
 
-These are tracked as v0.2+ candidates. See [MARKET_ANALYSIS.md](MARKET_ANALYSIS.md) for prioritization rationale.
+These are tracked as v0.2+ candidates.
 
 ---
 
