@@ -116,13 +116,23 @@ export class GarmentService {
     dto: UpdateGarmentDto,
     userId?: number,
   ): Promise<Garment> {
-    const garment = await this.findOne(id, userId);
-
+    // Process the file upload BEFORE any async DB operations.
+    // The multipart interceptor calls stream.resume() on all file streams before
+    // the controller runs. With Postgres, the async findOne() yields the event
+    // loop long enough for a resume()'d stream to drain/discard its data. By
+    // piping the stream to disk first (synchronous from the stream's perspective)
+    // we consume it before any Postgres round-trip can drain it.
+    let photo: File | undefined;
     if (dto.photo$) {
-      const photo = await this.fileService.storeImageFromFileUpload(
+      photo = await this.fileService.storeImageFromFileUpload(
         dto.photo$,
         userId,
       );
+    }
+
+    const garment = await this.findOne(id, userId);
+
+    if (photo) {
       garment.photo = photo as any;
     }
 
