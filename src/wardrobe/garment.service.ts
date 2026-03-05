@@ -36,8 +36,7 @@ export function normalizeSize(input?: string): string | undefined {
     .trim()
     .toLowerCase()
     .replace(/[\s-]+/g, '');
-  if (['xxxxxl', '5xl', '5xlarge', 'xxxxxlarge'].includes(s))
-    return '5X-Large';
+  if (['xxxxxl', '5xl', '5xlarge', 'xxxxxlarge'].includes(s)) return '5X-Large';
   if (['xxxxl', '4xl', '4xlarge', 'xxxxlarge'].includes(s)) return '4X-Large';
   if (['xxxl', '3xl', '3xlarge', 'xxxlarge'].includes(s)) return '3X-Large';
   if (['xxl', '2xl', '2xlarge', 'xxlarge'].includes(s)) return 'XX-Large';
