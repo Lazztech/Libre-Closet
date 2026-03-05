@@ -1,4 +1,4 @@
-import { EntityRepository } from '@mikro-orm/core';
+import { EntityRepository, FilterQuery } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import {
   ForbiddenException,
@@ -33,6 +33,14 @@ export interface UpdateGarmentDto {
   photo$?: Observable<MultipartFileStream>;
 }
 
+export interface SearchGarmentDto {
+  keyword?: string;
+  category?: GarmentCategory;
+  color?: string;
+  brand?: string;
+  size?: string;
+}
+
 @Injectable()
 export class GarmentService {
   private readonly logger = new Logger(GarmentService.name);
@@ -45,16 +53,30 @@ export class GarmentService {
     private readonly fileService: FileService,
   ) {}
 
-  async findAll(userId?: number): Promise<Garment[]> {
+  async findAll(
+    userId?: number,
+    dto: SearchGarmentDto = {},
+  ): Promise<Garment[]> {
+    const searchConditions: FilterQuery<Garment> = {
+      ...(dto.category ? { category: dto.category } : {}),
+      ...(dto.keyword
+        ? {
+            $or: [
+              { name: { $like: `%${dto.keyword}%` } },
+              { notes: { $like: `%${dto.keyword}%` } },
+            ],
+          }
+        : {}),
+    };
     if (userId != null) {
       return this.garmentRepository.find(
-        { owner: { id: userId } },
+        { owner: { id: userId }, ...searchConditions },
         { populate: ['photo'] },
       );
     }
     // AUTH_ENABLED=false: only return garments that belong to no user
     return this.garmentRepository.find(
-      { owner: null },
+      { owner: null, ...searchConditions },
       { populate: ['photo'] },
     );
   }
@@ -109,6 +131,25 @@ export class GarmentService {
 
     await this.garmentRepository.getEntityManager().persistAndFlush(garment);
     return garment;
+  }
+
+  async findAvailableFilters(userId?: number): Promise<{
+    colors: string[];
+    brands: string[];
+    sizes: string[];
+  }> {
+    const where = userId != null ? { owner: { id: userId } } : { owner: null };
+    const garments = await this.garmentRepository.find(where);
+
+    const colors = [...new Set(garments.flatMap((g) => g.colors ?? []))].sort();
+    const brands = [
+      ...new Set(garments.map((g) => g.brand).filter(Boolean) as string[]),
+    ].sort();
+    const sizes = [
+      ...new Set(garments.map((g) => g.size).filter(Boolean) as string[]),
+    ].sort();
+
+    return { colors, brands, sizes };
   }
 
   async update(

@@ -9,6 +9,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Render,
   Req,
   Res,
@@ -19,7 +20,7 @@ import { type Request, type Response } from 'express';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { GarmentCategory } from '../dal/entity/garment.entity';
-import { GarmentService } from './garment.service';
+import * as garmentService from './garment.service';
 import {
   MultipartFiles,
   MultipartFileStream,
@@ -34,7 +35,7 @@ export class WardrobeController {
 
   constructor(
     @Inject()
-    private readonly garmentService: GarmentService,
+    private readonly garmentService: garmentService.GarmentService,
   ) {}
 
   private userId(req: Request): number | undefined {
@@ -43,9 +44,16 @@ export class WardrobeController {
 
   @Get()
   @Render('wardrobe/index')
-  async index(@Req() req: Request) {
-    const garments = await this.garmentService.findAll(this.userId(req));
-    return { garments, categories: Object.values(GarmentCategory) };
+  async index(
+    @Req() req: Request,
+    @Query() query: garmentService.SearchGarmentDto,
+  ) {
+    const garments = await this.garmentService.findAll(this.userId(req), query);
+    return {
+      garments,
+      categories: Object.values(GarmentCategory),
+      search: query,
+    };
   }
 
   @Get('new')

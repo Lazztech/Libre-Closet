@@ -79,6 +79,10 @@
   "ADD_PHOTO": "Add Photo",
   "UPDATE_PHOTO": "Update Photo",
   "CONFIRM_DELETE": "Are you sure you want to delete this?",
+  "SEARCH_PLACEHOLDER": "Search garments...",
+  "SEARCH": "Search",
+  "ALL_CATEGORIES": "All Categories",
+  "CLEAR": "Clear",
   "validation": {
     "IS_EMAIL": "Please provide a valid email address",
     "MIN_PASSWORD_LENGTH": "Password must be at least 8 characters long",

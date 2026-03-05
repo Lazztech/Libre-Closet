@@ -6,6 +6,31 @@
     <a href="/wardrobe/new" class="btn btn-primary btn-sm">+ {{t 'lang.NEW_GARMENT'}}</a>
   </div>
 
+  <div>
+    <form method="get" action="/wardrobe">
+      <div class="flex flex-wrap gap-2 items-center mb-4">
+        <input
+          type="text"
+          name="keyword"
+          placeholder="{{t 'lang.SEARCH_PLACEHOLDER'}}"
+          value="{{search.keyword}}"
+          class="input input-bordered w-full max-w-xs"
+        />
+        <select name="category" class="select select-bordered w-full max-w-xs">
+          <option value="">{{t 'lang.ALL_CATEGORIES'}}</option>
+          {{#each categories}}
+          <option value="{{this}}" {{#ifEquals this ../search.category}}selected{{/ifEquals}}>
+          {{this}}
+          </option>
+          {{/each}}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">{{t 'lang.SEARCH'}}</button>
+        <a href="/wardrobe" class="btn btn-ghost btn-sm">{{t 'lang.CLEAR'}}</a>
+      </div>
+  </div>
+
+  <p class="text-sm text-base-content/60 mb-4 px-2">{{garments.length}} results</p>
+
   {{#if garments.length}}
   <div class="flex flex-wrap gap-4 justify-center">
     {{#each garments}}
