@@ -65,14 +65,10 @@
         <span class="font-medium">{{garment.size}}</span>
       </div>
       {{/if}}
-      {{#if garment.colors.length}}
-      <div class="flex justify-between items-start">
-        <span class="text-base-content/60 text-sm">{{t 'lang.COLORS'}}</span>
-        <div class="flex flex-wrap gap-1 justify-end">
-          {{#each garment.colors}}
-          <span class="badge badge-ghost badge-sm capitalize">{{this}}</span>
-          {{/each}}
-        </div>
+      {{#if garment.color}}
+      <div class="flex justify-between">
+        <span class="text-base-content/60 text-sm">{{t 'lang.COLOR'}}</span>
+        <span class="capitalize font-medium">{{garment.color}}</span>
       </div>
       {{/if}}
       {{#if garment.notes}}

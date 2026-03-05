@@ -28,6 +28,25 @@ export enum GarmentCategory {
   OTHER = 'other',
 }
 
+export enum GarmentColor {
+  RED = 'red',
+  PINK = 'pink',
+  ORANGE = 'orange',
+  YELLOW = 'yellow',
+  GREEN = 'green',
+  BLUE = 'blue',
+  PURPLE = 'purple',
+  BLACK = 'black',
+  WHITE = 'white',
+  GREY = 'grey',
+  BEIGE = 'beige',
+  BROWN = 'brown',
+  GOLD = 'gold',
+  SILVER = 'silver',
+  PATTERN = 'pattern',
+  OTHER = 'other',
+}
+
 @Entity()
 export class Garment extends ShareableId {
   @PrimaryKey()
@@ -40,10 +59,10 @@ export class Garment extends ShareableId {
   public category!: GarmentCategory;
 
   @Property({ nullable: true })
-  public brand?: string;
+  public color?: GarmentColor;
 
-  @Property({ type: 'json', nullable: true })
-  public colors?: string[];
+  @Property({ nullable: true })
+  public brand?: string;
 
   @Property({ nullable: true })
   public size?: string;

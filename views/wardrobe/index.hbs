@@ -24,9 +24,24 @@
           </option>
           {{/each}}
         </select>
+
+        <select name="color" class="select select-bordered w-full max-w-xs">
+          <option value="">All colors</option>
+          {{#each colors}}
+          <option value="{{this}}" {{#ifEquals this ../search.color}}selected{{/ifEquals}}>{{this}}</option>
+          {{/each}}
+        </select>
+
+        <select name="size" class="select select-bordered w-full max-w-xs">
+          <option value="">All sizes</option>
+          {{#each availableSizes}}
+          <option value="{{this}}" {{#ifEquals this ../search.size}}selected{{/ifEquals}}>{{this}}</option>
+          {{/each}}
+        </select>
         <button type="submit" class="btn btn-primary btn-sm">{{t 'lang.SEARCH'}}</button>
         <a href="/wardrobe" class="btn btn-ghost btn-sm">{{t 'lang.CLEAR'}}</a>
       </div>
+    </form>
   </div>
 
   <p class="text-sm text-base-content/60 mb-4 px-2">{{garments.length}} results</p>

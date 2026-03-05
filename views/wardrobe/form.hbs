@@ -51,17 +51,13 @@
     </div>
 
     <div class="form-control">
-      <label class="label">
-        <span class="label-text">{{t 'lang.COLORS'}}</span>
-        <span class="label-text-alt text-base-content/50">{{t 'lang.COLORS_HINT'}}</span>
-      </label>
-      <input
-        type="text"
-        name="colors"
-        class="input input-bordered"
-        value="{{#if garment}}{{join garment.colors ', '}}{{/if}}"
-        placeholder="black, white"
-      />
+      <label class="label"><span class="label-text">{{t 'lang.COLOR'}}</span></label>
+      <select name="color" class="select select-bordered">
+        <option value="">Select a color</option>
+        {{#each colors}}
+        <option value="{{this}}" {{#ifEquals this ../garment.color}}selected{{/ifEquals}} class="capitalize">{{this}}</option>
+        {{/each}}
+      </select>
     </div>
 
     <div class="form-control">
