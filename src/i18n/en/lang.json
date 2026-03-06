@@ -82,6 +82,13 @@
   "SEARCH": "Search",
   "ALL_CATEGORIES": "All Categories",
   "CLEAR": "Clear",
+  "RESULTS": "results",
+  "FILTER_SEARCH": "Filter Search",
+  "FILTERS": "Filters",
+  "GARMENT_TYPE": "Garment Type",
+  "CLEAR_FILTERS": "Clear Filters",
+  "APPLY_FILTERS": "Apply Filters",
+  "SELECT_COLOR": "Select a color",
   "validation": {
     "IS_EMAIL": "Please provide a valid email address",
     "MIN_PASSWORD_LENGTH": "Password must be at least 8 characters long",

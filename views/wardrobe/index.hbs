@@ -6,7 +6,7 @@
     <a href="/wardrobe/new" class="btn btn-primary btn-sm">+ {{t 'lang.NEW_GARMENT'}}</a>
   </div>
 
-  <p class="text-sm text-base-content/60 mb-4 px-2">{{garments.length}} results</p>
+  <p class="text-sm text-base-content/60 mb-4 px-2">{{garments.length}} {{t 'lang.RESULTS'}}</p>
 
   {{#if garments.length}}
   <div class="flex flex-wrap gap-4 justify-center">
@@ -46,12 +46,12 @@
 
   {{!-- Filter button + active filter pills row --}}
   <div class="flex flex-wrap items-center gap-2 mb-2">
-    <button type="button" onclick="document.getElementById('filter-modal').showModal()"
+    <button type="button" _="on click call #filter-modal.showModal()"
       class="btn btn-ghost btn-xs gap-1">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
       </svg>
-      Filter Search
+      {{t 'lang.FILTER_SEARCH'}}
     </button>
 
     {{#if search.category}}
@@ -93,11 +93,11 @@
 {{!-- Filter modal --}}
 <dialog id="filter-modal" class="modal modal-bottom sm:modal-middle">
   <div class="modal-box">
-    <h3 class="font-bold text-lg mb-4">Filters</h3>
+    <h3 class="font-bold text-lg mb-4">{{t 'lang.FILTERS'}}</h3>
 
     {{!-- Garment Type --}}
     <div class="mb-5">
-      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">Garment Type</h4>
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.GARMENT_TYPE'}}</h4>
       <div class="flex flex-wrap gap-2">
         {{#each categories}}
         <label class="cursor-pointer">
@@ -111,7 +111,7 @@
 
     {{!-- Color --}}
     <div class="mb-5">
-      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">Color</h4>
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.COLOR'}}</h4>
       <div class="flex flex-wrap gap-2">
         {{#each colors}}
         <label class="cursor-pointer">
@@ -126,7 +126,7 @@
     {{!-- Size --}}
     {{#if availableSizes.length}}
     <div class="mb-5">
-      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">Size</h4>
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.SIZE'}}</h4>
       <div class="flex flex-wrap gap-2">
         {{#each availableSizes}}
         <label class="cursor-pointer">
@@ -140,36 +140,49 @@
     {{/if}}
 
     <div class="modal-action">
-      <button type="button" onclick="clearFilters()" class="btn btn-ghost btn-sm">Clear Filters</button>
-      <button type="button" onclick="applyFilters()" class="btn btn-primary btn-sm">Apply Filters</button>
+      <button type="button"
+        class="btn btn-ghost btn-sm"
+        _="on click
+          for el in <input[name='modal-category']/>
+            set el.checked to false
+          end
+          for el in <input[name='modal-color']/>
+            set el.checked to false
+          end
+          for el in <input[name='modal-size']/>
+            set el.checked to false
+          end
+          set #active-category.value to ''
+          set #active-color.value to ''
+          set #active-size.value to ''
+          call #filter-modal.close()
+          call #search-form.submit()">
+        {{t 'lang.CLEAR_FILTERS'}}
+      </button>
+      <button type="button"
+        class="btn btn-primary btn-sm"
+        _="on click
+          set category to ''
+          get the first <input[name='modal-category']:checked/>
+          if it then set category to it.value end
+          set color to ''
+          get the first <input[name='modal-color']:checked/>
+          if it then set color to it.value end
+          set size to ''
+          get the first <input[name='modal-size']:checked/>
+          if it then set size to it.value end
+          set #active-category.value to category
+          set #active-color.value to color
+          set #active-size.value to size
+          call #filter-modal.close()
+          call #search-form.submit()">
+        {{t 'lang.APPLY_FILTERS'}}
+      </button>
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
   </form>
 </dialog>
-
-<script>
-  function applyFilters() {
-    const category = document.querySelector('input[name="modal-category"]:checked')?.value ?? '';
-    const color = document.querySelector('input[name="modal-color"]:checked')?.value ?? '';
-    const size = document.querySelector('input[name="modal-size"]:checked')?.value ?? '';
-    document.getElementById('active-category').value = category;
-    document.getElementById('active-color').value = color;
-    document.getElementById('active-size').value = size;
-    document.getElementById('filter-modal').close();
-    document.getElementById('search-form').submit();
-  }
-
-  function clearFilters() {
-    document.querySelectorAll('input[name="modal-category"], input[name="modal-color"], input[name="modal-size"]')
-      .forEach(el => el.checked = false);
-    document.getElementById('active-category').value = '';
-    document.getElementById('active-color').value = '';
-    document.getElementById('active-size').value = '';
-    document.getElementById('filter-modal').close();
-    document.getElementById('search-form').submit();
-  }
-</script>
 
 {{>dock}}

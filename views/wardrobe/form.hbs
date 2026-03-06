@@ -53,7 +53,7 @@
     <div class="form-control">
       <label class="label"><span class="label-text">{{t 'lang.COLOR'}}</span></label>
       <select name="color" class="select select-bordered">
-        <option value="">Select a color</option>
+        <option value="">{{t 'lang.SELECT_COLOR'}}</option>
         {{#each colors}}
         <option value="{{this}}" {{#ifEquals this ../garment.color}}selected{{/ifEquals}} class="capitalize">{{this}}</option>
         {{/each}}
