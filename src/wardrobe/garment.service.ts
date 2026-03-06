@@ -10,9 +10,9 @@ import { Garment } from '../dal/entity/garment.entity';
 import { File } from '../dal/entity/file.entity';
 import { User } from '../dal/entity/user.entity';
 import { FileService } from '../file/file-service.abstract';
-import { CreateGarmentDto } from '../dal/dto/create-garment.dto';
-import { UpdateGarmentDto } from '../dal/dto/update-garment.dto';
-import { SearchGarmentDto } from '../dal/dto/search-garment.dto';
+import { CreateGarmentDto } from './dto/create-garment.dto';
+import { UpdateGarmentDto } from './dto/update-garment.dto';
+import { SearchGarmentDto } from './dto/search-garment.dto';
 
 const CANONICAL_SIZES = [
   'XX-Small',

@@ -12,8 +12,8 @@ import { File } from './file.entity';
 import { Outfit } from './outfit.entity';
 import { ShareableId } from './shareableId.entity';
 import { User } from './user.entity';
-import { GarmentCategory } from './garment-category.enum';
-import { GarmentColor } from './garment-color.enum';
+import { GarmentCategory } from '../../wardrobe/garment-category.enum';
+import { GarmentColor } from '../../wardrobe/garment-color.enum';
 
 export { GarmentCategory, GarmentColor };
 

@@ -19,10 +19,10 @@ import {
 import { type Request, type Response } from 'express';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
-import { GarmentCategory } from '../dal/entity/garment-category.enum';
-import { GarmentColor } from '../dal/entity/garment-color.enum';
+import { GarmentCategory } from './garment-category.enum';
+import { GarmentColor } from './garment-color.enum';
 import { GarmentService } from './garment.service';
-import type { SearchGarmentDto } from '../dal/dto/search-garment.dto';
+import type { SearchGarmentDto } from './dto/search-garment.dto';
 import {
   MultipartFiles,
   MultipartFileStream,

@@ -1,5 +1,5 @@
-import { GarmentCategory } from '../entity/garment-category.enum';
-import { GarmentColor } from '../entity/garment-color.enum';
+import { GarmentCategory } from '../garment-category.enum';
+import { GarmentColor } from '../garment-color.enum';
 import { Observable } from 'rxjs';
 import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 
