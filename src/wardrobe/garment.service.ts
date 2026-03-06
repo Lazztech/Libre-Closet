@@ -215,10 +215,10 @@ export class GarmentService {
 
     garment.name = dto.name ?? garment.name;
     garment.category = dto.category ?? garment.category;
-    garment.brand = dto.brand ?? garment.brand;
-    garment.color = dto.color ?? garment.color;
-    garment.size = normalizeSize(dto.size) ?? garment.size;
-    garment.notes = dto.notes ?? garment.notes;
+    if ('brand' in dto) garment.brand = dto.brand;
+    if ('color' in dto) garment.color = dto.color;
+    if ('size' in dto) garment.size = normalizeSize(dto.size);
+    if ('notes' in dto) garment.notes = dto.notes;
 
     await this.garmentRepository.getEntityManager().flush();
     return garment;
