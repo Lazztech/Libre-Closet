@@ -75,17 +75,32 @@ https://nestjs-i18n.com/quick-start --}}
       if ('serviceWorker' in navigator) {
         const wb = new Workbox('/sw.js');
 
-        // Add an event listener to detect when the registered
-        // service worker has installed but is waiting to activate.
-        wb.addEventListener('waiting', () => {
-          // When a new service worker is waiting, set up a listener that
-          // reloads the page as soon as the new SW takes control, then
-          // immediately send the skip-waiting message so the update applies
-          // without requiring any user interaction.
-          wb.addEventListener('controlling', () => {
-            window.location.reload();
-          });
-          wb.messageSkipWaiting();
+        // When an updated SW takes control of this page (via skipWaiting +
+        // clientsClaim), set a flag rather than reloading immediately.
+        // Immediate reloads cause a black screen on long-lived htmx-boosted
+        // pages because the new SW isn't ready to serve mid-session requests.
+        wb.addEventListener('controlling', (event) => {
+          if (event.isUpdate) {
+            window.__swUpdated = true;
+          }
+        });
+
+        // On the user's next htmx GET navigation after a SW update, cancel
+        // the htmx XHR and do a full page navigation to the destination
+        // instead. window.location.reload() would drop the user on the
+        // current URL, not where they were trying to go.
+        // Non-GET requests (form submits etc.) are passed through — they use
+        // NetworkFirst so the SW doesn't cache them and they reach the server
+        // regardless of which SW is in control.
+        document.addEventListener('htmx:beforeRequest', (event) => {
+          if (
+            window.__swUpdated &&
+            event.detail.requestConfig.boosted &&
+            event.detail.requestConfig.verb === 'get'
+          ) {
+            event.preventDefault();
+            window.location.href = event.detail.requestConfig.path;
+          }
         });
 
         // Register the service worker

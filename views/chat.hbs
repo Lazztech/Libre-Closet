@@ -1,0 +1,57 @@
+{{!-- Load navbar partial --}} {{>navbar}}
+<main class="flex flex-col h-screen">
+  <div class="w-full p-2 gap-2 pt-20 shadow-md bg-base-200 flex justify-center">
+    {{#if user}}
+    <button
+      hx-post="/notification/test"
+      hx-indicator="#loading"
+      hx-swap="none"
+      class="btn btn-neutral btn-sm"
+    >
+      {{t 'lang.TEST_WEB_PUSH'}}
+    </button>
+    {{/if}}
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-20">
+    <div id="chat" class="flex flex-col justify-center items-center">
+      <!-- Chat messages will be displayed here -->
+    </div>
+  </div>
+  <div
+    id="sse-listener"
+    hx-ext="sse"
+    sse-connect="/sse"
+    sse-swap="message"
+    hx-swap="beforeend"
+    hx-target="#chat"
+  ></div>
+
+  <div
+    class="fixed bottom-15 left-0 right-0 p-4 shadow-lg bg-gradient-to-t from-base-100 via-base-100/50 to-transparent"
+  >
+    <div class="flex flex-row gap-2 items-center justify-center">
+      <form
+        id="messageForm"
+        hx-post="/message"
+        hx-indicator="#loading"
+        hx-trigger="submit"
+        hx-swap="beforeend"
+        hx-target="#chat"
+        class="flex flex-row gap-2 items-center"
+      >
+        <input
+          type="text"
+          id="message"
+          name="message"
+          class="input"
+          placeholder="{{t 'lang.YOUR_MESSAGE'}}"
+          required
+        />
+        <button type="submit" class="btn btn-neutral">{{t 'lang.SEND'}}</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+{{!-- Load dock partial --}} {{>dock}}
