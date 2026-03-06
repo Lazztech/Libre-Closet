@@ -19,8 +19,10 @@ import {
 import { type Request, type Response } from 'express';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
-import { GarmentCategory, GarmentColor } from '../dal/entity/garment.entity';
+import { GarmentCategory } from '../dal/entity/garment-category.enum';
+import { GarmentColor } from '../dal/entity/garment-color.enum';
 import * as garmentService from './garment.service';
+import type { SearchGarmentDto } from '../dal/dto/search-garment.dto';
 import {
   MultipartFiles,
   MultipartFileStream,
@@ -44,10 +46,7 @@ export class WardrobeController {
 
   @Get()
   @Render('wardrobe/index')
-  async index(
-    @Req() req: Request,
-    @Query() query: garmentService.SearchGarmentDto,
-  ) {
+  async index(@Req() req: Request, @Query() query: SearchGarmentDto) {
     const [garments, filters] = await Promise.all([
       this.garmentService.findAll(this.userId(req), query),
       this.garmentService.findAvailableFilters(this.userId(req)),
