@@ -21,7 +21,7 @@ import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { GarmentCategory } from '../dal/entity/garment-category.enum';
 import { GarmentColor } from '../dal/entity/garment-color.enum';
-import * as garmentService from './garment.service';
+import { GarmentService } from './garment.service';
 import type { SearchGarmentDto } from '../dal/dto/search-garment.dto';
 import {
   MultipartFiles,
@@ -37,7 +37,7 @@ export class WardrobeController {
 
   constructor(
     @Inject()
-    private readonly garmentService: garmentService.GarmentService,
+    private readonly garmentService: GarmentService,
   ) {}
 
   private userId(req: Request): number | undefined {
