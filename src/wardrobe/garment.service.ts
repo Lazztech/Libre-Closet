@@ -13,7 +13,6 @@ import { FileService } from '../file/file-service.abstract';
 import { CreateGarmentDto } from '../dal/dto/create-garment.dto';
 import { UpdateGarmentDto } from '../dal/dto/update-garment.dto';
 import { SearchGarmentDto } from '../dal/dto/search-garment.dto';
-import { normalizeSize } from './garment-size';
 
 const CANONICAL_SIZES = [
   'XX-Small',
@@ -44,7 +43,7 @@ export class GarmentService {
     userId?: number,
     dto: SearchGarmentDto = {},
   ): Promise<Garment[]> {
-    const normalizedSize = normalizeSize(dto.size);
+    const normalizedSize = this.normalizeSize(dto.size);
     const searchConditions: FilterQuery<Garment> = {
       ...(dto.category ? { category: dto.category } : {}),
       ...(dto.color ? { color: dto.color } : {}),
@@ -110,7 +109,7 @@ export class GarmentService {
       category: dto.category,
       brand: dto.brand,
       color: dto.color,
-      size: normalizeSize(dto.size),
+      size: this.normalizeSize(dto.size),
       notes: dto.notes,
       photo: photo ?? undefined,
     });
@@ -178,7 +177,7 @@ export class GarmentService {
     garment.category = dto.category ?? garment.category;
     if ('brand' in dto) garment.brand = dto.brand;
     if ('color' in dto) garment.color = dto.color;
-    if ('size' in dto) garment.size = normalizeSize(dto.size);
+    if ('size' in dto) garment.size = this.normalizeSize(dto.size);
     if ('notes' in dto) garment.notes = dto.notes;
 
     await this.garmentRepository.getEntityManager().flush();
@@ -188,5 +187,25 @@ export class GarmentService {
   async remove(id: number, userId?: number): Promise<void> {
     const garment = await this.findOne(id, userId);
     await this.garmentRepository.getEntityManager().removeAndFlush(garment);
+  }
+
+  private normalizeSize(input?: string): string | undefined {
+    if (!input) return undefined;
+    const s = input
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, '');
+    if (['xxxxxl', '5xl', '5xlarge', 'xxxxxlarge'].includes(s))
+      return '5X-Large';
+    if (['xxxxl', '4xl', '4xlarge', 'xxxxlarge'].includes(s)) return '4X-Large';
+    if (['xxxl', '3xl', '3xlarge', 'xxxlarge'].includes(s)) return '3X-Large';
+    if (['xxl', '2xl', '2xlarge', 'xxlarge'].includes(s)) return 'XX-Large';
+    if (['xl', 'xlarge'].includes(s)) return 'X-Large';
+    if (['l', 'large'].includes(s)) return 'Large';
+    if (['m', 'medium'].includes(s)) return 'Medium';
+    if (['s', 'small'].includes(s)) return 'Small';
+    if (['xs', 'xsmall'].includes(s)) return 'X-Small';
+    if (['xxs', '2xs', '2xsmall', 'xxsmall'].includes(s)) return 'XX-Small';
+    return input.trim();
   }
 }
