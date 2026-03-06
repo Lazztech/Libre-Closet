@@ -25,9 +25,9 @@ export const CANONICAL_SIZES = [
   'Large',
   'X-Large',
   'XX-Large',
-  'XXX-Large',
-  'XXXX-Large',
-  'XXXXX-Large',
+  '3X-Large',
+  '4X-Large',
+  '5X-Large',
 ];
 
 export function normalizeSize(input?: string): string | undefined {
