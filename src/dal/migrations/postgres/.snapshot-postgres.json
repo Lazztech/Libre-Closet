@@ -466,6 +466,16 @@
           "length": 255,
           "mappedType": "string"
         },
+        "color": {
+          "name": "color",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
         "brand": {
           "name": "brand",
           "type": "varchar(255)",
@@ -475,15 +485,6 @@
           "nullable": true,
           "length": 255,
           "mappedType": "string"
-        },
-        "colors": {
-          "name": "colors",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "json"
         },
         "size": {
           "name": "size",

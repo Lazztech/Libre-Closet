@@ -9,6 +9,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Render,
   Req,
   Res,
@@ -18,8 +19,10 @@ import {
 import { type Request, type Response } from 'express';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
-import { GarmentCategory } from '../dal/entity/garment.entity';
+import { GarmentCategory } from './garment-category.enum';
+import { GarmentColor } from './garment-color.enum';
 import { GarmentService } from './garment.service';
+import type { SearchGarmentDto } from './dto/search-garment.dto';
 import {
   MultipartFiles,
   MultipartFileStream,
@@ -43,15 +46,28 @@ export class WardrobeController {
 
   @Get()
   @Render('wardrobe/index')
-  async index(@Req() req: Request) {
-    const garments = await this.garmentService.findAll(this.userId(req));
-    return { garments, categories: Object.values(GarmentCategory) };
+  async index(@Req() req: Request, @Query() query: SearchGarmentDto) {
+    const [garments, filters] = await Promise.all([
+      this.garmentService.findAll(this.userId(req), query),
+      this.garmentService.findAvailableFilters(this.userId(req)),
+    ]);
+    return {
+      garments,
+      categories: Object.values(GarmentCategory),
+      colors: Object.values(GarmentColor),
+      availableSizes: filters.sizes,
+      search: query,
+    };
   }
 
   @Get('new')
   @Render('wardrobe/form')
   newForm() {
-    return { categories: Object.values(GarmentCategory), garment: null };
+    return {
+      categories: Object.values(GarmentCategory),
+      colors: Object.values(GarmentColor),
+      garment: null,
+    };
   }
 
   @Post()
@@ -61,27 +77,19 @@ export class WardrobeController {
       name: string;
       category: GarmentCategory;
       brand?: string;
-      colors?: string | string[];
+      color?: GarmentColor;
       size?: string;
       notes?: string;
     },
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const colors =
-      typeof body.colors === 'string'
-        ? body.colors
-            .split(',')
-            .map((c) => c.trim())
-            .filter(Boolean)
-        : (body.colors ?? []);
-
     const garment = await this.garmentService.create(
       {
         name: body.name,
         category: body.category,
         brand: body.brand,
-        colors,
+        color: body.color,
         size: body.size,
         notes: body.notes,
       },
@@ -101,7 +109,11 @@ export class WardrobeController {
   @Render('wardrobe/form')
   async editForm(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
     const garment = await this.garmentService.findOne(id, this.userId(req));
-    return { garment, categories: Object.values(GarmentCategory) };
+    return {
+      garment,
+      categories: Object.values(GarmentCategory),
+      colors: Object.values(GarmentColor),
+    };
   }
 
   @Post(':id')
@@ -112,28 +124,20 @@ export class WardrobeController {
       name?: string;
       category?: GarmentCategory;
       brand?: string;
-      colors?: string | string[];
+      color?: GarmentColor;
       size?: string;
       notes?: string;
     },
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const colors =
-      typeof body.colors === 'string'
-        ? body.colors
-            .split(',')
-            .map((c) => c.trim())
-            .filter(Boolean)
-        : (body.colors ?? undefined);
-
     await this.garmentService.update(
       id,
       {
         name: body.name,
         category: body.category,
         brand: body.brand,
-        colors,
+        color: body.color,
         size: body.size,
         notes: body.notes,
       },

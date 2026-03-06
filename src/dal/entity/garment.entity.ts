@@ -12,21 +12,10 @@ import { File } from './file.entity';
 import { Outfit } from './outfit.entity';
 import { ShareableId } from './shareableId.entity';
 import { User } from './user.entity';
+import { GarmentCategory } from '../../wardrobe/garment-category.enum';
+import { GarmentColor } from '../../wardrobe/garment-color.enum';
 
-export enum GarmentCategory {
-  TOPS = 'tops',
-  BOTTOMS = 'bottoms',
-  DRESSES = 'dresses',
-  OUTERWEAR = 'outerwear',
-  FOOTWEAR = 'footwear',
-  ACCESSORIES = 'accessories',
-  BAGS = 'bags',
-  ACTIVEWEAR = 'activewear',
-  SWIMWEAR = 'swimwear',
-  UNDERWEAR = 'underwear',
-  LINGERIE = 'lingerie',
-  OTHER = 'other',
-}
+export { GarmentCategory, GarmentColor };
 
 @Entity()
 export class Garment extends ShareableId {
@@ -40,10 +29,10 @@ export class Garment extends ShareableId {
   public category!: GarmentCategory;
 
   @Property({ nullable: true })
-  public brand?: string;
+  public color?: GarmentColor;
 
-  @Property({ type: 'json', nullable: true })
-  public colors?: string[];
+  @Property({ nullable: true })
+  public brand?: string;
 
   @Property({ nullable: true })
   public size?: string;

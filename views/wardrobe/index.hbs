@@ -1,10 +1,12 @@
 {{>navbar}}
 
-<main class="p-4 pt-20 pb-24">
+<main class="p-4 pt-20 pb-40">
   <div class="flex items-center justify-between mb-6 px-2">
     <h1 class="text-2xl font-bold">{{t 'lang.WARDROBE'}}</h1>
     <a href="/wardrobe/new" class="btn btn-primary btn-sm">+ {{t 'lang.NEW_GARMENT'}}</a>
   </div>
+
+  <p class="text-sm text-base-content/60 mb-4 px-2">{{garments.length}} {{t 'lang.RESULTS'}}</p>
 
   {{#if garments.length}}
   <div class="flex flex-wrap gap-4 justify-center">
@@ -38,5 +40,149 @@
   </div>
   {{/if}}
 </main>
+
+{{!-- Fixed bottom search + filter bar --}}
+<div class="fixed bottom-16 left-0 right-0 bg-base-100 border-t border-base-300 z-20 px-4 pt-2 pb-2">
+
+  {{!-- Filter button + active filter pills row --}}
+  <div class="flex flex-wrap items-center gap-2 mb-2">
+    <button type="button" _="on click call #filter-modal.showModal()"
+      class="btn btn-ghost btn-xs gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+      </svg>
+      {{t 'lang.FILTER_SEARCH'}}
+    </button>
+
+    {{#if search.category}}
+    <a href="/wardrobe?keyword={{search.keyword}}&color={{search.color}}&size={{search.size}}"
+      class="badge badge-primary badge-sm gap-1 cursor-pointer capitalize no-underline">
+      {{search.category}} &times;
+    </a>
+    {{/if}}
+    {{#if search.color}}
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&size={{search.size}}"
+      class="badge badge-secondary badge-sm gap-1 cursor-pointer capitalize no-underline">
+      {{search.color}} &times;
+    </a>
+    {{/if}}
+    {{#if search.size}}
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&color={{search.color}}"
+      class="badge badge-accent badge-sm gap-1 cursor-pointer no-underline">
+      {{search.size}} &times;
+    </a>
+    {{/if}}
+  </div>
+
+  {{!-- Search input row --}}
+  <form method="get" action="/wardrobe" id="search-form" class="flex gap-2">
+    <input type="hidden" name="category" id="active-category" value="{{search.category}}">
+    <input type="hidden" name="color" id="active-color" value="{{search.color}}">
+    <input type="hidden" name="size" id="active-size" value="{{search.size}}">
+    <input
+      type="text"
+      name="keyword"
+      value="{{search.keyword}}"
+      placeholder="{{t 'lang.SEARCH_PLACEHOLDER'}}"
+      class="input input-bordered input-sm flex-1"
+    />
+    <button type="submit" class="btn btn-primary btn-sm">{{t 'lang.SEARCH'}}</button>
+  </form>
+</div>
+
+{{!-- Filter modal --}}
+<dialog id="filter-modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg mb-4">{{t 'lang.FILTERS'}}</h3>
+
+    {{!-- Garment Type --}}
+    <div class="mb-5">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.GARMENT_TYPE'}}</h4>
+      <div class="flex flex-wrap gap-2">
+        {{#each categories}}
+        <label class="cursor-pointer">
+          <input type="radio" name="modal-category" value="{{this}}" class="hidden peer"
+            {{#ifEquals this ../search.category}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-primary capitalize select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Color --}}
+    <div class="mb-5">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.COLOR'}}</h4>
+      <div class="flex flex-wrap gap-2">
+        {{#each colors}}
+        <label class="cursor-pointer">
+          <input type="radio" name="modal-color" value="{{this}}" class="hidden peer"
+            {{#ifEquals this ../search.color}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-secondary capitalize select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Size --}}
+    {{#if availableSizes.length}}
+    <div class="mb-5">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.SIZE'}}</h4>
+      <div class="flex flex-wrap gap-2">
+        {{#each availableSizes}}
+        <label class="cursor-pointer">
+          <input type="radio" name="modal-size" value="{{this}}" class="hidden peer"
+            {{#ifEquals this ../search.size}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-accent select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <div class="modal-action">
+      <button type="button"
+        class="btn btn-ghost btn-sm"
+        _="on click
+          for el in <input[name='modal-category']/>
+            set el.checked to false
+          end
+          for el in <input[name='modal-color']/>
+            set el.checked to false
+          end
+          for el in <input[name='modal-size']/>
+            set el.checked to false
+          end
+          set #active-category.value to ''
+          set #active-color.value to ''
+          set #active-size.value to ''
+          call #filter-modal.close()
+          call #search-form.submit()">
+        {{t 'lang.CLEAR_FILTERS'}}
+      </button>
+      <button type="button"
+        class="btn btn-primary btn-sm"
+        _="on click
+          set category to ''
+          get the first <input[name='modal-category']:checked/>
+          if it then set category to it.value end
+          set color to ''
+          get the first <input[name='modal-color']:checked/>
+          if it then set color to it.value end
+          set size to ''
+          get the first <input[name='modal-size']:checked/>
+          if it then set size to it.value end
+          set #active-category.value to category
+          set #active-color.value to color
+          set #active-size.value to size
+          call #filter-modal.close()
+          call #search-form.submit()">
+        {{t 'lang.APPLY_FILTERS'}}
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 {{>dock}}
