@@ -5,7 +5,8 @@
 A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, upload photos, build outfits, and access everything from your phone as an offline-ready PWA — all on your own server.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Version](https://img.shields.io/badge/version-0.1.4-green.svg)](https://github.com/lazztech/libre-closet/tags)
+[![Version](https://img.shields.io/badge/version-0.1.5-green.svg)](https://github.com/lazztech/libre-closet/tags)
+
 ---
 
 ## Quick start
@@ -25,8 +26,8 @@ Open [http://localhost:3000](http://localhost:3000). No account required by defa
 
 ## Screenshots
 
-| Wardrobe | Garment detail | Outfit builder | Outfit detail |
-|---|---|---|---|
+| Wardrobe                                       | Garment detail                                  | Outfit builder                                  | Outfit detail                                  |
+| ---------------------------------------------- | ----------------------------------------------- | ----------------------------------------------- | ---------------------------------------------- |
 | ![Wardrobe grid](screenshots/Screenshot_1.png) | ![Garment detail](screenshots/Screenshot_2.png) | ![Outfit builder](screenshots/Screenshot_3.png) | ![Outfit detail](screenshots/Screenshot_4.png) |
 
 ---
@@ -63,13 +64,13 @@ services:
   libre-closet:
     image: ghcr.io/lazztech/libre-closet
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - librecloset_data:/app/data
     environment:
       APP_NAME: Libre Closet
-      AUTH_ENABLED: "false"
-      PWA_ENABLED: "true"
+      AUTH_ENABLED: 'false'
+      PWA_ENABLED: 'true'
       DATA_PATH: /app/data
     restart: unless-stopped
 
@@ -93,36 +94,38 @@ npm run start:prod
 
 `.env` contains committed defaults. Override any value via a `.env.local` file (gitignored) or by passing real environment variables to Docker.
 
-| Variable | Description | Default |
-|---|---|---|
-| `APP_NAME` | Display name shown in the UI and navbar | `Libre Closet` |
-| `DATA_PATH` | Directory for SQLite DB and uploaded files | `./data` |
-| `AUTH_ENABLED` | Enable JWT user accounts and login | `false` |
-| `PWA_ENABLED` | Enable service worker and PWA install prompt | `false` |
-| `ACCESS_TOKEN_SECRET` | JWT signing secret — **change for production** | `ChangeMe!` |
-| `DATABASE_TYPE` | `sqlite` or `postgres` | `sqlite` |
-| `DATABASE_HOST` | Postgres host | — |
-| `DATABASE_PORT` | Postgres port | `5432` |
-| `DATABASE_USER` | Postgres user | — |
-| `DATABASE_PASS` | Postgres password | — |
-| `DATABASE_SCHEMA` | Postgres schema | `postgres` |
-| `DATABASE_SSL` | Use SSL for Postgres | `false` |
-| `FILE_STORAGE_TYPE` | `local` or `object` (S3) | `local` |
-| `OBJECT_STORAGE_ACCESS_KEY_ID` | S3 access key | — |
-| `OBJECT_STORAGE_SECRET_ACCESS_KEY` | S3 secret key | — |
-| `OBJECT_STORAGE_ENDPOINT` | S3-compatible endpoint URL | — |
-| `EMAIL_FROM_ADDRESS` | From address for password reset emails | — |
-| `EMAIL_TRANSPORT` | `gmail` or `mailgun` | `gmail` |
-| `EMAIL_API_KEY` | Mailgun API key | — |
-| `PUBLIC_VAPID_KEY` | Web push — generate for production | — |
-| `PRIVATE_VAPID_KEY` | Web push — generate for production | — |
+| Variable                           | Description                                    | Default        |
+| ---------------------------------- | ---------------------------------------------- | -------------- |
+| `APP_NAME`                         | Display name shown in the UI and navbar        | `Libre Closet` |
+| `DATA_PATH`                        | Directory for SQLite DB and uploaded files     | `./data`       |
+| `AUTH_ENABLED`                     | Enable JWT user accounts and login             | `false`        |
+| `PWA_ENABLED`                      | Enable service worker and PWA install prompt   | `false`        |
+| `ACCESS_TOKEN_SECRET`              | JWT signing secret — **change for production** | `ChangeMe!`    |
+| `DATABASE_TYPE`                    | `sqlite` or `postgres`                         | `sqlite`       |
+| `DATABASE_HOST`                    | Postgres host                                  | —              |
+| `DATABASE_PORT`                    | Postgres port                                  | `5432`         |
+| `DATABASE_USER`                    | Postgres user                                  | —              |
+| `DATABASE_PASS`                    | Postgres password                              | —              |
+| `DATABASE_SCHEMA`                  | Postgres schema                                | `postgres`     |
+| `DATABASE_SSL`                     | Use SSL for Postgres                           | `false`        |
+| `FILE_STORAGE_TYPE`                | `local` or `object` (S3)                       | `local`        |
+| `OBJECT_STORAGE_ACCESS_KEY_ID`     | S3 access key                                  | —              |
+| `OBJECT_STORAGE_SECRET_ACCESS_KEY` | S3 secret key                                  | —              |
+| `OBJECT_STORAGE_ENDPOINT`          | S3-compatible endpoint URL                     | —              |
+| `EMAIL_FROM_ADDRESS`               | From address for password reset emails         | —              |
+| `EMAIL_TRANSPORT`                  | `gmail` or `mailgun`                           | `gmail`        |
+| `EMAIL_API_KEY`                    | Mailgun API key                                | —              |
+| `PUBLIC_VAPID_KEY`                 | Web push — generate for production             | —              |
+| `PRIVATE_VAPID_KEY`                | Web push — generate for production             | —              |
 
 Generate JWT secret:
+
 ```bash
 openssl rand -base64 60
 ```
 
 Generate VAPID keys:
+
 ```bash
 npx web-push generate-vapid-keys
 ```
@@ -200,5 +203,3 @@ PRs and issues are welcome. This project is licensed under AGPL-3.0 — contribu
 ## Built by
 
 [Lazztech LLC](https://lazz.tech)
-
-
