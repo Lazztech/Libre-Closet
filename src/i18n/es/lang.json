@@ -89,6 +89,9 @@
     "CLEAR_FILTERS": "Limpiar filtros",
     "APPLY_FILTERS": "Aplicar filtros",
     "SELECT_COLOR": "Seleccionar un color",
+    "OFFLINE_TITLE": "Sin conexión.",
+    "OFFLINE_DESC": "Algunas páginas pueden estar en caché para verlas sin conexión.",
+    "SHARED_BY": "Compartido por",
     "validation": {
         "IS_EMAIL": "Por favor, introduce una dirección de correo electrónico válida",
         "MIN_PASSWORD_LENGTH": "La contraseña debe tener al menos 8 caracteres",

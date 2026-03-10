@@ -89,6 +89,9 @@
   "CLEAR_FILTERS": "Clear Filters",
   "APPLY_FILTERS": "Apply Filters",
   "SELECT_COLOR": "Select a color",
+  "OFFLINE_TITLE": "Offline.",
+  "OFFLINE_DESC": "Some pages may be cached for offline viewing.",
+  "SHARED_BY": "Shared by",
   "validation": {
     "IS_EMAIL": "Please provide a valid email address",
     "MIN_PASSWORD_LENGTH": "Password must be at least 8 characters long",

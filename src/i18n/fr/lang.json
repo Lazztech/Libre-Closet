@@ -89,6 +89,9 @@
     "CLEAR_FILTERS": "Effacer les filtres",
     "APPLY_FILTERS": "Appliquer les filtres",
     "SELECT_COLOR": "Sélectionner une couleur",
+    "OFFLINE_TITLE": "Hors ligne.",
+    "OFFLINE_DESC": "Certaines pages peuvent être mises en cache pour une consultation hors ligne.",
+    "SHARED_BY": "Partagé par",
     "validation": {
         "IS_EMAIL": "Veuillez fournir une adresse e-mail valide",
         "MIN_PASSWORD_LENGTH": "Le mot de passe doit comporter au moins 8 caractères",
