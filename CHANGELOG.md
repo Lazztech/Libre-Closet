@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Safe area inset for search bar
 
+#### Added
+
+- French, German, and Spanish language support
+
 ## [0.1.7]
 
 #### Added
