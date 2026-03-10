@@ -25,7 +25,19 @@ export class ViewContextMiddleware implements NestMiddleware {
     res.locals.authEnabled = this.configService.get<boolean>('AUTH_ENABLED');
     res.locals.pwaEnabled = this.configService.get<boolean>('PWA_ENABLED');
     // Assign locale for i18n language selection
-    res.locals.locale = I18nContext.current()?.lang;
+    const lang = I18nContext.current()?.lang ?? 'en';
+    res.locals.locale = lang;
+    // Canonical URL for SEO (protocol + host + path, no query string)
+    res.locals.canonicalUrl = `${req.protocol}://${req.get('host')}${req.path}`;
+    // og:locale uses underscore format (e.g. en_US)
+    const ogLocaleMap: Record<string, string> = {
+      en: 'en_US',
+      it: 'it_IT',
+      fr: 'fr_FR',
+      de: 'de_DE',
+      es: 'es_ES',
+    };
+    res.locals.ogLocale = ogLocaleMap[lang] ?? `${lang}_${lang.toUpperCase()}`;
     try {
       const token = req.cookies?.['access_token'] as string;
       const payload = await this.jwtService.verifyAsync(token, {
