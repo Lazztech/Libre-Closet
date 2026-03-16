@@ -81,7 +81,8 @@ export class FileController {
   }
 
   @Get('watermark/:shareableId')
-  @Header('Cache-Control', 'public, max-age=86400') // public for CDN, max-age= 24hrs in seconds  @Header('content-type', 'image/jpeg')
+  @Header('Cache-Control', 'public, max-age=86400') // public for CDN, max-age= 24hrs in seconds
+  @Header('content-type', 'image/jpeg')
   async watermark(
     @Param('shareableId') shareableId: string,
     @Res() response: Response,
