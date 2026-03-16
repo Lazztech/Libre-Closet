@@ -68,7 +68,7 @@ export class FileController {
   }
 
   @Get(':fileName')
-  @Header('Cache-Control', 'public, max-age=31536000') // public for CDN, max-age= 1 year for immutable content
+  @Header('Cache-Control', 'public, max-age=31536000, immutable') // public for CDN, max-age= 1 year for immutable content
   async getFile(
     @Param('fileName') fileName: string,
     @Res() response: Response,
