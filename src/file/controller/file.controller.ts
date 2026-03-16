@@ -68,7 +68,7 @@ export class FileController {
   }
 
   @Get(':fileName')
-  @Header('Cache-Control', 'public, max-age=86400') // public for CDN, max-age= 24hrs in seconds
+  @Header('Cache-Control', 'public, max-age=31536000') // public for CDN, max-age= 1 year for immutable content
   async getFile(
     @Param('fileName') fileName: string,
     @Res() response: Response,
@@ -81,7 +81,7 @@ export class FileController {
   }
 
   @Get('watermark/:shareableId')
-  @Header('Cache-Control', 'public, max-age=86400') // public for CDN, max-age= 24hrs in seconds
+  @Header('Cache-Control', 'public, max-age=31536000') // public for CDN, max-age= 1 year for immutable content
   @Header('content-type', 'image/jpeg')
   async watermark(
     @Param('shareableId') shareableId: string,
