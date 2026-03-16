@@ -2645,6 +2645,10 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
     strategy: CACHE_STRATEGY
   });
   registerRoute(({ url }) => url.pathname === "/sse", new NetworkOnly());
+  registerRoute(
+    ({ url, request }) => url.pathname.startsWith("/file/") && request.destination !== "document",
+    new NetworkOnly()
+  );
   registerRoute(() => true, CACHE_STRATEGY);
   setCatchHandler(async ({ event, request }) => {
     console.log(`setCatchHandler callback:`, event);
