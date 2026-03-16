@@ -35,7 +35,7 @@ warmStrategyCache({
 registerRoute(({ url }) => url.pathname === '/sse', new NetworkOnly());
 
 // https://jakearchibald.com/2016/caching-best-practices/
-// https://dev.to/jonchen/service-worker-caching-and-http-caching-p82
+// https://web.dev/articles/service-worker-caching-and-http-caching
 // All /file/** file requests: defer caching to server Cache-Control headers.
 // NetworkOnly lets the browser's HTTP cache honour the max-age set on these
 // routes, making images available offline without the SW holding a second copy.
