@@ -15,7 +15,7 @@ import { EmailModule } from '../email/email.module';
       useFactory: (configService: ConfigService) => ({
         global: true,
         secret: configService.get<string>('ACCESS_TOKEN_SECRET'),
-        signOptions: { expiresIn: '7d' },
+        signOptions: { expiresIn: '365d' },
       }),
     }),
     MikroOrmModule.forFeature([PasswordReset, User]),
