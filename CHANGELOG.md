@@ -10,12 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Fixed
 
 - Rely on http cache layer for images from the file endpoint rather than the service worker
+- Extended login validity and added token fingerprint for invalidation on password change
 
 #### Changed
 
 - Change garments query to order by descending order to show new items at the top
 - Adjusted garment list sizing on mobile
-- Extended login validity
 
 ## [0.1.8]
 
