@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard';
+import { ConditionalAuthGuard } from './conditional-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
@@ -22,7 +24,7 @@ import { EmailModule } from '../email/email.module';
     EmailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
-  exports: [JwtModule],
+  providers: [AuthService, AuthGuard, ConditionalAuthGuard],
+  exports: [JwtModule, AuthService, AuthGuard, ConditionalAuthGuard],
 })
 export class AuthModule {}
