@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@aws-sdk/lib-storage": "^3.1009.0",
+    "@imgly/background-removal-node": "^1.4.5",
     "@khmyznikov/pwa-install": "^0.5.8",
     "@mikro-orm/better-sqlite": "^6.5.8",
     "@mikro-orm/core": "^6.5.8",
