@@ -14,7 +14,7 @@
     <a href="/wardrobe/{{this.id}}" class="card bg-base-100 w-44 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
       <figure class="aspect-square bg-base-200">
         {{#if this.photo}}
-        <img src="/file/{{this.photo.fileName}}" alt="{{this.name}}" class="object-cover w-full h-full" />
+        <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}" class="object-cover w-full h-full" />
         {{else}}
         <div class="flex items-center justify-center w-full h-full text-base-content/30">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-12">

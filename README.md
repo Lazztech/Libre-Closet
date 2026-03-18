@@ -120,6 +120,8 @@ npm run start:prod
 | `EMAIL_API_KEY`                    | Mailgun API key                                | —              | `fyhn2437cryb248cbrdc32`                                                                  |
 | `PUBLIC_VAPID_KEY`                 | Web push — generate for production             | —              | `BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U` |
 | `PRIVATE_VAPID_KEY`                | Web push — generate for production             | —              | `UUxI4O8-FbRouAevSmBQ6o18hgE4nSG3qwvJTfKc-ls`                                             |
+| `BACKGROUND_REMOVAL_ENABLED`       | Enable auto background removal on garment images | `true`       | `false`                                                                                   |
+| `BACKGROUND_REMOVAL_CONCURRENCY`   | Max concurrent ONNX bg-removal jobs            | `2`            | `1`                                                                                        |
 
 Generate JWT secret:
 

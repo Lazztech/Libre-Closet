@@ -129,4 +129,37 @@ export class S3FileService extends FileService {
     });
     return result.Body as Readable;
   }
+
+  protected async getStoredNobgVariant(
+    nobgFileName: string,
+  ): Promise<Readable | undefined> {
+    try {
+      const result = await this.s3.getObject({
+        Bucket: this.bucketName,
+        Key: nobgFileName,
+      });
+      return result.Body as Readable;
+    } catch (err: any) {
+      if (err?.name === 'NoSuchKey' || err?.$metadata?.httpStatusCode === 404) {
+        return undefined;
+      }
+      throw err;
+    }
+  }
+
+  protected async storeNobgVariant(
+    nobgFileName: string,
+    buffer: Buffer,
+  ): Promise<void> {
+    const upload = new Upload({
+      client: this.s3,
+      params: {
+        Bucket: this.bucketName,
+        Key: nobgFileName,
+        Body: buffer,
+        ContentType: 'image/webp',
+      },
+    });
+    await upload.done();
+  }
 }

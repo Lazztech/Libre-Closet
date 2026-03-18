@@ -8,6 +8,7 @@ import {
   Logger,
   Param,
   Post,
+  Query,
   Render,
   Res,
   UseGuards,
@@ -90,6 +91,29 @@ export class FileController {
     const fileStream = await this.fileService.getByShareableId(shareableId);
     const readable = await this.fileService.watermarkImage(fileStream);
     readable?.pipe(response).on('error', (err) => {
+      this.logger.error(err);
+      response.status(500).send(err);
+    });
+  }
+
+  @Get('nobg/:fileName')
+  @Header('content-type', 'image/webp')
+  async nobg(
+    @Param('fileName') fileName: string,
+    @Query('mode') mode: 'lazy' | 'eager' = 'lazy',
+    @Res() response: Response,
+  ) {
+    const stream = await this.fileService.getOrCreateNobgVariant(
+      fileName,
+      mode,
+    );
+    if (!stream) {
+      return response
+        .setHeader('Cache-Control', 'no-store')
+        .redirect(302, `/file/${fileName}`);
+    }
+    response.setHeader('Cache-Control', 'public, max-age=86400');
+    stream.pipe(response).on('error', (err) => {
       this.logger.error(err);
       response.status(500).send(err);
     });

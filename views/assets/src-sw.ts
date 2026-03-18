@@ -34,6 +34,14 @@ warmStrategyCache({
 // SSE is a streaming connection - bypass the service worker cache entirely
 registerRoute(({ url }) => url.pathname === '/sse', new NetworkOnly());
 
+// Delegate all /file/ caching to the browser HTTP cache via Cache-Control headers.
+// NetworkFirst would store responses in CacheStorage and ignore Cache-Control,
+// defeating the max-age headers already set on these routes.
+registerRoute(
+  ({ url }) => url.pathname.startsWith('/file/'),
+  new NetworkOnly(),
+);
+
 // https://developer.chrome.com/docs/workbox/modules/workbox-routing
 registerRoute(() => true, CACHE_STRATEGY);
 

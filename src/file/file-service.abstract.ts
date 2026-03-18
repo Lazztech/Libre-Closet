@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { type Response } from 'express';
 import { join } from 'path';
@@ -6,16 +6,122 @@ import sharp from 'sharp';
 import { File } from 'src/dal/entity/file.entity';
 import Stream, { Readable } from 'stream';
 import { FileServiceInterface } from './file-service.interface';
-import { Observable } from 'rxjs';
+import { Observable, Subject, mergeMap } from 'rxjs';
 import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 
+type BgJob = {
+  input: Buffer;
+  resolve: (result: Buffer) => void;
+  reject: (err: unknown) => void;
+};
+
 @Injectable()
-export abstract class FileService implements FileServiceInterface {
+export abstract class FileService
+  implements FileServiceInterface, OnModuleInit
+{
   public logger = new Logger(FileService.name);
 
   public watermark: Promise<Buffer<ArrayBufferLike>>;
 
+  private bgQueue$ = new Subject<BgJob>();
+  private removeBackgroundFn: (
+    input: ArrayBuffer | Buffer | Blob,
+  ) => Promise<Blob>;
+
   constructor(readonly configService: ConfigService) {}
+
+  async onModuleInit() {
+    if (this.configService.get<boolean>('BACKGROUND_REMOVAL_ENABLED', true)) {
+      const mod = await import('@imgly/background-removal-node');
+      this.removeBackgroundFn = mod.removeBackground;
+
+      const concurrency = this.configService.get<number>(
+        'BACKGROUND_REMOVAL_CONCURRENCY',
+        2,
+      );
+
+      this.bgQueue$
+        .pipe(
+          mergeMap(async ({ input, resolve, reject }) => {
+            try {
+              const inputBlob = new Blob([input.buffer as ArrayBuffer], {
+                type: 'image/webp',
+              });
+              const blob = await this.removeBackgroundFn(inputBlob);
+              const rawBuffer = Buffer.from(await blob.arrayBuffer());
+              const webpBuffer = await sharp(rawBuffer).webp().toBuffer();
+              resolve(webpBuffer);
+            } catch (err) {
+              reject(err);
+            }
+          }, concurrency),
+        )
+        .subscribe();
+    }
+  }
+
+  protected processBackground(input: Buffer): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      this.bgQueue$.next({ input, resolve, reject });
+    });
+  }
+
+  private nobgFileName(fileName: string): string {
+    const extIndex = fileName.lastIndexOf('.');
+    return extIndex === -1
+      ? `${fileName}-nobg`
+      : `${fileName.slice(0, extIndex)}-nobg${fileName.slice(extIndex)}`;
+  }
+
+  async getOrCreateNobgVariant(
+    fileName: string,
+    mode: 'lazy' | 'eager',
+  ): Promise<Readable | null> {
+    if (!this.configService.get<boolean>('BACKGROUND_REMOVAL_ENABLED', true)) {
+      return null;
+    }
+
+    const nobgName = this.nobgFileName(fileName);
+
+    const existing = await this.getStoredNobgVariant(nobgName);
+    if (existing) {
+      return existing;
+    }
+
+    if (mode === 'eager') {
+      const original = await this.get(fileName);
+      if (!original) return null;
+      const chunks: Buffer<ArrayBufferLike>[] = [];
+      for await (const chunk of original) {
+        chunks.push(Buffer.from(chunk as Uint8Array));
+      }
+      const inputBuffer = Buffer.concat(chunks);
+      const outputBuffer = await this.processBackground(inputBuffer);
+      await this.storeNobgVariant(nobgName, outputBuffer);
+      return (await this.getStoredNobgVariant(nobgName)) ?? null;
+    }
+
+    // lazy: kick off async, caller will 302
+    this.get(fileName)
+      .then(async (original) => {
+        if (!original) return;
+        const chunks: Buffer<ArrayBufferLike>[] = [];
+        for await (const chunk of original) {
+          chunks.push(Buffer.from(chunk as Uint8Array));
+        }
+        const inputBuffer = Buffer.concat(chunks);
+        const outputBuffer = await this.processBackground(inputBuffer);
+        await this.storeNobgVariant(nobgName, outputBuffer);
+      })
+      .catch((err) =>
+        this.logger.error(
+          `Failed to generate nobg variant for ${fileName}`,
+          err,
+        ),
+      );
+
+    return null;
+  }
 
   abstract storeImageFromFileUpload(
     upload$: Observable<MultipartFileStream>,
@@ -25,6 +131,13 @@ export abstract class FileService implements FileServiceInterface {
   abstract deleteById(fileId: any, userId: any): Promise<any>;
   abstract get(fileName: string): Promise<Readable | undefined>;
   abstract getByShareableId(shareableId: string): Promise<Readable | undefined>;
+  protected abstract getStoredNobgVariant(
+    nobgFileName: string,
+  ): Promise<Readable | undefined>;
+  protected abstract storeNobgVariant(
+    nobgFileName: string,
+    buffer: Buffer,
+  ): Promise<void>;
 
   async getWatermark() {
     return sharp(

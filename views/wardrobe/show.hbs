@@ -3,27 +3,57 @@
 <main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
   <div class="flex items-center gap-3 mb-6">
     <a href="/wardrobe" class="btn btn-ghost btn-sm btn-circle">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="size-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+        />
       </svg>
     </a>
     <h1 class="text-2xl font-bold flex-1">{{garment.name}}</h1>
-    <a href="/wardrobe/{{garment.id}}/edit" class="btn btn-ghost btn-sm">{{t 'lang.EDIT'}}</a>
+    <a href="/wardrobe/{{garment.id}}/edit" class="btn btn-ghost btn-sm"
+      >{{t 'lang.EDIT'}}</a
+    >
   </div>
 
   {{#if garment.photo}}
-  <figure class="rounded-box overflow-hidden mb-6 bg-base-200 aspect-square w-full max-w-sm mx-auto">
-    <img src="/file/{{garment.photo.fileName}}" alt="{{garment.name}}" class="object-cover w-full h-full" />
+  <figure
+    class="rounded-box overflow-hidden mb-6 bg-base-200 aspect-square w-full max-w-sm mx-auto"
+  >
+    <img
+      src="/file/nobg/{{garment.photo.fileName}}?mode=eager"
+      alt="{{garment.name}}"
+      class="object-cover w-full h-full"
+    />
   </figure>
   {{else}}
-  <div class="rounded-box bg-base-200 aspect-square w-full max-w-sm mx-auto flex items-center justify-center text-base-content/30 mb-6">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-20">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+  <div
+    class="rounded-box bg-base-200 aspect-square w-full max-w-sm mx-auto flex items-center justify-center text-base-content/30 mb-6"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1"
+      stroke="currentColor"
+      class="size-20"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3"
+      />
     </svg>
   </div>
-  {{/if}}
-
-  {{!-- Photo upload --}}
+  {{/if}} {{!-- Photo upload --}}
   <form
     hx-post="/wardrobe/{{garment.id}}/photo"
     hx-encoding="multipart/form-data"
@@ -41,9 +71,13 @@
       onchange="document.getElementById('photoBtn').disabled = !this.files.length"
     />
     <button id="photoBtn" class="btn btn-neutral btn-sm" disabled>
-      {{#if garment.photo}}{{t 'lang.UPDATE_PHOTO'}}{{else}}{{t 'lang.ADD_PHOTO'}}{{/if}}
+      {{#if garment.photo}}{{t 'lang.UPDATE_PHOTO'}}{{else}}{{t
+      'lang.ADD_PHOTO'}}{{/if}}
     </button>
-    <span id="loading" class="htmx-indicator loading loading-ring loading-sm"></span>
+    <span
+      id="loading"
+      class="htmx-indicator loading loading-ring loading-sm"
+    ></span>
   </form>
 
   {{!-- Metadata --}}
@@ -58,20 +92,17 @@
         <span class="text-base-content/60 text-sm">{{t 'lang.BRAND'}}</span>
         <span class="font-medium">{{garment.brand}}</span>
       </div>
-      {{/if}}
-      {{#if garment.size}}
+      {{/if}} {{#if garment.size}}
       <div class="flex justify-between">
         <span class="text-base-content/60 text-sm">{{t 'lang.SIZE'}}</span>
         <span class="font-medium">{{garment.size}}</span>
       </div>
-      {{/if}}
-      {{#if garment.color}}
+      {{/if}} {{#if garment.color}}
       <div class="flex justify-between">
         <span class="text-base-content/60 text-sm">{{t 'lang.COLOR'}}</span>
         <span class="capitalize font-medium">{{garment.color}}</span>
       </div>
-      {{/if}}
-      {{#if garment.notes}}
+      {{/if}} {{#if garment.notes}}
       <div class="flex flex-col gap-1">
         <span class="text-base-content/60 text-sm">{{t 'lang.NOTES'}}</span>
         <p class="text-sm">{{garment.notes}}</p>
@@ -86,8 +117,19 @@
       class="btn btn-outline btn-sm flex-1"
       onclick="navigator.clipboard.writeText('{{siteUrl}}/share?shareableId={{garment.shareableId}}&type=garment'); alert('{{t 'lang.COPIED'}}')"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.935-2.185 2.25 2.25 0 0 0-3.935 2.185Z" />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="size-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.935-2.185 2.25 2.25 0 0 0-3.935 2.185Z"
+        />
       </svg>
       {{t 'lang.SHARE'}}
     </button>

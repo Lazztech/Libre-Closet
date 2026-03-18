@@ -118,6 +118,26 @@ export class LocalFileService extends FileService {
     return this.fileRepository.getEntityManager().removeAndFlush(file);
   }
 
+  protected getStoredNobgVariant(
+    nobgFileName: string,
+  ): Promise<Readable | undefined> {
+    const fullPath = path.join(this.directory, nobgFileName);
+    const stream = fs.existsSync(fullPath)
+      ? fs.createReadStream(fullPath)
+      : undefined;
+    return Promise.resolve(stream);
+  }
+
+  protected async storeNobgVariant(
+    nobgFileName: string,
+    buffer: Buffer,
+  ): Promise<void> {
+    await fs.promises.writeFile(
+      path.join(this.directory, nobgFileName),
+      buffer,
+    );
+  }
+
   setupDir() {
     if (!fs.existsSync(this.directory)) {
       this.logger.debug('creating uploads directory');
