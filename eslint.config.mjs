@@ -39,6 +39,8 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       'no-unsafe-optional-chaining': 'off',
+      complexity: ['warn', { max: 10 }],
+      'max-depth': ['warn', { max: 3 }],
     },
   },
 );

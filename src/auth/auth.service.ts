@@ -49,6 +49,7 @@ export class AuthService {
     return this.jwtService.signAsync({
       userId: user.id,
       email: user.email,
+      pwf: hashedPassword.slice(-8),
     } as Payload);
   }
 
@@ -61,7 +62,18 @@ export class AuthService {
     return this.jwtService.signAsync({
       userId: user.id,
       email: user.email,
+      pwf: user.password.slice(-8),
     } as Payload);
+  }
+
+  public async verifyPwf(payload: Payload) {
+    // Verify password fingerprint, tokens invalidate on password change or if missing
+    const user = await this.userRepository.findOneOrFail({
+      id: payload.userId,
+    });
+    if (user.password.slice(-8) !== payload.pwf) {
+      throw new UnauthorizedException();
+    }
   }
 
   public async changePassword(userId: any, details: ChangePasswordDto) {

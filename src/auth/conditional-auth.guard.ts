@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { AuthService } from './auth.service';
 
 /**
  * When AUTH_ENABLED=false: passes all requests through (no auth needed).
@@ -14,6 +15,7 @@ export class ConditionalAuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly authService: AuthService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -26,12 +28,14 @@ export class ConditionalAuthGuard implements CanActivate {
 
     if (token) {
       try {
-        request['user'] = await this.jwtService.verifyAsync(token, {
+        const payload = await this.jwtService.verifyAsync(token, {
           secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
         });
+        await this.authService.verifyPwf(payload);
+        request['user'] = payload;
         return true;
       } catch {
-        // invalid/expired token — fall through to redirect
+        // invalid/expired token or fingerprint mismatch — fall through to redirect
       }
     }
 

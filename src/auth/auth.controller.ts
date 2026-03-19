@@ -47,7 +47,10 @@ export class AuthController {
     }
 
     const jwt = await this.authService.register(body.email, body.password);
-    response.cookie('access_token', jwt);
+    response.cookie('access_token', jwt, {
+      maxAge: 365 * 24 * 60 * 60 * 1000, // 365 days
+      httpOnly: true, // Prevents client-side JS from reading it
+    });
     return response.redirect('/auth/profile');
   }
 
@@ -77,7 +80,10 @@ export class AuthController {
         loginDto.email,
         loginDto.password,
       );
-      response.cookie('access_token', jwt);
+      response.cookie('access_token', jwt, {
+        maxAge: 365 * 24 * 60 * 60 * 1000, // 365 days
+        httpOnly: true, // Prevents client-side JS from reading it
+      });
       return response.redirect('/auth/profile');
     } catch (error) {
       this.logger.warn(error);

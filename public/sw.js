@@ -1,224 +1,273 @@
 (() => {
   // node_modules/workbox-core/_version.js
   try {
-    self["workbox:core:7.2.0"] && _();
-  } catch (e) {
-  }
+    self['workbox:core:7.2.0'] && _();
+  } catch (e) {}
 
   // node_modules/workbox-core/_private/logger.js
-  var logger = false ? null : (() => {
-    if (!("__WB_DISABLE_DEV_LOGS" in globalThis)) {
-      self.__WB_DISABLE_DEV_LOGS = false;
-    }
-    let inGroup = false;
-    const methodToColorMap = {
-      debug: `#7f8c8d`,
-      log: `#2ecc71`,
-      warn: `#f39c12`,
-      error: `#c0392b`,
-      groupCollapsed: `#3498db`,
-      groupEnd: null
-      // No colored prefix on groupEnd
-    };
-    const print = function(method, args) {
-      if (self.__WB_DISABLE_DEV_LOGS) {
-        return;
-      }
-      if (method === "groupCollapsed") {
-        if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-          console[method](...args);
-          return;
+  var logger = false
+    ? null
+    : (() => {
+        if (!('__WB_DISABLE_DEV_LOGS' in globalThis)) {
+          self.__WB_DISABLE_DEV_LOGS = false;
         }
-      }
-      const styles = [
-        `background: ${methodToColorMap[method]}`,
-        `border-radius: 0.5em`,
-        `color: white`,
-        `font-weight: bold`,
-        `padding: 2px 0.5em`
-      ];
-      const logPrefix = inGroup ? [] : ["%cworkbox", styles.join(";")];
-      console[method](...logPrefix, ...args);
-      if (method === "groupCollapsed") {
-        inGroup = true;
-      }
-      if (method === "groupEnd") {
-        inGroup = false;
-      }
-    };
-    const api = {};
-    const loggerMethods = Object.keys(methodToColorMap);
-    for (const key of loggerMethods) {
-      const method = key;
-      api[method] = (...args) => {
-        print(method, args);
-      };
-    }
-    return api;
-  })();
+        let inGroup = false;
+        const methodToColorMap = {
+          debug: `#7f8c8d`,
+          log: `#2ecc71`,
+          warn: `#f39c12`,
+          error: `#c0392b`,
+          groupCollapsed: `#3498db`,
+          groupEnd: null,
+          // No colored prefix on groupEnd
+        };
+        const print = function (method, args) {
+          if (self.__WB_DISABLE_DEV_LOGS) {
+            return;
+          }
+          if (method === 'groupCollapsed') {
+            if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+              console[method](...args);
+              return;
+            }
+          }
+          const styles = [
+            `background: ${methodToColorMap[method]}`,
+            `border-radius: 0.5em`,
+            `color: white`,
+            `font-weight: bold`,
+            `padding: 2px 0.5em`,
+          ];
+          const logPrefix = inGroup ? [] : ['%cworkbox', styles.join(';')];
+          console[method](...logPrefix, ...args);
+          if (method === 'groupCollapsed') {
+            inGroup = true;
+          }
+          if (method === 'groupEnd') {
+            inGroup = false;
+          }
+        };
+        const api = {};
+        const loggerMethods = Object.keys(methodToColorMap);
+        for (const key of loggerMethods) {
+          const method = key;
+          api[method] = (...args) => {
+            print(method, args);
+          };
+        }
+        return api;
+      })();
 
   // node_modules/workbox-core/models/messages/messages.js
   var messages = {
-    "invalid-value": ({ paramName, validValueDescription, value }) => {
+    'invalid-value': ({ paramName, validValueDescription, value }) => {
       if (!paramName || !validValueDescription) {
         throw new Error(`Unexpected input to 'invalid-value' error.`);
       }
       return `The '${paramName}' parameter was given a value with an unexpected value. ${validValueDescription} Received a value of ${JSON.stringify(value)}.`;
     },
-    "not-an-array": ({ moduleName, className, funcName, paramName }) => {
+    'not-an-array': ({ moduleName, className, funcName, paramName }) => {
       if (!moduleName || !className || !funcName || !paramName) {
         throw new Error(`Unexpected input to 'not-an-array' error.`);
       }
       return `The parameter '${paramName}' passed into '${moduleName}.${className}.${funcName}()' must be an array.`;
     },
-    "incorrect-type": ({ expectedType, paramName, moduleName, className, funcName }) => {
+    'incorrect-type': ({
+      expectedType,
+      paramName,
+      moduleName,
+      className,
+      funcName,
+    }) => {
       if (!expectedType || !paramName || !moduleName || !funcName) {
         throw new Error(`Unexpected input to 'incorrect-type' error.`);
       }
-      const classNameStr = className ? `${className}.` : "";
+      const classNameStr = className ? `${className}.` : '';
       return `The parameter '${paramName}' passed into '${moduleName}.${classNameStr}${funcName}()' must be of type ${expectedType}.`;
     },
-    "incorrect-class": ({ expectedClassName, paramName, moduleName, className, funcName, isReturnValueProblem }) => {
+    'incorrect-class': ({
+      expectedClassName,
+      paramName,
+      moduleName,
+      className,
+      funcName,
+      isReturnValueProblem,
+    }) => {
       if (!expectedClassName || !moduleName || !funcName) {
         throw new Error(`Unexpected input to 'incorrect-class' error.`);
       }
-      const classNameStr = className ? `${className}.` : "";
+      const classNameStr = className ? `${className}.` : '';
       if (isReturnValueProblem) {
         return `The return value from '${moduleName}.${classNameStr}${funcName}()' must be an instance of class ${expectedClassName}.`;
       }
       return `The parameter '${paramName}' passed into '${moduleName}.${classNameStr}${funcName}()' must be an instance of class ${expectedClassName}.`;
     },
-    "missing-a-method": ({ expectedMethod, paramName, moduleName, className, funcName }) => {
-      if (!expectedMethod || !paramName || !moduleName || !className || !funcName) {
+    'missing-a-method': ({
+      expectedMethod,
+      paramName,
+      moduleName,
+      className,
+      funcName,
+    }) => {
+      if (
+        !expectedMethod ||
+        !paramName ||
+        !moduleName ||
+        !className ||
+        !funcName
+      ) {
         throw new Error(`Unexpected input to 'missing-a-method' error.`);
       }
       return `${moduleName}.${className}.${funcName}() expected the '${paramName}' parameter to expose a '${expectedMethod}' method.`;
     },
-    "add-to-cache-list-unexpected-type": ({ entry }) => {
+    'add-to-cache-list-unexpected-type': ({ entry }) => {
       return `An unexpected entry was passed to 'workbox-precaching.PrecacheController.addToCacheList()' The entry '${JSON.stringify(entry)}' isn't supported. You must supply an array of strings with one or more characters, objects with a url property or Request objects.`;
     },
-    "add-to-cache-list-conflicting-entries": ({ firstEntry, secondEntry }) => {
+    'add-to-cache-list-conflicting-entries': ({ firstEntry, secondEntry }) => {
       if (!firstEntry || !secondEntry) {
-        throw new Error(`Unexpected input to 'add-to-cache-list-duplicate-entries' error.`);
+        throw new Error(
+          `Unexpected input to 'add-to-cache-list-duplicate-entries' error.`,
+        );
       }
       return `Two of the entries passed to 'workbox-precaching.PrecacheController.addToCacheList()' had the URL ${firstEntry} but different revision details. Workbox is unable to cache and version the asset correctly. Please remove one of the entries.`;
     },
-    "plugin-error-request-will-fetch": ({ thrownErrorMessage }) => {
+    'plugin-error-request-will-fetch': ({ thrownErrorMessage }) => {
       if (!thrownErrorMessage) {
-        throw new Error(`Unexpected input to 'plugin-error-request-will-fetch', error.`);
+        throw new Error(
+          `Unexpected input to 'plugin-error-request-will-fetch', error.`,
+        );
       }
       return `An error was thrown by a plugins 'requestWillFetch()' method. The thrown error message was: '${thrownErrorMessage}'.`;
     },
-    "invalid-cache-name": ({ cacheNameId, value }) => {
+    'invalid-cache-name': ({ cacheNameId, value }) => {
       if (!cacheNameId) {
-        throw new Error(`Expected a 'cacheNameId' for error 'invalid-cache-name'`);
+        throw new Error(
+          `Expected a 'cacheNameId' for error 'invalid-cache-name'`,
+        );
       }
       return `You must provide a name containing at least one character for setCacheDetails({${cacheNameId}: '...'}). Received a value of '${JSON.stringify(value)}'`;
     },
-    "unregister-route-but-not-found-with-method": ({ method }) => {
+    'unregister-route-but-not-found-with-method': ({ method }) => {
       if (!method) {
-        throw new Error(`Unexpected input to 'unregister-route-but-not-found-with-method' error.`);
+        throw new Error(
+          `Unexpected input to 'unregister-route-but-not-found-with-method' error.`,
+        );
       }
       return `The route you're trying to unregister was not  previously registered for the method type '${method}'.`;
     },
-    "unregister-route-route-not-registered": () => {
+    'unregister-route-route-not-registered': () => {
       return `The route you're trying to unregister was not previously registered.`;
     },
-    "queue-replay-failed": ({ name }) => {
+    'queue-replay-failed': ({ name }) => {
       return `Replaying the background sync queue '${name}' failed.`;
     },
-    "duplicate-queue-name": ({ name }) => {
+    'duplicate-queue-name': ({ name }) => {
       return `The Queue name '${name}' is already being used. All instances of backgroundSync.Queue must be given unique names.`;
     },
-    "expired-test-without-max-age": ({ methodName, paramName }) => {
+    'expired-test-without-max-age': ({ methodName, paramName }) => {
       return `The '${methodName}()' method can only be used when the '${paramName}' is used in the constructor.`;
     },
-    "unsupported-route-type": ({ moduleName, className, funcName, paramName }) => {
+    'unsupported-route-type': ({
+      moduleName,
+      className,
+      funcName,
+      paramName,
+    }) => {
       return `The supplied '${paramName}' parameter was an unsupported type. Please check the docs for ${moduleName}.${className}.${funcName} for valid input types.`;
     },
-    "not-array-of-class": ({ value, expectedClass, moduleName, className, funcName, paramName }) => {
+    'not-array-of-class': ({
+      value,
+      expectedClass,
+      moduleName,
+      className,
+      funcName,
+      paramName,
+    }) => {
       return `The supplied '${paramName}' parameter must be an array of '${expectedClass}' objects. Received '${JSON.stringify(value)},'. Please check the call to ${moduleName}.${className}.${funcName}() to fix the issue.`;
     },
-    "max-entries-or-age-required": ({ moduleName, className, funcName }) => {
+    'max-entries-or-age-required': ({ moduleName, className, funcName }) => {
       return `You must define either config.maxEntries or config.maxAgeSecondsin ${moduleName}.${className}.${funcName}`;
     },
-    "statuses-or-headers-required": ({ moduleName, className, funcName }) => {
+    'statuses-or-headers-required': ({ moduleName, className, funcName }) => {
       return `You must define either config.statuses or config.headersin ${moduleName}.${className}.${funcName}`;
     },
-    "invalid-string": ({ moduleName, funcName, paramName }) => {
+    'invalid-string': ({ moduleName, funcName, paramName }) => {
       if (!paramName || !moduleName || !funcName) {
         throw new Error(`Unexpected input to 'invalid-string' error.`);
       }
       return `When using strings, the '${paramName}' parameter must start with 'http' (for cross-origin matches) or '/' (for same-origin matches). Please see the docs for ${moduleName}.${funcName}() for more info.`;
     },
-    "channel-name-required": () => {
+    'channel-name-required': () => {
       return `You must provide a channelName to construct a BroadcastCacheUpdate instance.`;
     },
-    "invalid-responses-are-same-args": () => {
+    'invalid-responses-are-same-args': () => {
       return `The arguments passed into responsesAreSame() appear to be invalid. Please ensure valid Responses are used.`;
     },
-    "expire-custom-caches-only": () => {
+    'expire-custom-caches-only': () => {
       return `You must provide a 'cacheName' property when using the expiration plugin with a runtime caching strategy.`;
     },
-    "unit-must-be-bytes": ({ normalizedRangeHeader }) => {
+    'unit-must-be-bytes': ({ normalizedRangeHeader }) => {
       if (!normalizedRangeHeader) {
         throw new Error(`Unexpected input to 'unit-must-be-bytes' error.`);
       }
       return `The 'unit' portion of the Range header must be set to 'bytes'. The Range header provided was "${normalizedRangeHeader}"`;
     },
-    "single-range-only": ({ normalizedRangeHeader }) => {
+    'single-range-only': ({ normalizedRangeHeader }) => {
       if (!normalizedRangeHeader) {
         throw new Error(`Unexpected input to 'single-range-only' error.`);
       }
       return `Multiple ranges are not supported. Please use a  single start value, and optional end value. The Range header provided was "${normalizedRangeHeader}"`;
     },
-    "invalid-range-values": ({ normalizedRangeHeader }) => {
+    'invalid-range-values': ({ normalizedRangeHeader }) => {
       if (!normalizedRangeHeader) {
         throw new Error(`Unexpected input to 'invalid-range-values' error.`);
       }
       return `The Range header is missing both start and end values. At least one of those values is needed. The Range header provided was "${normalizedRangeHeader}"`;
     },
-    "no-range-header": () => {
+    'no-range-header': () => {
       return `No Range header was found in the Request provided.`;
     },
-    "range-not-satisfiable": ({ size, start, end }) => {
+    'range-not-satisfiable': ({ size, start, end }) => {
       return `The start (${start}) and end (${end}) values in the Range are not satisfiable by the cached response, which is ${size} bytes.`;
     },
-    "attempt-to-cache-non-get-request": ({ url, method }) => {
+    'attempt-to-cache-non-get-request': ({ url, method }) => {
       return `Unable to cache '${url}' because it is a '${method}' request and only 'GET' requests can be cached.`;
     },
-    "cache-put-with-no-response": ({ url }) => {
+    'cache-put-with-no-response': ({ url }) => {
       return `There was an attempt to cache '${url}' but the response was not defined.`;
     },
-    "no-response": ({ url, error }) => {
+    'no-response': ({ url, error }) => {
       let message = `The strategy could not generate a response for '${url}'.`;
       if (error) {
         message += ` The underlying error is ${error}.`;
       }
       return message;
     },
-    "bad-precaching-response": ({ url, status }) => {
-      return `The precaching request for '${url}' failed` + (status ? ` with an HTTP status of ${status}.` : `.`);
+    'bad-precaching-response': ({ url, status }) => {
+      return (
+        `The precaching request for '${url}' failed` +
+        (status ? ` with an HTTP status of ${status}.` : `.`)
+      );
     },
-    "non-precached-url": ({ url }) => {
+    'non-precached-url': ({ url }) => {
       return `createHandlerBoundToURL('${url}') was called, but that URL is not precached. Please pass in a URL that is precached instead.`;
     },
-    "add-to-cache-list-conflicting-integrities": ({ url }) => {
+    'add-to-cache-list-conflicting-integrities': ({ url }) => {
       return `Two of the entries passed to 'workbox-precaching.PrecacheController.addToCacheList()' had the URL ${url} with different integrity values. Please remove one of them.`;
     },
-    "missing-precache-entry": ({ cacheName, url }) => {
+    'missing-precache-entry': ({ cacheName, url }) => {
       return `Unable to find a precached response in ${cacheName} for ${url}.`;
     },
-    "cross-origin-copy-response": ({ origin }) => {
+    'cross-origin-copy-response': ({ origin }) => {
       return `workbox-core.copyResponse() can only be used with same-origin responses. It was passed a response with origin ${origin}.`;
     },
-    "opaque-streams-source": ({ type }) => {
+    'opaque-streams-source': ({ type }) => {
       const message = `One of the workbox-streams sources resulted in an '${type}' response.`;
-      if (type === "opaqueredirect") {
+      if (type === 'opaqueredirect') {
         return `${message} Please do not use a navigation request that results in a redirect as a source.`;
       }
       return `${message} Please ensure your sources are CORS-enabled.`;
-    }
+    },
   };
 
   // node_modules/workbox-core/models/messages/messageGenerator.js
@@ -252,36 +301,37 @@
   // node_modules/workbox-core/_private/assert.js
   var isArray = (value, details) => {
     if (!Array.isArray(value)) {
-      throw new WorkboxError("not-an-array", details);
+      throw new WorkboxError('not-an-array', details);
     }
   };
   var hasMethod = (object, expectedMethod, details) => {
     const type = typeof object[expectedMethod];
-    if (type !== "function") {
-      details["expectedMethod"] = expectedMethod;
-      throw new WorkboxError("missing-a-method", details);
+    if (type !== 'function') {
+      details['expectedMethod'] = expectedMethod;
+      throw new WorkboxError('missing-a-method', details);
     }
   };
   var isType = (object, expectedType, details) => {
     if (typeof object !== expectedType) {
-      details["expectedType"] = expectedType;
-      throw new WorkboxError("incorrect-type", details);
+      details['expectedType'] = expectedType;
+      throw new WorkboxError('incorrect-type', details);
     }
   };
   var isInstance = (object, expectedClass, details) => {
     if (!(object instanceof expectedClass)) {
-      details["expectedClassName"] = expectedClass.name;
-      throw new WorkboxError("incorrect-class", details);
+      details['expectedClassName'] = expectedClass.name;
+      throw new WorkboxError('incorrect-class', details);
     }
   };
   var isOneOf = (value, validValues, details) => {
     if (!validValues.includes(value)) {
-      details["validValueDescription"] = `Valid values are ${JSON.stringify(validValues)}.`;
-      throw new WorkboxError("invalid-value", details);
+      details['validValueDescription'] =
+        `Valid values are ${JSON.stringify(validValues)}.`;
+      throw new WorkboxError('invalid-value', details);
     }
   };
   var isArrayOfClass = (value, expectedClass, details) => {
-    const error = new WorkboxError("not-array-of-class", details);
+    const error = new WorkboxError('not-array-of-class', details);
     if (!Array.isArray(value)) {
       throw error;
     }
@@ -291,28 +341,32 @@
       }
     }
   };
-  var finalAssertExports = false ? null : {
-    hasMethod,
-    isArray,
-    isInstance,
-    isOneOf,
-    isType,
-    isArrayOfClass
-  };
+  var finalAssertExports = false
+    ? null
+    : {
+        hasMethod,
+        isArray,
+        isInstance,
+        isOneOf,
+        isType,
+        isArrayOfClass,
+      };
 
   // node_modules/workbox-core/models/quotaErrorCallbacks.js
   var quotaErrorCallbacks = /* @__PURE__ */ new Set();
 
   // node_modules/workbox-core/_private/cacheNames.js
   var _cacheNameDetails = {
-    googleAnalytics: "googleAnalytics",
-    precache: "precache-v2",
-    prefix: "workbox",
-    runtime: "runtime",
-    suffix: typeof registration !== "undefined" ? registration.scope : ""
+    googleAnalytics: 'googleAnalytics',
+    precache: 'precache-v2',
+    prefix: 'workbox',
+    runtime: 'runtime',
+    suffix: typeof registration !== 'undefined' ? registration.scope : '',
   };
   var _createCacheName = (cacheName) => {
-    return [_cacheNameDetails.prefix, cacheName, _cacheNameDetails.suffix].filter((value) => value && value.length > 0).join("-");
+    return [_cacheNameDetails.prefix, cacheName, _cacheNameDetails.suffix]
+      .filter((value) => value && value.length > 0)
+      .join('-');
   };
   var eachCacheNameDetail = (fn) => {
     for (const key of Object.keys(_cacheNameDetails)) {
@@ -322,13 +376,15 @@
   var cacheNames = {
     updateDetails: (details) => {
       eachCacheNameDetail((key) => {
-        if (typeof details[key] === "string") {
+        if (typeof details[key] === 'string') {
           _cacheNameDetails[key] = details[key];
         }
       });
     },
     getGoogleAnalyticsName: (userCacheName) => {
-      return userCacheName || _createCacheName(_cacheNameDetails.googleAnalytics);
+      return (
+        userCacheName || _createCacheName(_cacheNameDetails.googleAnalytics)
+      );
     },
     getPrecacheName: (userCacheName) => {
       return userCacheName || _createCacheName(_cacheNameDetails.precache);
@@ -341,7 +397,7 @@
     },
     getSuffix: () => {
       return _cacheNameDetails.suffix;
-    }
+    },
   };
 
   // node_modules/workbox-core/_private/cacheMatchIgnoreParams.js
@@ -352,12 +408,19 @@
     }
     return strippedURL.href;
   }
-  async function cacheMatchIgnoreParams(cache, request, ignoreParams, matchOptions) {
+  async function cacheMatchIgnoreParams(
+    cache,
+    request,
+    ignoreParams,
+    matchOptions,
+  ) {
     const strippedRequestURL = stripParams(request.url, ignoreParams);
     if (request.url === strippedRequestURL) {
       return cache.match(request, matchOptions);
     }
-    const keysOptions = Object.assign(Object.assign({}, matchOptions), { ignoreSearch: true });
+    const keysOptions = Object.assign(Object.assign({}, matchOptions), {
+      ignoreSearch: true,
+    });
     const cacheKeys = await cache.keys(request, keysOptions);
     for (const cacheKey of cacheKeys) {
       const strippedCacheKeyURL = stripParams(cacheKey.url, ignoreParams);
@@ -372,8 +435,8 @@
   var supportStatus;
   function canConstructResponseFromBodyStream() {
     if (supportStatus === void 0) {
-      const testResponse = new Response("");
-      if ("body" in testResponse) {
+      const testResponse = new Response('');
+      if ('body' in testResponse) {
         try {
           new Response(testResponse.body);
           supportStatus = true;
@@ -402,23 +465,25 @@
   // node_modules/workbox-core/_private/executeQuotaErrorCallbacks.js
   async function executeQuotaErrorCallbacks() {
     if (true) {
-      logger.log(`About to run ${quotaErrorCallbacks.size} callbacks to clean up caches.`);
+      logger.log(
+        `About to run ${quotaErrorCallbacks.size} callbacks to clean up caches.`,
+      );
     }
     for (const callback of quotaErrorCallbacks) {
       await callback();
       if (true) {
-        logger.log(callback, "is complete.");
+        logger.log(callback, 'is complete.');
       }
     }
     if (true) {
-      logger.log("Finished running callbacks.");
+      logger.log('Finished running callbacks.');
     }
   }
 
   // node_modules/workbox-core/_private/getFriendlyURL.js
   var getFriendlyURL = (url) => {
     const urlObj = new URL(String(url), location.href);
-    return urlObj.href.replace(new RegExp(`^${location.origin}`), "");
+    return urlObj.href.replace(new RegExp(`^${location.origin}`), '');
   };
 
   // node_modules/workbox-core/_private/timeout.js
@@ -441,52 +506,55 @@
       origin = responseURL.origin;
     }
     if (origin !== self.location.origin) {
-      throw new WorkboxError("cross-origin-copy-response", { origin });
+      throw new WorkboxError('cross-origin-copy-response', { origin });
     }
     const clonedResponse = response.clone();
     const responseInit = {
       headers: new Headers(clonedResponse.headers),
       status: clonedResponse.status,
-      statusText: clonedResponse.statusText
+      statusText: clonedResponse.statusText,
     };
-    const modifiedResponseInit = modifier ? modifier(responseInit) : responseInit;
-    const body = canConstructResponseFromBodyStream() ? clonedResponse.body : await clonedResponse.blob();
+    const modifiedResponseInit = modifier
+      ? modifier(responseInit)
+      : responseInit;
+    const body = canConstructResponseFromBodyStream()
+      ? clonedResponse.body
+      : await clonedResponse.blob();
     return new Response(body, modifiedResponseInit);
   }
 
   // node_modules/workbox-core/clientsClaim.js
   function clientsClaim() {
-    self.addEventListener("activate", () => self.clients.claim());
+    self.addEventListener('activate', () => self.clients.claim());
   }
 
   // node_modules/workbox-precaching/_version.js
   try {
-    self["workbox:precaching:7.2.0"] && _();
-  } catch (e) {
-  }
+    self['workbox:precaching:7.2.0'] && _();
+  } catch (e) {}
 
   // node_modules/workbox-precaching/utils/createCacheKey.js
-  var REVISION_SEARCH_PARAM = "__WB_REVISION__";
+  var REVISION_SEARCH_PARAM = '__WB_REVISION__';
   function createCacheKey(entry) {
     if (!entry) {
-      throw new WorkboxError("add-to-cache-list-unexpected-type", { entry });
+      throw new WorkboxError('add-to-cache-list-unexpected-type', { entry });
     }
-    if (typeof entry === "string") {
+    if (typeof entry === 'string') {
       const urlObject = new URL(entry, location.href);
       return {
         cacheKey: urlObject.href,
-        url: urlObject.href
+        url: urlObject.href,
       };
     }
     const { revision, url } = entry;
     if (!url) {
-      throw new WorkboxError("add-to-cache-list-unexpected-type", { entry });
+      throw new WorkboxError('add-to-cache-list-unexpected-type', { entry });
     }
     if (!revision) {
       const urlObject = new URL(url, location.href);
       return {
         cacheKey: urlObject.href,
-        url: urlObject.href
+        url: urlObject.href,
       };
     }
     const cacheKeyURL = new URL(url, location.href);
@@ -494,7 +562,7 @@
     cacheKeyURL.searchParams.set(REVISION_SEARCH_PARAM, revision);
     return {
       cacheKey: cacheKeyURL.href,
-      url: originalURL.href
+      url: originalURL.href,
     };
   }
 
@@ -508,9 +576,17 @@
           state.originalRequest = request;
         }
       };
-      this.cachedResponseWillBeUsed = async ({ event, state, cachedResponse }) => {
-        if (event.type === "install") {
-          if (state && state.originalRequest && state.originalRequest instanceof Request) {
+      this.cachedResponseWillBeUsed = async ({
+        event,
+        state,
+        cachedResponse,
+      }) => {
+        if (event.type === 'install') {
+          if (
+            state &&
+            state.originalRequest &&
+            state.originalRequest instanceof Request
+          ) {
             const url = state.originalRequest.url;
             if (cachedResponse) {
               this.notUpdatedURLs.push(url);
@@ -528,8 +604,12 @@
   var PrecacheCacheKeyPlugin = class {
     constructor({ precacheController: precacheController2 }) {
       this.cacheKeyWillBeUsed = async ({ request, params }) => {
-        const cacheKey = (params === null || params === void 0 ? void 0 : params.cacheKey) || this._precacheController.getCacheKeyForURL(request.url);
-        return cacheKey ? new Request(cacheKey, { headers: request.headers }) : request;
+        const cacheKey =
+          (params === null || params === void 0 ? void 0 : params.cacheKey) ||
+          this._precacheController.getCacheKeyForURL(request.url);
+        return cacheKey
+          ? new Request(cacheKey, { headers: request.headers })
+          : request;
       };
       this._precacheController = precacheController2;
     }
@@ -546,8 +626,10 @@
   function printCleanupDetails(deletedURLs) {
     const deletionCount = deletedURLs.length;
     if (deletionCount > 0) {
-      logger.groupCollapsed(`During precaching cleanup, ${deletionCount} cached request${deletionCount === 1 ? " was" : "s were"} deleted.`);
-      logGroup("Deleted Cache Requests", deletedURLs);
+      logger.groupCollapsed(
+        `During precaching cleanup, ${deletionCount} cached request${deletionCount === 1 ? ' was' : 's were'} deleted.`,
+      );
+      logGroup('Deleted Cache Requests', deletedURLs);
       logger.groupEnd();
     }
   }
@@ -567,9 +649,9 @@
     const precachedCount = urlsToPrecache.length;
     const alreadyPrecachedCount = urlsAlreadyPrecached.length;
     if (precachedCount || alreadyPrecachedCount) {
-      let message = `Precaching ${precachedCount} file${precachedCount === 1 ? "" : "s"}.`;
+      let message = `Precaching ${precachedCount} file${precachedCount === 1 ? '' : 's'}.`;
       if (alreadyPrecachedCount > 0) {
-        message += ` ${alreadyPrecachedCount} file${alreadyPrecachedCount === 1 ? " is" : "s are"} already cached.`;
+        message += ` ${alreadyPrecachedCount} file${alreadyPrecachedCount === 1 ? ' is' : 's are'} already cached.`;
       }
       logger.groupCollapsed(message);
       _nestedGroup(`View newly precached URLs.`, urlsToPrecache);
@@ -580,13 +662,12 @@
 
   // node_modules/workbox-strategies/_version.js
   try {
-    self["workbox:strategies:7.2.0"] && _();
-  } catch (e) {
-  }
+    self['workbox:strategies:7.2.0'] && _();
+  } catch (e) {}
 
   // node_modules/workbox-strategies/StrategyHandler.js
   function toRequest(input) {
-    return typeof input === "string" ? new Request(input) : input;
+    return typeof input === 'string' ? new Request(input) : input;
   }
   var StrategyHandler = class {
     /**
@@ -609,10 +690,10 @@
       this._cacheKeys = {};
       if (true) {
         finalAssertExports.isInstance(options.event, ExtendableEvent, {
-          moduleName: "workbox-strategies",
-          className: "StrategyHandler",
-          funcName: "constructor",
-          paramName: "options.event"
+          moduleName: 'workbox-strategies',
+          className: 'StrategyHandler',
+          funcName: 'constructor',
+          paramName: 'options.event',
         });
       }
       Object.assign(this, options);
@@ -643,52 +724,68 @@
     async fetch(input) {
       const { event } = this;
       let request = toRequest(input);
-      if (request.mode === "navigate" && event instanceof FetchEvent && event.preloadResponse) {
+      if (
+        request.mode === 'navigate' &&
+        event instanceof FetchEvent &&
+        event.preloadResponse
+      ) {
         const possiblePreloadResponse = await event.preloadResponse;
         if (possiblePreloadResponse) {
           if (true) {
-            logger.log(`Using a preloaded navigation response for '${getFriendlyURL(request.url)}'`);
+            logger.log(
+              `Using a preloaded navigation response for '${getFriendlyURL(request.url)}'`,
+            );
           }
           return possiblePreloadResponse;
         }
       }
-      const originalRequest = this.hasCallback("fetchDidFail") ? request.clone() : null;
+      const originalRequest = this.hasCallback('fetchDidFail')
+        ? request.clone()
+        : null;
       try {
-        for (const cb of this.iterateCallbacks("requestWillFetch")) {
+        for (const cb of this.iterateCallbacks('requestWillFetch')) {
           request = await cb({ request: request.clone(), event });
         }
       } catch (err) {
         if (err instanceof Error) {
-          throw new WorkboxError("plugin-error-request-will-fetch", {
-            thrownErrorMessage: err.message
+          throw new WorkboxError('plugin-error-request-will-fetch', {
+            thrownErrorMessage: err.message,
           });
         }
       }
       const pluginFilteredRequest = request.clone();
       try {
         let fetchResponse;
-        fetchResponse = await fetch(request, request.mode === "navigate" ? void 0 : this._strategy.fetchOptions);
+        fetchResponse = await fetch(
+          request,
+          request.mode === 'navigate' ? void 0 : this._strategy.fetchOptions,
+        );
         if (true) {
-          logger.debug(`Network request for '${getFriendlyURL(request.url)}' returned a response with status '${fetchResponse.status}'.`);
+          logger.debug(
+            `Network request for '${getFriendlyURL(request.url)}' returned a response with status '${fetchResponse.status}'.`,
+          );
         }
-        for (const callback of this.iterateCallbacks("fetchDidSucceed")) {
+        for (const callback of this.iterateCallbacks('fetchDidSucceed')) {
           fetchResponse = await callback({
             event,
             request: pluginFilteredRequest,
-            response: fetchResponse
+            response: fetchResponse,
           });
         }
         return fetchResponse;
       } catch (error) {
         if (true) {
-          logger.log(`Network request for '${getFriendlyURL(request.url)}' threw an error.`, error);
+          logger.log(
+            `Network request for '${getFriendlyURL(request.url)}' threw an error.`,
+            error,
+          );
         }
         if (originalRequest) {
-          await this.runCallbacks("fetchDidFail", {
+          await this.runCallbacks('fetchDidFail', {
             error,
             event,
             originalRequest: originalRequest.clone(),
-            request: pluginFilteredRequest.clone()
+            request: pluginFilteredRequest.clone(),
           });
         }
         throw error;
@@ -726,8 +823,10 @@
       const request = toRequest(key);
       let cachedResponse;
       const { cacheName, matchOptions } = this._strategy;
-      const effectiveRequest = await this.getCacheKey(request, "read");
-      const multiMatchOptions = Object.assign(Object.assign({}, matchOptions), { cacheName });
+      const effectiveRequest = await this.getCacheKey(request, 'read');
+      const multiMatchOptions = Object.assign(Object.assign({}, matchOptions), {
+        cacheName,
+      });
       cachedResponse = await caches.match(effectiveRequest, multiMatchOptions);
       if (true) {
         if (cachedResponse) {
@@ -736,14 +835,17 @@
           logger.debug(`No cached response found in '${cacheName}'.`);
         }
       }
-      for (const callback of this.iterateCallbacks("cachedResponseWillBeUsed")) {
-        cachedResponse = await callback({
-          cacheName,
-          matchOptions,
-          cachedResponse,
-          request: effectiveRequest,
-          event: this.event
-        }) || void 0;
+      for (const callback of this.iterateCallbacks(
+        'cachedResponseWillBeUsed',
+      )) {
+        cachedResponse =
+          (await callback({
+            cacheName,
+            matchOptions,
+            cachedResponse,
+            request: effectiveRequest,
+            event: this.event,
+          })) || void 0;
       }
       return cachedResponse;
     }
@@ -765,66 +867,80 @@
     async cachePut(key, response) {
       const request = toRequest(key);
       await timeout(0);
-      const effectiveRequest = await this.getCacheKey(request, "write");
+      const effectiveRequest = await this.getCacheKey(request, 'write');
       if (true) {
-        if (effectiveRequest.method && effectiveRequest.method !== "GET") {
-          throw new WorkboxError("attempt-to-cache-non-get-request", {
+        if (effectiveRequest.method && effectiveRequest.method !== 'GET') {
+          throw new WorkboxError('attempt-to-cache-non-get-request', {
             url: getFriendlyURL(effectiveRequest.url),
-            method: effectiveRequest.method
+            method: effectiveRequest.method,
           });
         }
-        const vary = response.headers.get("Vary");
+        const vary = response.headers.get('Vary');
         if (vary) {
-          logger.debug(`The response for ${getFriendlyURL(effectiveRequest.url)} has a 'Vary: ${vary}' header. Consider setting the {ignoreVary: true} option on your strategy to ensure cache matching and deletion works as expected.`);
+          logger.debug(
+            `The response for ${getFriendlyURL(effectiveRequest.url)} has a 'Vary: ${vary}' header. Consider setting the {ignoreVary: true} option on your strategy to ensure cache matching and deletion works as expected.`,
+          );
         }
       }
       if (!response) {
         if (true) {
-          logger.error(`Cannot cache non-existent response for '${getFriendlyURL(effectiveRequest.url)}'.`);
+          logger.error(
+            `Cannot cache non-existent response for '${getFriendlyURL(effectiveRequest.url)}'.`,
+          );
         }
-        throw new WorkboxError("cache-put-with-no-response", {
-          url: getFriendlyURL(effectiveRequest.url)
+        throw new WorkboxError('cache-put-with-no-response', {
+          url: getFriendlyURL(effectiveRequest.url),
         });
       }
       const responseToCache = await this._ensureResponseSafeToCache(response);
       if (!responseToCache) {
         if (true) {
-          logger.debug(`Response '${getFriendlyURL(effectiveRequest.url)}' will not be cached.`, responseToCache);
+          logger.debug(
+            `Response '${getFriendlyURL(effectiveRequest.url)}' will not be cached.`,
+            responseToCache,
+          );
         }
         return false;
       }
       const { cacheName, matchOptions } = this._strategy;
       const cache = await self.caches.open(cacheName);
-      const hasCacheUpdateCallback = this.hasCallback("cacheDidUpdate");
-      const oldResponse = hasCacheUpdateCallback ? await cacheMatchIgnoreParams(
-        // TODO(philipwalton): the `__WB_REVISION__` param is a precaching
-        // feature. Consider into ways to only add this behavior if using
-        // precaching.
-        cache,
-        effectiveRequest.clone(),
-        ["__WB_REVISION__"],
-        matchOptions
-      ) : null;
+      const hasCacheUpdateCallback = this.hasCallback('cacheDidUpdate');
+      const oldResponse = hasCacheUpdateCallback
+        ? await cacheMatchIgnoreParams(
+            // TODO(philipwalton): the `__WB_REVISION__` param is a precaching
+            // feature. Consider into ways to only add this behavior if using
+            // precaching.
+            cache,
+            effectiveRequest.clone(),
+            ['__WB_REVISION__'],
+            matchOptions,
+          )
+        : null;
       if (true) {
-        logger.debug(`Updating the '${cacheName}' cache with a new Response for ${getFriendlyURL(effectiveRequest.url)}.`);
+        logger.debug(
+          `Updating the '${cacheName}' cache with a new Response for ${getFriendlyURL(effectiveRequest.url)}.`,
+        );
       }
       try {
-        await cache.put(effectiveRequest, hasCacheUpdateCallback ? responseToCache.clone() : responseToCache);
+        await cache.put(
+          effectiveRequest,
+          hasCacheUpdateCallback ? responseToCache.clone() : responseToCache,
+        );
       } catch (error) {
         if (error instanceof Error) {
-          if (error.name === "QuotaExceededError") {
+          if (error.name === 'QuotaExceededError') {
             await executeQuotaErrorCallbacks();
           }
           throw error;
         }
       }
-      for (const callback of this.iterateCallbacks("cacheDidUpdate")) {
+      for (const callback of this.iterateCallbacks('cacheDidUpdate')) {
         await callback({
           cacheName,
           oldResponse,
           newResponse: responseToCache.clone(),
           request: effectiveRequest,
-          event: this.event
+          event: this.event,
         });
       }
       return true;
@@ -844,15 +960,17 @@
       const key = `${request.url} | ${mode}`;
       if (!this._cacheKeys[key]) {
         let effectiveRequest = request;
-        for (const callback of this.iterateCallbacks("cacheKeyWillBeUsed")) {
-          effectiveRequest = toRequest(await callback({
-            mode,
-            request: effectiveRequest,
-            event: this.event,
-            // params has a type any can't change right now.
-            params: this.params
-            // eslint-disable-line
-          }));
+        for (const callback of this.iterateCallbacks('cacheKeyWillBeUsed')) {
+          effectiveRequest = toRequest(
+            await callback({
+              mode,
+              request: effectiveRequest,
+              event: this.event,
+              // params has a type any can't change right now.
+              params: this.params,
+              // eslint-disable-line
+            }),
+          );
         }
         this._cacheKeys[key] = effectiveRequest;
       }
@@ -905,10 +1023,12 @@
      */
     *iterateCallbacks(name) {
       for (const plugin of this._strategy.plugins) {
-        if (typeof plugin[name] === "function") {
+        if (typeof plugin[name] === 'function') {
           const state = this._pluginStateMap.get(plugin);
           const statefulCallback = (param) => {
-            const statefulParam = Object.assign(Object.assign({}, param), { state });
+            const statefulParam = Object.assign(Object.assign({}, param), {
+              state,
+            });
             return plugin[name](statefulParam);
           };
           yield statefulCallback;
@@ -944,7 +1064,7 @@
      */
     async doneWaiting() {
       let promise;
-      while (promise = this._extendLifetimePromises.shift()) {
+      while ((promise = this._extendLifetimePromises.shift())) {
         await promise;
       }
     }
@@ -968,12 +1088,13 @@
     async _ensureResponseSafeToCache(response) {
       let responseToCache = response;
       let pluginsUsed = false;
-      for (const callback of this.iterateCallbacks("cacheWillUpdate")) {
-        responseToCache = await callback({
-          request: this.request,
-          response: responseToCache,
-          event: this.event
-        }) || void 0;
+      for (const callback of this.iterateCallbacks('cacheWillUpdate')) {
+        responseToCache =
+          (await callback({
+            request: this.request,
+            response: responseToCache,
+            event: this.event,
+          })) || void 0;
         pluginsUsed = true;
         if (!responseToCache) {
           break;
@@ -987,9 +1108,13 @@
           if (responseToCache) {
             if (responseToCache.status !== 200) {
               if (responseToCache.status === 0) {
-                logger.warn(`The response for '${this.request.url}' is an opaque response. The caching strategy that you're using will not cache opaque responses by default.`);
+                logger.warn(
+                  `The response for '${this.request.url}' is an opaque response. The caching strategy that you're using will not cache opaque responses by default.`,
+                );
               } else {
-                logger.debug(`The response for '${this.request.url}' returned a status code of '${response.status}' and won't be cached as a result.`);
+                logger.debug(
+                  `The response for '${this.request.url}' returned a status code of '${response.status}' and won't be cached as a result.`,
+                );
               }
             }
           }
@@ -1078,28 +1203,36 @@
       if (options instanceof FetchEvent) {
         options = {
           event: options,
-          request: options.request
+          request: options.request,
         };
       }
       const event = options.event;
-      const request = typeof options.request === "string" ? new Request(options.request) : options.request;
-      const params = "params" in options ? options.params : void 0;
+      const request =
+        typeof options.request === 'string'
+          ? new Request(options.request)
+          : options.request;
+      const params = 'params' in options ? options.params : void 0;
       const handler = new StrategyHandler(this, { event, request, params });
       const responseDone = this._getResponse(handler, request, event);
-      const handlerDone = this._awaitComplete(responseDone, handler, request, event);
+      const handlerDone = this._awaitComplete(
+        responseDone,
+        handler,
+        request,
+        event,
+      );
       return [responseDone, handlerDone];
     }
     async _getResponse(handler, request, event) {
-      await handler.runCallbacks("handlerWillStart", { event, request });
+      await handler.runCallbacks('handlerWillStart', { event, request });
       let response = void 0;
       try {
         response = await this._handle(request, handler);
-        if (!response || response.type === "error") {
-          throw new WorkboxError("no-response", { url: request.url });
+        if (!response || response.type === 'error') {
+          throw new WorkboxError('no-response', { url: request.url });
         }
       } catch (error) {
         if (error instanceof Error) {
-          for (const callback of handler.iterateCallbacks("handlerDidError")) {
+          for (const callback of handler.iterateCallbacks('handlerDidError')) {
             response = await callback({ error, event, request });
             if (response) {
               break;
@@ -1109,10 +1242,12 @@
         if (!response) {
           throw error;
         } else if (true) {
-          logger.log(`While responding to '${getFriendlyURL(request.url)}', an ${error instanceof Error ? error.toString() : ""} error occurred. Using a fallback response provided by a handlerDidError plugin.`);
+          logger.log(
+            `While responding to '${getFriendlyURL(request.url)}', an ${error instanceof Error ? error.toString() : ''} error occurred. Using a fallback response provided by a handlerDidError plugin.`,
+          );
         }
       }
-      for (const callback of handler.iterateCallbacks("handlerWillRespond")) {
+      for (const callback of handler.iterateCallbacks('handlerWillRespond')) {
         response = await callback({ event, request, response });
       }
       return response;
@@ -1122,13 +1257,12 @@
       let error;
       try {
         response = await responseDone;
-      } catch (error2) {
-      }
+      } catch (error2) {}
       try {
-        await handler.runCallbacks("handlerDidRespond", {
+        await handler.runCallbacks('handlerDidRespond', {
           event,
           request,
-          response
+          response,
         });
         await handler.doneWaiting();
       } catch (waitUntilError) {
@@ -1136,11 +1270,11 @@
           error = waitUntilError;
         }
       }
-      await handler.runCallbacks("handlerDidComplete", {
+      await handler.runCallbacks('handlerDidComplete', {
         event,
         request,
         response,
-        error
+        error,
       });
       handler.destroy();
       if (error) {
@@ -1171,8 +1305,11 @@
     constructor(options = {}) {
       options.cacheName = cacheNames.getPrecacheName(options.cacheName);
       super(options);
-      this._fallbackToNetwork = options.fallbackToNetwork === false ? false : true;
-      this.plugins.push(_PrecacheStrategy.copyRedirectedCacheableResponsesPlugin);
+      this._fallbackToNetwork =
+        options.fallbackToNetwork === false ? false : true;
+      this.plugins.push(
+        _PrecacheStrategy.copyRedirectedCacheableResponsesPlugin,
+      );
     }
     /**
      * @private
@@ -1186,7 +1323,7 @@
       if (response) {
         return response;
       }
-      if (handler.event && handler.event.type === "install") {
+      if (handler.event && handler.event.type === 'install') {
         return await this._handleInstall(request, handler);
       }
       return await this._handleFetch(request, handler);
@@ -1196,33 +1333,52 @@
       const params = handler.params || {};
       if (this._fallbackToNetwork) {
         if (true) {
-          logger.warn(`The precached response for ${getFriendlyURL(request.url)} in ${this.cacheName} was not found. Falling back to the network.`);
+          logger.warn(
+            `The precached response for ${getFriendlyURL(request.url)} in ${this.cacheName} was not found. Falling back to the network.`,
+          );
         }
         const integrityInManifest = params.integrity;
         const integrityInRequest = request.integrity;
-        const noIntegrityConflict = !integrityInRequest || integrityInRequest === integrityInManifest;
-        response = await handler.fetch(new Request(request, {
-          integrity: request.mode !== "no-cors" ? integrityInRequest || integrityInManifest : void 0
-        }));
-        if (integrityInManifest && noIntegrityConflict && request.mode !== "no-cors") {
+        const noIntegrityConflict =
+          !integrityInRequest || integrityInRequest === integrityInManifest;
+        response = await handler.fetch(
+          new Request(request, {
+            integrity:
+              request.mode !== 'no-cors'
+                ? integrityInRequest || integrityInManifest
+                : void 0,
+          }),
+        );
+        if (
+          integrityInManifest &&
+          noIntegrityConflict &&
+          request.mode !== 'no-cors'
+        ) {
           this._useDefaultCacheabilityPluginIfNeeded();
           const wasCached = await handler.cachePut(request, response.clone());
           if (true) {
             if (wasCached) {
-              logger.log(`A response for ${getFriendlyURL(request.url)} was used to "repair" the precache.`);
+              logger.log(
+                `A response for ${getFriendlyURL(request.url)} was used to "repair" the precache.`,
+              );
             }
           }
         }
       } else {
-        throw new WorkboxError("missing-precache-entry", {
+        throw new WorkboxError('missing-precache-entry', {
           cacheName: this.cacheName,
-          url: request.url
+          url: request.url,
         });
       }
       if (true) {
-        const cacheKey = params.cacheKey || await handler.getCacheKey(request, "read");
-        logger.groupCollapsed(`Precaching is responding to: ` + getFriendlyURL(request.url));
-        logger.log(`Serving the precached url: ${getFriendlyURL(cacheKey instanceof Request ? cacheKey.url : cacheKey)}`);
+        const cacheKey =
+          params.cacheKey || (await handler.getCacheKey(request, 'read'));
+        logger.groupCollapsed(
+          `Precaching is responding to: ` + getFriendlyURL(request.url),
+        );
+        logger.log(
+          `Serving the precached url: ${getFriendlyURL(cacheKey instanceof Request ? cacheKey.url : cacheKey)}`,
+        );
         logger.groupCollapsed(`View request details here.`);
         logger.log(request);
         logger.groupEnd();
@@ -1238,9 +1394,9 @@
       const response = await handler.fetch(request);
       const wasCached = await handler.cachePut(request, response.clone());
       if (!wasCached) {
-        throw new WorkboxError("bad-precaching-response", {
+        throw new WorkboxError('bad-precaching-response', {
           url: request.url,
-          status: response.status
+          status: response.status,
         });
       }
       return response;
@@ -1276,7 +1432,9 @@
       let defaultPluginIndex = null;
       let cacheWillUpdatePluginCount = 0;
       for (const [index, plugin] of this.plugins.entries()) {
-        if (plugin === _PrecacheStrategy.copyRedirectedCacheableResponsesPlugin) {
+        if (
+          plugin === _PrecacheStrategy.copyRedirectedCacheableResponsesPlugin
+        ) {
           continue;
         }
         if (plugin === _PrecacheStrategy.defaultPrecacheCacheabilityPlugin) {
@@ -1288,7 +1446,10 @@
       }
       if (cacheWillUpdatePluginCount === 0) {
         this.plugins.push(_PrecacheStrategy.defaultPrecacheCacheabilityPlugin);
-      } else if (cacheWillUpdatePluginCount > 1 && defaultPluginIndex !== null) {
+      } else if (
+        cacheWillUpdatePluginCount > 1 &&
+        defaultPluginIndex !== null
+      ) {
         this.plugins.splice(defaultPluginIndex, 1);
       }
     }
@@ -1299,12 +1460,12 @@
         return null;
       }
       return response;
-    }
+    },
   };
   PrecacheStrategy.copyRedirectedCacheableResponsesPlugin = {
     async cacheWillUpdate({ response }) {
       return response.redirected ? await copyResponse(response) : response;
-    }
+    },
   };
 
   // node_modules/workbox-precaching/PrecacheController.js
@@ -1327,9 +1488,9 @@
         cacheName: cacheNames.getPrecacheName(cacheName),
         plugins: [
           ...plugins,
-          new PrecacheCacheKeyPlugin({ precacheController: this })
+          new PrecacheCacheKeyPlugin({ precacheController: this }),
         ],
-        fallbackToNetwork
+        fallbackToNetwork,
       });
       this.install = this.install.bind(this);
       this.activate = this.activate.bind(this);
@@ -1354,8 +1515,8 @@
     precache(entries) {
       this.addToCacheList(entries);
       if (!this._installAndActiveListenersAdded) {
-        self.addEventListener("install", this.install);
-        self.addEventListener("activate", this.activate);
+        self.addEventListener('install', this.install);
+        self.addEventListener('activate', this.activate);
         this._installAndActiveListenersAdded = true;
       }
     }
@@ -1369,39 +1530,49 @@
     addToCacheList(entries) {
       if (true) {
         finalAssertExports.isArray(entries, {
-          moduleName: "workbox-precaching",
-          className: "PrecacheController",
-          funcName: "addToCacheList",
-          paramName: "entries"
+          moduleName: 'workbox-precaching',
+          className: 'PrecacheController',
+          funcName: 'addToCacheList',
+          paramName: 'entries',
         });
       }
       const urlsToWarnAbout = [];
       for (const entry of entries) {
-        if (typeof entry === "string") {
+        if (typeof entry === 'string') {
           urlsToWarnAbout.push(entry);
         } else if (entry && entry.revision === void 0) {
           urlsToWarnAbout.push(entry.url);
         }
         const { cacheKey, url } = createCacheKey(entry);
-        const cacheMode = typeof entry !== "string" && entry.revision ? "reload" : "default";
-        if (this._urlsToCacheKeys.has(url) && this._urlsToCacheKeys.get(url) !== cacheKey) {
-          throw new WorkboxError("add-to-cache-list-conflicting-entries", {
+        const cacheMode =
+          typeof entry !== 'string' && entry.revision ? 'reload' : 'default';
+        if (
+          this._urlsToCacheKeys.has(url) &&
+          this._urlsToCacheKeys.get(url) !== cacheKey
+        ) {
+          throw new WorkboxError('add-to-cache-list-conflicting-entries', {
             firstEntry: this._urlsToCacheKeys.get(url),
-            secondEntry: cacheKey
+            secondEntry: cacheKey,
           });
         }
-        if (typeof entry !== "string" && entry.integrity) {
-          if (this._cacheKeysToIntegrities.has(cacheKey) && this._cacheKeysToIntegrities.get(cacheKey) !== entry.integrity) {
-            throw new WorkboxError("add-to-cache-list-conflicting-integrities", {
-              url
-            });
+        if (typeof entry !== 'string' && entry.integrity) {
+          if (
+            this._cacheKeysToIntegrities.has(cacheKey) &&
+            this._cacheKeysToIntegrities.get(cacheKey) !== entry.integrity
+          ) {
+            throw new WorkboxError(
+              'add-to-cache-list-conflicting-integrities',
+              {
+                url,
+              },
+            );
           }
           this._cacheKeysToIntegrities.set(cacheKey, entry.integrity);
         }
         this._urlsToCacheKeys.set(url, cacheKey);
         this._urlsToCacheModes.set(url, cacheMode);
         if (urlsToWarnAbout.length > 0) {
-          const warningMessage = `Workbox is precaching URLs without revision info: ${urlsToWarnAbout.join(", ")}
+          const warningMessage = `Workbox is precaching URLs without revision info: ${urlsToWarnAbout.join(', ')}
 This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
           if (false) {
             console.warn(warningMessage);
@@ -1431,13 +1602,15 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
           const request = new Request(url, {
             integrity,
             cache: cacheMode,
-            credentials: "same-origin"
+            credentials: 'same-origin',
           });
-          await Promise.all(this.strategy.handleAll({
-            params: { cacheKey },
-            request,
-            event
-          }));
+          await Promise.all(
+            this.strategy.handleAll({
+              params: { cacheKey },
+              request,
+              event,
+            }),
+          );
         }
         const { updatedURLs, notUpdatedURLs } = installReportPlugin;
         if (true) {
@@ -1551,7 +1724,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
     createHandlerBoundToURL(url) {
       const cacheKey = this.getCacheKeyForURL(url);
       if (!cacheKey) {
-        throw new WorkboxError("non-precached-url", { url });
+        throw new WorkboxError('non-precached-url', { url });
       }
       return (options) => {
         options.request = new Request(url);
@@ -1572,40 +1745,32 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
 
   // node_modules/workbox-routing/_version.js
   try {
-    self["workbox:routing:7.2.0"] && _();
-  } catch (e) {
-  }
+    self['workbox:routing:7.2.0'] && _();
+  } catch (e) {}
 
   // node_modules/workbox-routing/utils/constants.js
-  var defaultMethod = "GET";
-  var validMethods = [
-    "DELETE",
-    "GET",
-    "HEAD",
-    "PATCH",
-    "POST",
-    "PUT"
-  ];
+  var defaultMethod = 'GET';
+  var validMethods = ['DELETE', 'GET', 'HEAD', 'PATCH', 'POST', 'PUT'];
 
   // node_modules/workbox-routing/utils/normalizeHandler.js
   var normalizeHandler = (handler) => {
-    if (handler && typeof handler === "object") {
+    if (handler && typeof handler === 'object') {
       if (true) {
-        finalAssertExports.hasMethod(handler, "handle", {
-          moduleName: "workbox-routing",
-          className: "Route",
-          funcName: "constructor",
-          paramName: "handler"
+        finalAssertExports.hasMethod(handler, 'handle', {
+          moduleName: 'workbox-routing',
+          className: 'Route',
+          funcName: 'constructor',
+          paramName: 'handler',
         });
       }
       return handler;
     } else {
       if (true) {
-        finalAssertExports.isType(handler, "function", {
-          moduleName: "workbox-routing",
-          className: "Route",
-          funcName: "constructor",
-          paramName: "handler"
+        finalAssertExports.isType(handler, 'function', {
+          moduleName: 'workbox-routing',
+          className: 'Route',
+          funcName: 'constructor',
+          paramName: 'handler',
         });
       }
       return { handle: handler };
@@ -1627,14 +1792,16 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
      */
     constructor(match, handler, method = defaultMethod) {
       if (true) {
-        finalAssertExports.isType(match, "function", {
-          moduleName: "workbox-routing",
-          className: "Route",
-          funcName: "constructor",
-          paramName: "match"
+        finalAssertExports.isType(match, 'function', {
+          moduleName: 'workbox-routing',
+          className: 'Route',
+          funcName: 'constructor',
+          paramName: 'match',
         });
         if (method) {
-          finalAssertExports.isOneOf(method, validMethods, { paramName: "method" });
+          finalAssertExports.isOneOf(method, validMethods, {
+            paramName: 'method',
+          });
         }
       }
       this.handler = normalizeHandler(handler);
@@ -1669,10 +1836,10 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
     constructor(regExp, handler, method) {
       if (true) {
         finalAssertExports.isInstance(regExp, RegExp, {
-          moduleName: "workbox-routing",
-          className: "RegExpRoute",
-          funcName: "constructor",
-          paramName: "pattern"
+          moduleName: 'workbox-routing',
+          className: 'RegExpRoute',
+          funcName: 'constructor',
+          paramName: 'pattern',
         });
       }
       const match = ({ url }) => {
@@ -1682,7 +1849,9 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         }
         if (url.origin !== location.origin && result.index !== 0) {
           if (true) {
-            logger.debug(`The regular expression '${regExp.toString()}' only partially matched against the cross-origin URL '${url.toString()}'. RegExpRoute's will only handle cross-origin requests if they match the entire URL.`);
+            logger.debug(
+              `The regular expression '${regExp.toString()}' only partially matched against the cross-origin URL '${url.toString()}'. RegExpRoute's will only handle cross-origin requests if they match the entire URL.`,
+            );
           }
           return;
         }
@@ -1714,13 +1883,13 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
      * the event's request.
      */
     addFetchListener() {
-      self.addEventListener("fetch", ((event) => {
+      self.addEventListener('fetch', (event) => {
         const { request } = event;
         const responsePromise = this.handleRequest({ request, event });
         if (responsePromise) {
           event.respondWith(responsePromise);
         }
-      }));
+      });
     }
     /**
      * Adds a message event listener for URLs to cache from the window.
@@ -1745,25 +1914,27 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
      * ```
      */
     addCacheListener() {
-      self.addEventListener("message", ((event) => {
-        if (event.data && event.data.type === "CACHE_URLS") {
+      self.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'CACHE_URLS') {
           const { payload } = event.data;
           if (true) {
             logger.debug(`Caching URLs from the window`, payload.urlsToCache);
           }
-          const requestPromises = Promise.all(payload.urlsToCache.map((entry) => {
-            if (typeof entry === "string") {
-              entry = [entry];
-            }
-            const request = new Request(...entry);
-            return this.handleRequest({ request, event });
-          }));
+          const requestPromises = Promise.all(
+            payload.urlsToCache.map((entry) => {
+              if (typeof entry === 'string') {
+                entry = [entry];
+              }
+              const request = new Request(...entry);
+              return this.handleRequest({ request, event });
+            }),
+          );
           event.waitUntil(requestPromises);
           if (event.ports && event.ports[0]) {
             void requestPromises.then(() => event.ports[0].postMessage(true));
           }
         }
-      }));
+      });
     }
     /**
      * Apply the routing rules to a FetchEvent object to get a Response from an
@@ -1780,16 +1951,18 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
     handleRequest({ request, event }) {
       if (true) {
         finalAssertExports.isInstance(request, Request, {
-          moduleName: "workbox-routing",
-          className: "Router",
-          funcName: "handleRequest",
-          paramName: "options.request"
+          moduleName: 'workbox-routing',
+          className: 'Router',
+          funcName: 'handleRequest',
+          paramName: 'options.request',
         });
       }
       const url = new URL(request.url, location.href);
-      if (!url.protocol.startsWith("http")) {
+      if (!url.protocol.startsWith('http')) {
         if (true) {
-          logger.debug(`Workbox Router only supports URLs that start with 'http'.`);
+          logger.debug(
+            `Workbox Router only supports URLs that start with 'http'.`,
+          );
         }
         return;
       }
@@ -1798,7 +1971,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         event,
         request,
         sameOrigin,
-        url
+        url,
       });
       let handler = route && route.handler;
       const debugMessages = [];
@@ -1808,7 +1981,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
           if (params) {
             debugMessages.push([
               `Passing the following params to the route's handler:`,
-              params
+              params,
             ]);
           }
         }
@@ -1816,7 +1989,9 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
       const method = request.method;
       if (!handler && this._defaultHandlerMap.has(method)) {
         if (true) {
-          debugMessages.push(`Failed to find a matching route. Falling back to the default handler for ${method}.`);
+          debugMessages.push(
+            `Failed to find a matching route. Falling back to the default handler for ${method}.`,
+          );
         }
         handler = this._defaultHandlerMap.get(method);
       }
@@ -1827,7 +2002,9 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         return;
       }
       if (true) {
-        logger.groupCollapsed(`Router is responding to: ${getFriendlyURL(url)}`);
+        logger.groupCollapsed(
+          `Router is responding to: ${getFriendlyURL(url)}`,
+        );
         debugMessages.forEach((msg) => {
           if (Array.isArray(msg)) {
             logger.log(...msg);
@@ -1844,11 +2021,16 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         responsePromise = Promise.reject(err);
       }
       const catchHandler = route && route.catchHandler;
-      if (responsePromise instanceof Promise && (this._catchHandler || catchHandler)) {
+      if (
+        responsePromise instanceof Promise &&
+        (this._catchHandler || catchHandler)
+      ) {
         responsePromise = responsePromise.catch(async (err) => {
           if (catchHandler) {
             if (true) {
-              logger.groupCollapsed(`Error thrown when responding to:  ${getFriendlyURL(url)}. Falling back to route's Catch Handler.`);
+              logger.groupCollapsed(
+                `Error thrown when responding to:  ${getFriendlyURL(url)}. Falling back to route's Catch Handler.`,
+              );
               logger.error(`Error thrown by:`, route);
               logger.error(err);
               logger.groupEnd();
@@ -1863,7 +2045,9 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
           }
           if (this._catchHandler) {
             if (true) {
-              logger.groupCollapsed(`Error thrown when responding to:  ${getFriendlyURL(url)}. Falling back to global Catch Handler.`);
+              logger.groupCollapsed(
+                `Error thrown when responding to:  ${getFriendlyURL(url)}. Falling back to global Catch Handler.`,
+              );
               logger.error(`Error thrown by:`, route);
               logger.error(err);
               logger.groupEnd();
@@ -1898,16 +2082,21 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         if (matchResult) {
           if (true) {
             if (matchResult instanceof Promise) {
-              logger.warn(`While routing ${getFriendlyURL(url)}, an async matchCallback function was used. Please convert the following route to use a synchronous matchCallback function:`, route);
+              logger.warn(
+                `While routing ${getFriendlyURL(url)}, an async matchCallback function was used. Please convert the following route to use a synchronous matchCallback function:`,
+                route,
+              );
             }
           }
           params = matchResult;
           if (Array.isArray(params) && params.length === 0) {
             params = void 0;
-          } else if (matchResult.constructor === Object && // eslint-disable-line
-          Object.keys(matchResult).length === 0) {
+          } else if (
+            matchResult.constructor === Object && // eslint-disable-line
+            Object.keys(matchResult).length === 0
+          ) {
             params = void 0;
-          } else if (typeof matchResult === "boolean") {
+          } else if (typeof matchResult === 'boolean') {
             params = void 0;
           }
           return { route, params };
@@ -1949,35 +2138,35 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
      */
     registerRoute(route) {
       if (true) {
-        finalAssertExports.isType(route, "object", {
-          moduleName: "workbox-routing",
-          className: "Router",
-          funcName: "registerRoute",
-          paramName: "route"
+        finalAssertExports.isType(route, 'object', {
+          moduleName: 'workbox-routing',
+          className: 'Router',
+          funcName: 'registerRoute',
+          paramName: 'route',
         });
-        finalAssertExports.hasMethod(route, "match", {
-          moduleName: "workbox-routing",
-          className: "Router",
-          funcName: "registerRoute",
-          paramName: "route"
+        finalAssertExports.hasMethod(route, 'match', {
+          moduleName: 'workbox-routing',
+          className: 'Router',
+          funcName: 'registerRoute',
+          paramName: 'route',
         });
-        finalAssertExports.isType(route.handler, "object", {
-          moduleName: "workbox-routing",
-          className: "Router",
-          funcName: "registerRoute",
-          paramName: "route"
+        finalAssertExports.isType(route.handler, 'object', {
+          moduleName: 'workbox-routing',
+          className: 'Router',
+          funcName: 'registerRoute',
+          paramName: 'route',
         });
-        finalAssertExports.hasMethod(route.handler, "handle", {
-          moduleName: "workbox-routing",
-          className: "Router",
-          funcName: "registerRoute",
-          paramName: "route.handler"
+        finalAssertExports.hasMethod(route.handler, 'handle', {
+          moduleName: 'workbox-routing',
+          className: 'Router',
+          funcName: 'registerRoute',
+          paramName: 'route.handler',
         });
-        finalAssertExports.isType(route.method, "string", {
-          moduleName: "workbox-routing",
-          className: "Router",
-          funcName: "registerRoute",
-          paramName: "route.method"
+        finalAssertExports.isType(route.method, 'string', {
+          moduleName: 'workbox-routing',
+          className: 'Router',
+          funcName: 'registerRoute',
+          paramName: 'route.method',
         });
       }
       if (!this._routes.has(route.method)) {
@@ -1992,15 +2181,15 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
      */
     unregisterRoute(route) {
       if (!this._routes.has(route.method)) {
-        throw new WorkboxError("unregister-route-but-not-found-with-method", {
-          method: route.method
+        throw new WorkboxError('unregister-route-but-not-found-with-method', {
+          method: route.method,
         });
       }
       const routeIndex = this._routes.get(route.method).indexOf(route);
       if (routeIndex > -1) {
         this._routes.get(route.method).splice(routeIndex, 1);
       } else {
-        throw new WorkboxError("unregister-route-route-not-registered");
+        throw new WorkboxError('unregister-route-route-not-registered');
       }
     }
   };
@@ -2019,26 +2208,35 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
   // node_modules/workbox-routing/registerRoute.js
   function registerRoute(capture, handler, method) {
     let route;
-    if (typeof capture === "string") {
+    if (typeof capture === 'string') {
       const captureUrl = new URL(capture, location.href);
       if (true) {
-        if (!(capture.startsWith("/") || capture.startsWith("http"))) {
-          throw new WorkboxError("invalid-string", {
-            moduleName: "workbox-routing",
-            funcName: "registerRoute",
-            paramName: "capture"
+        if (!(capture.startsWith('/') || capture.startsWith('http'))) {
+          throw new WorkboxError('invalid-string', {
+            moduleName: 'workbox-routing',
+            funcName: 'registerRoute',
+            paramName: 'capture',
           });
         }
-        const valueToCheck = capture.startsWith("http") ? captureUrl.pathname : capture;
-        const wildcards = "[*:?+]";
+        const valueToCheck = capture.startsWith('http')
+          ? captureUrl.pathname
+          : capture;
+        const wildcards = '[*:?+]';
         if (new RegExp(`${wildcards}`).exec(valueToCheck)) {
-          logger.debug(`The '$capture' parameter contains an Express-style wildcard character (${wildcards}). Strings are now always interpreted as exact matches; use a RegExp for partial or wildcard matches.`);
+          logger.debug(
+            `The '$capture' parameter contains an Express-style wildcard character (${wildcards}). Strings are now always interpreted as exact matches; use a RegExp for partial or wildcard matches.`,
+          );
         }
       }
       const matchCallback = ({ url }) => {
         if (true) {
-          if (url.pathname === captureUrl.pathname && url.origin !== captureUrl.origin) {
-            logger.debug(`${capture} only partially matches the cross-origin URL ${url.toString()}. This route will only handle cross-origin requests if they match the entire URL.`);
+          if (
+            url.pathname === captureUrl.pathname &&
+            url.origin !== captureUrl.origin
+          ) {
+            logger.debug(
+              `${capture} only partially matches the cross-origin URL ${url.toString()}. This route will only handle cross-origin requests if they match the entire URL.`,
+            );
           }
         }
         return url.href === captureUrl.href;
@@ -2046,15 +2244,15 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
       route = new Route(matchCallback, handler, method);
     } else if (capture instanceof RegExp) {
       route = new RegExpRoute(capture, handler, method);
-    } else if (typeof capture === "function") {
+    } else if (typeof capture === 'function') {
       route = new Route(capture, handler, method);
     } else if (capture instanceof Route) {
       route = capture;
     } else {
-      throw new WorkboxError("unsupported-route-type", {
-        moduleName: "workbox-routing",
-        funcName: "registerRoute",
-        paramName: "capture"
+      throw new WorkboxError('unsupported-route-type', {
+        moduleName: 'workbox-routing',
+        funcName: 'registerRoute',
+        paramName: 'capture',
       });
     }
     const defaultRouter2 = getOrCreateDefaultRouter();
@@ -2063,9 +2261,14 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
   }
 
   // node_modules/workbox-precaching/utils/removeIgnoredSearchParams.js
-  function removeIgnoredSearchParams(urlObject, ignoreURLParametersMatching = []) {
+  function removeIgnoredSearchParams(
+    urlObject,
+    ignoreURLParametersMatching = [],
+  ) {
     for (const paramName of [...urlObject.searchParams.keys()]) {
-      if (ignoreURLParametersMatching.some((regExp) => regExp.test(paramName))) {
+      if (
+        ignoreURLParametersMatching.some((regExp) => regExp.test(paramName))
+      ) {
         urlObject.searchParams.delete(paramName);
       }
     }
@@ -2073,20 +2276,31 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
   }
 
   // node_modules/workbox-precaching/utils/generateURLVariations.js
-  function* generateURLVariations(url, { ignoreURLParametersMatching = [/^utm_/, /^fbclid$/], directoryIndex = "index.html", cleanURLs = true, urlManipulation } = {}) {
+  function* generateURLVariations(
+    url,
+    {
+      ignoreURLParametersMatching = [/^utm_/, /^fbclid$/],
+      directoryIndex = 'index.html',
+      cleanURLs = true,
+      urlManipulation,
+    } = {},
+  ) {
     const urlObject = new URL(url, location.href);
-    urlObject.hash = "";
+    urlObject.hash = '';
     yield urlObject.href;
-    const urlWithoutIgnoredParams = removeIgnoredSearchParams(urlObject, ignoreURLParametersMatching);
+    const urlWithoutIgnoredParams = removeIgnoredSearchParams(
+      urlObject,
+      ignoreURLParametersMatching,
+    );
     yield urlWithoutIgnoredParams.href;
-    if (directoryIndex && urlWithoutIgnoredParams.pathname.endsWith("/")) {
+    if (directoryIndex && urlWithoutIgnoredParams.pathname.endsWith('/')) {
       const directoryURL = new URL(urlWithoutIgnoredParams.href);
       directoryURL.pathname += directoryIndex;
       yield directoryURL.href;
     }
     if (cleanURLs) {
       const cleanURL = new URL(urlWithoutIgnoredParams.href);
-      cleanURL.pathname += ".html";
+      cleanURL.pathname += '.html';
       yield cleanURL.href;
     }
     if (urlManipulation) {
@@ -2121,12 +2335,16 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         for (const possibleURL of generateURLVariations(request.url, options)) {
           const cacheKey = urlsToCacheKeys.get(possibleURL);
           if (cacheKey) {
-            const integrity = precacheController2.getIntegrityForCacheKey(cacheKey);
+            const integrity =
+              precacheController2.getIntegrityForCacheKey(cacheKey);
             return { cacheKey, integrity };
           }
         }
         if (true) {
-          logger.debug(`Precaching did not find a match for ` + getFriendlyURL(request.url));
+          logger.debug(
+            `Precaching did not find a match for ` +
+              getFriendlyURL(request.url),
+          );
         }
         return;
       };
@@ -2170,46 +2388,53 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         return response;
       }
       return null;
-    }
+    },
   };
 
   // node_modules/workbox-strategies/utils/messages.js
   var messages2 = {
-    strategyStart: (strategyName, request) => `Using ${strategyName} to respond to '${getFriendlyURL(request.url)}'`,
+    strategyStart: (strategyName, request) =>
+      `Using ${strategyName} to respond to '${getFriendlyURL(request.url)}'`,
     printFinalResponse: (response) => {
       if (response) {
         logger.groupCollapsed(`View the final response here.`);
-        logger.log(response || "[No response returned]");
+        logger.log(response || '[No response returned]');
         logger.groupEnd();
       }
-    }
+    },
   };
 
   // node_modules/workbox-cacheable-response/_version.js
   try {
-    self["workbox:cacheable-response:7.2.0"] && _();
-  } catch (e) {
-  }
+    self['workbox:cacheable-response:7.2.0'] && _();
+  } catch (e) {}
 
   // node_modules/idb/build/wrap-idb-value.js
-  var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
+  var instanceOfAny = (object, constructors) =>
+    constructors.some((c) => object instanceof c);
   var idbProxyableTypes;
   var cursorAdvanceMethods;
   function getIdbProxyableTypes() {
-    return idbProxyableTypes || (idbProxyableTypes = [
-      IDBDatabase,
-      IDBObjectStore,
-      IDBIndex,
-      IDBCursor,
-      IDBTransaction
-    ]);
+    return (
+      idbProxyableTypes ||
+      (idbProxyableTypes = [
+        IDBDatabase,
+        IDBObjectStore,
+        IDBIndex,
+        IDBCursor,
+        IDBTransaction,
+      ])
+    );
   }
   function getCursorAdvanceMethods() {
-    return cursorAdvanceMethods || (cursorAdvanceMethods = [
-      IDBCursor.prototype.advance,
-      IDBCursor.prototype.continue,
-      IDBCursor.prototype.continuePrimaryKey
-    ]);
+    return (
+      cursorAdvanceMethods ||
+      (cursorAdvanceMethods = [
+        IDBCursor.prototype.advance,
+        IDBCursor.prototype.continue,
+        IDBCursor.prototype.continuePrimaryKey,
+      ])
+    );
   }
   var cursorRequestMap = /* @__PURE__ */ new WeakMap();
   var transactionDoneMap = /* @__PURE__ */ new WeakMap();
@@ -2219,8 +2444,8 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
   function promisifyRequest(request) {
     const promise = new Promise((resolve, reject) => {
       const unlisten = () => {
-        request.removeEventListener("success", success);
-        request.removeEventListener("error", error);
+        request.removeEventListener('success', success);
+        request.removeEventListener('error', error);
       };
       const success = () => {
         resolve(wrap(request.result));
@@ -2230,51 +2455,54 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         reject(request.error);
         unlisten();
       };
-      request.addEventListener("success", success);
-      request.addEventListener("error", error);
+      request.addEventListener('success', success);
+      request.addEventListener('error', error);
     });
-    promise.then((value) => {
-      if (value instanceof IDBCursor) {
-        cursorRequestMap.set(value, request);
-      }
-    }).catch(() => {
-    });
+    promise
+      .then((value) => {
+        if (value instanceof IDBCursor) {
+          cursorRequestMap.set(value, request);
+        }
+      })
+      .catch(() => {});
     reverseTransformCache.set(promise, request);
     return promise;
   }
   function cacheDonePromiseForTransaction(tx) {
-    if (transactionDoneMap.has(tx))
-      return;
+    if (transactionDoneMap.has(tx)) return;
     const done = new Promise((resolve, reject) => {
       const unlisten = () => {
-        tx.removeEventListener("complete", complete);
-        tx.removeEventListener("error", error);
-        tx.removeEventListener("abort", error);
+        tx.removeEventListener('complete', complete);
+        tx.removeEventListener('error', error);
+        tx.removeEventListener('abort', error);
       };
       const complete = () => {
         resolve();
         unlisten();
       };
       const error = () => {
-        reject(tx.error || new DOMException("AbortError", "AbortError"));
+        reject(tx.error || new DOMException('AbortError', 'AbortError'));
         unlisten();
       };
-      tx.addEventListener("complete", complete);
-      tx.addEventListener("error", error);
-      tx.addEventListener("abort", error);
+      tx.addEventListener('complete', complete);
+      tx.addEventListener('error', error);
+      tx.addEventListener('abort', error);
     });
     transactionDoneMap.set(tx, done);
   }
   var idbProxyTraps = {
     get(target, prop, receiver) {
       if (target instanceof IDBTransaction) {
-        if (prop === "done")
-          return transactionDoneMap.get(target);
-        if (prop === "objectStoreNames") {
-          return target.objectStoreNames || transactionStoreNamesMap.get(target);
+        if (prop === 'done') return transactionDoneMap.get(target);
+        if (prop === 'objectStoreNames') {
+          return (
+            target.objectStoreNames || transactionStoreNamesMap.get(target)
+          );
         }
-        if (prop === "store") {
-          return receiver.objectStoreNames[1] ? void 0 : receiver.objectStore(receiver.objectStoreNames[0]);
+        if (prop === 'store') {
+          return receiver.objectStoreNames[1]
+            ? void 0
+            : receiver.objectStore(receiver.objectStoreNames[0]);
         }
       }
       return wrap(target[prop]);
@@ -2284,47 +2512,52 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
       return true;
     },
     has(target, prop) {
-      if (target instanceof IDBTransaction && (prop === "done" || prop === "store")) {
+      if (
+        target instanceof IDBTransaction &&
+        (prop === 'done' || prop === 'store')
+      ) {
         return true;
       }
       return prop in target;
-    }
+    },
   };
   function replaceTraps(callback) {
     idbProxyTraps = callback(idbProxyTraps);
   }
   function wrapFunction(func) {
-    if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
-      return function(storeNames, ...args) {
+    if (
+      func === IDBDatabase.prototype.transaction &&
+      !('objectStoreNames' in IDBTransaction.prototype)
+    ) {
+      return function (storeNames, ...args) {
         const tx = func.call(unwrap(this), storeNames, ...args);
-        transactionStoreNamesMap.set(tx, storeNames.sort ? storeNames.sort() : [storeNames]);
+        transactionStoreNamesMap.set(
+          tx,
+          storeNames.sort ? storeNames.sort() : [storeNames],
+        );
         return wrap(tx);
       };
     }
     if (getCursorAdvanceMethods().includes(func)) {
-      return function(...args) {
+      return function (...args) {
         func.apply(unwrap(this), args);
         return wrap(cursorRequestMap.get(this));
       };
     }
-    return function(...args) {
+    return function (...args) {
       return wrap(func.apply(unwrap(this), args));
     };
   }
   function transformCachableValue(value) {
-    if (typeof value === "function")
-      return wrapFunction(value);
-    if (value instanceof IDBTransaction)
-      cacheDonePromiseForTransaction(value);
+    if (typeof value === 'function') return wrapFunction(value);
+    if (value instanceof IDBTransaction) cacheDonePromiseForTransaction(value);
     if (instanceOfAny(value, getIdbProxyableTypes()))
       return new Proxy(value, idbProxyTraps);
     return value;
   }
   function wrap(value) {
-    if (value instanceof IDBRequest)
-      return promisifyRequest(value);
-    if (transformCache.has(value))
-      return transformCache.get(value);
+    if (value instanceof IDBRequest) return promisifyRequest(value);
+    if (transformCache.has(value)) return transformCache.get(value);
     const newValue = transformCachableValue(value);
     if (newValue !== value) {
       transformCache.set(value, newValue);
@@ -2335,62 +2568,75 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
   var unwrap = (value) => reverseTransformCache.get(value);
 
   // node_modules/idb/build/index.js
-  var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
-  var writeMethods = ["put", "add", "delete", "clear"];
+  var readMethods = ['get', 'getKey', 'getAll', 'getAllKeys', 'count'];
+  var writeMethods = ['put', 'add', 'delete', 'clear'];
   var cachedMethods = /* @__PURE__ */ new Map();
   function getMethod(target, prop) {
-    if (!(target instanceof IDBDatabase && !(prop in target) && typeof prop === "string")) {
+    if (
+      !(
+        target instanceof IDBDatabase &&
+        !(prop in target) &&
+        typeof prop === 'string'
+      )
+    ) {
       return;
     }
-    if (cachedMethods.get(prop))
-      return cachedMethods.get(prop);
-    const targetFuncName = prop.replace(/FromIndex$/, "");
+    if (cachedMethods.get(prop)) return cachedMethods.get(prop);
+    const targetFuncName = prop.replace(/FromIndex$/, '');
     const useIndex = prop !== targetFuncName;
     const isWrite = writeMethods.includes(targetFuncName);
     if (
       // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
-      !(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) || !(isWrite || readMethods.includes(targetFuncName))
+      !(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) ||
+      !(isWrite || readMethods.includes(targetFuncName))
     ) {
       return;
     }
-    const method = async function(storeName, ...args) {
-      const tx = this.transaction(storeName, isWrite ? "readwrite" : "readonly");
+    const method = async function (storeName, ...args) {
+      const tx = this.transaction(
+        storeName,
+        isWrite ? 'readwrite' : 'readonly',
+      );
       let target2 = tx.store;
-      if (useIndex)
-        target2 = target2.index(args.shift());
-      return (await Promise.all([
-        target2[targetFuncName](...args),
-        isWrite && tx.done
-      ]))[0];
+      if (useIndex) target2 = target2.index(args.shift());
+      return (
+        await Promise.all([
+          target2[targetFuncName](...args),
+          isWrite && tx.done,
+        ])
+      )[0];
     };
     cachedMethods.set(prop, method);
     return method;
   }
   replaceTraps((oldTraps) => ({
     ...oldTraps,
-    get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
-    has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
+    get: (target, prop, receiver) =>
+      getMethod(target, prop) || oldTraps.get(target, prop, receiver),
+    has: (target, prop) =>
+      !!getMethod(target, prop) || oldTraps.has(target, prop),
   }));
 
   // node_modules/workbox-expiration/_version.js
   try {
-    self["workbox:expiration:7.2.0"] && _();
-  } catch (e) {
-  }
+    self['workbox:expiration:7.2.0'] && _();
+  } catch (e) {}
 
   // node_modules/workbox-recipes/_version.js
   try {
-    self["workbox:recipes:7.2.0"] && _();
-  } catch (e) {
-  }
+    self['workbox:recipes:7.2.0'] && _();
+  } catch (e) {}
 
   // node_modules/workbox-recipes/warmStrategyCache.js
   function warmStrategyCache(options) {
-    self.addEventListener("install", (event) => {
-      const done = options.urls.map((path) => options.strategy.handleAll({
-        event,
-        request: new Request(path)
-      })[1]);
+    self.addEventListener('install', (event) => {
+      const done = options.urls.map(
+        (path) =>
+          options.strategy.handleAll({
+            event,
+            request: new Request(path),
+          })[1],
+      );
       event.waitUntil(Promise.all(done));
     });
   }
@@ -2418,17 +2664,17 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
      */
     constructor(options = {}) {
       super(options);
-      if (!this.plugins.some((p) => "cacheWillUpdate" in p)) {
+      if (!this.plugins.some((p) => 'cacheWillUpdate' in p)) {
         this.plugins.unshift(cacheOkAndOpaquePlugin);
       }
       this._networkTimeoutSeconds = options.networkTimeoutSeconds || 0;
       if (true) {
         if (this._networkTimeoutSeconds) {
-          finalAssertExports.isType(this._networkTimeoutSeconds, "number", {
-            moduleName: "workbox-strategies",
+          finalAssertExports.isType(this._networkTimeoutSeconds, 'number', {
+            moduleName: 'workbox-strategies',
             className: this.constructor.name,
-            funcName: "constructor",
-            paramName: "networkTimeoutSeconds"
+            funcName: 'constructor',
+            paramName: 'networkTimeoutSeconds',
           });
         }
       }
@@ -2444,16 +2690,20 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
       const logs = [];
       if (true) {
         finalAssertExports.isInstance(request, Request, {
-          moduleName: "workbox-strategies",
+          moduleName: 'workbox-strategies',
           className: this.constructor.name,
-          funcName: "handle",
-          paramName: "makeRequest"
+          funcName: 'handle',
+          paramName: 'makeRequest',
         });
       }
       const promises = [];
       let timeoutId;
       if (this._networkTimeoutSeconds) {
-        const { id, promise } = this._getTimeoutPromise({ request, logs, handler });
+        const { id, promise } = this._getTimeoutPromise({
+          request,
+          logs,
+          handler,
+        });
         timeoutId = id;
         promises.push(promise);
       }
@@ -2461,19 +2711,25 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         timeoutId,
         request,
         logs,
-        handler
+        handler,
       });
       promises.push(networkPromise);
-      const response = await handler.waitUntil((async () => {
-        return await handler.waitUntil(Promise.race(promises)) || // If Promise.race() resolved with null, it might be due to a network
-        // timeout + a cache miss. If that were to happen, we'd rather wait until
-        // the networkPromise resolves instead of returning null.
-        // Note that it's fine to await an already-resolved promise, so we don't
-        // have to check to see if it's still "in flight".
-        await networkPromise;
-      })());
+      const response = await handler.waitUntil(
+        (async () => {
+          return (
+            (await handler.waitUntil(Promise.race(promises))) || // If Promise.race() resolved with null, it might be due to a network
+            // timeout + a cache miss. If that were to happen, we'd rather wait until
+            // the networkPromise resolves instead of returning null.
+            // Note that it's fine to await an already-resolved promise, so we don't
+            // have to check to see if it's still "in flight".
+            (await networkPromise)
+          );
+        })(),
+      );
       if (true) {
-        logger.groupCollapsed(messages2.strategyStart(this.constructor.name, request));
+        logger.groupCollapsed(
+          messages2.strategyStart(this.constructor.name, request),
+        );
         for (const log of logs) {
           logger.log(log);
         }
@@ -2481,7 +2737,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         logger.groupEnd();
       }
       if (!response) {
-        throw new WorkboxError("no-response", { url: request.url });
+        throw new WorkboxError('no-response', { url: request.url });
       }
       return response;
     }
@@ -2499,15 +2755,20 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
       const timeoutPromise = new Promise((resolve) => {
         const onNetworkTimeout = async () => {
           if (true) {
-            logs.push(`Timing out the network response at ${this._networkTimeoutSeconds} seconds.`);
+            logs.push(
+              `Timing out the network response at ${this._networkTimeoutSeconds} seconds.`,
+            );
           }
           resolve(await handler.cacheMatch(request));
         };
-        timeoutId = setTimeout(onNetworkTimeout, this._networkTimeoutSeconds * 1e3);
+        timeoutId = setTimeout(
+          onNetworkTimeout,
+          this._networkTimeoutSeconds * 1e3,
+        );
       });
       return {
         promise: timeoutPromise,
-        id: timeoutId
+        id: timeoutId,
       };
     }
     /**
@@ -2537,14 +2798,18 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         if (response) {
           logs.push(`Got response from network.`);
         } else {
-          logs.push(`Unable to get a response from the network. Will respond with a cached response.`);
+          logs.push(
+            `Unable to get a response from the network. Will respond with a cached response.`,
+          );
         }
       }
       if (error || !response) {
         response = await handler.cacheMatch(request);
         if (true) {
           if (response) {
-            logs.push(`Found a cached response in the '${this.cacheName}' cache.`);
+            logs.push(
+              `Found a cached response in the '${this.cacheName}' cache.`,
+            );
           } else {
             logs.push(`No response found in the '${this.cacheName}' cache.`);
           }
@@ -2587,25 +2852,25 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
     async _handle(request, handler) {
       if (true) {
         finalAssertExports.isInstance(request, Request, {
-          moduleName: "workbox-strategies",
+          moduleName: 'workbox-strategies',
           className: this.constructor.name,
-          funcName: "_handle",
-          paramName: "request"
+          funcName: '_handle',
+          paramName: 'request',
         });
       }
       let error = void 0;
       let response;
       try {
-        const promises = [
-          handler.fetch(request)
-        ];
+        const promises = [handler.fetch(request)];
         if (this._networkTimeoutSeconds) {
           const timeoutPromise = timeout(this._networkTimeoutSeconds * 1e3);
           promises.push(timeoutPromise);
         }
         response = await Promise.race(promises);
         if (!response) {
-          throw new Error(`Timed out the network response after ${this._networkTimeoutSeconds} seconds.`);
+          throw new Error(
+            `Timed out the network response after ${this._networkTimeoutSeconds} seconds.`,
+          );
         }
       } catch (err) {
         if (err instanceof Error) {
@@ -2613,7 +2878,9 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         }
       }
       if (true) {
-        logger.groupCollapsed(messages2.strategyStart(this.constructor.name, request));
+        logger.groupCollapsed(
+          messages2.strategyStart(this.constructor.name, request),
+        );
         if (response) {
           logger.log(`Got response from network.`);
         } else {
@@ -2623,7 +2890,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
         logger.groupEnd();
       }
       if (!response) {
-        throw new WorkboxError("no-response", { url: request.url, error });
+        throw new WorkboxError('no-response', { url: request.url, error });
       }
       return response;
     }
@@ -2631,72 +2898,84 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
 
   // views/assets/src-sw.ts
   clientsClaim();
-  precacheAndRoute([{"revision":"e4cb185b2e80d1080505613a40f431fc","url":"assets/lazztech_icon.png"},{"revision":"f0598a10b39d3b5a995d9ef85ede09c4","url":"assets/lazztech_icon.webp"},{"revision":"4028031daeaa9331194fe676f9a6881b","url":"bundle.css"},{"revision":"0609c12e87f501b8192828ad3f74c84f","url":"favicon.ico"},{"revision":"67f0c6927b568b4c2d310fbe10f10f70","url":"js/webPush.js"},{"revision":"dd284d5fd9d141740063d324844de705","url":"manifest.json"},{"revision":"6c54723b981c892a39e18e81e6346bdf","url":"robots.txt"}]);
+  precacheAndRoute([
+    {
+      revision: 'e4cb185b2e80d1080505613a40f431fc',
+      url: 'assets/lazztech_icon.png',
+    },
+    {
+      revision: 'f0598a10b39d3b5a995d9ef85ede09c4',
+      url: 'assets/lazztech_icon.webp',
+    },
+    { revision: 'efa167e59198c55c3417040e17b2a354', url: 'bundle.css' },
+    { revision: '0609c12e87f501b8192828ad3f74c84f', url: 'favicon.ico' },
+    { revision: '67f0c6927b568b4c2d310fbe10f10f70', url: 'js/webPush.js' },
+    { revision: 'dd284d5fd9d141740063d324844de705', url: 'manifest.json' },
+    { revision: '6c54723b981c892a39e18e81e6346bdf', url: 'robots.txt' },
+  ]);
   var CACHE_STRATEGY = new NetworkFirst();
-  var FALLBACK_HTML_URL = "/offline.html";
+  var FALLBACK_HTML_URL = '/offline.html';
   warmStrategyCache({
     urls: [
       FALLBACK_HTML_URL,
-      "/modules/htmx.min.js",
-      "/modules/_hyperscript.min.js",
-      "/modules/sse.js",
-      "/modules/pwa-install.bundle.js"
+      '/modules/htmx.min.js',
+      '/modules/_hyperscript.min.js',
+      '/modules/sse.js',
+      '/modules/pwa-install.bundle.js',
     ],
-    strategy: CACHE_STRATEGY
+    strategy: CACHE_STRATEGY,
   });
-  registerRoute(({ url }) => url.pathname === "/sse", new NetworkOnly());
+  registerRoute(({ url }) => url.pathname === '/sse', new NetworkOnly());
   registerRoute(
-    ({ url }) => url.pathname.startsWith("/file/"),
-    new NetworkOnly()
+    ({ url, request }) =>
+      url.pathname.startsWith('/file/') && request.destination !== 'document',
+    new NetworkOnly(),
   );
   registerRoute(() => true, CACHE_STRATEGY);
   setCatchHandler(async ({ event, request }) => {
     console.log(`setCatchHandler callback:`, event);
-    if (request.destination === "document") {
+    if (request.destination === 'document') {
       return CACHE_STRATEGY.handle({
         event,
-        request: new Request(FALLBACK_HTML_URL)
+        request: new Request(FALLBACK_HTML_URL),
       }).catch(() => Response.error());
     }
     return Response.error();
   });
-  addEventListener("install", (event) => {
-    console.log("Service worker installing - skipping waiting");
+  addEventListener('install', (event) => {
+    console.log('Service worker installing - skipping waiting');
     self.skipWaiting();
   });
-  self.addEventListener("push", function(event) {
+  self.addEventListener('push', function (event) {
     if (!event.data) {
-      console.log("This push event has no data.");
+      console.log('This push event has no data.');
       return;
     }
     if (!self.registration) {
-      console.log("Service worker does not control the page");
+      console.log('Service worker does not control the page');
       return;
     }
     if (!self.registration || !self.registration.pushManager) {
-      console.log("Push is not supported");
+      console.log('Push is not supported');
       return;
     }
     const eventText = event.data.text();
     let options = {};
-    let title = "";
-    if (eventText.substr(0, 1) === "{") {
+    let title = '';
+    if (eventText.substr(0, 1) === '{') {
       const eventData = JSON.parse(eventText);
       title = eventData.title;
       if (eventData.options) {
         options = Object.assign(options, eventData.options);
       }
       if (eventData.expires && Date.now() > eventData.expires) {
-        console.log("Push notification has expired");
+        console.log('Push notification has expired');
         return;
       }
     } else {
       title = eventText;
     }
-    const promiseChain = self.registration.showNotification(
-      title,
-      options
-    );
+    const promiseChain = self.registration.showNotification(title, options);
     event.waitUntil(promiseChain);
   });
 })();

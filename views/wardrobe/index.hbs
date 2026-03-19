@@ -11,7 +11,7 @@
   {{#if garments.length}}
   <div class="flex flex-wrap gap-4 justify-center">
     {{#each garments}}
-    <a href="/wardrobe/{{this.id}}" class="card bg-base-100 w-44 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+    <a href="/wardrobe/{{this.id}}" class="card bg-base-100 w-40 sm:w-44 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
       <figure class="aspect-square bg-base-200">
         {{#if this.photo}}
         <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}" class="object-cover w-full h-full" />

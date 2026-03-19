@@ -61,13 +61,13 @@ export class GarmentService {
     if (userId != null) {
       return this.garmentRepository.find(
         { owner: { id: userId }, ...searchConditions },
-        { populate: ['photo'] },
+        { populate: ['photo'], orderBy: { id: 'DESC' } },
       );
     }
     // AUTH_ENABLED=false: only return garments that belong to no user
     return this.garmentRepository.find(
       { owner: null, ...searchConditions },
-      { populate: ['photo'] },
+      { populate: ['photo'], orderBy: { id: 'DESC' } },
     );
   }
 

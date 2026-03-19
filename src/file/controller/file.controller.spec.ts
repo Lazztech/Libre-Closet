@@ -7,6 +7,7 @@ import { File } from '../../dal/entity/file.entity';
 import { User } from '../../dal/entity/user.entity';
 import { FileService } from '../file-service.abstract';
 import { FileController } from './file.controller';
+import { AuthService } from '../../auth/auth.service';
 
 describe('FileController', () => {
   let controller: FileController;
@@ -28,6 +29,10 @@ describe('FileController', () => {
           },
         },
         ConfigService,
+        {
+          provide: AuthService,
+          useValue: { verifyPwf: jest.fn() },
+        },
         {
           provide: getRepositoryToken(File),
           useValue: {
