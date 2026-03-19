@@ -139,7 +139,7 @@ export abstract class FileService
 
     const nobgName = this.nobgFileName(fileName);
 
-    const existing = await this.getStoredNobgVariant(nobgName);
+    const existing = await this.get(nobgName).catch(() => undefined);
     if (existing) {
       return existing;
     }
@@ -156,7 +156,7 @@ export abstract class FileService
 
     if (mode === 'eager') {
       await this.processBackground(nobgName, inputFn);
-      return (await this.getStoredNobgVariant(nobgName)) ?? null;
+      return (await this.get(nobgName).catch(() => undefined)) ?? null;
     }
 
     // lazy: kick off async, caller will 302
@@ -175,9 +175,6 @@ export abstract class FileService
   abstract deleteById(fileId: any, userId: any): Promise<any>;
   abstract get(fileName: string): Promise<Readable | undefined>;
   abstract getByShareableId(shareableId: string): Promise<Readable | undefined>;
-  protected abstract getStoredNobgVariant(
-    nobgFileName: string,
-  ): Promise<Readable | undefined>;
   protected abstract store(fileName: string, stream: Readable): Promise<void>;
 
   protected storeNobgVariant(

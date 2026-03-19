@@ -118,16 +118,6 @@ export class LocalFileService extends FileService {
     return this.fileRepository.getEntityManager().removeAndFlush(file);
   }
 
-  protected getStoredNobgVariant(
-    nobgFileName: string,
-  ): Promise<Readable | undefined> {
-    const fullPath = path.join(this.directory, nobgFileName);
-    const stream = fs.existsSync(fullPath)
-      ? fs.createReadStream(fullPath)
-      : undefined;
-    return Promise.resolve(stream);
-  }
-
   protected async store(fileName: string, stream: Readable): Promise<void> {
     await pipeline(
       stream,
