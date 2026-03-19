@@ -33,6 +33,7 @@ export abstract class FileService
   private bgPendingJobs = new Map<string, { reject: (err: unknown) => void }>();
   private removeBackgroundFn: (
     input: ArrayBuffer | Buffer | Blob,
+    config?: { output?: { format?: string; quality?: number } },
   ) => Promise<Blob>;
 
   constructor(readonly configService: ConfigService) {}
@@ -52,13 +53,17 @@ export abstract class FileService
           mergeMap(async ({ key, inputFn, resolve, reject }) => {
             try {
               const input = await inputFn();
+              const { format } = await sharp(input).metadata();
+              const mimeType = `image/${format}`;
               const inputBlob = new Blob([input.buffer as ArrayBuffer], {
-                type: 'image/webp',
+                type: mimeType,
               });
-              const blob = await this.removeBackgroundFn(inputBlob);
+              const blob = await this.removeBackgroundFn(inputBlob, {
+                output: { format: mimeType },
+              });
               const webpStream = Readable.fromWeb(
                 blob.stream() as Parameters<typeof Readable.fromWeb>[0],
-              ).pipe(sharp().webp());
+              );
               this.bgPendingJobs.delete(key);
               this.logger.log(
                 `Background removal job completed. Queue depth: ${this.bgPendingJobs.size}`,
