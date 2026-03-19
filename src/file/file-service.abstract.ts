@@ -17,7 +17,7 @@ import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 type BgJob = {
   id: symbol;
   inputFn: () => Promise<Buffer>;
-  resolve: (result: Buffer) => void;
+  resolve: (result: Readable) => void;
   reject: (err: unknown) => void;
 };
 
@@ -56,13 +56,14 @@ export abstract class FileService
                 type: 'image/webp',
               });
               const blob = await this.removeBackgroundFn(inputBlob);
-              const rawBuffer = Buffer.from(await blob.arrayBuffer());
-              const webpBuffer = await sharp(rawBuffer).webp().toBuffer();
+              const webpStream = Readable.fromWeb(
+                blob.stream() as Parameters<typeof Readable.fromWeb>[0],
+              ).pipe(sharp().webp());
               this.bgPendingJobs.delete(id);
               this.logger.log(
                 `Background removal job completed. Queue depth: ${this.bgPendingJobs.size}`,
               );
-              resolve(webpBuffer);
+              resolve(webpStream);
             } catch (err) {
               this.bgPendingJobs.delete(id);
               this.logger.log(
@@ -92,7 +93,9 @@ export abstract class FileService
     this.bgQueue$.complete();
   }
 
-  protected processBackground(inputFn: () => Promise<Buffer>): Promise<Buffer> {
+  protected processBackground(
+    inputFn: () => Promise<Buffer>,
+  ): Promise<Readable> {
     return new Promise((resolve, reject) => {
       const id = Symbol();
       this.bgPendingJobs.set(id, { reject });
@@ -126,7 +129,7 @@ export abstract class FileService
     }
 
     if (mode === 'eager') {
-      const outputBuffer = await this.processBackground(async () => {
+      const outputStream = await this.processBackground(async () => {
         const original = await this.get(fileName);
         if (!original) throw new Error(`File not found: ${fileName}`);
         const chunks: Buffer<ArrayBufferLike>[] = [];
@@ -135,7 +138,7 @@ export abstract class FileService
         }
         return Buffer.concat(chunks);
       });
-      await this.storeNobgVariant(nobgName, outputBuffer);
+      await this.storeNobgVariant(nobgName, outputStream);
       return (await this.getStoredNobgVariant(nobgName)) ?? null;
     }
 
@@ -149,7 +152,7 @@ export abstract class FileService
       }
       return Buffer.concat(chunks);
     })
-      .then((outputBuffer) => this.storeNobgVariant(nobgName, outputBuffer))
+      .then((outputStream) => this.storeNobgVariant(nobgName, outputStream))
       .catch((err) =>
         this.logger.error(
           `Failed to generate nobg variant for ${fileName}`,
@@ -171,10 +174,14 @@ export abstract class FileService
   protected abstract getStoredNobgVariant(
     nobgFileName: string,
   ): Promise<Readable | undefined>;
-  protected abstract storeNobgVariant(
+  protected abstract store(fileName: string, stream: Readable): Promise<void>;
+
+  protected storeNobgVariant(
     nobgFileName: string,
-    buffer: Buffer,
-  ): Promise<void>;
+    stream: Readable,
+  ): Promise<void> {
+    return this.store(nobgFileName, stream);
+  }
 
   async getWatermark() {
     return sharp(

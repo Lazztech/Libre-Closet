@@ -128,13 +128,10 @@ export class LocalFileService extends FileService {
     return Promise.resolve(stream);
   }
 
-  protected async storeNobgVariant(
-    nobgFileName: string,
-    buffer: Buffer,
-  ): Promise<void> {
-    await fs.promises.writeFile(
-      path.join(this.directory, nobgFileName),
-      buffer,
+  protected async store(fileName: string, stream: Readable): Promise<void> {
+    await pipeline(
+      stream,
+      fs.createWriteStream(path.join(this.directory, fileName)),
     );
   }
 

@@ -147,16 +147,13 @@ export class S3FileService extends FileService {
     }
   }
 
-  protected async storeNobgVariant(
-    nobgFileName: string,
-    buffer: Buffer,
-  ): Promise<void> {
+  protected async store(fileName: string, stream: Readable): Promise<void> {
     const upload = new Upload({
       client: this.s3,
       params: {
         Bucket: this.bucketName,
-        Key: nobgFileName,
-        Body: buffer,
+        Key: fileName,
+        Body: stream,
         ContentType: 'image/webp',
       },
     });
