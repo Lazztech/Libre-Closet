@@ -50,7 +50,7 @@ export abstract class FileService
 
       this.bgQueue$
         .pipe(
-          mergeMap(async ({ key, inputFn, resolve, reject }) => {
+          mergeMap(async ({ inputFn, resolve, reject }) => {
             try {
               const input = await inputFn();
               const { format } = await sharp(input).metadata();
@@ -64,16 +64,8 @@ export abstract class FileService
               const webpStream = Readable.fromWeb(
                 blob.stream() as Parameters<typeof Readable.fromWeb>[0],
               );
-              this.bgPendingJobs.delete(key);
-              this.logger.log(
-                `Background removal job completed. Queue depth: ${this.bgPendingJobs.size}`,
-              );
               resolve(webpStream);
             } catch (err) {
-              this.bgPendingJobs.delete(key);
-              this.logger.log(
-                `Background removal job failed. Queue depth: ${this.bgPendingJobs.size}`,
-              );
               reject(err);
             }
           }, concurrency),
@@ -98,23 +90,36 @@ export abstract class FileService
     this.bgQueue$.complete();
   }
 
-  protected processBackground(
+  protected async processBackground(
     key: string,
     inputFn: () => Promise<Buffer>,
-  ): Promise<Readable | null> {
+  ): Promise<void> {
     if (this.bgPendingJobs.has(key)) {
       this.logger.log(
         `Background removal already in progress for ${key}, skipping duplicate.`,
       );
-      return Promise.resolve(null);
+      return;
     }
-    return new Promise((resolve, reject) => {
-      this.bgPendingJobs.set(key, { reject });
+    try {
+      const outputStream = await new Promise<Readable>((resolve, reject) => {
+        this.bgPendingJobs.set(key, { reject });
+        this.logger.log(
+          `Background removal job queued. Queue depth: ${this.bgPendingJobs.size}`,
+        );
+        this.bgQueue$.next({ key, inputFn, resolve, reject });
+      });
+      await this.storeNobgVariant(key, outputStream);
+      this.bgPendingJobs.delete(key);
       this.logger.log(
-        `Background removal job queued. Queue depth: ${this.bgPendingJobs.size}`,
+        `Background removal job completed. Queue depth: ${this.bgPendingJobs.size}`,
       );
-      this.bgQueue$.next({ key, inputFn, resolve, reject });
-    });
+    } catch (err) {
+      this.bgPendingJobs.delete(key);
+      this.logger.log(
+        `Background removal job failed. Queue depth: ${this.bgPendingJobs.size}`,
+      );
+      throw err;
+    }
   }
 
   private nobgFileName(fileName: string): string {
@@ -139,23 +144,7 @@ export abstract class FileService
       return existing;
     }
 
-    if (mode === 'eager') {
-      const outputStream = await this.processBackground(nobgName, async () => {
-        const original = await this.get(fileName);
-        if (!original) throw new Error(`File not found: ${fileName}`);
-        const chunks: Buffer<ArrayBufferLike>[] = [];
-        for await (const chunk of original) {
-          chunks.push(Buffer.from(chunk as Uint8Array));
-        }
-        return Buffer.concat(chunks);
-      });
-      if (!outputStream) return null;
-      await this.storeNobgVariant(nobgName, outputStream);
-      return (await this.getStoredNobgVariant(nobgName)) ?? null;
-    }
-
-    // lazy: kick off async, caller will 302
-    this.processBackground(nobgName, async () => {
+    const inputFn = async () => {
       const original = await this.get(fileName);
       if (!original) throw new Error(`File not found: ${fileName}`);
       const chunks: Buffer<ArrayBufferLike>[] = [];
@@ -163,17 +152,17 @@ export abstract class FileService
         chunks.push(Buffer.from(chunk as Uint8Array));
       }
       return Buffer.concat(chunks);
-    })
-      .then((outputStream) => {
-        if (!outputStream) return;
-        return this.storeNobgVariant(nobgName, outputStream);
-      })
-      .catch((err) =>
-        this.logger.error(
-          `Failed to generate nobg variant for ${fileName}`,
-          err,
-        ),
-      );
+    };
+
+    if (mode === 'eager') {
+      await this.processBackground(nobgName, inputFn);
+      return (await this.getStoredNobgVariant(nobgName)) ?? null;
+    }
+
+    // lazy: kick off async, caller will 302
+    this.processBackground(nobgName, inputFn).catch((err) =>
+      this.logger.error(`Failed to generate nobg variant for ${fileName}`, err),
+    );
 
     return null;
   }
