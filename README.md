@@ -5,7 +5,7 @@
 A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, upload photos, build outfits, and access everything from your phone as an offline-ready PWA — all on your own server.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Version](https://img.shields.io/badge/version-0.1.8-green.svg)](https://github.com/lazztech/libre-closet/tags)
+[![Version](https://img.shields.io/badge/version-0.1.9-green.svg)](https://github.com/lazztech/libre-closet/tags)
 [![GHCR Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Flazztech%2Flibre-closet%2Flibre-closet.json&query=%24.downloads&label=GHCR%20pulls)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lazztech/libre-closet)](https://hub.docker.com/r/lazztech/libre-closet)
 
@@ -56,7 +56,6 @@ Open [http://localhost:3000](http://localhost:3000). No account required by defa
 docker run -d \
   -p 3000:3000 \
   -v librecloset_data:/app/data \
-  -e APP_NAME="Libre Closet" \
   ghcr.io/lazztech/libre-closet
 ```
 
