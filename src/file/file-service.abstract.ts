@@ -1,4 +1,9 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { type Response } from 'express';
 import { join } from 'path';
@@ -10,6 +15,7 @@ import { Observable, Subject, mergeMap } from 'rxjs';
 import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 
 type BgJob = {
+  id: symbol;
   inputFn: () => Promise<Buffer>;
   resolve: (result: Buffer) => void;
   reject: (err: unknown) => void;
@@ -17,13 +23,14 @@ type BgJob = {
 
 @Injectable()
 export abstract class FileService
-  implements FileServiceInterface, OnModuleInit
+  implements FileServiceInterface, OnModuleInit, OnModuleDestroy
 {
   public logger = new Logger(FileService.name);
 
   public watermark: Promise<Buffer<ArrayBufferLike>>;
 
   private bgQueue$ = new Subject<BgJob>();
+  private bgPendingJobs = new Map<symbol, { reject: (err: unknown) => void }>();
   private removeBackgroundFn: (
     input: ArrayBuffer | Buffer | Blob,
   ) => Promise<Blob>;
@@ -42,7 +49,7 @@ export abstract class FileService
 
       this.bgQueue$
         .pipe(
-          mergeMap(async ({ inputFn, resolve, reject }) => {
+          mergeMap(async ({ id, inputFn, resolve, reject }) => {
             try {
               const input = await inputFn();
               const inputBlob = new Blob([input.buffer as ArrayBuffer], {
@@ -51,8 +58,16 @@ export abstract class FileService
               const blob = await this.removeBackgroundFn(inputBlob);
               const rawBuffer = Buffer.from(await blob.arrayBuffer());
               const webpBuffer = await sharp(rawBuffer).webp().toBuffer();
+              this.bgPendingJobs.delete(id);
+              this.logger.log(
+                `Background removal job completed. Queue depth: ${this.bgPendingJobs.size}`,
+              );
               resolve(webpBuffer);
             } catch (err) {
+              this.bgPendingJobs.delete(id);
+              this.logger.log(
+                `Background removal job failed. Queue depth: ${this.bgPendingJobs.size}`,
+              );
               reject(err);
             }
           }, concurrency),
@@ -61,9 +76,30 @@ export abstract class FileService
     }
   }
 
+  onModuleDestroy() {
+    const pending = this.bgPendingJobs.size;
+    if (pending > 0) {
+      this.logger.warn(
+        `Module destroying with ${pending} background removal job(s) still pending. Rejecting all.`,
+      );
+      for (const { reject } of this.bgPendingJobs.values()) {
+        reject(new Error('Service shutting down'));
+      }
+      this.bgPendingJobs.clear();
+    } else {
+      this.logger.log('Module destroying. No pending background removal jobs.');
+    }
+    this.bgQueue$.complete();
+  }
+
   protected processBackground(inputFn: () => Promise<Buffer>): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      this.bgQueue$.next({ inputFn, resolve, reject });
+      const id = Symbol();
+      this.bgPendingJobs.set(id, { reject });
+      this.logger.log(
+        `Background removal job queued. Queue depth: ${this.bgPendingJobs.size}`,
+      );
+      this.bgQueue$.next({ id, inputFn, resolve, reject });
     });
   }
 
