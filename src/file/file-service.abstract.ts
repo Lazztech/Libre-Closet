@@ -10,7 +10,7 @@ import { Observable, Subject, mergeMap } from 'rxjs';
 import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 
 type BgJob = {
-  input: Buffer;
+  inputFn: () => Promise<Buffer>;
   resolve: (result: Buffer) => void;
   reject: (err: unknown) => void;
 };
@@ -42,8 +42,9 @@ export abstract class FileService
 
       this.bgQueue$
         .pipe(
-          mergeMap(async ({ input, resolve, reject }) => {
+          mergeMap(async ({ inputFn, resolve, reject }) => {
             try {
+              const input = await inputFn();
               const inputBlob = new Blob([input.buffer as ArrayBuffer], {
                 type: 'image/webp',
               });
@@ -60,9 +61,9 @@ export abstract class FileService
     }
   }
 
-  protected processBackground(input: Buffer): Promise<Buffer> {
+  protected processBackground(inputFn: () => Promise<Buffer>): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      this.bgQueue$.next({ input, resolve, reject });
+      this.bgQueue$.next({ inputFn, resolve, reject });
     });
   }
 
@@ -89,30 +90,30 @@ export abstract class FileService
     }
 
     if (mode === 'eager') {
-      const original = await this.get(fileName);
-      if (!original) return null;
-      const chunks: Buffer<ArrayBufferLike>[] = [];
-      for await (const chunk of original) {
-        chunks.push(Buffer.from(chunk as Uint8Array));
-      }
-      const inputBuffer = Buffer.concat(chunks);
-      const outputBuffer = await this.processBackground(inputBuffer);
+      const outputBuffer = await this.processBackground(async () => {
+        const original = await this.get(fileName);
+        if (!original) throw new Error(`File not found: ${fileName}`);
+        const chunks: Buffer<ArrayBufferLike>[] = [];
+        for await (const chunk of original) {
+          chunks.push(Buffer.from(chunk as Uint8Array));
+        }
+        return Buffer.concat(chunks);
+      });
       await this.storeNobgVariant(nobgName, outputBuffer);
       return (await this.getStoredNobgVariant(nobgName)) ?? null;
     }
 
     // lazy: kick off async, caller will 302
-    this.get(fileName)
-      .then(async (original) => {
-        if (!original) return;
-        const chunks: Buffer<ArrayBufferLike>[] = [];
-        for await (const chunk of original) {
-          chunks.push(Buffer.from(chunk as Uint8Array));
-        }
-        const inputBuffer = Buffer.concat(chunks);
-        const outputBuffer = await this.processBackground(inputBuffer);
-        await this.storeNobgVariant(nobgName, outputBuffer);
-      })
+    this.processBackground(async () => {
+      const original = await this.get(fileName);
+      if (!original) throw new Error(`File not found: ${fileName}`);
+      const chunks: Buffer<ArrayBufferLike>[] = [];
+      for await (const chunk of original) {
+        chunks.push(Buffer.from(chunk as Uint8Array));
+      }
+      return Buffer.concat(chunks);
+    })
+      .then((outputBuffer) => this.storeNobgVariant(nobgName, outputBuffer))
       .catch((err) =>
         this.logger.error(
           `Failed to generate nobg variant for ${fileName}`,
