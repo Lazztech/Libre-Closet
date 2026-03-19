@@ -15,7 +15,7 @@ import { Observable, Subject, mergeMap } from 'rxjs';
 import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 
 type BgJob = {
-  id: symbol;
+  key: string;
   inputFn: () => Promise<Buffer>;
   resolve: (result: Readable) => void;
   reject: (err: unknown) => void;
@@ -30,7 +30,7 @@ export abstract class FileService
   public watermark: Promise<Buffer<ArrayBufferLike>>;
 
   private bgQueue$ = new Subject<BgJob>();
-  private bgPendingJobs = new Map<symbol, { reject: (err: unknown) => void }>();
+  private bgPendingJobs = new Map<string, { reject: (err: unknown) => void }>();
   private removeBackgroundFn: (
     input: ArrayBuffer | Buffer | Blob,
   ) => Promise<Blob>;
@@ -49,7 +49,7 @@ export abstract class FileService
 
       this.bgQueue$
         .pipe(
-          mergeMap(async ({ id, inputFn, resolve, reject }) => {
+          mergeMap(async ({ key, inputFn, resolve, reject }) => {
             try {
               const input = await inputFn();
               const inputBlob = new Blob([input.buffer as ArrayBuffer], {
@@ -59,13 +59,13 @@ export abstract class FileService
               const webpStream = Readable.fromWeb(
                 blob.stream() as Parameters<typeof Readable.fromWeb>[0],
               ).pipe(sharp().webp());
-              this.bgPendingJobs.delete(id);
+              this.bgPendingJobs.delete(key);
               this.logger.log(
                 `Background removal job completed. Queue depth: ${this.bgPendingJobs.size}`,
               );
               resolve(webpStream);
             } catch (err) {
-              this.bgPendingJobs.delete(id);
+              this.bgPendingJobs.delete(key);
               this.logger.log(
                 `Background removal job failed. Queue depth: ${this.bgPendingJobs.size}`,
               );
@@ -94,15 +94,21 @@ export abstract class FileService
   }
 
   protected processBackground(
+    key: string,
     inputFn: () => Promise<Buffer>,
-  ): Promise<Readable> {
+  ): Promise<Readable | null> {
+    if (this.bgPendingJobs.has(key)) {
+      this.logger.log(
+        `Background removal already in progress for ${key}, skipping duplicate.`,
+      );
+      return Promise.resolve(null);
+    }
     return new Promise((resolve, reject) => {
-      const id = Symbol();
-      this.bgPendingJobs.set(id, { reject });
+      this.bgPendingJobs.set(key, { reject });
       this.logger.log(
         `Background removal job queued. Queue depth: ${this.bgPendingJobs.size}`,
       );
-      this.bgQueue$.next({ id, inputFn, resolve, reject });
+      this.bgQueue$.next({ key, inputFn, resolve, reject });
     });
   }
 
@@ -129,7 +135,7 @@ export abstract class FileService
     }
 
     if (mode === 'eager') {
-      const outputStream = await this.processBackground(async () => {
+      const outputStream = await this.processBackground(nobgName, async () => {
         const original = await this.get(fileName);
         if (!original) throw new Error(`File not found: ${fileName}`);
         const chunks: Buffer<ArrayBufferLike>[] = [];
@@ -138,12 +144,13 @@ export abstract class FileService
         }
         return Buffer.concat(chunks);
       });
+      if (!outputStream) return null;
       await this.storeNobgVariant(nobgName, outputStream);
       return (await this.getStoredNobgVariant(nobgName)) ?? null;
     }
 
     // lazy: kick off async, caller will 302
-    this.processBackground(async () => {
+    this.processBackground(nobgName, async () => {
       const original = await this.get(fileName);
       if (!original) throw new Error(`File not found: ${fileName}`);
       const chunks: Buffer<ArrayBufferLike>[] = [];
@@ -152,7 +159,10 @@ export abstract class FileService
       }
       return Buffer.concat(chunks);
     })
-      .then((outputStream) => this.storeNobgVariant(nobgName, outputStream))
+      .then((outputStream) => {
+        if (!outputStream) return;
+        return this.storeNobgVariant(nobgName, outputStream);
+      })
       .catch((err) =>
         this.logger.error(
           `Failed to generate nobg variant for ${fileName}`,
