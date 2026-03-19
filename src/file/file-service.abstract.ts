@@ -108,7 +108,7 @@ export abstract class FileService
         );
         this.bgQueue$.next({ key, inputFn, resolve, reject });
       });
-      await this.storeNobgVariant(key, outputStream);
+      await this.store(key, outputStream);
       this.bgPendingJobs.delete(key);
       this.logger.log(
         `Background removal job completed. Queue depth: ${this.bgPendingJobs.size}`,
@@ -176,13 +176,6 @@ export abstract class FileService
   abstract get(fileName: string): Promise<Readable | undefined>;
   abstract getByShareableId(shareableId: string): Promise<Readable | undefined>;
   protected abstract store(fileName: string, stream: Readable): Promise<void>;
-
-  protected storeNobgVariant(
-    nobgFileName: string,
-    stream: Readable,
-  ): Promise<void> {
-    return this.store(nobgFileName, stream);
-  }
 
   async getWatermark() {
     return sharp(
