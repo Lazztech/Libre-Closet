@@ -19,7 +19,7 @@ A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, uploa
 
 #### Released
 
-- `v0.1.9 - March 19, 2026:` Garment list now orders by most recently added, caching improvements, and improved security on password change
+- `v0.1.9 - March 19, 2026:` Garment list now orders by most recently added
 - `v0.1.8 - March 13, 2026:` Added French, German, and Spanish language support.
 - `v0.1.7 - March 7, 2026:` Added Italian language support.
 - `v0.1.6 - March 6, 2026:` Added garment search and filter.
