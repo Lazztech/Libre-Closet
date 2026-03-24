@@ -1,6 +1,6 @@
 {{>navbar}}
 
-<main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
+<main class="p-4 pt-20 pb-24 sm:max-w-lg sm:mx-auto">
   <div class="flex items-center gap-3 mb-6">
     <a
       href="{{#if outfit}}/outfits/{{outfit.id}}{{else}}/outfits{{/if}}"
@@ -71,35 +71,70 @@
             ‹
           </button>
 
-          <div class="flex-1 min-w-0">
+          <div class="flex-1 min-w-0 flex justify-center">
             <!-- none slot: index 0 -->
             <div
               class="outfit-slot flex items-center gap-2 {{#unless this.initialIsNoneVisible}}hidden{{/unless}}"
             >
               <div
-                class="size-14 rounded-box bg-base-200 flex items-center justify-center shrink-0"
+                class="size-20 rounded-box bg-base-200 flex items-center justify-center shrink-0"
               >
                 <span class="text-xs text-base-content/40">—</span>
               </div>
-              <span class="text-sm text-base-content/40 italic"
-                >{{t 'lang.NONE'}}</span
-              >
             </div>
 
             {{#each this.garments}}
             <div
               class="outfit-slot flex items-center gap-2 {{#unless this.isVisible}}hidden{{/unless}}"
               data-garment-id="{{this.id}}"
+              data-garment-name="{{this.name}}"
+              data-garment-photo="{{#if this.photo}}/file/nobg/{{this.photo.fileName}}{{/if}}"
+              data-garment-brand="{{this.brand}}"
+              data-garment-color="{{this.color}}"
+              data-garment-size="{{this.size}}"
+              data-garment-notes="{{this.notes}}"
             >
               {{#if this.photo}}
               <img
                 src="/file/nobg/{{this.photo.fileName}}"
                 alt="{{this.name}}"
-                class="size-14 rounded-box object-cover shrink-0"
+                class="size-20 rounded-box object-cover shrink-0 cursor-pointer"
+                _="on click
+                   js(me)
+                     const slot = me.closest('.outfit-slot')
+                     const d = slot.dataset
+                     document.getElementById('modal-garment-name').innerText = d.garmentName || ''
+                     const img = document.getElementById('modal-photo-img')
+                     const ph = document.getElementById('modal-photo-placeholder')
+                     if (d.garmentPhoto) { img.src = d.garmentPhoto; img.classList.remove('hidden'); ph.classList.add('hidden') }
+                     else { img.classList.add('hidden'); ph.classList.remove('hidden') }
+                     const setField = (id, val) => { const el = document.getElementById(id); if (val) { el.innerText = val; el.classList.remove('hidden') } else { el.classList.add('hidden') } }
+                     setField('modal-brand', d.garmentBrand)
+                     setField('modal-color', d.garmentColor)
+                     setField('modal-size', d.garmentSize)
+                     setField('modal-notes', d.garmentNotes)
+                     document.getElementById('modal-garment-link').href = '/wardrobe/' + d.garmentId
+                     document.getElementById('garment-modal').showModal()
+                   end"
               />
               {{else}}
               <div
-                class="size-14 rounded-box bg-base-200 flex items-center justify-center shrink-0"
+                class="size-20 rounded-box bg-base-200 flex items-center justify-center shrink-0 cursor-pointer"
+                _="on click
+                   js(me)
+                     const slot = me.closest('.outfit-slot')
+                     const d = slot.dataset
+                     document.getElementById('modal-garment-name').innerText = d.garmentName || ''
+                     document.getElementById('modal-photo-img').classList.add('hidden')
+                     document.getElementById('modal-photo-placeholder').classList.remove('hidden')
+                     const setField = (id, val) => { const el = document.getElementById(id); if (val) { el.innerText = val; el.classList.remove('hidden') } else { el.classList.add('hidden') } }
+                     setField('modal-brand', d.garmentBrand)
+                     setField('modal-color', d.garmentColor)
+                     setField('modal-size', d.garmentSize)
+                     setField('modal-notes', d.garmentNotes)
+                     document.getElementById('modal-garment-link').href = '/wardrobe/' + d.garmentId
+                     document.getElementById('garment-modal').showModal()
+                   end"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +152,6 @@
                 </svg>
               </div>
               {{/if}}
-              <span class="text-sm truncate">{{this.name}}</span>
             </div>
             {{/each}}
           </div>
@@ -167,7 +201,7 @@
         id="outfit-name"
         type="text"
         name="name"
-        class="input input-bordered"
+        class="input input-bordered w-full"
         value="{{#if outfit}}{{outfit.name}}{{/if}}"
         placeholder="e.g. Summer Date Night"
       />
@@ -180,7 +214,7 @@
       <textarea
         id="outfit-notes"
         name="notes"
-        class="textarea textarea-bordered"
+        class="textarea textarea-bordered w-full"
         rows="2"
         placeholder="Occasion, weather, etc."
       >
@@ -246,5 +280,31 @@
   </div>
   {{/if}}
 </main>
+
+<dialog id="garment-modal" class="modal">
+  <div class="modal-box p-0 overflow-hidden max-w-sm">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-10">✕</button>
+    </form>
+    <a id="modal-garment-link" href="#" class="block">
+      <div class="aspect-square w-full bg-base-200">
+        <img id="modal-photo-img" src="" alt="" class="w-full h-full object-cover hidden" />
+        <div id="modal-photo-placeholder" class="w-full h-full flex items-center justify-center text-base-content/30">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-20">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+          </svg>
+        </div>
+      </div>
+      <div class="p-4 flex flex-col gap-2">
+        <h3 id="modal-garment-name" class="font-bold text-lg"></h3>
+        <p id="modal-brand" class="text-sm text-base-content/60 capitalize hidden"></p>
+        <p id="modal-color" class="text-sm text-base-content/60 capitalize hidden"></p>
+        <p id="modal-size" class="text-sm text-base-content/60 hidden"></p>
+        <p id="modal-notes" class="text-sm mt-1 hidden"></p>
+      </div>
+    </a>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
 
 {{>dock}}
