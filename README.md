@@ -11,6 +11,23 @@ A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, uploa
 
 ---
 
+## News
+
+#### Unreleased
+
+- Background removal
+
+#### Released
+
+- **[0.1.9] | March 19, 2026:** Garment list now orders by most recently added, caching improvements, and improved security on password change
+- **[0.1.8] | March 13, 2026:** Added French, German, and Spanish language support.
+- **[0.1.7] | March 7, 2026:** Added Italian language support.
+- **[0.1.6] | March 6, 2026:** Added garment search and filter.
+
+For full details refer to the [CHANGELOG](CHANGELOG.md).
+
+---
+
 ## Quick start
 
 ```bash
@@ -196,9 +213,7 @@ If you need horizontal scaling later, switch to S3-compatible storage and add [L
 
 ## Contributing
 
-PRs and issues are welcome. This project is licensed under AGPL-3.0 — contributions must be compatible with that license.
-
----
+## PRs and issues are welcome. This project is licensed under AGPL-3.0 — contributions must be compatible with that license.
 
 ## License
 
