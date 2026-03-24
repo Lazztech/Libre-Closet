@@ -95,6 +95,11 @@
   "OFFLINE_TITLE": "Offline.",
   "OFFLINE_DESC": "Some pages may be cached for offline viewing.",
   "SHARED_BY": "Shared by",
+  "BUILD_OUTFIT": "Build Outfit",
+  "BUILD_OUTFIT_TITLE": "Build an Outfit",
+  "NONE": "None",
+  "START_OVER": "Start Over",
+  "NO_GARMENTS_FOR_BUILDER": "Add some garments to your wardrobe to start building outfits.",
   "validation": {
     "IS_EMAIL": "Please provide a valid email address",
     "MIN_PASSWORD_LENGTH": "Password must be at least 8 characters long",

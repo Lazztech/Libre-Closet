@@ -17,6 +17,7 @@ import {
 import { type Request, type Response } from 'express';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
+import { Garment } from '../dal/entity/garment.entity';
 import { OutfitService } from './outfit.service';
 import { GarmentService } from './garment.service';
 
@@ -47,7 +48,7 @@ export class OutfitController {
   @Render('outfits/form')
   async newForm(@Req() req: Request) {
     const garments = await this.garmentService.findAll(this.userId(req));
-    return { outfit: null, garments };
+    return { outfit: null, categoryRows: this.buildCategoryRows(garments, []) };
   }
 
   @Post()
@@ -89,7 +90,10 @@ export class OutfitController {
       this.garmentService.findAll(this.userId(req)),
     ]);
     const selectedGarmentIds = outfit.garments.getItems().map((g) => g.id);
-    return { outfit, garments, selectedGarmentIds };
+    return {
+      outfit,
+      categoryRows: this.buildCategoryRows(garments, selectedGarmentIds),
+    };
   }
 
   @Post(':id')
@@ -116,6 +120,43 @@ export class OutfitController {
       this.userId(req),
     );
     return res.redirect(`/outfits/${id}`);
+  }
+
+  private buildCategoryRows(garments: Garment[], selectedIds: number[]) {
+    const CATEGORY_ORDER = [
+      'underwear',
+      'lingerie',
+      'tops',
+      'bottoms',
+      'dresses',
+      'activewear',
+      'swimwear',
+      'outerwear',
+      'footwear',
+      'bags',
+      'accessories',
+      'other',
+    ];
+    const grouped: Partial<Record<string, Garment[]>> = {};
+    for (const g of garments) {
+      (grouped[g.category] ??= []).push(g);
+    }
+    return CATEGORY_ORDER.filter((cat) => grouped[cat]?.length).map((cat) => {
+      const items = grouped[cat]!;
+      const selectedIndex = items.findIndex((g) => selectedIds.includes(g.id));
+      return {
+        category: cat,
+        garments: items.map((g, i) => ({
+          id: g.id,
+          name: g.name,
+          photo: g.photo,
+          isVisible: selectedIndex === i,
+        })),
+        initialIndex: selectedIndex >= 0 ? selectedIndex + 1 : 0,
+        initialIsNoneVisible: selectedIndex === -1,
+        garmentCount: items.length,
+      };
+    });
   }
 
   @Delete(':id')
