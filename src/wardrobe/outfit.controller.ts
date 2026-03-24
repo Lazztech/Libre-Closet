@@ -154,6 +154,7 @@ export class OutfitController {
         })),
         initialIndex: selectedIndex >= 0 ? selectedIndex + 1 : 0,
         initialIsNoneVisible: selectedIndex === -1,
+        initialGarmentId: selectedIndex >= 0 ? items[selectedIndex].id : null,
         garmentCount: items.length,
       };
     });
