@@ -55,8 +55,12 @@ export abstract class FileService
               const inputBlob = new Blob([input.buffer as ArrayBuffer], {
                 type: mimeType,
               });
+              const model = this.configService.get<string>(
+                'BACKGROUND_REMOVAL_MODEL',
+                'small',
+              ) as 'small' | 'medium' | 'large';
               const blob = await this.removeBackgroundFn(inputBlob, {
-                model: 'small',
+                model,
                 output: {
                   format: mimeType as 'image/png' | 'image/jpeg' | 'image/webp',
                 },

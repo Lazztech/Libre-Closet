@@ -162,6 +162,9 @@ import { LoggerModule } from 'nestjs-pino';
           .integer()
           .min(1)
           .default(1),
+        BACKGROUND_REMOVAL_MODEL: Joi.string()
+          .valid('small', 'medium', 'large')
+          .default('small'),
       }),
       validationOptions: {
         abortEarly: true,

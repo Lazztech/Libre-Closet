@@ -142,6 +142,7 @@ npm run start:prod
 <!-- Commented out not yet released
 | `BACKGROUND_REMOVAL_ENABLED`       | Enable auto background removal on garment images | `true`         | `false`                                                                                   |
 | `BACKGROUND_REMOVAL_CONCURRENCY`   | Max concurrent ONNX bg-removal jobs              | `1`            | `1`                                                                                       |
+| `BACKGROUND_REMOVAL_MODEL`         | ONNX model size for background removal (`small`, `medium`, `large`) | `small` | `medium` |
  -->
 
 Generate JWT secret:
