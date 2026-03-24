@@ -216,7 +216,9 @@ If you need horizontal scaling later, switch to S3-compatible storage and add [L
 
 ## Contributing
 
-## PRs and issues are welcome. This project is licensed under AGPL-3.0 — contributions must be compatible with that license.
+PRs and issues are welcome. This project is licensed under AGPL-3.0 — contributions must be compatible with that license.
+
+---
 
 ## License
 
