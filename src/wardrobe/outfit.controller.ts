@@ -124,14 +124,14 @@ export class OutfitController {
 
   private buildCategoryRows(garments: Garment[], selectedIds: number[]) {
     const CATEGORY_ORDER = [
-      'underwear',
-      'lingerie',
+      'outerwear',
       'tops',
       'bottoms',
       'dresses',
       'activewear',
+      'underwear',
+      'lingerie',
       'swimwear',
-      'outerwear',
       'footwear',
       'bags',
       'accessories',
