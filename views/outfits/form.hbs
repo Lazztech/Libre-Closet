@@ -47,7 +47,7 @@
 
           <button
             type="button"
-            class="btn btn-ghost btn-sm btn-circle shrink-0"
+            class="btn btn-ghost btn-sm btn-circle shrink-0 btn-prev"
             _="on click
                set row to closest .outfit-row
                set idx to (row's @data-index as Int)
@@ -158,7 +158,7 @@
 
           <button
             type="button"
-            class="btn btn-ghost btn-sm btn-circle shrink-0"
+            class="btn btn-ghost btn-sm btn-circle shrink-0 btn-next"
             _="on click
                set row to closest .outfit-row
                set idx to (row's @data-index as Int)
@@ -282,5 +282,33 @@
 </main>
 
 {{>garmentModal}}
+
+<script>
+  document.querySelectorAll('.outfit-row').forEach(function (row) {
+    var startX = null;
+    var startY = null;
+    row.addEventListener('touchstart', function (e) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    row.addEventListener('touchmove', function (e) {
+      if (startX === null) return;
+      var dx = Math.abs(e.touches[0].clientX - startX);
+      var dy = Math.abs(e.touches[0].clientY - startY);
+      if (dx > dy) e.preventDefault();
+    }, { passive: false });
+    row.addEventListener('touchend', function (e) {
+      if (startX === null) return;
+      var dx = e.changedTouches[0].clientX - startX;
+      startX = null;
+      startY = null;
+      if (Math.abs(dx) < 30) return;
+      var btn = dx < 0
+        ? row.querySelector('.btn-next')
+        : row.querySelector('.btn-prev');
+      if (btn) btn.click();
+    }, { passive: true });
+  });
+</script>
 
 {{>dock}}
