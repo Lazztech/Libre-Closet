@@ -40,6 +40,30 @@
           class="outfit-row flex items-center gap-2 py-3 {{#unless @last}}border-b border-base-300{{/unless}}"
           data-index="{{this.initialIndex}}"
           data-count="{{this.garmentCount}}"
+          _="on touchstart
+               set my startX to event.touches[0].clientX
+               set my startY to event.touches[0].clientY
+             on touchmove
+               if my startX is not null
+                 set dx to Math.abs(event.touches[0].clientX - my startX)
+                 set dy to Math.abs(event.touches[0].clientY - my startY)
+                 if dx > dy
+                   js(event) event.preventDefault() end
+                 end
+               end
+             on touchend
+               if my startX is not null
+                 set dx to event.changedTouches[0].clientX - my startX
+                 set my startX to null
+                 set my startY to null
+                 if Math.abs(dx) >= 30
+                   if dx < 0
+                     send click to the first .btn-next in me
+                   else
+                     send click to the first .btn-prev in me
+                   end
+                 end
+               end"
         >
           <span class="w-24 text-sm font-medium shrink-0 capitalize"
             >{{this.category}}</span
@@ -282,33 +306,5 @@
 </main>
 
 {{>garmentModal}}
-
-<script>
-  document.querySelectorAll('.outfit-row').forEach(function (row) {
-    var startX = null;
-    var startY = null;
-    row.addEventListener('touchstart', function (e) {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-    }, { passive: true });
-    row.addEventListener('touchmove', function (e) {
-      if (startX === null) return;
-      var dx = Math.abs(e.touches[0].clientX - startX);
-      var dy = Math.abs(e.touches[0].clientY - startY);
-      if (dx > dy) e.preventDefault();
-    }, { passive: false });
-    row.addEventListener('touchend', function (e) {
-      if (startX === null) return;
-      var dx = e.changedTouches[0].clientX - startX;
-      startX = null;
-      startY = null;
-      if (Math.abs(dx) < 30) return;
-      var btn = dx < 0
-        ? row.querySelector('.btn-next')
-        : row.querySelector('.btn-prev');
-      if (btn) btn.click();
-    }, { passive: true });
-  });
-</script>
 
 {{>dock}}
