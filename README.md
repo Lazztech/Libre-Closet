@@ -45,9 +45,9 @@ Open [http://localhost:3000](http://localhost:3000). No account required by defa
 
 ## Screenshots
 
-| Wardrobe (Viewed as a standalone PWA)           | Garment detail                                  | Outfit builder                                  | Outfit detail                                  |
-| ----------------------------------------------- | ----------------------------------------------- | ----------------------------------------------- | ---------------------------------------------- |
-| ![Wardrobe grid](screenshots/Screenshot_1.webp) | ![Garment detail](screenshots/Screenshot_2.png) | ![Outfit builder](screenshots/Screenshot_3.png) | ![Outfit detail](screenshots/Screenshot_4.png) |
+| Wardrobe (Viewed as a standalone PWA)                  | Garment detail                                          | Outfit builder                                          | Outfit detail                                          |
+| ------------------------------------------------------ | ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------ |
+| ![Wardrobe grid](public/screenshots/Screenshot_1.webp) | ![Garment detail](public/screenshots/Screenshot_2.webp) | ![Outfit builder](public/screenshots/Screenshot_3.webp) | ![Outfit detail](public/screenshots/Screenshot_4.webp) |
 
 ---
 

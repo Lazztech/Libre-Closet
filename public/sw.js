@@ -2631,7 +2631,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`;
 
   // views/assets/src-sw.ts
   clientsClaim();
-  precacheAndRoute([{"revision":"e4cb185b2e80d1080505613a40f431fc","url":"assets/lazztech_icon.png"},{"revision":"f0598a10b39d3b5a995d9ef85ede09c4","url":"assets/lazztech_icon.webp"},{"revision":"ac942e0f71e3a643265d24a05cd782ff","url":"bundle.css"},{"revision":"0609c12e87f501b8192828ad3f74c84f","url":"favicon.ico"},{"revision":"67f0c6927b568b4c2d310fbe10f10f70","url":"js/webPush.js"},{"revision":"dd284d5fd9d141740063d324844de705","url":"manifest.json"},{"revision":"6c54723b981c892a39e18e81e6346bdf","url":"robots.txt"}]);
+  precacheAndRoute([{"revision":"e4cb185b2e80d1080505613a40f431fc","url":"assets/lazztech_icon.png"},{"revision":"f0598a10b39d3b5a995d9ef85ede09c4","url":"assets/lazztech_icon.webp"},{"revision":"293ec2d4fea850f4be5da93d6a4d5dce","url":"bundle.css"},{"revision":"0609c12e87f501b8192828ad3f74c84f","url":"favicon.ico"},{"revision":"67f0c6927b568b4c2d310fbe10f10f70","url":"js/webPush.js"},{"revision":"dd284d5fd9d141740063d324844de705","url":"manifest.json"},{"revision":"6c54723b981c892a39e18e81e6346bdf","url":"robots.txt"},{"revision":"e5676cc02295bc8d527efbb435ee28c3","url":"screenshots/Screenshot_1.webp"},{"revision":"3294f5905ec6260ae34f406a3258fdb8","url":"screenshots/Screenshot_2.webp"},{"revision":"89c4e271cb63ff6982387a95164950db","url":"screenshots/Screenshot_3.webp"},{"revision":"3fec5bcad5a019379f4ede2063c7e010","url":"screenshots/Screenshot_4.webp"}]);
   var CACHE_STRATEGY = new NetworkFirst();
   var FALLBACK_HTML_URL = "/offline.html";
   warmStrategyCache({
