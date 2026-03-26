@@ -126,6 +126,7 @@ export class GarmentService {
   async findAvailableFilters(userId?: number): Promise<{
     brands: string[];
     sizes: string[];
+    categories: string[];
   }> {
     const where = userId != null ? { owner: { id: userId } } : { owner: null };
     const garments = await this.garmentRepository.find(where);
@@ -145,7 +146,11 @@ export class GarmentService {
       return ai - bi;
     });
 
-    return { brands, sizes };
+    const categories = [
+      ...new Set(garments.map((g) => g.category).filter(Boolean)),
+    ].sort();
+
+    return { brands, sizes, categories };
   }
 
   async update(

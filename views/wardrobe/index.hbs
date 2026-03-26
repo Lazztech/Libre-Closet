@@ -99,11 +99,11 @@
     <div class="mb-5">
       <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.GARMENT_TYPE'}}</h4>
       <div class="flex flex-wrap gap-2">
-        {{#each categories}}
+        {{#each availableCategories}}
         <label class="cursor-pointer">
-          <input type="radio" name="modal-category" value="{{this}}" class="hidden peer"
-            {{#ifEquals this ../search.category}}checked{{/ifEquals}}>
-          <span class="badge badge-outline peer-checked:badge-primary capitalize select-none">{{this}}</span>
+          <input type="radio" name="modal-category" value="{{this.value}}" class="hidden peer"
+            {{#ifEquals this.value ../search.category}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-primary capitalize select-none">{{this.label}}</span>
         </label>
         {{/each}}
       </div>
