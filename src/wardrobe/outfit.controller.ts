@@ -15,9 +15,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { type Request, type Response } from 'express';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { Garment } from '../dal/entity/garment.entity';
+import { GarmentCategory } from './garment-category.enum';
 import { OutfitService } from './outfit.service';
 import { GarmentService } from './garment.service';
 
@@ -46,9 +48,12 @@ export class OutfitController {
 
   @Get('new')
   @Render('outfits/form')
-  async newForm(@Req() req: Request) {
+  async newForm(@Req() req: Request, @I18n() i18n: I18nContext) {
     const garments = await this.garmentService.findAll(this.userId(req));
-    return { outfit: null, categoryRows: this.buildCategoryRows(garments, []) };
+    return {
+      outfit: null,
+      categoryRows: this.buildCategoryRows(garments, [], i18n),
+    };
   }
 
   @Post()
@@ -84,7 +89,11 @@ export class OutfitController {
 
   @Get(':id/edit')
   @Render('outfits/form')
-  async editForm(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+  async editForm(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @I18n() i18n: I18nContext,
+  ) {
     const [outfit, garments] = await Promise.all([
       this.outfitService.findOne(id, this.userId(req)),
       this.garmentService.findAll(this.userId(req)),
@@ -92,7 +101,7 @@ export class OutfitController {
     const selectedGarmentIds = outfit.garments.getItems().map((g) => g.id);
     return {
       outfit,
-      categoryRows: this.buildCategoryRows(garments, selectedGarmentIds),
+      categoryRows: this.buildCategoryRows(garments, selectedGarmentIds, i18n),
     };
   }
 
@@ -122,30 +131,30 @@ export class OutfitController {
     return res.redirect(`/outfits/${id}`);
   }
 
-  private buildCategoryRows(garments: Garment[], selectedIds: number[]) {
-    const CATEGORY_ORDER = [
-      'outerwear',
-      'tops',
-      'bottoms',
-      'dresses',
-      'activewear',
-      'underwear',
-      'lingerie',
-      'swimwear',
-      'footwear',
-      'bags',
-      'accessories',
-      'other',
-    ];
+  private buildCategoryRows(
+    garments: Garment[],
+    selectedIds: number[],
+    i18n: I18nContext,
+  ) {
     const grouped: Partial<Record<string, Garment[]>> = {};
     for (const g of garments) {
       (grouped[g.category] ??= []).push(g);
     }
-    return CATEGORY_ORDER.filter((cat) => grouped[cat]?.length).map((cat) => {
+    const enumOrder = Object.values(GarmentCategory);
+    const orderedKeys = [
+      ...enumOrder.filter((c) => grouped[c]?.length),
+      ...Object.keys(grouped)
+        .filter(
+          (c) => !(enumOrder as string[]).includes(c) && grouped[c]?.length,
+        )
+        .sort(),
+    ];
+    return orderedKeys.map((cat) => {
       const items = grouped[cat]!;
       const selectedIndex = items.findIndex((g) => selectedIds.includes(g.id));
       return {
-        category: cat,
+        value: cat,
+        label: this.garmentService.resolveCategoryLabel(cat, i18n),
         garments: items.map((g, i) => ({
           id: g.id,
           name: g.name,
