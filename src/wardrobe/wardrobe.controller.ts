@@ -17,6 +17,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { type Request, type Response } from 'express';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { GarmentCategory } from './garment-category.enum';
@@ -46,14 +47,22 @@ export class WardrobeController {
 
   @Get()
   @Render('wardrobe/index')
-  async index(@Req() req: Request, @Query() query: SearchGarmentDto) {
+  async index(
+    @Req() req: Request,
+    @Query() query: SearchGarmentDto,
+    @I18n() i18n: I18nContext,
+  ) {
     const [garments, filters] = await Promise.all([
       this.garmentService.findAll(this.userId(req), query),
       this.garmentService.findAvailableFilters(this.userId(req)),
     ]);
+    const availableCategories = filters.categories.map((value) => ({
+      value,
+      label: this.garmentService.resolveCategoryLabel(value, i18n),
+    }));
     return {
       garments,
-      categories: Object.values(GarmentCategory),
+      availableCategories,
       colors: Object.values(GarmentColor),
       availableSizes: filters.sizes,
       search: query,
@@ -62,9 +71,20 @@ export class WardrobeController {
 
   @Get('new')
   @Render('wardrobe/form')
-  newForm() {
+  async newForm(@Req() req: Request, @I18n() i18n: I18nContext) {
+    const filters = await this.garmentService.findAvailableFilters(
+      this.userId(req),
+    );
+    const enumValues = Object.values(GarmentCategory) as string[];
+    const customCategories = filters.categories.filter(
+      (c) => !enumValues.includes(c),
+    );
+    const categories = [...enumValues, ...customCategories].map((value) => ({
+      value,
+      label: this.garmentService.resolveCategoryLabel(value, i18n),
+    }));
     return {
-      categories: Object.values(GarmentCategory),
+      categories,
       colors: Object.values(GarmentColor),
       garment: null,
     };
@@ -75,7 +95,7 @@ export class WardrobeController {
     @Body()
     body: {
       name: string;
-      category: GarmentCategory;
+      category: string;
       brand?: string;
       color?: GarmentColor;
       size?: string;
@@ -100,18 +120,43 @@ export class WardrobeController {
 
   @Get(':id')
   @Render('wardrobe/show')
-  async show(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+  async show(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @I18n() i18n: I18nContext,
+  ) {
     const garment = await this.garmentService.findOne(id, this.userId(req));
-    return { garment };
+    return {
+      garment,
+      categoryLabel: this.garmentService.resolveCategoryLabel(
+        garment.category,
+        i18n,
+      ),
+    };
   }
 
   @Get(':id/edit')
   @Render('wardrobe/form')
-  async editForm(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    const garment = await this.garmentService.findOne(id, this.userId(req));
+  async editForm(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @I18n() i18n: I18nContext,
+  ) {
+    const [garment, filters] = await Promise.all([
+      this.garmentService.findOne(id, this.userId(req)),
+      this.garmentService.findAvailableFilters(this.userId(req)),
+    ]);
+    const enumValues = Object.values(GarmentCategory) as string[];
+    const customCategories = filters.categories.filter(
+      (c) => !enumValues.includes(c),
+    );
+    const categories = [...enumValues, ...customCategories].map((value) => ({
+      value,
+      label: this.garmentService.resolveCategoryLabel(value, i18n),
+    }));
     return {
       garment,
-      categories: Object.values(GarmentCategory),
+      categories,
       colors: Object.values(GarmentColor),
     };
   }
@@ -122,7 +167,7 @@ export class WardrobeController {
     @Body()
     body: {
       name?: string;
-      category?: GarmentCategory;
+      category?: string;
       brand?: string;
       color?: GarmentColor;
       size?: string;

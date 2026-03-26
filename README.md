@@ -5,17 +5,27 @@
 A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, upload photos, build outfits, and access everything from your phone as an offline-ready PWA — all on your own server.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Version](https://img.shields.io/badge/version-0.1.9-green.svg)](https://github.com/lazztech/libre-closet/tags)
-[![GHCR Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Flazztech%2Flibre-closet%2Flibre-closet.json&query=%24.downloads&label=GHCR%20pulls)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet)
-[![Docker Pulls](https://img.shields.io/docker/pulls/lazztech/libre-closet)](https://hub.docker.com/r/lazztech/libre-closet)
+[![Version](https://img.shields.io/badge/Version-0.1.9-green.svg)](https://github.com/lazztech/libre-closet/tags)
+[![GHCR Pulls](https://img.shields.io/badge/GHCR%20pulls-1.6k-grey?logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet)
+[![Docker Pulls](https://img.shields.io/docker/pulls/lazztech/libre-closet?logo=docker&logoColor=959da5&labelColor=333a41&label=Docker%20Pulls)](https://hub.docker.com/r/lazztech/libre-closet)
+
+<!-- [![GHCR Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Flazztech%2Flibre-closet%2Flibre-closet.json&query=%24.downloads&label=GHCR%20pulls&logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet) -->
 
 ---
 
 ## News
 
-#### Unreleased
+#### Unreleased (Upcoming for v0.2.0)
+
+WIP
+
+- Clueless inspired outfit builder
+- Outfit Scheduling
+
+Merged
 
 - Background removal
+- Customizable categories
 
 #### Released
 
