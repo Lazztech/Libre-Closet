@@ -45,13 +45,6 @@ export class WardrobeController {
     return (req['user'] as Payload | undefined)?.userId;
   }
 
-  private resolveCategoryLabel(value: string, i18n: I18nContext): string {
-    if ((Object.values(GarmentCategory) as string[]).includes(value)) {
-      return i18n.t(`lang.CATEGORY_${value.toUpperCase()}`);
-    }
-    return value;
-  }
-
   @Get()
   @Render('wardrobe/index')
   async index(
@@ -65,7 +58,7 @@ export class WardrobeController {
     ]);
     const availableCategories = filters.categories.map((value) => ({
       value,
-      label: this.resolveCategoryLabel(value, i18n),
+      label: this.garmentService.resolveCategoryLabel(value, i18n),
     }));
     return {
       garments,
@@ -88,7 +81,7 @@ export class WardrobeController {
     );
     const categories = [...enumValues, ...customCategories].map((value) => ({
       value,
-      label: this.resolveCategoryLabel(value, i18n),
+      label: this.garmentService.resolveCategoryLabel(value, i18n),
     }));
     return {
       categories,
@@ -135,7 +128,10 @@ export class WardrobeController {
     const garment = await this.garmentService.findOne(id, this.userId(req));
     return {
       garment,
-      categoryLabel: this.resolveCategoryLabel(garment.category, i18n),
+      categoryLabel: this.garmentService.resolveCategoryLabel(
+        garment.category,
+        i18n,
+      ),
     };
   }
 
@@ -156,7 +152,7 @@ export class WardrobeController {
     );
     const categories = [...enumValues, ...customCategories].map((value) => ({
       value,
-      label: this.resolveCategoryLabel(value, i18n),
+      label: this.garmentService.resolveCategoryLabel(value, i18n),
     }));
     return {
       garment,
