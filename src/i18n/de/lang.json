@@ -111,6 +111,7 @@
     "BUILD_OUTFIT": "Outfit erstellen",
     "BUILD_OUTFIT_TITLE": "Ein Outfit erstellen",
     "START_OVER": "Neu beginnen",
+    "DRAG_TO_REORDER": "Zum Neuanordnen ziehen",
     "NO_GARMENTS_FOR_BUILDER": "Füge einige Kleidungsstücke zu deinem Kleiderschrank hinzu, um Outfits zu erstellen.",
     "validation": {
         "IS_EMAIL": "Bitte gib eine gültige E-Mail-Adresse ein",

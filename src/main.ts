@@ -86,6 +86,9 @@ async function bootstrap() {
       prefix: '/modules/',
     },
   );
+  app.useStaticAssets(join(__dirname, '..', 'node_modules/sortablejs'), {
+    prefix: '/modules/',
+  });
 
   app.useGlobalFilters(new ErrorViewFilter());
   await app.listen(process.env.PORT ?? 3000);

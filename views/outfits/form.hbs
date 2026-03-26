@@ -34,7 +34,7 @@
     class="flex flex-col gap-4"
   >
     <div class="card bg-base-100 shadow-sm mb-4">
-      <div class="card-body p-3">
+      <div id="outfit-rows-list" class="card-body p-3">
         {{#each categoryRows}}
         <div
           class="outfit-row flex items-center gap-2 py-3 {{#unless @last}}border-b border-base-300{{/unless}}"
@@ -65,6 +65,14 @@
                  end
                end"
         >
+          <span
+            class="drag-handle cursor-grab active:cursor-grabbing text-base-content/30 shrink-0 touch-none flex items-center justify-center p-3 -m-3"
+            title="{{t 'lang.DRAG_TO_REORDER'}}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+            </svg>
+          </span>
           <span class="w-24 text-sm font-medium shrink-0 capitalize"
             >{{this.label}}</span
           >
@@ -306,5 +314,9 @@
 </main>
 
 {{>garmentModal}}
+
+<script src="/modules/Sortable.min.js"></script>
+<script src="/js/outfitSort.js"></script>
+<script>initOutfitSort();</script>
 
 {{>dock}}
