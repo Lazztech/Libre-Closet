@@ -236,8 +236,41 @@
             class="row-input"
             {{#if this.initialGarmentId}}value="{{this.initialGarmentId}}"{{else}}disabled{{/if}}
           />
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm btn-circle shrink-0 text-error"
+            _="on click remove closest .outfit-row"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
         {{/each}}
+      </div>
+      <div class="flex gap-2 p-3 pt-0">
+        <input
+          type="text"
+          id="add-row-input"
+          list="add-row-suggestions"
+          class="input input-bordered input-sm flex-1"
+          placeholder="{{t 'lang.TYPE_OR_SELECT_CATEGORY'}}"
+          autocomplete="off"
+        />
+        <datalist id="add-row-suggestions">
+          {{#each allCategoryRows}}
+          <option value="{{this.value}}"></option>
+          {{/each}}
+        </datalist>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline"
+          _="on click
+             js(me)
+               addOutfitRow(document.getElementById('add-row-input').value)
+               document.getElementById('add-row-input').value = ''
+             end"
+        >{{t 'lang.ADD_ROW'}}</button>
       </div>
     </div>
 
@@ -332,5 +365,8 @@
 </main>
 
 {{>garmentModal}}
+
+<script type="application/json" id="outfit-category-data">{{{json allCategoryRows}}}</script>
+<script src="/js/outfitForm.js"></script>
 
 {{>dock}}

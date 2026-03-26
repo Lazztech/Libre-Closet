@@ -112,6 +112,7 @@
     "BUILD_OUTFIT_TITLE": "Crear un conjunto",
     "START_OVER": "Empezar de nuevo",
     "DRAG_TO_REORDER": "Arrastra para reordenar",
+    "ADD_ROW": "Añadir fila",
     "NO_GARMENTS_FOR_BUILDER": "Añade algunas prendas a tu armario para empezar a crear conjuntos.",
     "validation": {
         "IS_EMAIL": "Por favor, introduce una dirección de correo electrónico válida",

@@ -51,9 +51,11 @@ export class OutfitController {
   @Render('outfits/form')
   async newForm(@Req() req: Request, @I18n() i18n: I18nContext) {
     const garments = await this.garmentService.findAll(this.userId(req));
+    const categoryRows = this.buildCategoryRows(garments, [], i18n);
     return {
       outfit: null,
-      categoryRows: this.buildCategoryRows(garments, [], i18n),
+      categoryRows,
+      allCategoryRows: categoryRows,
     };
   }
 
@@ -104,6 +106,7 @@ export class OutfitController {
         i18n,
         outfit.slots,
       ),
+      allCategoryRows: this.buildCategoryRows(garments, [], i18n),
     };
   }
 

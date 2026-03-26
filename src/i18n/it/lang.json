@@ -112,6 +112,7 @@
   "BUILD_OUTFIT_TITLE": "Crea un Outfit",
   "START_OVER": "Ricomincia",
   "DRAG_TO_REORDER": "Trascina per riordinare",
+  "ADD_ROW": "Aggiungi riga",
   "NO_GARMENTS_FOR_BUILDER": "Aggiungi alcuni capi al tuo guardaroba per iniziare a creare outfit.",
   "validation": {
     "IS_EMAIL": "Si prega di fornire un indirizzo email valido",

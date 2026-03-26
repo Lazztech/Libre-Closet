@@ -112,6 +112,7 @@
   "BUILD_OUTFIT_TITLE": "Build an Outfit",
   "START_OVER": "Start Over",
   "DRAG_TO_REORDER": "Drag to reorder",
+  "ADD_ROW": "Add row",
   "NO_GARMENTS_FOR_BUILDER": "Add some garments to your wardrobe to start building outfits.",
   "validation": {
     "IS_EMAIL": "Please provide a valid email address",
