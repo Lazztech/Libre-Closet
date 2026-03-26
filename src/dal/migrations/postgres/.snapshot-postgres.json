@@ -244,6 +244,15 @@
           "length": 255,
           "mappedType": "string"
         },
+        "slots": {
+          "name": "slots",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "json"
+        },
         "owner_id": {
           "name": "owner_id",
           "type": "int",

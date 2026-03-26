@@ -7,19 +7,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Garment } from '../dal/entity/garment.entity';
-import { Outfit } from '../dal/entity/outfit.entity';
+import { Outfit, OutfitSlot } from '../dal/entity/outfit.entity';
 import { User } from '../dal/entity/user.entity';
 
 export interface CreateOutfitDto {
   name: string;
   notes?: string;
-  garmentIds?: number[];
+  slots?: OutfitSlot[];
 }
 
 export interface UpdateOutfitDto {
   name?: string;
   notes?: string;
-  garmentIds?: number[];
+  slots?: OutfitSlot[];
 }
 
 @Injectable()
@@ -77,11 +77,17 @@ export class OutfitService {
     const outfit = this.outfitRepository.create({
       name: dto.name,
       notes: dto.notes,
+      slots: dto.slots,
     });
 
-    if (dto.garmentIds?.length) {
+    const garmentIds =
+      dto.slots
+        ?.map((s) => s.garmentId)
+        .filter((id): id is number => id !== null) ?? [];
+
+    if (garmentIds.length) {
       const garments = await this.garmentRepository.find({
-        id: { $in: dto.garmentIds },
+        id: { $in: garmentIds },
       });
       outfit.garments.set(garments);
     }
@@ -105,11 +111,15 @@ export class OutfitService {
     wrap(outfit).assign({
       name: dto.name ?? outfit.name,
       notes: dto.notes ?? outfit.notes,
+      slots: dto.slots ?? outfit.slots,
     });
 
-    if (dto.garmentIds !== undefined) {
+    if (dto.slots !== undefined) {
+      const garmentIds = dto.slots
+        .map((s) => s.garmentId)
+        .filter((id): id is number => id !== null);
       const garments = await this.garmentRepository.find({
-        id: { $in: dto.garmentIds },
+        id: { $in: garmentIds },
       });
       outfit.garments.set(garments);
     }

@@ -247,6 +247,16 @@
           "length": null,
           "mappedType": "text"
         },
+        "slots": {
+          "name": "slots",
+          "type": "json",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": null,
+          "mappedType": "json"
+        },
         "owner_id": {
           "name": "owner_id",
           "type": "integer",

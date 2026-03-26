@@ -32,12 +32,28 @@
     method="POST"
     action="{{#if outfit}}/outfits/{{outfit.id}}{{else}}/outfits{{/if}}"
     class="flex flex-col gap-4"
+    _="on submit
+       halt the event
+       js(me)
+         const rows = me.querySelectorAll('.outfit-row')
+         const slots = Array.from(rows).map(row => {
+           const inp = row.querySelector('.row-input')
+           return {
+             category: row.dataset.category,
+             garmentId: (!inp.disabled && inp.value) ? Number(inp.value) : null
+           }
+         })
+         document.getElementById('slots-input').value = JSON.stringify(slots)
+         me.submit()
+       end"
   >
     <div class="card bg-base-100 shadow-sm mb-4">
-      <div id="outfit-rows-list" class="card-body p-3">
+      <div id="outfit-rows-list" class="card-body p-3"
+        _="init js(me) Sortable.create(me, { handle: '.drag-handle', animation: 150, ghostClass: 'opacity-40' }) end">
         {{#each categoryRows}}
         <div
           class="outfit-row flex items-center gap-2 py-3 {{#unless @last}}border-b border-base-300{{/unless}}"
+          data-category="{{this.value}}"
           data-index="{{this.initialIndex}}"
           data-count="{{this.garmentCount}}"
           _="on touchstart
@@ -225,6 +241,8 @@
       </div>
     </div>
 
+    <input type="hidden" name="slots" id="slots-input" />
+
     <div class="form-control">
       <label class="label"
         ><span class="label-text">{{t 'lang.NAME'}}</span></label
@@ -314,9 +332,5 @@
 </main>
 
 {{>garmentModal}}
-
-<script src="/modules/Sortable.min.js"></script>
-<script src="/js/outfitSort.js"></script>
-<script>initOutfitSort();</script>
 
 {{>dock}}
