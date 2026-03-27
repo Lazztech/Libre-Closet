@@ -19,6 +19,19 @@ and response bandwidth/latency. */
   z-index: 1000;
 }
 
+/* ── Schedule: outfit chip colors (outfit.id % 6) ─────────────────────── */
+.chip-0 { background-color: color-mix(in oklch, var(--color-primary)   20%, transparent); color: var(--color-primary);   }
+.chip-1 { background-color: color-mix(in oklch, var(--color-secondary) 20%, transparent); color: var(--color-secondary); }
+.chip-2 { background-color: color-mix(in oklch, var(--color-accent)    20%, transparent); color: var(--color-accent);    }
+.chip-3 { background-color: color-mix(in oklch, var(--color-info)      20%, transparent); color: var(--color-info);      }
+.chip-4 { background-color: color-mix(in oklch, var(--color-success)   20%, transparent); color: var(--color-success);   }
+.chip-5 { background-color: color-mix(in oklch, var(--color-warning)   20%, transparent); color: var(--color-warning);   }
+
+/* ── Schedule: mini calendar cell states ──────────────────────────────── */
+.cal-today    { background-color: var(--color-primary); color: var(--color-primary-content); font-weight: 700; }
+.cal-in-week  { color: var(--color-primary); background-color: color-mix(in oklch, var(--color-primary) 12%, transparent); font-weight: 600; }
+.cal-out-month { color: color-mix(in oklch, var(--color-base-content) 25%, transparent); }
+
 /* Prevent iOS from collapsing the viewport on scroll */
 body {
   min-height: 100vh;

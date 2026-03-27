@@ -1,0 +1,159 @@
+{{>navbar}}
+
+<main class="p-4 pt-20 pb-24">
+
+  {{!-- Responsive grid: 1 col → 2 col (400px+) → 4 col (lg) → 8 col horizontal (2xl) --}}
+  <div id="week-grid" class="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8 gap-3"
+    _="on touchstart set :sx to event.touches[0].clientX
+       on touchend
+         set dx to (event.changedTouches[0].clientX - :sx)
+         if dx > 60 go to url '/schedule?week={{prevWeekParam}}'
+         else if dx < -60 go to url '/schedule?week={{nextWeekParam}}'
+       end">
+
+    {{!-- Slot 1: Mini month calendar ──────────────────────────────────── --}}
+    <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
+
+      {{!-- Month header with prev/next navigation --}}
+      <div class="flex items-center justify-between px-3 py-2 bg-base-300 border-b border-base-300">
+        <a
+          href="/schedule?week={{prevMonthWeekParam}}&calMonth={{prevMonthParam}}"
+          class="btn btn-ghost btn-xs btn-square"
+          aria-label="Previous month"
+        >‹</a>
+        <p class="text-xs font-semibold uppercase tracking-wide text-base-content/50">
+          {{monthName}} {{year}}
+        </p>
+        <a
+          href="/schedule?week={{nextMonthWeekParam}}&calMonth={{nextMonthParam}}"
+          class="btn btn-ghost btn-xs btn-square"
+          aria-label="Next month"
+        >›</a>
+      </div>
+
+      <div class="p-3 flex-1">
+      <table class="w-full table-fixed text-[10px] select-none">
+        <thead>
+          <tr>
+            <th class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]">{{t 'lang.SCHEDULE_CAL_SUN_LETTER'}}</th>
+            <th class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]">{{t 'lang.SCHEDULE_CAL_MON_LETTER'}}</th>
+            <th class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]">{{t 'lang.SCHEDULE_CAL_TUE_LETTER'}}</th>
+            <th class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]">{{t 'lang.SCHEDULE_CAL_WED_LETTER'}}</th>
+            <th class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]">{{t 'lang.SCHEDULE_CAL_THU_LETTER'}}</th>
+            <th class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]">{{t 'lang.SCHEDULE_CAL_FRI_LETTER'}}</th>
+            <th class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]">{{t 'lang.SCHEDULE_CAL_SAT_LETTER'}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each calendarWeeks}}
+          <tr>
+            {{#each this.days}}
+            <td class="text-center p-0">
+              <a
+                href="/schedule?week={{../weekParam}}"
+                class="flex items-center justify-center size-5 mx-auto my-0.5 rounded-full text-[10px] {{this.calCellClass}}"
+              >{{this.dayNum}}</a>
+            </td>
+            {{/each}}
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    {{!-- Slots 2–8: Day columns (Sun → Sat) ─────────────────────────── --}}
+    {{#each days}}
+    <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
+
+      {{!-- Day header --}}
+      <div class="flex items-baseline gap-1.5 px-3 py-2 bg-base-300 border-b border-base-300">
+        <span class="text-xs font-semibold
+                     {{#if this.isToday}}text-primary{{else}}text-base-content/50{{/if}}">
+          {{this.dayName}}
+        </span>
+        <span class="text-base font-bold {{#if this.isToday}}text-primary{{/if}}">
+          {{this.dayNum}}
+        </span>
+      </div>
+
+      {{!-- Outfit chips --}}
+      <div class="flex flex-col gap-1 p-3 flex-1">
+      {{#each this.entries}}
+      <div class="flex items-center gap-1 mb-0.5">
+        {{!-- Worn toggle --}}
+        <form method="post" action="/schedule/{{this.id}}/worn" class="flex-1 min-w-0">
+          <input type="hidden" name="week" value="{{../dateParam}}" />
+          <button
+            type="submit"
+            class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border
+                   flex items-center justify-between gap-1 leading-tight
+                   {{#if this.wornAt}}bg-success/15 text-success border-success/30{{else}}bg-base-100 text-base-content/70 border-base-content/15{{/if}}"
+          >
+            {{!-- Left: garment thumbnails if available, else name/untitled fallback --}}
+            {{#if this.outfit.garmentPhotos.length}}
+            <span class="flex items-center gap-0.5 min-w-0 overflow-hidden">
+              {{#each this.outfit.garmentPhotos}}
+              <img src="/file/nobg/{{this}}" alt="" class="size-6 rounded object-cover shrink-0" />
+              {{/each}}
+              {{#if this.outfit.morePhotos}}<span class="shrink-0 text-base-content/40 leading-none">…</span>{{/if}}
+            </span>
+            {{else}}
+            <span class="truncate">{{#if this.outfit.name}}{{this.outfit.name}}{{else}}{{t 'lang.UNTITLED_OUTFIT'}}{{/if}}</span>
+            {{/if}}
+            {{#if this.wornAt}}
+            <span class="shrink-0 font-semibold">✓</span>
+            {{else}}
+            <span class="shrink-0 text-base-content/30 italic">{{t 'lang.SCHEDULE_MARK_WORN_PROMPT'}}</span>
+            {{/if}}
+          </button>
+        </form>
+        {{!-- Delete --}}
+        <button
+          class="text-base-content/25 hover:text-error shrink-0 text-base leading-none px-0.5"
+          hx-post="/schedule/{{this.id}}/delete"
+          hx-confirm="{{t 'lang.SCHEDULE_DELETE_CONFIRM'}}"
+          hx-vals='{"week": "{{../dateParam}}"}'
+          aria-label="{{t 'lang.DELETE'}}"
+        >×</button>
+      </div>
+      {{#if this.repeatWarnDays}}
+      <p class="text-xs text-warning mb-0.5">
+        {{t 'lang.SCHEDULE_WORN_RECENTLY' days=this.repeatWarnDays}}
+      </p>
+      {{/if}}
+      {{/each}}
+
+      {{!-- Plan outfit --}}
+      {{#if ../outfits.length}}
+      <details class="mt-auto pt-2">
+        <summary
+          class="text-xs text-base-content/30 hover:text-base-content/60 cursor-pointer select-none list-none"
+        >
+          + {{t 'lang.SCHEDULE_PLAN_OUTFIT'}}
+        </summary>
+        <form method="post" action="/schedule" class="mt-1.5 flex flex-col gap-1">
+          <input type="hidden" name="date" value="{{this.dateParam}}" />
+          <input type="hidden" name="week" value="{{../weekParam}}" />
+          <select name="outfitId" class="select select-bordered select-xs w-full" required>
+            <option value="" disabled selected>{{t 'lang.SELECT_AN_OUTFIT'}}</option>
+            {{#each ../outfits}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+          <button type="submit" class="btn btn-primary btn-xs w-full">
+            {{t 'lang.SAVE'}}
+          </button>
+        </form>
+      </details>
+      {{/if}}
+
+    </div>{{!-- /inner flex-col --}}
+    </div>{{!-- /card --}}
+    {{/each}}
+
+  </div>
+
+</main>
+
+{{>dock}}
