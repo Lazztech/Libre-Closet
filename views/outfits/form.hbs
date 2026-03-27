@@ -32,221 +32,14 @@
     method="POST"
     action="{{#if outfit}}/outfits/{{outfit.id}}{{else}}/outfits{{/if}}"
     class="flex flex-col gap-4"
-    _="on submit
-       halt the event
-       js(me)
-         const rows = me.querySelectorAll('.outfit-row')
-         const slots = Array.from(rows).map(row => {
-           const inp = row.querySelector('.row-input')
-           return {
-             category: row.dataset.category,
-             garmentId: (!inp.disabled && inp.value) ? Number(inp.value) : null
-           }
-         })
-         document.getElementById('slots-input').value = JSON.stringify(slots)
-         me.submit()
-       end"
   >
     <div class="card bg-base-100 shadow-sm mb-4">
-      <div id="outfit-rows-list" class="card-body p-3"
-        _="init js(me) Sortable.create(me, { handle: '.drag-handle', animation: 150, ghostClass: 'opacity-40' }) end">
-        {{#each categoryRows}}
-        <div
-          class="outfit-row flex items-center gap-2 py-3 {{#unless @last}}border-b border-base-300{{/unless}}"
-          data-category="{{this.value}}"
-          data-index="{{this.initialIndex}}"
-          data-count="{{this.garmentCount}}"
-          _="on touchstart
-               set my startX to event.touches[0].clientX
-               set my startY to event.touches[0].clientY
-             on touchmove
-               if my startX is not null
-                 set dx to Math.abs(event.touches[0].clientX - my startX)
-                 set dy to Math.abs(event.touches[0].clientY - my startY)
-                 if dx > dy
-                   js(event) event.preventDefault() end
-                 end
-               end
-             on touchend
-               if my startX is not null
-                 set dx to event.changedTouches[0].clientX - my startX
-                 set my startX to null
-                 set my startY to null
-                 if Math.abs(dx) >= 30
-                   if dx < 0
-                     send click to the first .btn-next in me
-                   else
-                     send click to the first .btn-prev in me
-                   end
-                 end
-               end"
-        >
-          <span
-            class="drag-handle cursor-grab active:cursor-grabbing text-base-content/30 shrink-0 touch-none flex items-center justify-center p-3 -m-3"
-            title="{{t 'lang.DRAG_TO_REORDER'}}"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
-            </svg>
-          </span>
-          <span class="w-24 text-sm font-medium shrink-0 capitalize"
-            >{{this.label}}</span
-          >
-
-          <button
-            type="button"
-            class="btn btn-ghost btn-sm btn-circle shrink-0 btn-prev"
-            _="on click
-               set row to closest .outfit-row
-               set idx to (row's @data-index as Int)
-               set total to (row's @data-count as Int)
-               set newIdx to idx - 1
-               if newIdx < 0 then set newIdx to total end
-               set row's @data-index to newIdx
-               set slots to row.querySelectorAll('.outfit-slot')
-               for slot in slots
-                 add .hidden to slot
-               end
-               remove .hidden from slots[newIdx]
-               set inp to row.querySelector('.row-input')
-               if newIdx > 0 then
-                 set inp's value to the @data-garment-id of slots[newIdx]
-                 remove @disabled from inp
-               else
-                 add @disabled to inp
-               end"
-          >
-            ‹
-          </button>
-
-          <div class="flex-1 min-w-0 flex justify-center">
-            <!-- none slot: index 0 -->
-            <div
-              class="outfit-slot flex items-center gap-2 {{#unless this.initialIsNoneVisible}}hidden{{/unless}}"
-            >
-              <div
-                class="size-20 rounded-box bg-base-200 flex items-center justify-center shrink-0"
-              >
-                <span class="text-xs text-base-content/40">—</span>
-              </div>
-            </div>
-
-            {{#each this.garments}}
-            <div
-              class="outfit-slot flex items-center gap-2 {{#unless this.isVisible}}hidden{{/unless}}"
-              data-garment-id="{{this.id}}"
-              data-garment-name="{{this.name}}"
-              data-garment-photo="{{#if this.photo}}/file/nobg/{{this.photo.fileName}}{{/if}}"
-              data-garment-brand="{{this.brand}}"
-              data-garment-color="{{this.color}}"
-              data-garment-size="{{this.size}}"
-              data-garment-notes="{{this.notes}}"
-            >
-              {{#if this.photo}}
-              <img
-                src="/file/nobg/{{this.photo.fileName}}"
-                alt="{{this.name}}"
-                class="size-20 rounded-box object-cover shrink-0 cursor-pointer"
-                _="on click
-                   js(me)
-                     const slot = me.closest('.outfit-slot')
-                     const d = slot.dataset
-                     document.getElementById('modal-garment-name').innerText = d.garmentName || ''
-                     const img = document.getElementById('modal-photo-img')
-                     const ph = document.getElementById('modal-photo-placeholder')
-                     if (d.garmentPhoto) { img.src = d.garmentPhoto; img.classList.remove('hidden'); ph.classList.add('hidden') }
-                     else { img.classList.add('hidden'); ph.classList.remove('hidden') }
-                     const setField = (id, val) => { const el = document.getElementById(id); if (val) { el.innerText = val; el.classList.remove('hidden') } else { el.classList.add('hidden') } }
-                     setField('modal-brand', d.garmentBrand)
-                     setField('modal-color', d.garmentColor)
-                     setField('modal-size', d.garmentSize)
-                     setField('modal-notes', d.garmentNotes)
-                     document.getElementById('modal-garment-link').href = '/wardrobe/' + d.garmentId
-                     document.getElementById('garment-modal').showModal()
-                   end"
-              />
-              {{else}}
-              <div
-                class="size-20 rounded-box bg-base-200 flex items-center justify-center shrink-0 cursor-pointer"
-                _="on click
-                   js(me)
-                     const slot = me.closest('.outfit-slot')
-                     const d = slot.dataset
-                     document.getElementById('modal-garment-name').innerText = d.garmentName || ''
-                     document.getElementById('modal-photo-img').classList.add('hidden')
-                     document.getElementById('modal-photo-placeholder').classList.remove('hidden')
-                     const setField = (id, val) => { const el = document.getElementById(id); if (val) { el.innerText = val; el.classList.remove('hidden') } else { el.classList.add('hidden') } }
-                     setField('modal-brand', d.garmentBrand)
-                     setField('modal-color', d.garmentColor)
-                     setField('modal-size', d.garmentSize)
-                     setField('modal-notes', d.garmentNotes)
-                     document.getElementById('modal-garment-link').href = '/wardrobe/' + d.garmentId
-                     document.getElementById('garment-modal').showModal()
-                   end"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6 text-base-content/30"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3"
-                  />
-                </svg>
-              </div>
-              {{/if}}
-            </div>
-            {{/each}}
-          </div>
-
-          <button
-            type="button"
-            class="btn btn-ghost btn-sm btn-circle shrink-0 btn-next"
-            _="on click
-               set row to closest .outfit-row
-               set idx to (row's @data-index as Int)
-               set total to (row's @data-count as Int)
-               set newIdx to idx + 1
-               if newIdx > total then set newIdx to 0 end
-               set row's @data-index to newIdx
-               set slots to row.querySelectorAll('.outfit-slot')
-               for slot in slots
-                 add .hidden to slot
-               end
-               remove .hidden from slots[newIdx]
-               set inp to row.querySelector('.row-input')
-               if newIdx > 0 then
-                 set inp's value to the @data-garment-id of slots[newIdx]
-                 remove @disabled from inp
-               else
-                 add @disabled to inp
-               end"
-          >
-            ›
-          </button>
-
-          <input
-            type="hidden"
-            name="garmentIds"
-            class="row-input"
-            {{#if this.initialGarmentId}}value="{{this.initialGarmentId}}"{{else}}disabled{{/if}}
-          />
-          <button
-            type="button"
-            class="btn btn-ghost btn-sm btn-circle shrink-0 text-error"
-            _="on click remove closest .outfit-row"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        {{/each}}
+      <div
+        id="outfit-rows-list"
+        class="card-body p-3 divide-y divide-base-300"
+        _="init js(me) Sortable.create(me, { handle: '.drag-handle', animation: 150, ghostClass: 'opacity-40' }) end"
+      >
+        {{#each categoryRows}}{{> outfit_row row=this}}{{/each}}
       </div>
       <div class="flex gap-2 p-3 pt-0">
         <input
@@ -266,22 +59,22 @@
           type="button"
           class="btn btn-sm btn-outline"
           _="on click
-             js(me)
-               addOutfitRow(document.getElementById('add-row-input').value)
-               document.getElementById('add-row-input').value = ''
+             set cat to the value of #add-row-input
+             if cat is not ''
+               js(cat) htmx.ajax('GET', '/outfits/row-fragment?category=' + encodeURIComponent(cat), {target: '#outfit-rows-list', swap: 'beforeend'}) end
+               set the value of #add-row-input to ''
              end"
-        >{{t 'lang.ADD_ROW'}}</button>
+        >
+          {{t 'lang.ADD_ROW'}}
+        </button>
       </div>
     </div>
-
-    <input type="hidden" name="slots" id="slots-input" />
 
     <div class="form-control">
       <label class="label"
         ><span class="label-text">{{t 'lang.NAME'}}</span></label
       >
       <input
-        id="outfit-name"
         type="text"
         name="name"
         class="input input-bordered w-full"
@@ -295,7 +88,6 @@
         ><span class="label-text">{{t 'lang.NOTES'}}</span></label
       >
       <textarea
-        id="outfit-notes"
         name="notes"
         class="textarea textarea-bordered w-full"
         rows="2"
@@ -310,25 +102,7 @@
         {{t 'lang.SAVE'}}
       </button>
       {{#unless outfit}}
-      <button
-        type="button"
-        class="btn btn-ghost"
-        _="on click
-           for row in <.outfit-row/>
-             set row's @data-index to 0
-             set slots to row.querySelectorAll('.outfit-slot')
-             for slot in slots
-               add .hidden to slot
-             end
-             remove .hidden from slots[0]
-             set inp to row.querySelector('.row-input')
-             add @disabled to inp
-           end
-           set #outfit-name's value to ''
-           set #outfit-notes's value to ''"
-      >
-        {{t 'lang.START_OVER'}}
-      </button>
+      <a href="/outfits/new" class="btn btn-ghost">{{t 'lang.START_OVER'}}</a>
       {{/unless}}
       <a
         href="{{#if outfit}}/outfits/{{outfit.id}}{{else}}/outfits{{/if}}"
@@ -363,10 +137,5 @@
   </div>
   {{/if}}
 </main>
-
-{{>garmentModal}}
-
-<script type="application/json" id="outfit-category-data">{{{json allCategoryRows}}}</script>
-<script src="/js/outfitForm.js"></script>
 
 {{>dock}}

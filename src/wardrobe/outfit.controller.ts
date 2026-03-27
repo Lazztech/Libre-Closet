@@ -9,6 +9,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Render,
   Req,
   Res,
@@ -65,18 +66,36 @@ export class OutfitController {
     body: {
       name: string;
       notes?: string;
-      slots?: string;
+      category?: string | string[];
+      garmentId?: string | string[];
     },
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const slots = body.slots ? (JSON.parse(body.slots) as OutfitSlot[]) : [];
+    const slots = this.parseSlotsFromBody(body.category, body.garmentId);
 
     const outfit = await this.outfitService.create(
       { name: body.name, notes: body.notes, slots },
       this.userId(req),
     );
     return res.redirect(`/outfits/${outfit.id}`);
+  }
+
+  @Get('row-fragment')
+  async rowFragment(
+    @Query('category') category: string,
+    @Query('index') indexStr: string,
+    @Req() req: Request,
+    @Res() res: Response,
+    @I18n() i18n: I18nContext,
+  ) {
+    if (!category?.trim()) return res.status(400).send();
+    const garments = await this.garmentService.findAll(this.userId(req));
+    const items = garments.filter((g) => g.category === category);
+    const count = items.length;
+    const idx = Math.min(Math.max(parseInt(indexStr) || 0, 0), count);
+    const row = this.buildRow(category, items, idx, i18n);
+    return res.render('partials/outfit_row', { layout: false, row });
   }
 
   @Get(':id')
@@ -117,14 +136,13 @@ export class OutfitController {
     body: {
       name?: string;
       notes?: string;
-      slots?: string;
+      category?: string | string[];
+      garmentId?: string | string[];
     },
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const slots = body.slots
-      ? (JSON.parse(body.slots) as OutfitSlot[])
-      : undefined;
+    const slots = this.parseSlotsFromBody(body.category, body.garmentId);
 
     await this.outfitService.update(
       id,
@@ -145,38 +163,28 @@ export class OutfitController {
       (grouped[g.category] ??= []).push(g);
     }
 
+    const toRow = (
+      category: string,
+      items: Garment[],
+      selectedId: number | null,
+    ) => {
+      const selectedIdx =
+        selectedId != null ? items.findIndex((g) => g.id === selectedId) : -1;
+      const idx = selectedIdx >= 0 ? selectedIdx + 1 : 0;
+      return this.buildRow(category, items, idx, i18n);
+    };
+
     // Slot-based path: preserves saved order and duplicate categories
     if (slots?.length) {
       return slots
         .filter((slot) => grouped[slot.category]?.length)
         .map((slot) => {
           const items = grouped[slot.category]!;
-          const selectedIndex =
-            slot.garmentId !== null
-              ? items.findIndex((g) => g.id === slot.garmentId)
-              : -1;
-          return {
-            value: slot.category,
-            label: this.garmentService.resolveCategoryLabel(
-              slot.category,
-              i18n,
-            ),
-            garments: items.map((g, i) => ({
-              id: g.id,
-              name: g.name,
-              photo: g.photo,
-              brand: g.brand ?? null,
-              color: g.color ?? null,
-              size: g.size ?? null,
-              notes: g.notes ?? null,
-              isVisible: selectedIndex === i,
-            })),
-            initialIndex: selectedIndex >= 0 ? selectedIndex + 1 : 0,
-            initialIsNoneVisible: selectedIndex === -1,
-            initialGarmentId:
-              selectedIndex >= 0 ? items[selectedIndex].id : null,
-            garmentCount: items.length,
-          };
+          const selected =
+            slot.garmentId != null
+              ? (items.find((g) => g.id === slot.garmentId) ?? null)
+              : null;
+          return toRow(slot.category, items, selected?.id ?? null);
         });
     }
 
@@ -192,26 +200,55 @@ export class OutfitController {
     ];
     return orderedKeys.map((cat) => {
       const items = grouped[cat]!;
-      const selectedIndex = items.findIndex((g) => selectedIds.includes(g.id));
-      return {
-        value: cat,
-        label: this.garmentService.resolveCategoryLabel(cat, i18n),
-        garments: items.map((g, i) => ({
-          id: g.id,
-          name: g.name,
-          photo: g.photo,
-          brand: g.brand ?? null,
-          color: g.color ?? null,
-          size: g.size ?? null,
-          notes: g.notes ?? null,
-          isVisible: selectedIndex === i,
-        })),
-        initialIndex: selectedIndex >= 0 ? selectedIndex + 1 : 0,
-        initialIsNoneVisible: selectedIndex === -1,
-        initialGarmentId: selectedIndex >= 0 ? items[selectedIndex].id : null,
-        garmentCount: items.length,
-      };
+      const selected = items.find((g) => selectedIds.includes(g.id)) ?? null;
+      return toRow(cat, items, selected?.id ?? null);
     });
+  }
+
+  private parseSlotsFromBody(
+    category: string | string[] | undefined,
+    garmentId: string | string[] | undefined,
+  ): OutfitSlot[] {
+    const cats = Array.isArray(category)
+      ? category
+      : category
+        ? [category]
+        : [];
+    const ids = Array.isArray(garmentId)
+      ? garmentId
+      : garmentId
+        ? [garmentId]
+        : [];
+    return cats.map((cat, i) => ({
+      category: cat,
+      garmentId: ids[i] ? Number(ids[i]) : null,
+    }));
+  }
+
+  private buildRow(
+    category: string,
+    items: Garment[],
+    idx: number,
+    i18n: I18nContext,
+  ) {
+    const count = items.length;
+    const sel = idx > 0 ? (items[idx - 1] ?? null) : null;
+    return {
+      value: category,
+      label: this.garmentService.resolveCategoryLabel(category, i18n),
+      garmentCount: count,
+      currentIndex: idx,
+      prevIndex: idx === 0 ? count : idx - 1,
+      nextIndex: idx === count ? 0 : idx + 1,
+      currentGarment: sel
+        ? {
+            id: sel.id,
+            name: sel.name,
+            photo: sel.photo ? `/file/nobg/${sel.photo.fileName}` : null,
+          }
+        : null,
+      garmentId: sel?.id ?? null,
+    };
   }
 
   @Delete(':id')
