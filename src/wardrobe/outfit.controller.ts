@@ -19,9 +19,6 @@ import { type Request, type Response } from 'express';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
-import { Garment } from '../dal/entity/garment.entity';
-import { OutfitSlot } from '../dal/entity/outfit.entity';
-import { GarmentCategory } from './garment-category.enum';
 import { OutfitService } from './outfit.service';
 import { GarmentService } from './garment.service';
 
@@ -52,7 +49,11 @@ export class OutfitController {
   @Render('outfits/form')
   async newForm(@Req() req: Request, @I18n() i18n: I18nContext) {
     const garments = await this.garmentService.findAll(this.userId(req));
-    const categoryRows = this.buildCategoryRows(garments, [], i18n);
+    const categoryRows = this.outfitService.buildCategoryRows(
+      garments,
+      [],
+      i18n,
+    );
     return {
       outfit: null,
       categoryRows,
@@ -72,7 +73,10 @@ export class OutfitController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const slots = this.parseSlotsFromBody(body.category, body.garmentId);
+    const slots = this.outfitService.parseSlotsFromBody(
+      body.category,
+      body.garmentId,
+    );
 
     const outfit = await this.outfitService.create(
       { name: body.name, notes: body.notes, slots },
@@ -94,7 +98,7 @@ export class OutfitController {
     const items = garments.filter((g) => g.category === category);
     const count = items.length;
     const idx = Math.min(Math.max(parseInt(indexStr) || 0, 0), count);
-    const row = this.buildRow(category, items, idx, i18n);
+    const row = this.outfitService.buildRow(category, items, idx, i18n);
     return res.render('partials/outfit_row', { layout: false, row });
   }
 
@@ -119,13 +123,13 @@ export class OutfitController {
     const selectedGarmentIds = outfit.garments.getItems().map((g) => g.id);
     return {
       outfit,
-      categoryRows: this.buildCategoryRows(
+      categoryRows: this.outfitService.buildCategoryRows(
         garments,
         selectedGarmentIds,
         i18n,
         outfit.slots,
       ),
-      allCategoryRows: this.buildCategoryRows(garments, [], i18n),
+      allCategoryRows: this.outfitService.buildCategoryRows(garments, [], i18n),
     };
   }
 
@@ -142,7 +146,10 @@ export class OutfitController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const slots = this.parseSlotsFromBody(body.category, body.garmentId);
+    const slots = this.outfitService.parseSlotsFromBody(
+      body.category,
+      body.garmentId,
+    );
 
     await this.outfitService.update(
       id,
@@ -150,105 +157,6 @@ export class OutfitController {
       this.userId(req),
     );
     return res.redirect(`/outfits/${id}`);
-  }
-
-  private buildCategoryRows(
-    garments: Garment[],
-    selectedIds: number[],
-    i18n: I18nContext,
-    slots?: OutfitSlot[],
-  ) {
-    const grouped: Partial<Record<string, Garment[]>> = {};
-    for (const g of garments) {
-      (grouped[g.category] ??= []).push(g);
-    }
-
-    const toRow = (
-      category: string,
-      items: Garment[],
-      selectedId: number | null,
-    ) => {
-      const selectedIdx =
-        selectedId != null ? items.findIndex((g) => g.id === selectedId) : -1;
-      const idx = selectedIdx >= 0 ? selectedIdx + 1 : 0;
-      return this.buildRow(category, items, idx, i18n);
-    };
-
-    // Slot-based path: preserves saved order and duplicate categories
-    if (slots?.length) {
-      return slots
-        .filter((slot) => grouped[slot.category]?.length)
-        .map((slot) => {
-          const items = grouped[slot.category]!;
-          const selected =
-            slot.garmentId != null
-              ? (items.find((g) => g.id === slot.garmentId) ?? null)
-              : null;
-          return toRow(slot.category, items, selected?.id ?? null);
-        });
-    }
-
-    // Fallback: enum order, one row per category with garments
-    const enumOrder = Object.values(GarmentCategory);
-    const orderedKeys = [
-      ...enumOrder.filter((c) => grouped[c]?.length),
-      ...Object.keys(grouped)
-        .filter(
-          (c) => !(enumOrder as string[]).includes(c) && grouped[c]?.length,
-        )
-        .sort(),
-    ];
-    return orderedKeys.map((cat) => {
-      const items = grouped[cat]!;
-      const selected = items.find((g) => selectedIds.includes(g.id)) ?? null;
-      return toRow(cat, items, selected?.id ?? null);
-    });
-  }
-
-  private parseSlotsFromBody(
-    category: string | string[] | undefined,
-    garmentId: string | string[] | undefined,
-  ): OutfitSlot[] {
-    const cats = Array.isArray(category)
-      ? category
-      : category
-        ? [category]
-        : [];
-    const ids = Array.isArray(garmentId)
-      ? garmentId
-      : garmentId
-        ? [garmentId]
-        : [];
-    return cats.map((cat, i) => ({
-      category: cat,
-      garmentId: ids[i] ? Number(ids[i]) : null,
-    }));
-  }
-
-  private buildRow(
-    category: string,
-    items: Garment[],
-    idx: number,
-    i18n: I18nContext,
-  ) {
-    const count = items.length;
-    const sel = idx > 0 ? (items[idx - 1] ?? null) : null;
-    return {
-      value: category,
-      label: this.garmentService.resolveCategoryLabel(category, i18n),
-      garmentCount: count,
-      currentIndex: idx,
-      prevIndex: idx === 0 ? count : idx - 1,
-      nextIndex: idx === count ? 0 : idx + 1,
-      currentGarment: sel
-        ? {
-            id: sel.id,
-            name: sel.name,
-            photo: sel.photo ? `/file/nobg/${sel.photo.fileName}` : null,
-          }
-        : null,
-      garmentId: sel?.id ?? null,
-    };
   }
 
   @Delete(':id')
