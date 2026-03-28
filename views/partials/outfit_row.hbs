@@ -75,42 +75,19 @@
     data-garment-color="{{#if row.currentGarment.color}}{{row.currentGarment.color}}{{/if}}"
     data-garment-size="{{#if row.currentGarment.size}}{{row.currentGarment.size}}{{/if}}"
     data-garment-notes="{{#if row.currentGarment.notes}}{{row.currentGarment.notes}}{{/if}}"
-    _="on click
-         set #modal-garment-link's @href to my @data-garment-href
-         set #modal-garment-name's textContent to my @data-garment-name
-         if my @data-garment-photo is not ''
-           set #modal-photo-img's @src to my @data-garment-photo
-           remove .hidden from #modal-photo-img
-           add .hidden to #modal-photo-placeholder
-         else
-           add .hidden to #modal-photo-img
-           remove .hidden from #modal-photo-placeholder
-         end
-         if my @data-garment-brand is not ''
-           set #modal-brand's textContent to my @data-garment-brand
-           remove .hidden from #modal-brand
-         else
-           add .hidden to #modal-brand
-         end
-         if my @data-garment-color is not ''
-           set #modal-color's textContent to my @data-garment-color
-           remove .hidden from #modal-color
-         else
-           add .hidden to #modal-color
-         end
-         if my @data-garment-size is not ''
-           set #modal-size's textContent to my @data-garment-size
-           remove .hidden from #modal-size
-         else
-           add .hidden to #modal-size
-         end
-         if my @data-garment-notes is not ''
-           set #modal-notes's textContent to my @data-garment-notes
-           remove .hidden from #modal-notes
-         else
-           add .hidden to #modal-notes
-         end
-         call #garment-modal.showModal()"
+    _="on click js(me)
+         const d = me.dataset;
+         document.getElementById('modal-garment-link').href = d.garmentHref;
+         document.getElementById('modal-garment-name').textContent = d.garmentName;
+         const img = document.getElementById('modal-photo-img');
+         const ph = document.getElementById('modal-photo-placeholder');
+         img.src = d.garmentPhoto || '';
+         img.classList.toggle('hidden', !d.garmentPhoto);
+         ph.classList.toggle('hidden', !!d.garmentPhoto);
+         [['modal-brand', d.garmentBrand], ['modal-color', d.garmentColor], ['modal-size', d.garmentSize], ['modal-notes', d.garmentNotes]]
+           .forEach(([id, val]) => { const el = document.getElementById(id); el.textContent = val || ''; el.classList.toggle('hidden', !val); });
+         document.getElementById('garment-modal').showModal();
+       end"
   >
     <img
       class="outfit-photo size-14 rounded-box object-cover{{#unless row.currentGarment.photo}} hidden{{/unless}}"
