@@ -37,45 +37,138 @@
     class="drag-handle cursor-grab active:cursor-grabbing text-base-content/30 shrink-0 touch-none flex items-center justify-center p-3 -m-3"
     title="{{t 'lang.DRAG_TO_REORDER'}}"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
+      />
     </svg>
   </span>
-  <span class="w-20 text-sm font-medium shrink-0 capitalize">{{row.label}}</span>
+  <span class="w-20 text-sm font-medium shrink-0 capitalize"
+    >{{row.label}}</span
+  >
   <button
     type="button"
     class="btn btn-ghost btn-sm btn-circle shrink-0"
     hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.prevIndex}}"
     hx-target="closest .outfit-row"
     hx-swap="outerHTML"
-  >&#8249;</button>
-  <div class="flex-1 flex flex-col items-center gap-1 min-w-0 overflow-hidden">
+  >
+    &#8249;
+  </button>
+  {{#if row.currentGarment}}
+  <button
+    type="button"
+    class="flex-1 flex flex-col items-center gap-1 min-w-0 overflow-hidden"
+    data-garment-href="/wardrobe/{{row.currentGarment.id}}"
+    data-garment-name="{{row.currentGarment.name}}"
+    data-garment-photo="{{#if row.currentGarment.photo}}{{row.currentGarment.photo}}{{/if}}"
+    data-garment-brand="{{#if row.currentGarment.brand}}{{row.currentGarment.brand}}{{/if}}"
+    data-garment-color="{{#if row.currentGarment.color}}{{row.currentGarment.color}}{{/if}}"
+    data-garment-size="{{#if row.currentGarment.size}}{{row.currentGarment.size}}{{/if}}"
+    data-garment-notes="{{#if row.currentGarment.notes}}{{row.currentGarment.notes}}{{/if}}"
+    _="on click
+         set #modal-garment-link's @href to my @data-garment-href
+         set #modal-garment-name's textContent to my @data-garment-name
+         if my @data-garment-photo is not ''
+           set #modal-photo-img's @src to my @data-garment-photo
+           remove .hidden from #modal-photo-img
+           add .hidden to #modal-photo-placeholder
+         else
+           add .hidden to #modal-photo-img
+           remove .hidden from #modal-photo-placeholder
+         end
+         if my @data-garment-brand is not ''
+           set #modal-brand's textContent to my @data-garment-brand
+           remove .hidden from #modal-brand
+         else
+           add .hidden to #modal-brand
+         end
+         if my @data-garment-color is not ''
+           set #modal-color's textContent to my @data-garment-color
+           remove .hidden from #modal-color
+         else
+           add .hidden to #modal-color
+         end
+         if my @data-garment-size is not ''
+           set #modal-size's textContent to my @data-garment-size
+           remove .hidden from #modal-size
+         else
+           add .hidden to #modal-size
+         end
+         if my @data-garment-notes is not ''
+           set #modal-notes's textContent to my @data-garment-notes
+           remove .hidden from #modal-notes
+         else
+           add .hidden to #modal-notes
+         end
+         call #garment-modal.showModal()"
+  >
     <img
       class="outfit-photo size-14 rounded-box object-cover{{#unless row.currentGarment.photo}} hidden{{/unless}}"
       src="{{#if row.currentGarment.photo}}{{row.currentGarment.photo}}{{/if}}"
-      alt="{{#if row.currentGarment}}{{row.currentGarment.name}}{{/if}}"
+      alt="{{row.currentGarment.name}}"
     />
-    <div class="outfit-none size-14 rounded-box bg-base-200 flex items-center justify-center{{#if row.currentGarment.photo}} hidden{{/if}}">
+    <div
+      class="outfit-none size-14 rounded-box bg-base-200 flex items-center justify-center{{#if row.currentGarment.photo}} hidden{{/if}}"
+    >
       <span class="text-xs text-base-content/40">—</span>
     </div>
-    <span class="outfit-name text-xs truncate max-w-full text-center">{{#if row.currentGarment}}{{row.currentGarment.name}}{{/if}}</span>
+    <span class="outfit-name text-xs truncate max-w-full text-center"
+      >{{row.currentGarment.name}}</span
+    >
+  </button>
+  {{else}}
+  <div class="flex-1 flex flex-col items-center gap-1 min-w-0 overflow-hidden">
+    <div
+      class="outfit-none size-14 rounded-box bg-base-200 flex items-center justify-center"
+    >
+      <span class="text-xs text-base-content/40">—</span>
+    </div>
+    <span class="outfit-name text-xs truncate max-w-full text-center"></span>
   </div>
+  {{/if}}
   <button
     type="button"
     class="btn btn-ghost btn-sm btn-circle shrink-0"
     hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.nextIndex}}"
     hx-target="closest .outfit-row"
     hx-swap="outerHTML"
-  >&#8250;</button>
+  >
+    &#8250;
+  </button>
   <input type="hidden" name="category" value="{{row.value}}" />
-  <input type="hidden" name="garmentId" value="{{#if row.garmentId}}{{row.garmentId}}{{/if}}" />
+  <input
+    type="hidden"
+    name="garmentId"
+    value="{{#if row.garmentId}}{{row.garmentId}}{{/if}}"
+  />
   <button
     type="button"
     class="btn btn-ghost btn-sm btn-circle shrink-0 text-error"
     _="on click remove closest .outfit-row"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      class="size-4"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M6 18 18 6M6 6l12 12"
+      />
     </svg>
   </button>
 </div>

@@ -225,6 +225,10 @@ export class OutfitService {
             id: sel.id,
             name: sel.name,
             photo: sel.photo ? `/file/nobg/${sel.photo.fileName}` : null,
+            brand: sel.brand ?? null,
+            color: sel.color ?? null,
+            size: sel.size ?? null,
+            notes: sel.notes ?? null,
           }
         : null,
       garmentId: sel?.id ?? null,
