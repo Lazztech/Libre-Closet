@@ -18,7 +18,7 @@
 
   let removeBackground;
   try {
-    const mod = await import('/js/background-removal-lib.js');
+    const mod = await import('/modules/background-removal/index.mjs');
     removeBackground = mod.removeBackground;
   } catch (err) {
     // Package failed to load (old browser, no ES module support, etc.)

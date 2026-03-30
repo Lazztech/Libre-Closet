@@ -102,6 +102,9 @@ async function bootstrap() {
     join(__dirname, '..', 'node_modules/@imgly/background-removal/dist'),
     { prefix: '/modules/background-removal' },
   );
+  app.useStaticAssets(join(__dirname, '..', 'node_modules/onnxruntime-web'), {
+    prefix: '/modules/onnxruntime-web',
+  });
   app.useStaticAssets(
     join(__dirname, '..', 'node_modules/@imgly/background-removal-data/dist'),
     { prefix: '/bg-removal-models' },

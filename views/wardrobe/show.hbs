@@ -91,6 +91,13 @@
       <span>{{t 'lang.REMOVING_BACKGROUND'}}</span>
     </div>
   </form>
+  <script type="importmap">
+    {
+      "imports": {
+        "onnxruntime-web": "/modules/onnxruntime-web/dist/ort.webgpu.bundle.min.mjs"
+      }
+    }
+  </script>
   <script type="module" src="/js/background-removal.js"></script>
 
   {{!-- Metadata --}}
