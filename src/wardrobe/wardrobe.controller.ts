@@ -196,7 +196,8 @@ export class WardrobeController {
   async uploadPhoto(
     @Param('id', ParseIntPipe) id: number,
     @MultipartFiles('photo') photo$: Observable<MultipartFileStream>,
-    @MultipartFiles('nobgPhoto') nobgPhoto$: Observable<MultipartFileStream>,
+    @MultipartFiles([['nobgPhoto', false]])
+    nobgPhoto$: Observable<MultipartFileStream>,
     @Req() req: Request,
     @Res() res: Response,
   ) {

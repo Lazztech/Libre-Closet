@@ -19,7 +19,7 @@
 
   let removeBackground;
   try {
-    const mod = await import('/modules/background-removal/index.mjs');
+    const mod = await import('/js/background-removal-lib.js');
     removeBackground = mod.removeBackground;
   } catch (err) {
     // Package failed to load (old browser, no ES module support, etc.)
@@ -40,10 +40,12 @@
 
     try {
       const blob = await removeBackground(file, {
-        // publicPath must be an absolute URL — new URL(asset, base) requires an
-        // absolute base, so prepend the current origin.
-        publicPath: window.location.origin + '/bg-removal-models/',
-        model: 'small',
+        // Model files are fetched from the imgly CDN (default).
+        // Self-hosting requires the matching data package:
+        //   https://staticimgly.com/@imgly/background-removal-data/1.7.0/package.tgz
+        // Extract package/dist, serve it, and set:
+        //   publicPath: window.location.origin + '/bg-removal-models/'
+        model: 'isnet_quint8',
         output: { format: 'image/webp', quality: 0.9 },
       });
 

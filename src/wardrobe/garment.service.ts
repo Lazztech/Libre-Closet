@@ -1,5 +1,6 @@
 import { EntityRepository, FilterQuery } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
+import { lastValueFrom, mergeMap } from 'rxjs';
 import {
   ForbiddenException,
   Injectable,
@@ -174,18 +175,42 @@ export class GarmentService {
     // loop long enough for a resume()'d stream to drain/discard its data. By
     // piping the stream to disk first (synchronous from the stream's perspective)
     // we consume it before any Postgres round-trip can drain it.
+    //
+    // IMPORTANT: nobgPhoto$ must be subscribed concurrently with photo$, not
+    // after it. Both come from the same hot Subject in the multipart interceptor
+    // — by the time storeImageFromFileUpload resolves, nobgPhoto's data has
+    // already been emitted and is gone. Buffer the nobg bytes in parallel before
+    // any await, then write to disk once we have the filename.
     let photo: File | undefined;
     if (dto.photo$) {
+      // Start buffering nobgPhoto bytes immediately, before awaiting photo$.
+      const nobgBufferPromise = dto.nobgPhoto$
+        ? lastValueFrom(
+            dto.nobgPhoto$.pipe(
+              mergeMap(async (fileStream) => {
+                const chunks: Buffer[] = [];
+                for await (const chunk of fileStream) {
+                  chunks.push(Buffer.from(chunk as Uint8Array));
+                }
+                return Buffer.concat(chunks);
+              }),
+            ),
+            { defaultValue: null },
+          )
+        : Promise.resolve(null);
+
       photo = await this.fileService.storeImageFromFileUpload(
         dto.photo$,
         userId,
       );
-    }
-    if (photo && dto.nobgPhoto$) {
-      await this.fileService.storeNobgVariantFromUpload(
-        dto.nobgPhoto$,
-        photo.fileName,
-      );
+
+      const nobgBuffer = await nobgBufferPromise;
+      if (nobgBuffer) {
+        await this.fileService.storeNobgVariantFromBuffer(
+          nobgBuffer,
+          photo.fileName,
+        );
+      }
     }
 
     const garment = await this.findOne(id, userId);

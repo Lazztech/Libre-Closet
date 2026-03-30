@@ -48,7 +48,9 @@ registerRoute(
 );
 
 // https://developer.chrome.com/docs/workbox/modules/workbox-routing
-registerRoute(() => true, CACHE_STRATEGY);
+// POST (and other non-GET) requests cannot be cached — exclude them so the
+// service worker passes them straight through to the network unchanged.
+registerRoute(({ request }) => request.method === 'GET', CACHE_STRATEGY);
 
 // https://developer.chrome.com/docs/workbox/managing-fallback-responses
 // This "catch" handler is triggered when any of the other routes fail to

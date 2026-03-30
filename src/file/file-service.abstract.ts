@@ -188,25 +188,42 @@ export abstract class FileService
   ): Promise<File>;
   abstract delete(fileName: string): Promise<void>;
 
+  async storeNobgVariantFromBuffer(
+    buffer: Buffer,
+    originalFileName: string,
+  ): Promise<void> {
+    const nobgName = this.nobgFileName(originalFileName);
+    const transformer = sharp(buffer)
+      .webp({ quality: 100 })
+      .resize(1080, 1080, { fit: sharp.fit.inside });
+    const passThrough = new Stream.PassThrough();
+    const storePromise = this.store(nobgName, passThrough);
+    transformer.pipe(passThrough);
+    await storePromise;
+  }
+
   async storeNobgVariantFromUpload(
     upload$: Observable<MultipartFileStream>,
     originalFileName: string,
   ): Promise<void> {
     const nobgName = this.nobgFileName(originalFileName);
-    const transformer = sharp()
-      .webp({ quality: 100 })
-      .resize(1080, 1080, { fit: sharp.fit.inside });
-    const passThrough = new Stream.PassThrough();
-    const storePromise = this.store(nobgName, passThrough);
     await lastValueFrom(
       upload$.pipe(
-        mergeMap((fileStream: MultipartFileStream) =>
-          pipeline(fileStream, transformer, passThrough),
-        ),
+        mergeMap(async (fileStream: MultipartFileStream) => {
+          // Create passThrough and storePromise only when a file actually arrives.
+          // If upload$ completes with no emissions (field was drained before we
+          // subscribed), passThrough is never created so there is no hanging promise.
+          const transformer = sharp()
+            .webp({ quality: 100 })
+            .resize(1080, 1080, { fit: sharp.fit.inside });
+          const passThrough = new Stream.PassThrough();
+          const storePromise = this.store(nobgName, passThrough);
+          await pipeline(fileStream, transformer, passThrough);
+          await storePromise;
+        }),
       ),
       { defaultValue: undefined },
     );
-    await storePromise;
   }
   abstract deleteById(fileId: any, userId: any): Promise<any>;
   abstract get(fileName: string): Promise<Readable | undefined>;
