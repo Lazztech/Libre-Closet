@@ -117,6 +117,8 @@ export class ScheduleController {
     );
 
     // ── Day columns ──────────────────────────────────────────────────────
+    const CHIP_HUES = [220, 240, 260];
+
     // Transform to plain objects — avoids MikroORM Ref/Collection proxy
     // edge cases inside Handlebars property-access lookups.
     const days = weekSchedule.days.map((day) => ({
@@ -124,7 +126,7 @@ export class ScheduleController {
       dayNum: day.date.getUTCDate(),
       dateParam: toWeekParam(day.date),
       isToday: toWeekParam(day.date) === todayStr,
-      entries: day.entries.map(({ entry, repeatWarnDays }) => {
+      entries: day.entries.map(({ entry, repeatWarnDays }, entryIndex) => {
         const outfit = entry.outfit.unwrap();
         const garmentPhotos = outfit.garments
           .getItems()
@@ -138,6 +140,7 @@ export class ScheduleController {
             id: outfit.id,
             name: outfit.name || null,
             garmentPhotos,
+            chipHue: CHIP_HUES[entryIndex % CHIP_HUES.length],
           },
         };
       }),
