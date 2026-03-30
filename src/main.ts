@@ -103,7 +103,7 @@ async function bootstrap() {
     { prefix: '/modules/background-removal' },
   );
   app.useStaticAssets(
-    join(__dirname, '..', 'node_modules/@imgly/background-removal-node/dist'),
+    join(__dirname, '..', 'node_modules/@imgly/background-removal-data/dist'),
     { prefix: '/bg-removal-models' },
   );
 

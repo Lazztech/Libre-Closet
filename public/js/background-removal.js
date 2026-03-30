@@ -6,8 +6,8 @@
  * On any failure the form submits unchanged — the server-side fallback path
  * handles generation lazily on first /file/nobg/ request.
  *
- * Models are served from /bg-removal-models/ (the already-installed
- * @imgly/background-removal-node dist directory — no CDN required).
+ * Models are served from /bg-removal-models/ (@imgly/background-removal-data
+ * installed from the IMG.LY CDN tarball — no runtime CDN required).
  */
 (async function () {
   const photoInput = document.getElementById('photoInput');
@@ -43,11 +43,7 @@
 
     try {
       const blob = await removeBackground(file, {
-        // Model files are fetched from the imgly CDN (default).
-        // Self-hosting requires the matching data package:
-        //   https://staticimgly.com/@imgly/background-removal-data/1.7.0/package.tgz
-        // Extract package/dist, serve it, and set:
-        //   publicPath: window.location.origin + '/bg-removal-models/'
+        publicPath: window.location.origin + '/bg-removal-models/',
         model: 'isnet_quint8',
         output: { format: 'image/webp', quality: 0.9 },
       });
