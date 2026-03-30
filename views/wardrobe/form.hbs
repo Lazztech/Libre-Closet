@@ -31,12 +31,21 @@
 
     <div class="form-control">
       <label class="label"><span class="label-text">{{t 'lang.CATEGORY'}} *</span></label>
-      <select name="category" class="select select-bordered" required>
-        <option value="" disabled {{#unless garment}}selected{{/unless}}>Select a category</option>
+      <input
+        type="text"
+        name="category"
+        list="category-suggestions"
+        class="input input-bordered w-full"
+        value="{{#if garment}}{{garment.category}}{{/if}}"
+        required
+        placeholder="{{t 'lang.TYPE_OR_SELECT_CATEGORY'}}"
+        autocomplete="off"
+      />
+      <datalist id="category-suggestions">
         {{#each categories}}
-        <option value="{{this}}" {{#ifEquals this ../garment.category}}selected{{/ifEquals}} class="capitalize">{{this}}</option>
+        <option value="{{this.value}}"></option>
         {{/each}}
-      </select>
+      </datalist>
     </div>
 
     <div class="form-control">

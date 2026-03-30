@@ -59,6 +59,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 **/*.sqlite3
 data/**
 public/bundle.css
+public/sw.js
 views/assets/src-sw.js
 
 # Playwright

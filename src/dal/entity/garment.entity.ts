@@ -12,10 +12,9 @@ import { File } from './file.entity';
 import { Outfit } from './outfit.entity';
 import { ShareableId } from './shareableId.entity';
 import { User } from './user.entity';
-import { GarmentCategory } from '../../wardrobe/garment-category.enum';
 import { GarmentColor } from '../../wardrobe/garment-color.enum';
 
-export { GarmentCategory, GarmentColor };
+export { GarmentColor };
 
 @Entity()
 export class Garment extends ShareableId {
@@ -26,7 +25,7 @@ export class Garment extends ShareableId {
   public name!: string;
 
   @Property()
-  public category!: GarmentCategory;
+  public category!: string;
 
   @Property({ nullable: true })
   public color?: GarmentColor;

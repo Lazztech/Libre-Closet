@@ -31,6 +31,22 @@ and response bandwidth/latency. */
 .cal-today    { background-color: var(--color-primary); color: var(--color-primary-content); font-weight: 700; }
 .cal-in-week  { color: var(--color-primary); background-color: color-mix(in oklch, var(--color-primary) 12%, transparent); font-weight: 600; }
 .cal-out-month { color: color-mix(in oklch, var(--color-base-content) 25%, transparent); }
+/* 
+ * pulltorefresh.js styling to pin refresh UI elements
+ * under navbar and match the daisyui theme  
+ */
+.ptr--ptr {
+  position: fixed !important;
+  top: 4rem !important; /* pin below the fixed navbar */
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background-color: var(--color-base-300) !important;
+}
+.ptr--text,
+.ptr--icon {
+  color: var(--color-base-content) !important;
+}
 
 /* Prevent iOS from collapsing the viewport on scroll */
 body {

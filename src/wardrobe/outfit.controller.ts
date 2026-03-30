@@ -9,12 +9,14 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Render,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { type Request, type Response } from 'express';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { OutfitService } from './outfit.service';
@@ -45,9 +47,18 @@ export class OutfitController {
 
   @Get('new')
   @Render('outfits/form')
-  async newForm(@Req() req: Request) {
+  async newForm(@Req() req: Request, @I18n() i18n: I18nContext) {
     const garments = await this.garmentService.findAll(this.userId(req));
-    return { outfit: null, garments };
+    const categoryRows = this.outfitService.buildCategoryRows(
+      garments,
+      [],
+      i18n,
+    );
+    return {
+      outfit: null,
+      categoryRows,
+      allCategoryRows: categoryRows,
+    };
   }
 
   @Post()
@@ -56,22 +67,39 @@ export class OutfitController {
     body: {
       name: string;
       notes?: string;
-      garmentIds?: string | string[];
+      category?: string | string[];
+      garmentId?: string | string[];
     },
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const garmentIds = Array.isArray(body.garmentIds)
-      ? body.garmentIds.map(Number)
-      : body.garmentIds
-        ? [Number(body.garmentIds)]
-        : [];
+    const slots = this.outfitService.parseSlotsFromBody(
+      body.category,
+      body.garmentId,
+    );
 
     const outfit = await this.outfitService.create(
-      { name: body.name, notes: body.notes, garmentIds },
+      { name: body.name, notes: body.notes, slots },
       this.userId(req),
     );
     return res.redirect(`/outfits/${outfit.id}`);
+  }
+
+  @Get('row-fragment')
+  async rowFragment(
+    @Query('category') category: string,
+    @Query('index') indexStr: string,
+    @Req() req: Request,
+    @Res() res: Response,
+    @I18n() i18n: I18nContext,
+  ) {
+    if (!category?.trim()) return res.status(400).send();
+    const garments = await this.garmentService.findAll(this.userId(req));
+    const items = garments.filter((g) => g.category === category);
+    const count = items.length;
+    const idx = Math.min(Math.max(parseInt(indexStr) || 0, 0), count);
+    const row = this.outfitService.buildRow(category, items, idx, i18n);
+    return res.render('partials/outfit_row', { layout: false, row });
   }
 
   @Get(':id')
@@ -83,13 +111,26 @@ export class OutfitController {
 
   @Get(':id/edit')
   @Render('outfits/form')
-  async editForm(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+  async editForm(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @I18n() i18n: I18nContext,
+  ) {
     const [outfit, garments] = await Promise.all([
       this.outfitService.findOne(id, this.userId(req)),
       this.garmentService.findAll(this.userId(req)),
     ]);
     const selectedGarmentIds = outfit.garments.getItems().map((g) => g.id);
-    return { outfit, garments, selectedGarmentIds };
+    return {
+      outfit,
+      categoryRows: this.outfitService.buildCategoryRows(
+        garments,
+        selectedGarmentIds,
+        i18n,
+        outfit.slots,
+      ),
+      allCategoryRows: this.outfitService.buildCategoryRows(garments, [], i18n),
+    };
   }
 
   @Post(':id')
@@ -99,20 +140,20 @@ export class OutfitController {
     body: {
       name?: string;
       notes?: string;
-      garmentIds?: string | string[];
+      category?: string | string[];
+      garmentId?: string | string[];
     },
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const garmentIds = Array.isArray(body.garmentIds)
-      ? body.garmentIds.map(Number)
-      : body.garmentIds
-        ? [Number(body.garmentIds)]
-        : [];
+    const slots = this.outfitService.parseSlotsFromBody(
+      body.category,
+      body.garmentId,
+    );
 
     await this.outfitService.update(
       id,
-      { name: body.name, notes: body.notes, garmentIds },
+      { name: body.name, notes: body.notes, slots },
       this.userId(req),
     );
     return res.redirect(`/outfits/${id}`);

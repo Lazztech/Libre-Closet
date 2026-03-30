@@ -6,6 +6,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { I18nContext } from 'nestjs-i18n';
 import { Garment } from '../dal/entity/garment.entity';
 import { File } from '../dal/entity/file.entity';
 import { User } from '../dal/entity/user.entity';
@@ -13,6 +14,7 @@ import { FileService } from '../file/file-service.abstract';
 import { CreateGarmentDto } from './dto/create-garment.dto';
 import { UpdateGarmentDto } from './dto/update-garment.dto';
 import { SearchGarmentDto } from './dto/search-garment.dto';
+import { GarmentCategory } from './garment-category.enum';
 
 const CANONICAL_SIZES = [
   'XX-Small',
@@ -38,6 +40,14 @@ export class GarmentService {
     private readonly userRepository: EntityRepository<User>,
     private readonly fileService: FileService,
   ) {}
+
+  resolveCategoryLabel(value: string, i18n: I18nContext): string {
+    const normalized = value.toLowerCase();
+    if ((Object.values(GarmentCategory) as string[]).includes(normalized)) {
+      return i18n.t(`lang.CATEGORY_${normalized.toUpperCase()}`);
+    }
+    return value;
+  }
 
   async findAll(
     userId?: number,
@@ -126,6 +136,7 @@ export class GarmentService {
   async findAvailableFilters(userId?: number): Promise<{
     brands: string[];
     sizes: string[];
+    categories: string[];
   }> {
     const where = userId != null ? { owner: { id: userId } } : { owner: null };
     const garments = await this.garmentRepository.find(where);
@@ -145,7 +156,11 @@ export class GarmentService {
       return ai - bi;
     });
 
-    return { brands, sizes };
+    const categories = [
+      ...new Set(garments.map((g) => g.category).filter(Boolean)),
+    ].sort();
+
+    return { brands, sizes, categories };
   }
 
   async update(

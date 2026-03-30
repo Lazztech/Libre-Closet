@@ -1,0 +1,151 @@
+<div
+  class="outfit-row flex items-center gap-2 py-3"
+  data-category="{{row.value}}"
+  data-index="{{row.currentIndex}}"
+  data-count="{{row.garmentCount}}"
+  _="on touchstart
+       set my startX to event.touches[0].clientX
+       set my startY to event.touches[0].clientY
+     on touchmove
+       if my startX is not null
+         set dx to Math.abs(event.touches[0].clientX - my startX)
+         set dy to Math.abs(event.touches[0].clientY - my startY)
+         if dx > dy
+           js(event) event.preventDefault() end
+         end
+       end
+     on touchend
+       if my startX is not null
+         set dx to event.changedTouches[0].clientX - my startX
+         set my startX to null
+         set my startY to null
+         if Math.abs(dx) >= 30
+           set cnt to (me's @data-count as Int)
+           set idx to (me's @data-index as Int)
+           if dx < 0
+             set newIdx to idx + 1
+             if newIdx > cnt then set newIdx to 0 end
+           else
+             set newIdx to idx - 1
+             if newIdx < 0 then set newIdx to cnt end
+           end
+           js(me, newIdx) htmx.ajax('GET', '/outfits/row-fragment?category=' + encodeURIComponent(me.dataset.category) + '&index=' + newIdx, {target: me, swap: 'outerHTML'}) end
+         end
+       end"
+>
+  <span
+    class="drag-handle cursor-grab active:cursor-grabbing text-base-content/30 shrink-0 touch-none flex items-center justify-center p-3 -m-3"
+    title="{{t 'lang.DRAG_TO_REORDER'}}"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
+      />
+    </svg>
+  </span>
+  <span class="w-20 text-sm font-medium shrink-0 capitalize"
+    >{{row.label}}</span
+  >
+  <button
+    type="button"
+    class="btn btn-ghost btn-sm btn-circle shrink-0"
+    hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.prevIndex}}"
+    hx-target="closest .outfit-row"
+    hx-swap="outerHTML"
+  >
+    &#8249;
+  </button>
+  {{#if row.currentGarment}}
+  <button
+    type="button"
+    class="flex-1 flex flex-col items-center gap-1 min-w-0 overflow-hidden"
+    data-garment-href="/wardrobe/{{row.currentGarment.id}}"
+    data-garment-name="{{row.currentGarment.name}}"
+    data-garment-photo="{{#if row.currentGarment.photo}}{{row.currentGarment.photo}}{{/if}}"
+    data-garment-brand="{{#if row.currentGarment.brand}}{{row.currentGarment.brand}}{{/if}}"
+    data-garment-color="{{#if row.currentGarment.color}}{{row.currentGarment.color}}{{/if}}"
+    data-garment-size="{{#if row.currentGarment.size}}{{row.currentGarment.size}}{{/if}}"
+    data-garment-notes="{{#if row.currentGarment.notes}}{{row.currentGarment.notes}}{{/if}}"
+    _="on click js(me)
+         const d = me.dataset;
+         document.getElementById('modal-garment-link').href = d.garmentHref;
+         document.getElementById('modal-garment-name').textContent = d.garmentName;
+         const img = document.getElementById('modal-photo-img');
+         const ph = document.getElementById('modal-photo-placeholder');
+         img.src = d.garmentPhoto || '';
+         img.classList.toggle('hidden', !d.garmentPhoto);
+         ph.classList.toggle('hidden', !!d.garmentPhoto);
+         [['modal-brand', d.garmentBrand], ['modal-color', d.garmentColor], ['modal-size', d.garmentSize], ['modal-notes', d.garmentNotes]]
+           .forEach(([id, val]) => { const el = document.getElementById(id); el.textContent = val || ''; el.classList.toggle('hidden', !val); });
+         document.getElementById('garment-modal').showModal();
+       end"
+  >
+    <img
+      class="outfit-photo size-14 rounded-box object-cover{{#unless row.currentGarment.photo}} hidden{{/unless}}"
+      src="{{#if row.currentGarment.photo}}{{row.currentGarment.photo}}{{/if}}"
+      alt="{{row.currentGarment.name}}"
+    />
+    <div
+      class="outfit-none size-14 rounded-box bg-base-200 flex items-center justify-center{{#if row.currentGarment.photo}} hidden{{/if}}"
+    >
+      <span class="text-xs text-base-content/40">—</span>
+    </div>
+    <span class="outfit-name text-xs truncate max-w-full text-center"
+      >{{row.currentGarment.name}}</span
+    >
+  </button>
+  {{else}}
+  <div class="flex-1 flex flex-col items-center gap-1 min-w-0 overflow-hidden">
+    <div
+      class="outfit-none size-14 rounded-box bg-base-200 flex items-center justify-center"
+    >
+      <span class="text-xs text-base-content/40">—</span>
+    </div>
+    <span class="outfit-name text-xs truncate max-w-full text-center"></span>
+  </div>
+  {{/if}}
+  <button
+    type="button"
+    class="btn btn-ghost btn-sm btn-circle shrink-0"
+    hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.nextIndex}}"
+    hx-target="closest .outfit-row"
+    hx-swap="outerHTML"
+  >
+    &#8250;
+  </button>
+  <input type="hidden" name="category" value="{{row.value}}" />
+  <input
+    type="hidden"
+    name="garmentId"
+    value="{{#if row.garmentId}}{{row.garmentId}}{{/if}}"
+  />
+  <button
+    type="button"
+    class="btn btn-ghost btn-sm btn-circle shrink-0 text-error"
+    _="on click remove closest .outfit-row"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      class="size-4"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M6 18 18 6M6 6l12 12"
+      />
+    </svg>
+  </button>
+</div>

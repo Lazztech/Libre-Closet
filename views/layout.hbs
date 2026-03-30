@@ -55,6 +55,7 @@ https://nestjs-i18n.com/quick-start --}}
     https://blog.wesleyac.com/posts/why-not-javascript-cdn }}
     <script src="/modules/htmx.min.js"></script>
     <script src="/modules/_hyperscript.min.js"></script>
+    <script src="/modules/Sortable.min.js"></script>
     <script src="/modules/sse.js"></script>
     {{#if pwaEnabled}}
     <script type="module" src="/modules/pwa-install.bundle.js"></script>
@@ -83,6 +84,7 @@ https://nestjs-i18n.com/quick-start --}}
     <script type="module">
       // This code sample uses features introduced in Workbox v6.
       import { Workbox } from '/modules/workbox-window.prod.mjs';
+      import PullToRefresh from '/modules/pulltorefresh/index.esm.js';
 
       if ('serviceWorker' in navigator) {
         const wb = new Workbox('/sw.js');
@@ -119,20 +121,38 @@ https://nestjs-i18n.com/quick-start --}}
         wb.register().then(() => {
           console.log('Service Worker registered');
 
-          {{#if user}}
-          // If authenticated set up web push notifications
-          import('/js/webPush.js').then((module) => {
-            module.default
-              .subscribe()
-              .catch((err) =>
-                console.warn('Web push subscription failed:', err),
-              );
-          });
-          {{/if}}
+          // Check for access_token cookie first
+          if (
+            document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('access_token='))
+          ) {
+            // If authenticated set up web push notifications
+            import('/js/webPush.js').then((module) => {
+              module.default
+                .subscribe()
+                .catch((err) =>
+                  console.warn('Web push subscription failed:', err),
+                );
+            });
+          } else {
+            console.log('Not authenticated - skipping web push subscription');
+          }
+        });
+      }
+
+      // https://stackoverflow.com/questions/75972895/ios-pwa-how-to-re-enable-pull-to-refresh
+      const iosStandalone = window.navigator.standalone === true;
+      if (iosStandalone) {
+        // If iosStandalone; pull to refresh is needed
+        PullToRefresh.init({
+          mainElement: 'main',
+          onRefresh() {
+            location.reload();
+          },
         });
       }
     </script>
-    {{/if}} {{#if pwaEnabled}}
     <pwa-install id="pwa-install" manifest-url="/manifest.json"></pwa-install>
     <script type="text/javascript">
       var pwaInstall = document.getElementById('pwa-install');

@@ -4,7 +4,7 @@
   <div class="flex items-center justify-between mb-6 px-2">
     <h1 class="text-2xl font-bold">{{t 'lang.OUTFITS'}}</h1>
     <a href="/outfits/new" class="btn btn-primary btn-sm"
-      >+ {{t 'lang.NEW_OUTFIT'}}</a
+      >+ {{t 'lang.BUILD_OUTFIT'}}</a
     >
   </div>
 
@@ -13,7 +13,7 @@
     {{#each outfits}}
     <a
       href="/outfits/{{this.id}}"
-      class="card bg-base-100 w-56 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      class="card bg-base-100 w-96 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
     >
       <div class="card-body p-3">
         <h2 class="card-title text-sm">{{this.name}}</h2>
@@ -25,11 +25,11 @@
           <img
             src="/file/nobg/{{this.photo.fileName}}"
             alt="{{this.name}}"
-            class="size-10 rounded object-cover"
+            class="size-20 rounded object-cover"
           />
           {{else}}
           <div
-            class="size-10 rounded bg-base-200 flex items-center justify-center"
+            class="size-20 rounded bg-base-200 flex items-center justify-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

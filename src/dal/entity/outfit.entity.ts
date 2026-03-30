@@ -11,6 +11,11 @@ import { Garment } from './garment.entity';
 import { ShareableId } from './shareableId.entity';
 import { User } from './user.entity';
 
+export interface OutfitSlot {
+  category: string;
+  garmentId: number | null;
+}
+
 @Entity()
 export class Outfit extends ShareableId {
   @PrimaryKey()
@@ -21,6 +26,9 @@ export class Outfit extends ShareableId {
 
   @Property({ nullable: true })
   public notes?: string;
+
+  @Property({ type: 'json', nullable: true })
+  public slots?: OutfitSlot[];
 
   @ManyToMany(() => Garment, (garment) => garment.outfits, { owner: true })
   public garments = new Collection<Garment>(this);
