@@ -11,8 +11,9 @@ import sharp from 'sharp';
 import { File } from 'src/dal/entity/file.entity';
 import Stream, { Readable } from 'stream';
 import { FileServiceInterface } from './file-service.interface';
-import { Observable, Subject, mergeMap } from 'rxjs';
+import { Observable, Subject, lastValueFrom, mergeMap } from 'rxjs';
 import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
+import { pipeline } from 'node:stream/promises';
 
 type BgJob = {
   key: string;
@@ -148,6 +149,16 @@ export abstract class FileService
       return existing;
     }
 
+    if (
+      !this.configService.get<boolean>(
+        'BACKGROUND_REMOVAL_SERVER_FALLBACK_ENABLED',
+        true,
+      )
+    ) {
+      // Client-side happy path didn't run (or is disabled) and server fallback is off — redirect to original.
+      return null;
+    }
+
     const inputFn = async () => {
       const original = await this.get(fileName);
       if (!original) throw new Error(`File not found: ${fileName}`);
@@ -176,6 +187,27 @@ export abstract class FileService
     userId: any,
   ): Promise<File>;
   abstract delete(fileName: string): Promise<void>;
+
+  async storeNobgVariantFromUpload(
+    upload$: Observable<MultipartFileStream>,
+    originalFileName: string,
+  ): Promise<void> {
+    const nobgName = this.nobgFileName(originalFileName);
+    const transformer = sharp()
+      .webp({ quality: 100 })
+      .resize(1080, 1080, { fit: sharp.fit.inside });
+    const passThrough = new Stream.PassThrough();
+    const storePromise = this.store(nobgName, passThrough);
+    await lastValueFrom(
+      upload$.pipe(
+        mergeMap((fileStream: MultipartFileStream) =>
+          pipeline(fileStream, transformer, passThrough),
+        ),
+      ),
+      { defaultValue: undefined },
+    );
+    await storePromise;
+  }
   abstract deleteById(fileId: any, userId: any): Promise<any>;
   abstract get(fileName: string): Promise<Readable | undefined>;
   abstract getByShareableId(shareableId: string): Promise<Readable | undefined>;

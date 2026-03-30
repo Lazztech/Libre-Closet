@@ -181,6 +181,12 @@ export class GarmentService {
         userId,
       );
     }
+    if (photo && dto.nobgPhoto$) {
+      await this.fileService.storeNobgVariantFromUpload(
+        dto.nobgPhoto$,
+        photo.fileName,
+      );
+    }
 
     const garment = await this.findOne(id, userId);
 

@@ -98,6 +98,14 @@ async function bootstrap() {
       prefix: '/modules/pulltorefresh',
     },
   );
+  app.useStaticAssets(
+    join(__dirname, '..', 'node_modules/@imgly/background-removal/dist'),
+    { prefix: '/modules/background-removal' },
+  );
+  app.useStaticAssets(
+    join(__dirname, '..', 'node_modules/@imgly/background-removal-node/dist'),
+    { prefix: '/bg-removal-models' },
+  );
 
   app.useGlobalFilters(new ErrorViewFilter());
   await app.listen(process.env.PORT ?? 3000);

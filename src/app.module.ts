@@ -158,6 +158,7 @@ import { LoggerModule } from 'nestjs-pino';
           otherwise: Joi.optional(),
         }),
         BACKGROUND_REMOVAL_ENABLED: Joi.boolean().default(true),
+        BACKGROUND_REMOVAL_SERVER_FALLBACK_ENABLED: Joi.boolean().default(true),
         BACKGROUND_REMOVAL_CONCURRENCY: Joi.number()
           .integer()
           .min(1)

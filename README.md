@@ -145,9 +145,10 @@ npm run start:prod
 | `PRIVATE_VAPID_KEY`                | Web push — generate for production             | —              | `UUxI4O8-FbRouAevSmBQ6o18hgE4nSG3qwvJTfKc-ls`                                             |
 
 <!-- Commented out not yet released
-| `BACKGROUND_REMOVAL_ENABLED`       | Enable auto background removal on garment images | `true`         | `false`                                                                                   |
-| `BACKGROUND_REMOVAL_CONCURRENCY`   | Max concurrent ONNX bg-removal jobs              | `1`            | `1`                                                                                       |
-| `BACKGROUND_REMOVAL_MODEL`         | ONNX model size for background removal (`small`, `medium`, `large`) | `small` | `medium` |
+| `BACKGROUND_REMOVAL_ENABLED`                    | Master switch for background removal. If `false`: models not served, nobg endpoint redirects to original, client-side script not loaded | `true`  | `false`  |
+| `BACKGROUND_REMOVAL_SERVER_FALLBACK_ENABLED`    | Enable server-side ONNX inference as fallback when client-side removal didn't run (e.g. older browser). Disable on very low-powered hosts to prevent CPU spikes | `true` | `false` |
+| `BACKGROUND_REMOVAL_CONCURRENCY`                | Max concurrent server-side ONNX inference jobs (fallback path only)              | `1`            | `1`                                                                                       |
+| `BACKGROUND_REMOVAL_MODEL`                      | ONNX model size for server-side background removal (`small`, `medium`, `large`) | `small` | `medium` |
  -->
 
 Generate JWT secret:
