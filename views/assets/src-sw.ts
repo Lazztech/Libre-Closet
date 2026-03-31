@@ -2,7 +2,7 @@ import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute } from 'workbox-precaching';
 import { warmStrategyCache } from 'workbox-recipes';
 import { registerRoute, setCatchHandler } from 'workbox-routing';
-import { NetworkFirst, NetworkOnly } from 'workbox-strategies';
+import { CacheFirst, NetworkFirst, NetworkOnly } from 'workbox-strategies';
 
 // https://developer.chrome.com/docs/workbox/modules/workbox-core#clients_claim
 // This clientsClaim() should be at the top level
@@ -45,6 +45,12 @@ registerRoute(
   ({ url, request }) =>
     url.pathname.startsWith('/file/') && request.destination !== 'document',
   new NetworkOnly(),
+);
+
+// Background removal model files are content-hashed — cache forever, never revalidate.
+registerRoute(
+  ({ url }) => url.pathname.startsWith('/bg-removal-models/'),
+  new CacheFirst({ cacheName: 'bg-removal-models' }),
 );
 
 // https://developer.chrome.com/docs/workbox/modules/workbox-routing
