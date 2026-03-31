@@ -43,7 +43,7 @@
 
     try {
       const blob = await removeBackground(file, {
-        publicPath: window.location.origin + '/bg-removal-models/',
+        publicPath: location.origin + '/bg-removal-models/',
         model: 'isnet_quint8',
         output: { format: 'image/webp', quality: 0.9 },
       });
