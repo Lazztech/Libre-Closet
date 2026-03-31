@@ -9,33 +9,12 @@ import {
 import { OutfitSchedule } from '../dal/entity/outfit-schedule.entity';
 import { Outfit } from '../dal/entity/outfit.entity';
 import { User } from '../dal/entity/user.entity';
+import { CreateScheduleEntryDto } from './dto/create-schedule-entry.dto';
+import { ScheduleDay } from './view-models/schedule-day.view-model';
+import { WeekSchedule } from './view-models/week-schedule.view-model';
 
 /** Outfits worn within this many days trigger the repeat-wear badge. */
 const REPEAT_WEAR_DAYS = 14;
-
-export interface CreateScheduleEntryDto {
-  date: Date;
-  outfitId: number;
-  notes?: string;
-}
-
-export interface WeekSchedule {
-  /** ISO date string (YYYY-MM-DD) for the Monday of the week. */
-  weekStart: Date;
-  /** Seven days, Sun–Sat, each with its scheduled entries. */
-  days: ScheduleDay[];
-}
-
-export interface ScheduleDay {
-  date: Date;
-  entries: ScheduleEntryViewModel[];
-}
-
-export interface ScheduleEntryViewModel {
-  entry: OutfitSchedule;
-  /** Positive integer when wornAt appears within REPEAT_WEAR_DAYS of date; else null. */
-  repeatWarnDays: number | null;
-}
 
 @Injectable()
 export class ScheduleService {
