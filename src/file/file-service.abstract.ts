@@ -187,17 +187,17 @@ export abstract class FileService
   ): Promise<File>;
   abstract delete(fileName: string): Promise<void>;
 
-  async storeNobgVariantFromBuffer(
-    buffer: Buffer,
+  async storeNobgVariantFromStream(
+    stream: Readable,
     originalFileName: string,
   ): Promise<void> {
     const nobgName = this.nobgFileName(originalFileName);
-    const transformer = sharp(buffer)
+    const transformer = sharp()
       .webp({ quality: 100 })
       .resize(1080, 1080, { fit: sharp.fit.inside });
     const passThrough = new Stream.PassThrough();
     const storePromise = this.store(nobgName, passThrough);
-    transformer.pipe(passThrough);
+    stream.pipe(transformer).pipe(passThrough);
     await storePromise;
   }
 

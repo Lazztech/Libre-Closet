@@ -1,6 +1,7 @@
 import { EntityRepository, FilterQuery } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { lastValueFrom, mergeMap } from 'rxjs';
+import { PassThrough } from 'stream';
 import {
   ForbiddenException,
   Injectable,
@@ -183,16 +184,17 @@ export class GarmentService {
     // any await, then write to disk once we have the filename.
     let photo: File | undefined;
     if (dto.photo$) {
-      // Start buffering nobgPhoto bytes immediately, before awaiting photo$.
-      const nobgBufferPromise = dto.nobgPhoto$
+      // Pipe nobgPhoto$ into a PassThrough immediately to capture the stream
+      // under back-pressure — same timing constraint as before (must subscribe
+      // before awaiting photo$) but avoids materialising the whole image into
+      // a single Buffer.
+      const nobgPassThroughPromise = dto.nobgPhoto$
         ? lastValueFrom(
             dto.nobgPhoto$.pipe(
-              mergeMap(async (fileStream) => {
-                const chunks: Buffer[] = [];
-                for await (const chunk of fileStream) {
-                  chunks.push(Buffer.from(chunk as Uint8Array));
-                }
-                return Buffer.concat(chunks);
+              mergeMap((fileStream) => {
+                const pt = new PassThrough();
+                fileStream.pipe(pt);
+                return Promise.resolve(pt);
               }),
             ),
             { defaultValue: null },
@@ -204,10 +206,10 @@ export class GarmentService {
         userId,
       );
 
-      const nobgBuffer = await nobgBufferPromise;
-      if (nobgBuffer) {
-        await this.fileService.storeNobgVariantFromBuffer(
-          nobgBuffer,
+      const nobgPassThrough = await nobgPassThroughPromise;
+      if (nobgPassThrough) {
+        await this.fileService.storeNobgVariantFromStream(
+          nobgPassThrough,
           photo.fileName,
         );
       }
