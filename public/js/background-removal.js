@@ -39,9 +39,14 @@
     if (bgStatus) bgStatus.classList.remove('hidden');
 
     try {
+      const useGpu = !!navigator.gpu;
+      console.log(
+        `[bg-removal] Using ${useGpu ? 'WebGPU (isnet_fp16)' : 'WASM (isnet_quint8)'}`,
+      );
       const blob = await removeBackground(file, {
         publicPath: location.origin + '/bg-removal-models/',
-        model: 'isnet_quint8',
+        device: useGpu ? 'gpu' : 'cpu',
+        model: useGpu ? 'isnet_fp16' : 'isnet_quint8',
         output: { format: 'image/webp', quality: 0.9 },
       });
 
