@@ -192,6 +192,8 @@ export abstract class FileService
       .resize(1080, 1080, { fit: sharp.fit.inside });
     const passThrough = new Stream.PassThrough();
     const storePromise = this.store(nobgName, passThrough);
+    stream.on('error', (err) => passThrough.destroy(err));
+    transformer.on('error', (err) => passThrough.destroy(err));
     stream.pipe(transformer).pipe(passThrough);
     await storePromise;
   }
