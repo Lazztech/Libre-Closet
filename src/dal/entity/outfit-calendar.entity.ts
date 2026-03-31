@@ -9,7 +9,7 @@ import { Outfit } from './outfit.entity';
 import { User } from './user.entity';
 
 @Entity()
-export class OutfitSchedule {
+export class OutfitCalendar {
   @PrimaryKey()
   public id!: number;
 

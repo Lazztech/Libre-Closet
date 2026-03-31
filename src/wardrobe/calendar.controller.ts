@@ -18,16 +18,16 @@ import { type Request, type Response } from 'express';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
-import { ScheduleService } from './schedule.service';
+import { CalendarService } from './calendar.service';
 
 @UseGuards(ConditionalAuthGuard)
-@Controller('schedule')
-export class ScheduleController {
-  private readonly logger = new Logger(ScheduleController.name);
+@Controller('calendar')
+export class CalendarController {
+  private readonly logger = new Logger(CalendarController.name);
 
   constructor(
     @Inject()
-    private readonly scheduleService: ScheduleService,
+    private readonly calendarService: CalendarService,
   ) {}
 
   private userId(req: Request): number | undefined {
@@ -35,7 +35,7 @@ export class ScheduleController {
   }
 
   @Get()
-  @Render('schedule/index')
+  @Render('calendar/index')
   async index(
     @Query('week') weekParam: string | undefined,
     @Query('calMonth') calMonthParam: string | undefined,
@@ -44,8 +44,8 @@ export class ScheduleController {
   ) {
     const anchor = parseWeekParam(weekParam);
     const [weekSchedule, outfits] = await Promise.all([
-      this.scheduleService.findWeek(anchor, this.userId(req)),
-      this.scheduleService.findOutfitsForUser(this.userId(req)),
+      this.calendarService.findWeek(anchor, this.userId(req)),
+      this.calendarService.findOutfitsForUser(this.userId(req)),
     ]);
 
     const prevWeek = new Date(weekSchedule.weekStart);
@@ -146,7 +146,7 @@ export class ScheduleController {
     }));
 
     return {
-      pageTitle: 'Schedule',
+      pageTitle: 'Calendar',
       days,
       outfits: outfits.map((o) => ({ id: o.id, name: o.name })),
       weekParam: toWeekParam(weekSchedule.weekStart),
@@ -171,7 +171,7 @@ export class ScheduleController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    await this.scheduleService.create(
+    await this.calendarService.create(
       {
         date: new Date(body.date),
         outfitId: Number(body.outfitId),
@@ -179,7 +179,7 @@ export class ScheduleController {
       },
       this.userId(req),
     );
-    return res.redirect(`/schedule?week=${body.week ?? body.date}`);
+    return res.redirect(`/calendar?week=${body.week ?? body.date}`);
   }
 
   @Post(':id/delete')
@@ -190,8 +190,8 @@ export class ScheduleController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    await this.scheduleService.remove(id, this.userId(req));
-    res.setHeader('HX-Redirect', `/schedule?week=${body.week ?? ''}`);
+    await this.calendarService.remove(id, this.userId(req));
+    res.setHeader('HX-Redirect', `/calendar?week=${body.week ?? ''}`);
     return res.send();
   }
 
@@ -203,8 +203,8 @@ export class ScheduleController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    await this.scheduleService.toggleWorn(id, this.userId(req));
-    return res.redirect(`/schedule?week=${body.week ?? ''}`);
+    await this.calendarService.toggleWorn(id, this.userId(req));
+    return res.redirect(`/calendar?week=${body.week ?? ''}`);
   }
 }
 
@@ -214,13 +214,13 @@ export class ScheduleController {
 
 /** i18n key suffixes for each day of the week (index 0 = Sunday). */
 const DAY_I18N_KEYS = [
-  'SCHEDULE_DAY_SUN',
-  'SCHEDULE_DAY_MON',
-  'SCHEDULE_DAY_TUE',
-  'SCHEDULE_DAY_WED',
-  'SCHEDULE_DAY_THU',
-  'SCHEDULE_DAY_FRI',
-  'SCHEDULE_DAY_SAT',
+  'CALENDAR_DAY_SUN',
+  'CALENDAR_DAY_MON',
+  'CALENDAR_DAY_TUE',
+  'CALENDAR_DAY_WED',
+  'CALENDAR_DAY_THU',
+  'CALENDAR_DAY_FRI',
+  'CALENDAR_DAY_SAT',
 ] as const;
 
 /** i18n key suffixes for each month (index 0 = January). */
