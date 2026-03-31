@@ -13,9 +13,6 @@ import { CreateScheduleEntryDto } from './dto/create-schedule-entry.dto';
 import { ScheduleDay } from './view-models/schedule-day.view-model';
 import { WeekSchedule } from './view-models/week-schedule.view-model';
 
-/** Outfits worn within this many days trigger the repeat-wear badge. */
-const REPEAT_WEAR_DAYS = 14;
-
 @Injectable()
 export class ScheduleService {
   private readonly logger = new Logger(ScheduleService.name);
@@ -47,15 +44,6 @@ export class ScheduleService {
       { populate: ['outfit', 'outfit.garments', 'outfit.garments.photo'] },
     );
 
-    // For repeat-wear detection we need recent wornAt records outside this week too.
-    const repeatCutoff = new Date(weekStart);
-    repeatCutoff.setDate(repeatCutoff.getDate() - REPEAT_WEAR_DAYS);
-
-    const recentWorn = await this.scheduleRepository.find({
-      ...ownerFilter,
-      wornAt: { $gte: repeatCutoff, $lt: weekStart },
-    });
-
     const days: ScheduleDay[] = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(weekStart);
       date.setDate(date.getDate() + i);
@@ -66,12 +54,7 @@ export class ScheduleService {
       const dayIndex = daysBetween(weekStart, entry.date);
       if (dayIndex < 0 || dayIndex > 6) continue;
 
-      const repeatWarnDays = computeRepeatWarn(
-        entry,
-        recentWorn,
-        REPEAT_WEAR_DAYS,
-      );
-      days[dayIndex].entries.push({ entry, repeatWarnDays });
+      days[dayIndex].entries.push(entry);
     }
 
     return { weekStart, days };
@@ -178,35 +161,4 @@ function daysBetween(from: Date, to: Date): number {
       Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate())) /
       86_400_000,
   );
-}
-
-/**
- * Returns the number of days since the most recent prior wornAt for the same
- * outfit, or null if no prior wear falls within the repeat window.
- */
-function computeRepeatWarn(
-  entry: OutfitSchedule,
-  recentWorn: OutfitSchedule[],
-  windowDays: number,
-): number | null {
-  const outfitId = entry.outfit.id;
-  const entryDate = new Date(
-    Date.UTC(
-      entry.date.getUTCFullYear(),
-      entry.date.getUTCMonth(),
-      entry.date.getUTCDate(),
-    ),
-  );
-
-  let closest: number | null = null;
-
-  for (const prior of recentWorn) {
-    if (prior.outfit.id !== outfitId || prior.wornAt == null) continue;
-    const days = daysBetween(prior.wornAt, entryDate);
-    if (days > 0 && days <= windowDays) {
-      if (closest === null || days < closest) closest = days;
-    }
-  }
-
-  return closest;
 }

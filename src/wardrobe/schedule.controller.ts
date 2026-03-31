@@ -126,7 +126,7 @@ export class ScheduleController {
       dayNum: day.date.getUTCDate(),
       dateParam: toWeekParam(day.date),
       isToday: toWeekParam(day.date) === todayStr,
-      entries: day.entries.map(({ entry, repeatWarnDays }, entryIndex) => {
+      entries: day.entries.map((entry, entryIndex) => {
         const outfit = entry.outfit.unwrap();
         const garmentPhotos = outfit.garments
           .getItems()
@@ -135,7 +135,6 @@ export class ScheduleController {
         return {
           id: entry.id,
           wornAt: entry.wornAt ?? null,
-          repeatWarnDays,
           outfit: {
             id: outfit.id,
             name: outfit.name || null,

@@ -1,6 +1,6 @@
-import { ScheduleEntryViewModel } from './schedule-entry.view-model';
+import { OutfitSchedule } from '../../dal/entity/outfit-schedule.entity';
 
 export interface ScheduleDay {
   date: Date;
-  entries: ScheduleEntryViewModel[];
+  entries: OutfitSchedule[];
 }
