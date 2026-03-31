@@ -21,6 +21,7 @@ import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { OutfitService } from './outfit.service';
 import { GarmentService } from './garment.service';
+import { CalendarService } from './calendar.service';
 
 @UseGuards(ConditionalAuthGuard)
 @Controller('outfits')
@@ -32,6 +33,8 @@ export class OutfitController {
     private readonly outfitService: OutfitService,
     @Inject()
     private readonly garmentService: GarmentService,
+    @Inject()
+    private readonly calendarService: CalendarService,
   ) {}
 
   private userId(req: Request): number | undefined {
@@ -54,8 +57,12 @@ export class OutfitController {
       [],
       i18n,
     );
+    const scheduleDate = (req.query['scheduleDate'] as string) || null;
+    const returnTo = (req.query['returnTo'] as string) || '/outfits';
     return {
       outfit: null,
+      scheduleDate,
+      returnTo,
       categoryRows,
       allCategoryRows: categoryRows,
     };
@@ -67,6 +74,7 @@ export class OutfitController {
     body: {
       name: string;
       notes?: string;
+      scheduleDate?: string;
       category?: string | string[];
       garmentId?: string | string[];
     },
@@ -82,6 +90,12 @@ export class OutfitController {
       { name: body.name, notes: body.notes, slots },
       this.userId(req),
     );
+    if (body.scheduleDate) {
+      await this.calendarService.create(
+        { date: new Date(body.scheduleDate), outfitId: outfit.id },
+        this.userId(req),
+      );
+    }
     return res.redirect(`/outfits/${outfit.id}`);
   }
 
@@ -121,8 +135,10 @@ export class OutfitController {
       this.garmentService.findAll(this.userId(req)),
     ]);
     const selectedGarmentIds = outfit.garments.getItems().map((g) => g.id);
+    const returnTo = (req.query['returnTo'] as string) || `/outfits/${id}`;
     return {
       outfit,
+      returnTo,
       categoryRows: this.outfitService.buildCategoryRows(
         garments,
         selectedGarmentIds,
@@ -140,6 +156,7 @@ export class OutfitController {
     body: {
       name?: string;
       notes?: string;
+      scheduleDate?: string;
       category?: string | string[];
       garmentId?: string | string[];
     },
@@ -156,6 +173,12 @@ export class OutfitController {
       { name: body.name, notes: body.notes, slots },
       this.userId(req),
     );
+    if (body.scheduleDate) {
+      await this.calendarService.create(
+        { date: new Date(body.scheduleDate), outfitId: id },
+        this.userId(req),
+      );
+    }
     return res.redirect(`/outfits/${id}`);
   }
 
