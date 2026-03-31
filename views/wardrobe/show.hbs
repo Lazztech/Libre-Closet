@@ -78,6 +78,10 @@
         class="file-input file-input-sm flex-1"
         accept="image/jpeg,image/png,image/gif,image/webp"
       />
+      <button id="photoBtn" class="btn btn-neutral btn-sm" disabled>
+        {{#if garment.photo}}{{t 'lang.UPDATE_PHOTO'}}{{else}}{{t
+        'lang.ADD_PHOTO'}}{{/if}}
+      </button>
       <span
         id="loading"
         class="htmx-indicator loading loading-ring loading-sm"

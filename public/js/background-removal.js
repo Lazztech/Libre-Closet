@@ -12,6 +12,7 @@
 (async function () {
   const photoInput = document.getElementById('photoInput');
   const nobgInput = document.getElementById('nobgPhotoInput');
+  const submitBtn = document.getElementById('photoBtn');
   const bgStatus = document.getElementById('bgStatus');
 
   if (!photoInput || !nobgInput) return;
@@ -22,13 +23,8 @@
     removeBackground = mod.removeBackground;
   } catch (err) {
     // Package failed to load (old browser, no ES module support, etc.)
-    // Fall through to plain file-input behaviour — server fallback will handle it.
+    // Leave the form as-is; server fallback will handle it.
     console.warn('[bg-removal] Failed to load background-removal module:', err);
-    photoInput.addEventListener('change', function () {
-      if (photoInput.files?.[0]) {
-        htmx.trigger(photoInput.closest('form'), 'submit');
-      }
-    });
     return;
   }
 
@@ -39,6 +35,7 @@
     const file = photoInput.files?.[0];
     if (!file) return;
 
+    if (submitBtn) submitBtn.disabled = true;
     if (bgStatus) bgStatus.classList.remove('hidden');
 
     try {
@@ -60,8 +57,7 @@
       nobgInput.value = '';
     } finally {
       if (bgStatus) bgStatus.classList.add('hidden');
-      // Auto-submit the form via HTMX once bg removal is done (success or fallback)
-      htmx.trigger(photoInput.closest('form'), 'submit');
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 })();
