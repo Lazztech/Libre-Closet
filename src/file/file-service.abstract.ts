@@ -36,12 +36,12 @@ export abstract class FileService
   constructor(readonly configService: ConfigService) {}
 
   async onModuleInit() {
-    if (this.configService.get<boolean>('BACKGROUND_REMOVAL_ENABLED', true)) {
+    if (this.configService.get<boolean>('SERVER_BG_REMOVAL_ENABLED', true)) {
       const mod = await import('@imgly/background-removal-node');
       this.removeBackgroundFn = mod.removeBackground;
 
       const concurrency = this.configService.get<number>(
-        'BACKGROUND_REMOVAL_CONCURRENCY',
+        'SERVER_BG_REMOVAL_CONCURRENCY',
         2,
       );
 
@@ -56,7 +56,7 @@ export abstract class FileService
                 type: mimeType,
               });
               const model = this.configService.get<string>(
-                'BACKGROUND_REMOVAL_MODEL',
+                'SERVER_BG_REMOVAL_MODEL',
                 'small',
               ) as 'small' | 'medium' | 'large';
               const blob = await this.removeBackgroundFn(inputBlob, {
@@ -137,7 +137,7 @@ export abstract class FileService
     fileName: string,
     mode: 'lazy' | 'eager',
   ): Promise<Readable | null> {
-    if (!this.configService.get<boolean>('BACKGROUND_REMOVAL_ENABLED', true)) {
+    if (!this.configService.get<boolean>('SERVER_BG_REMOVAL_ENABLED', true)) {
       return null;
     }
 
@@ -148,12 +148,7 @@ export abstract class FileService
       return existing;
     }
 
-    if (
-      !this.configService.get<boolean>(
-        'BACKGROUND_REMOVAL_SERVER_FALLBACK_ENABLED',
-        true,
-      )
-    ) {
+    if (!this.configService.get<boolean>('SERVER_BG_REMOVAL_ENABLED', true)) {
       // Client-side happy path didn't run (or is disabled) and server fallback is off — redirect to original.
       return null;
     }
