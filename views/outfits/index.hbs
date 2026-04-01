@@ -11,16 +11,39 @@
   {{#if outfits.length}}
   <div class="flex flex-wrap gap-4 justify-center">
     {{#each outfits}}
-    <a
-      href="/outfits/{{this.id}}"
-      class="card bg-base-100 w-96 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+    <div
+      class="card bg-base-100 w-96 shadow-sm hover:shadow-md transition-shadow"
     >
       <div class="card-body p-3">
-        <h2 class="card-title text-sm">{{this.name}}</h2>
+        <div class="flex items-center justify-between gap-2">
+          <a href="/outfits/{{this.id}}" class="card-title text-sm hover:underline truncate">{{this.name}}</a>
+          <div class="dropdown dropdown-end shrink-0">
+            <label tabindex="0" class="btn btn-ghost btn-xs btn-square" title="{{t 'lang.ADD_TO_CALENDAR'}}">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+              </svg>
+            </label>
+            <div tabindex="0" class="dropdown-content z-10 card card-compact shadow-lg bg-base-100 border border-base-300 w-64 mt-1">
+              <div class="card-body p-4 gap-3">
+                <p class="font-semibold text-sm">{{t 'lang.CALENDAR_ADD_OUTFIT_PROMPT'}}</p>
+                <form action="/calendar" method="POST" class="flex flex-col gap-2">
+                  <input type="hidden" name="outfitId" value="{{this.id}}" />
+                  <input
+                    type="date"
+                    name="date"
+                    class="input input-sm input-bordered w-full"
+                    required
+                  />
+                  <button type="submit" class="btn btn-primary btn-sm w-full">{{t 'lang.SAVE'}}</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
         {{#if this.notes}}
         <p class="text-xs text-base-content/60 line-clamp-2">{{this.notes}}</p>
         {{/if}}
-        <div class="flex flex-wrap gap-1 mt-1">
+        <a href="/outfits/{{this.id}}" class="flex flex-wrap gap-1 mt-1">
           {{#each this.garments}} {{#if this.photo}}
           <img
             src="/file/nobg/{{this.photo.fileName}}"
@@ -47,9 +70,9 @@
             </svg>
           </div>
           {{/if}} {{/each}}
-        </div>
+        </a>
       </div>
-    </a>
+    </div>
     {{/each}}
   </div>
   {{else}}

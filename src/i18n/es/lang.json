@@ -150,6 +150,8 @@
     "DRAG_TO_REORDER": "Arrastra para reordenar",
     "ADD_ROW": "Añadir fila",
     "NO_GARMENTS_FOR_BUILDER": "Añade algunas prendas a tu armario para empezar a crear conjuntos.",
+    "ADD_TO_CALENDAR": "Añadir al Calendario",
+    "CALENDAR_ADD_OUTFIT_PROMPT": "¿Añadir conjunto al Calendario?",
     "validation": {
         "IS_EMAIL": "Por favor, introduce una dirección de correo electrónico válida",
         "MIN_PASSWORD_LENGTH": "La contraseña debe tener al menos 8 caracteres",
