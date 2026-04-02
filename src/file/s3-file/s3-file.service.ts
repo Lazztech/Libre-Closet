@@ -31,8 +31,9 @@ export class S3FileService extends FileService {
   public async storeImageFromFileUpload(
     upload$: Observable<MultipartFileStream>,
     userId: any,
+    fileName?: string,
   ): Promise<File> {
-    const fileName = randomUUID() + '.webp';
+    const storedFileName = fileName ?? randomUUID() + '.webp';
     const transformer = sharp()
       .autoOrient()
       .webp({ quality: 100 })
@@ -43,7 +44,7 @@ export class S3FileService extends FileService {
       client: this.s3,
       params: {
         Bucket: this.bucketName,
-        Key: fileName,
+        Key: storedFileName,
         Body: passThrough,
         ContentType: 'image/webp',
       },
@@ -82,7 +83,7 @@ export class S3FileService extends FileService {
     }
 
     const file = this.fileRepository.create({
-      fileName,
+      fileName: storedFileName,
       createdOn: new Date().toISOString(),
       createdBy: userId,
     });

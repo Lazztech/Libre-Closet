@@ -1,7 +1,7 @@
 import { EntityRepository, FilterQuery } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { lastValueFrom, mergeMap } from 'rxjs';
-import { PassThrough } from 'stream';
+import { randomUUID } from 'node:crypto';
 import {
   ForbiddenException,
   Injectable,
@@ -177,42 +177,23 @@ export class GarmentService {
     // piping the stream to disk first (synchronous from the stream's perspective)
     // we consume it before any Postgres round-trip can drain it.
     //
-    // IMPORTANT: nobgPhoto$ must be subscribed concurrently with photo$, not
-    // after it. Both come from the same hot Subject in the multipart interceptor
-    // — by the time storeImageFromFileUpload resolves, nobgPhoto's data has
-    // already been emitted and is gone. Buffer the nobg bytes in parallel before
-    // any await, then write to disk once we have the filename.
+    // IMPORTANT: photo$ and nobgPhoto$ must be subscribed concurrently, not
+    // sequentially. Both come from the same hot Subject in the multipart
+    // interceptor.
     let photo: File | undefined;
     if (dto.photo$) {
-      // Pipe nobgPhoto$ into a PassThrough immediately to capture the stream
-      // under back-pressure — same timing constraint as before (must subscribe
-      // before awaiting photo$) but avoids materialising the whole image into
-      // a single Buffer.
-      const nobgPassThroughPromise = dto.nobgPhoto$
-        ? lastValueFrom(
-            dto.nobgPhoto$.pipe(
-              mergeMap((fileStream) => {
-                const pt = new PassThrough();
-                fileStream.pipe(pt);
-                return Promise.resolve(pt);
-              }),
-            ),
-            { defaultValue: null },
-          )
-        : Promise.resolve(null);
-
-      photo = await this.fileService.storeImageFromFileUpload(
+      const photoFileName = `${randomUUID()}.webp`;
+      const photoPromise = this.fileService.storeImageFromFileUpload(
         dto.photo$,
         userId,
+        photoFileName,
+      );
+      const nobgPromise = this.streamNobgIfPresent(
+        dto.nobgPhoto$,
+        photoFileName,
       );
 
-      const nobgPassThrough = await nobgPassThroughPromise;
-      if (nobgPassThrough) {
-        await this.fileService.storeNobgVariantFromStream(
-          nobgPassThrough,
-          photo.fileName,
-        );
-      }
+      [photo] = await Promise.all([photoPromise, nobgPromise]);
     }
 
     const garment = await this.findOne(id, userId);
@@ -230,6 +211,25 @@ export class GarmentService {
 
     await this.garmentRepository.getEntityManager().flush();
     return garment;
+  }
+
+  private streamNobgIfPresent(
+    nobgPhoto$: UpdateGarmentDto['nobgPhoto$'],
+    photoFileName: string,
+  ): Promise<void> {
+    if (!nobgPhoto$) return Promise.resolve();
+
+    return lastValueFrom(
+      nobgPhoto$.pipe(
+        mergeMap((fileStream) =>
+          this.fileService.storeNobgVariantFromStream(
+            fileStream,
+            photoFileName,
+          ),
+        ),
+      ),
+      { defaultValue: undefined },
+    );
   }
 
   async remove(id: number, userId?: number): Promise<void> {
