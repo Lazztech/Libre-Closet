@@ -9,14 +9,15 @@
     "node": "22.x"
   },
   "scripts": {
-    "build": "nest build && npm run generate:tailwind && npm run generate:sw",
+    "build": "nest build && npm run generate",
+    "generate": "npm run generate:tailwind && npm run generate:sw",
     "generate:sw": "esbuild --outfile=views/assets/src-sw.js --bundle views/assets/src-sw.ts && npx workbox injectManifest",
     "generate:sw:watch": "npx workbox injectManifest --watch",
     "generate:tailwind": "npx @tailwindcss/cli -i ./views/assets/main.css -o ./public/bundle.css --minify",
     "generate:tailwind:watch": "npx @tailwindcss/cli -i ./views/assets/main.css -o ./public/bundle.css --minify --watch",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "npm run generate:tailwind && nest start",
+    "start": "npm run generate && nest start",
     "start:dev": "concurrently \"nest start --watch\" \"npm run generate:tailwind:watch\"",
     "start:debug": "concurrently \"nest start --debug --watch\" \"npm run generate:tailwind:watch\"",
     "start:prod": "node dist/main",
