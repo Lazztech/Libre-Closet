@@ -115,7 +115,11 @@
           </form>
         </div>
         {{!-- Mark worn pill button, to the right of the bar --}}
-        <form method="post" action="/calendar/{{this.id}}/worn" class="shrink-0">
+        <form method="post" action="/calendar/{{this.id}}/worn" class="shrink-0"
+          hx-post="/calendar/{{this.id}}/worn"
+          hx-target="this"
+          hx-swap="outerHTML"
+        >
           <input type="hidden" name="week" value="{{../dateParam}}" />
           <button
             type="submit"
