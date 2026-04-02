@@ -6,7 +6,7 @@ A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, uploa
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Version](https://img.shields.io/badge/Version-0.1.9-green.svg)](https://github.com/lazztech/libre-closet/tags)
-[![GHCR Pulls](https://img.shields.io/badge/GHCR%20pulls-1.9k-grey?logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet)
+[![GHCR Pulls](https://img.shields.io/badge/GHCR%20pulls-2.4k-grey?logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lazztech/libre-closet?logo=docker&logoColor=959da5&labelColor=333a41&label=Docker%20Pulls)](https://hub.docker.com/r/lazztech/libre-closet)
 
 <!-- [![GHCR Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Flazztech%2Flibre-closet%2Flibre-closet.json&query=%24.downloads&label=GHCR%20pulls&logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet) -->
@@ -145,9 +145,9 @@ npm run start:prod
 | `PRIVATE_VAPID_KEY`                | Web push — generate for production             | —              | `UUxI4O8-FbRouAevSmBQ6o18hgE4nSG3qwvJTfKc-ls`                                             |
 
 <!-- Commented out not yet released
-| `BACKGROUND_REMOVAL_ENABLED`       | Enable auto background removal on garment images | `true`         | `false`                                                                                   |
-| `BACKGROUND_REMOVAL_CONCURRENCY`   | Max concurrent ONNX bg-removal jobs              | `1`            | `1`                                                                                       |
-| `BACKGROUND_REMOVAL_MODEL`         | ONNX model size for background removal (`small`, `medium`, `large`) | `small` | `medium` |
+| `SERVER_BG_REMOVAL_ENABLED`                    | Enable server-side ONNX inference as fallback when client-side removal didn't run (e.g. older browser) or to lazily remove background from garments uploaded before background removal shipped. Disable on very low-powered hosts to prevent CPU spikes  If `false`: nobg endpoint redirects to original, client-side script not loaded | `true`  | `false`  |
+| `SERVER_BG_REMOVAL_CONCURRENCY`                | Max concurrent server-side ONNX inference jobs (fallback path only)              | `1`            | `1`                                                                                       |
+| `SERVER_BG_REMOVAL_MODEL`                      | ONNX model size for server-side background removal (`small`, `medium`, `large`) | `small` | `medium` |
  -->
 
 Generate JWT secret:

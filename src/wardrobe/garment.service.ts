@@ -1,5 +1,7 @@
 import { EntityRepository, FilterQuery } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
+import { lastValueFrom, mergeMap } from 'rxjs';
+import { randomUUID } from 'node:crypto';
 import {
   ForbiddenException,
   Injectable,
@@ -174,12 +176,24 @@ export class GarmentService {
     // loop long enough for a resume()'d stream to drain/discard its data. By
     // piping the stream to disk first (synchronous from the stream's perspective)
     // we consume it before any Postgres round-trip can drain it.
+    //
+    // IMPORTANT: photo$ and nobgPhoto$ must be subscribed concurrently, not
+    // sequentially. Both come from the same hot Subject in the multipart
+    // interceptor.
     let photo: File | undefined;
     if (dto.photo$) {
-      photo = await this.fileService.storeImageFromFileUpload(
+      const photoFileName = `${randomUUID()}.webp`;
+      const photoPromise = this.fileService.storeImageFromFileUpload(
         dto.photo$,
         userId,
+        photoFileName,
       );
+      const nobgPromise = this.streamNobgIfPresent(
+        dto.nobgPhoto$,
+        photoFileName,
+      );
+
+      [photo] = await Promise.all([photoPromise, nobgPromise]);
     }
 
     const garment = await this.findOne(id, userId);
@@ -197,6 +211,25 @@ export class GarmentService {
 
     await this.garmentRepository.getEntityManager().flush();
     return garment;
+  }
+
+  private streamNobgIfPresent(
+    nobgPhoto$: UpdateGarmentDto['nobgPhoto$'],
+    photoFileName: string,
+  ): Promise<void> {
+    if (!nobgPhoto$) return Promise.resolve();
+
+    return lastValueFrom(
+      nobgPhoto$.pipe(
+        mergeMap((fileStream) =>
+          this.fileService.storeNobgVariantFromStream(
+            fileStream,
+            photoFileName,
+          ),
+        ),
+      ),
+      { defaultValue: undefined },
+    );
   }
 
   async remove(id: number, userId?: number): Promise<void> {

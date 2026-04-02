@@ -10,4 +10,5 @@ export interface UpdateGarmentDto {
   size?: string;
   notes?: string;
   photo$?: Observable<MultipartFileStream>;
+  nobgPhoto$?: Observable<MultipartFileStream>;
 }

@@ -196,10 +196,16 @@ export class WardrobeController {
   async uploadPhoto(
     @Param('id', ParseIntPipe) id: number,
     @MultipartFiles('photo') photo$: Observable<MultipartFileStream>,
+    @MultipartFiles([['nobgPhoto', false]])
+    nobgPhoto$: Observable<MultipartFileStream>,
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    await this.garmentService.update(id, { photo$: photo$ }, this.userId(req));
+    await this.garmentService.update(
+      id,
+      { photo$, nobgPhoto$ },
+      this.userId(req),
+    );
     res.setHeader('HX-Redirect', `/wardrobe/${id}`);
     return res.send();
   }

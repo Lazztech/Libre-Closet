@@ -12,6 +12,7 @@ export interface FileServiceInterface {
   storeImageFromFileUpload(
     upload$: Observable<MultipartFileStream>,
     userId: any,
+    fileName?: string,
   ): Promise<File>;
   delete(fileName: string): Promise<void>;
   deleteById(fileId: any, userId: any): Promise<any>;

@@ -37,14 +37,15 @@ export class LocalFileService extends FileService {
   async storeImageFromFileUpload(
     upload$: Observable<MultipartFileStream>,
     userId: any,
+    fileName?: string,
   ): Promise<File> {
-    const fileName = randomUUID() + '.webp';
+    const storedFileName = fileName ?? randomUUID() + '.webp';
     const transformer = sharp()
       .autoOrient()
       .webp({ quality: 100 })
       .resize(1080, 1080, { fit: sharp.fit.inside });
     const writeStream = fs.createWriteStream(
-      path.join(this.directory, fileName),
+      path.join(this.directory, storedFileName),
     );
 
     try {
@@ -74,7 +75,7 @@ export class LocalFileService extends FileService {
     // repository.create => save pattern used to so that the @BeforeInsert decorated method
     // will fire generating a uuid for the shareableId
     const file = this.fileRepository.create({
-      fileName,
+      fileName: storedFileName,
       createdOn: new Date().toISOString(),
       createdBy: userId,
     });

@@ -157,12 +157,9 @@ import { LoggerModule } from 'nestjs-pino';
           then: Joi.string().default('us-east-1'),
           otherwise: Joi.optional(),
         }),
-        BACKGROUND_REMOVAL_ENABLED: Joi.boolean().default(true),
-        BACKGROUND_REMOVAL_CONCURRENCY: Joi.number()
-          .integer()
-          .min(1)
-          .default(1),
-        BACKGROUND_REMOVAL_MODEL: Joi.string()
+        SERVER_BG_REMOVAL_ENABLED: Joi.boolean().default(true),
+        SERVER_BG_REMOVAL_CONCURRENCY: Joi.number().integer().min(1).default(1),
+        SERVER_BG_REMOVAL_MODEL: Joi.string()
           .valid('small', 'medium', 'large')
           .default('small'),
       }),

@@ -36,12 +36,12 @@ export abstract class FileService
   constructor(readonly configService: ConfigService) {}
 
   async onModuleInit() {
-    if (this.configService.get<boolean>('BACKGROUND_REMOVAL_ENABLED', true)) {
+    if (this.configService.get<boolean>('SERVER_BG_REMOVAL_ENABLED', true)) {
       const mod = await import('@imgly/background-removal-node');
       this.removeBackgroundFn = mod.removeBackground;
 
       const concurrency = this.configService.get<number>(
-        'BACKGROUND_REMOVAL_CONCURRENCY',
+        'SERVER_BG_REMOVAL_CONCURRENCY',
         2,
       );
 
@@ -56,7 +56,7 @@ export abstract class FileService
                 type: mimeType,
               });
               const model = this.configService.get<string>(
-                'BACKGROUND_REMOVAL_MODEL',
+                'SERVER_BG_REMOVAL_MODEL',
                 'small',
               ) as 'small' | 'medium' | 'large';
               const blob = await this.removeBackgroundFn(inputBlob, {
@@ -137,7 +137,7 @@ export abstract class FileService
     fileName: string,
     mode: 'lazy' | 'eager',
   ): Promise<Readable | null> {
-    if (!this.configService.get<boolean>('BACKGROUND_REMOVAL_ENABLED', true)) {
+    if (!this.configService.get<boolean>('SERVER_BG_REMOVAL_ENABLED', true)) {
       return null;
     }
 
@@ -146,6 +146,11 @@ export abstract class FileService
     const existing = await this.get(nobgName).catch(() => undefined);
     if (existing) {
       return existing;
+    }
+
+    if (!this.configService.get<boolean>('SERVER_BG_REMOVAL_ENABLED', true)) {
+      // Client-side happy path didn't run (or is disabled) and server fallback is off — redirect to original.
+      return null;
     }
 
     const inputFn = async () => {
@@ -174,8 +179,26 @@ export abstract class FileService
   abstract storeImageFromFileUpload(
     upload$: Observable<MultipartFileStream>,
     userId: any,
+    fileName?: string,
   ): Promise<File>;
   abstract delete(fileName: string): Promise<void>;
+
+  async storeNobgVariantFromStream(
+    stream: Readable,
+    originalFileName: string,
+  ): Promise<void> {
+    const nobgName = this.nobgFileName(originalFileName);
+    const transformer = sharp()
+      .webp({ quality: 100 })
+      .resize(1080, 1080, { fit: sharp.fit.inside });
+    const passThrough = new Stream.PassThrough();
+    const storePromise = this.store(nobgName, passThrough);
+    stream.on('error', (err) => passThrough.destroy(err));
+    transformer.on('error', (err) => passThrough.destroy(err));
+    stream.pipe(transformer).pipe(passThrough);
+    await storePromise;
+  }
+
   abstract deleteById(fileId: any, userId: any): Promise<any>;
   abstract get(fileName: string): Promise<Readable | undefined>;
   abstract getByShareableId(shareableId: string): Promise<Readable | undefined>;

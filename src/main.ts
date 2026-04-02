@@ -20,6 +20,15 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
+  // Enable cross-origin isolation so the browser grants access to SharedArrayBuffer,
+  // which is required for WebAssembly multi-threading (used by onnxruntime-web).
+  // https://web.dev/cross-origin-isolation-guide/
+  app.use((_req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+    next();
+  });
+
   // https://docs.nestjs.com/techniques/compression
   app.use(compression());
 
@@ -97,6 +106,17 @@ async function bootstrap() {
     {
       prefix: '/modules/pulltorefresh',
     },
+  );
+  app.useStaticAssets(
+    join(__dirname, '..', 'node_modules/@imgly/background-removal/dist'),
+    { prefix: '/modules/background-removal' },
+  );
+  app.useStaticAssets(join(__dirname, '..', 'node_modules/onnxruntime-web'), {
+    prefix: '/modules/onnxruntime-web',
+  });
+  app.useStaticAssets(
+    join(__dirname, '..', 'node_modules/@imgly/background-removal-data/dist'),
+    { prefix: '/bg-removal-models' },
   );
 
   app.useGlobalFilters(new ErrorViewFilter());
