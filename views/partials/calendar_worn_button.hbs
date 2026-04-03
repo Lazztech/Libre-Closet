@@ -1,0 +1,7 @@
+<form method="post" action="/calendar/{{entryId}}/worn" class="shrink-0"
+    hx-post="/calendar/{{entryId}}/worn" hx-target="this" hx-swap="outerHTML">
+    <input type="hidden" name="week" value="{{week}}" />
+    <button type="submit" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap {{btnClass}}">
+        {{label}}
+    </button>
+</form>

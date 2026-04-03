@@ -89,7 +89,6 @@ export class CalendarController {
     const entry = await this.calendarService.toggleWorn(id, this.userId(req));
     const week = body.week ?? '';
 
-    // HTMX request: swap only the form in place — no page reload, no scroll jump
     if (req.headers['hx-request']) {
       const isWorn = !!entry.wornAt;
       const btnClass = isWorn
@@ -98,14 +97,13 @@ export class CalendarController {
       const label = isWorn
         ? `✓ ${i18n.t('lang.CALENDAR_WORN')}`
         : i18n.t('lang.CALENDAR_MARK_WORN_PROMPT');
-      const html =
-        `<form method="post" action="/calendar/${id}/worn" class="shrink-0"` +
-        ` hx-post="/calendar/${id}/worn" hx-target="this" hx-swap="outerHTML">` +
-        `<input type="hidden" name="week" value="${week}" />` +
-        `<button type="submit" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap ${btnClass}">${label}</button>` +
-        `</form>`;
-      res.setHeader('Content-Type', 'text/html');
-      return res.status(200).send(html);
+      return res.render('partials/calendar_worn_button', {
+        layout: false,
+        entryId: id,
+        week,
+        btnClass,
+        label,
+      });
     }
 
     // Non-HTMX fallback: full redirect
