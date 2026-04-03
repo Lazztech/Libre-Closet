@@ -9,34 +9,28 @@
  * Models are served from /bg-removal-models/ (@imgly/background-removal-data
  * installed from the IMG.LY CDN tarball — no runtime CDN required).
  */
-(async function () {
-  const photoInput = document.getElementById('photoInput');
-  const nobgInput = document.getElementById('nobgPhotoInput');
-  const submitBtn = document.getElementById('photoBtn');
-  const bgStatus = document.getElementById('bgStatus');
 
-  if (!photoInput || !nobgInput) return;
+const config = {
+  publicPath: location.origin + '/bg-removal-models/',
+  debug: true,
+  // @imgly/background-removal handles graceful degradation to WASM if navigator.gpu WebGPU is unavailable
+  // when set to 'gpu'.
+  device: 'cpu',
+  // Note when webgpu is used the 'isnet_quint8' 8bit floating point model gets converted at
+  // runtime to fp16. Some overhead is incurred in this conversion step.
+  model: 'isnet_quint8',
+  // Can output to a given format. Notably though webp incurs
+  // a compute burden on the client to convert in `imageEncode`.
+  // Leave to the default 'image/png' to bypass this.
+  // output: { format: 'image/webp', quality: 0.9 },
+};
 
-  const config = {
-    publicPath: location.origin + '/bg-removal-models/',
-    debug: true,
-    // @imgly/background-removal handles graceful degradation to WASM if navigator.gpu WebGPU is unavailable
-    device: 'gpu',
-    // Note when webgpu is used the 'isnet_quint8' 8bit floating point model gets converted at
-    // runtime to fp16. Some overhead is incurred in this conversion step.
-    model: 'isnet_quint8',
-    // Can output to a given format. Notably though webp incurs
-    // a compute burden on the client to convert in `imageEncode`.
-    // Leave to the default 'image/png' to bypass this.
-    // output: { format: 'image/webp', quality: 0.9 },
-  };
-  let removeBackground;
-  let preload;
+let mod = await import('/modules/background-removal/index.mjs');
+let removeBackground = mod.removeBackground;
+
+export const initBackgroundRemoval = async () => {
   try {
-    const mod = await import('/modules/background-removal/index.mjs');
-    removeBackground = mod.removeBackground;
-    preload = mod.preload;
-    preload(config).then(() => {
+    mod.preload(config).then(() => {
       console.log('Asset preloading succeeded');
     });
   } catch (err) {
@@ -45,6 +39,17 @@
     console.warn('[bg-removal] Failed to load background-removal module:', err);
     return;
   }
+};
+
+(async function () {
+  const photoInput = document.getElementById('photoInput');
+  const nobgInput = document.getElementById('nobgPhotoInput');
+  const submitBtn = document.getElementById('photoBtn');
+  const bgStatus = document.getElementById('bgStatus');
+
+  if (!photoInput || !nobgInput) return;
+
+  await initBackgroundRemoval();
 
   photoInput.addEventListener('change', async function () {
     // Re-enable submit for the "no file" case; it will be gated by html required
