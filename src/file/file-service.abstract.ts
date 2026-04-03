@@ -126,7 +126,7 @@ export abstract class FileService
     }
   }
 
-  private nobgFileName(fileName: string): string {
+  public nobgFileName(fileName: string): string {
     const extIndex = fileName.lastIndexOf('.');
     return extIndex === -1
       ? `${fileName}-nobg`

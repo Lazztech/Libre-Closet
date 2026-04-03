@@ -199,6 +199,7 @@ export class GarmentService {
     const garment = await this.findOne(id, userId);
 
     if (photo) {
+      await this.deleteOldPhoto(garment);
       garment.photo = photo as any;
     }
 
@@ -211,6 +212,19 @@ export class GarmentService {
 
     await this.garmentRepository.getEntityManager().flush();
     return garment;
+  }
+
+  private async deleteOldPhoto(garment: Garment) {
+    const oldFileName = garment.photo?.fileName;
+    if (oldFileName) {
+      await this.fileService
+        .delete(oldFileName)
+        .catch((err) => this.logger.warn(err));
+      const nobgFileName = this.fileService.nobgFileName(oldFileName);
+      await this.fileService
+        .delete(nobgFileName)
+        .catch((err) => this.logger.warn(err));
+    }
   }
 
   private streamNobgIfPresent(
