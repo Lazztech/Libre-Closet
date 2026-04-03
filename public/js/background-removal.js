@@ -17,10 +17,28 @@
 
   if (!photoInput || !nobgInput) return;
 
+  const config = {
+    publicPath: location.origin + '/bg-removal-models/',
+    debug: true,
+    // @imgly/background-removal handles graceful degradation to WASM if navigator.gpu WebGPU is unavailable
+    device: 'gpu',
+    // Note when webgpu is used the 'isnet_quint8' 8bit floating point model gets converted at
+    // runtime to fp16. Some overhead is incurred in this conversion step.
+    model: 'isnet_quint8',
+    // Can output to a given format. Notably though webp incurs
+    // a compute burden on the client to convert in `imageEncode`.
+    // Leave to the default 'image/png' to bypass this.
+    // output: { format: 'image/webp', quality: 0.9 },
+  };
   let removeBackground;
+  let preload;
   try {
     const mod = await import('/modules/background-removal/index.mjs');
     removeBackground = mod.removeBackground;
+    preload = mod.preload;
+    preload(config).then(() => {
+      console.log('Asset preloading succeeded');
+    });
   } catch (err) {
     // Package failed to load (old browser, no ES module support, etc.)
     // Leave the form as-is; server fallback will handle it.
@@ -39,19 +57,7 @@
     if (bgStatus) bgStatus.classList.remove('hidden');
 
     try {
-      const blob = await removeBackground(file, {
-        publicPath: location.origin + '/bg-removal-models/',
-        debug: true,
-        // @imgly/background-removal handles graceful degradation to WASM if navigator.gpu WebGPU is unavailable
-        device: 'gpu',
-        // Note when webgpu is used the 'isnet_quint8' 8bit floating point model gets converted at
-        // runtime to fp16. Some overhead is incurred in this conversion step.
-        model: 'isnet_quint8',
-        // Can output to a given format. Notably though webp incurs
-        // a compute burden on the client to convert in `imageEncode`.
-        // Leave to the default 'image/png' to bypass this.
-        // output: { format: 'image/webp', quality: 0.9 },
-      });
+      const blob = await removeBackground(file, config);
 
       const dt = new DataTransfer();
       dt.items.add(new File([blob], 'nobg.webp', { type: 'image/webp' }));
