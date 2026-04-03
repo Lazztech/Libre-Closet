@@ -137,10 +137,6 @@ export abstract class FileService
     fileName: string,
     mode: 'lazy' | 'eager',
   ): Promise<Readable | null> {
-    if (!this.configService.get<boolean>('SERVER_BG_REMOVAL_ENABLED', true)) {
-      return null;
-    }
-
     const nobgName = this.nobgFileName(fileName);
 
     const existing = await this.get(nobgName).catch(() => undefined);
