@@ -39,15 +39,18 @@
     if (bgStatus) bgStatus.classList.remove('hidden');
 
     try {
-      const useGpu = !!navigator.gpu;
-      console.log(
-        `[bg-removal] Using ${useGpu ? 'WebGPU (isnet_fp16)' : 'WASM (isnet_quint8)'}`,
-      );
       const blob = await removeBackground(file, {
         publicPath: location.origin + '/bg-removal-models/',
-        device: useGpu ? 'gpu' : 'cpu',
-        model: useGpu ? 'isnet_fp16' : 'isnet_quint8',
-        output: { format: 'image/webp', quality: 0.9 },
+        debug: true,
+        // @imgly/background-removal handles graceful degradation to WASM if navigator.gpu WebGPU is unavailable
+        device: 'gpu',
+        // Note when webgpu is used the 'isnet_quint8' 8bit floating point model gets converted at
+        // runtime to fp16. Some overhead is incurred in this conversion step.
+        model: 'isnet_quint8',
+        // Can output to a given format. Notably though webp incurs
+        // a compute burden on the client to convert in `imageEncode`.
+        // Leave to the default 'image/png' to bypass this.
+        // output: { format: 'image/webp', quality: 0.9 },
       });
 
       const dt = new DataTransfer();
