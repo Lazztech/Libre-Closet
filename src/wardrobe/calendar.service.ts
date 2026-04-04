@@ -11,8 +11,9 @@ import { Outfit } from '../dal/entity/outfit.entity';
 import { User } from '../dal/entity/user.entity';
 import { CreateCalendarEntryDto } from './dto/create-calendar-entry.dto';
 import { CalendarDay } from './view-models/calendar-day.view-model';
-import { WeekCalendar } from './view-models/week-calendar.view-model';
+import { WeekSchedule } from './view-models/week-schedule.view-model';
 import { I18nContext } from 'nestjs-i18n';
+import { WeekNavBoundaries } from './view-models/week-nav-boundaries';
 
 @Injectable()
 export class CalendarService {
@@ -140,7 +141,7 @@ export class CalendarService {
    * that contains `anchorDate`.  Populates outfit + garment thumbnails and
    * annotates each entry with a repeat-wear warning when applicable.
    */
-  async findWeek(anchorDate: Date, userId?: number): Promise<WeekCalendar> {
+  async findWeek(anchorDate: Date, userId?: number): Promise<WeekSchedule> {
     const weekStart = startOfWeek(anchorDate);
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 7);
@@ -245,18 +246,92 @@ export class CalendarService {
       this.findOutfitsForUser(userId),
     ]);
 
-    const prevWeek = new Date(weekSchedule.weekStart);
-    prevWeek.setUTCDate(prevWeek.getUTCDate() - 7);
-    const nextWeek = new Date(weekSchedule.weekStart);
-    nextWeek.setUTCDate(nextWeek.getUTCDate() + 7);
-    const weekEndDate = new Date(weekSchedule.weekStart);
-    weekEndDate.setUTCDate(weekEndDate.getUTCDate() + 6);
+    const weekBounds = this.findWeekBounds(weekSchedule);
 
-    const todayStr = this.toWeekParam(new Date());
-    const weekStartStr = this.toWeekParam(weekSchedule.weekStart);
-    const weekEndStr = this.toWeekParam(weekEndDate);
+    const miniMonthCal = this.getMiniMonthCal(
+      weekBounds,
+      weekSchedule,
+      calMonthParam,
+    );
 
-    // ── Mini month calendar ────────────────────────────────────────────
+    const {
+      calYear,
+      calMonth,
+      calendarWeeks,
+      prevMonthParam,
+      nextMonthParam,
+      prevMonthWeekParam,
+      nextMonthWeekParam,
+    } = miniMonthCal;
+
+    const days = this.calDays(weekSchedule, i18n, weekBounds);
+
+    return {
+      pageTitle: i18n.t('lang.CALENDAR_PAGE_TITLE'),
+      days,
+      outfits: outfits.map((o) => ({ id: o.id, name: o.name })),
+      weekParam: this.toWeekParam(weekSchedule.weekStart),
+      weekLabel: this.formatWeekLabel(
+        weekSchedule.weekStart,
+        weekBounds.weekEndDate,
+        i18n,
+      ),
+      prevWeekParam: this.toWeekParam(weekBounds.prevWeek),
+      nextWeekParam: this.toWeekParam(weekBounds.nextWeek),
+      today: weekBounds.todayStr,
+      monthName: i18n.t(`lang.${this.MONTH_I18N_KEYS[calMonth]}`),
+      year: calYear,
+      calendarWeeks,
+      prevMonthParam,
+      nextMonthParam,
+      prevMonthWeekParam,
+      nextMonthWeekParam,
+    };
+  }
+  // ---------------------------------------------------------------------------
+  // Private helpers
+  // ---------------------------------------------------------------------------
+
+  // ── Day columns ────────────────────────────────────────────────────
+  private calDays(
+    weekSchedule: WeekSchedule,
+    i18n: I18nContext,
+    weekBounds: WeekNavBoundaries,
+  ) {
+    const CHIP_HUES = [220, 240, 260];
+
+    const days = weekSchedule.days.map((day) => ({
+      dayName: i18n.t(`lang.${this.DAY_I18N_KEYS[day.date.getUTCDay()]}`),
+      dayNum: day.date.getUTCDate(),
+      dateParam: this.toWeekParam(day.date),
+      isToday: this.toWeekParam(day.date) === weekBounds.todayStr,
+      entries: day.entries.map((entry, entryIndex) => {
+        const outfit = entry.outfit.unwrap();
+        const garmentPhotos = outfit.garments
+          .getItems()
+          .map((g) => g.photo?.fileName ?? null)
+          .filter((f): f is string => f !== null);
+        return {
+          id: entry.id,
+          wornAt: entry.wornAt ?? null,
+          outfit: {
+            id: outfit.id,
+            name: outfit.name || null,
+            garmentPhotos,
+            chipHue: CHIP_HUES[entryIndex % CHIP_HUES.length],
+          },
+        };
+      }),
+    }));
+    return days;
+  }
+
+  // ── Mini month calendar ────────────────────────────────────────────
+  private getMiniMonthCal(
+    weekBounds: WeekNavBoundaries,
+    weekSchedule: WeekSchedule,
+    calMonthParam: string | undefined,
+  ) {
     let calMonth = weekSchedule.weekStart.getUTCMonth();
     let calYear = weekSchedule.weekStart.getUTCFullYear();
     if (calMonthParam && /^\d{4}-\d{2}$/.test(calMonthParam)) {
@@ -306,53 +381,14 @@ export class CalendarService {
     const calendarWeeks = this.buildCalendarWeeks(
       calYear,
       calMonth,
-      todayStr,
-      weekStartStr,
-      weekEndStr,
+      weekBounds.todayStr,
+      weekBounds.weekStartStr,
+      weekBounds.weekEndStr,
     );
 
-    // ── Day columns ────────────────────────────────────────────────────
-    const CHIP_HUES = [220, 240, 260];
-
-    const days = weekSchedule.days.map((day) => ({
-      dayName: i18n.t(`lang.${this.DAY_I18N_KEYS[day.date.getUTCDay()]}`),
-      dayNum: day.date.getUTCDate(),
-      dateParam: this.toWeekParam(day.date),
-      isToday: this.toWeekParam(day.date) === todayStr,
-      entries: day.entries.map((entry, entryIndex) => {
-        const outfit = entry.outfit.unwrap();
-        const garmentPhotos = outfit.garments
-          .getItems()
-          .map((g) => g.photo?.fileName ?? null)
-          .filter((f): f is string => f !== null);
-        return {
-          id: entry.id,
-          wornAt: entry.wornAt ?? null,
-          outfit: {
-            id: outfit.id,
-            name: outfit.name || null,
-            garmentPhotos,
-            chipHue: CHIP_HUES[entryIndex % CHIP_HUES.length],
-          },
-        };
-      }),
-    }));
-
     return {
-      pageTitle: i18n.t('lang.CALENDAR_PAGE_TITLE'),
-      days,
-      outfits: outfits.map((o) => ({ id: o.id, name: o.name })),
-      weekParam: this.toWeekParam(weekSchedule.weekStart),
-      weekLabel: this.formatWeekLabel(
-        weekSchedule.weekStart,
-        weekEndDate,
-        i18n,
-      ),
-      prevWeekParam: this.toWeekParam(prevWeek),
-      nextWeekParam: this.toWeekParam(nextWeek),
-      today: todayStr,
-      monthName: i18n.t(`lang.${this.MONTH_I18N_KEYS[calMonth]}`),
-      year: calYear,
+      calMonth,
+      calYear,
       calendarWeeks,
       prevMonthParam,
       nextMonthParam,
@@ -361,9 +397,26 @@ export class CalendarService {
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Private helpers
-  // ---------------------------------------------------------------------------
+  private findWeekBounds(weekSchedule: WeekSchedule) {
+    const prevWeek = new Date(weekSchedule.weekStart);
+    prevWeek.setUTCDate(prevWeek.getUTCDate() - 7);
+    const nextWeek = new Date(weekSchedule.weekStart);
+    nextWeek.setUTCDate(nextWeek.getUTCDate() + 7);
+    const weekEndDate = new Date(weekSchedule.weekStart);
+    weekEndDate.setUTCDate(weekEndDate.getUTCDate() + 6);
+
+    const todayStr = this.toWeekParam(new Date());
+    const weekStartStr = this.toWeekParam(weekSchedule.weekStart);
+    const weekEndStr = this.toWeekParam(weekEndDate);
+    return {
+      prevWeek,
+      nextWeek,
+      weekEndDate,
+      todayStr,
+      weekStartStr,
+      weekEndStr,
+    };
+  }
 
   private async findOneOwned(
     id: number,
