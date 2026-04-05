@@ -96,8 +96,13 @@
     </div>
   </form>
   <script type="module">
-    import { wireUpPhotoInput } from '/js/background-removal.js';
+    import {
+      initBackgroundRemoval,
+      wireUpPhotoInput,
+    } from '/js/background-removal.js';
     wireUpPhotoInput();
+    // Preload clientside background removal models
+    initBackgroundRemoval();
   </script>
 
   {{!-- Metadata --}}

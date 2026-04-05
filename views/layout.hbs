@@ -65,11 +65,6 @@ https://nestjs-i18n.com/quick-start --}}
         }
       }
     </script>
-    <script type="module">
-      import { initBackgroundRemoval } from '/js/background-removal.js';
-      // Preload clientside background removal models
-      initBackgroundRemoval();
-    </script>
     {{#if pwaEnabled}}
     <script type="module" src="/modules/pwa-install.bundle.js"></script>
     {{/if}} {{! Include assets/main.css and build output from
