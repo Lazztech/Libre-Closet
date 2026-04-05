@@ -12,10 +12,11 @@
 
 const config = {
   publicPath: location.origin + '/bg-removal-models/',
-  debug: true,
+  debug: false,
   // @imgly/background-removal handles graceful degradation to WASM if navigator.gpu WebGPU is unavailable
   // when set to 'gpu'.
-  device: 'cpu',
+  device: 'gpu',
+  proxyToWorker: true,
   // Note when webgpu is used the 'isnet_quint8' 8bit floating point model gets converted at
   // runtime to fp16. Some overhead is incurred in this conversion step.
   model: 'isnet_quint8',
