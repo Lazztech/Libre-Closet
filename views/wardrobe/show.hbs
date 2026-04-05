@@ -95,7 +95,10 @@
       <span>{{t 'lang.REMOVING_BACKGROUND'}}</span>
     </div>
   </form>
-  <script type="module" src="/js/background-removal.js"></script>
+  <script type="module">
+    import { wireUpPhotoInput } from '/js/background-removal.js';
+    wireUpPhotoInput();
+  </script>
 
   {{!-- Metadata --}}
   <div class="card bg-base-100 shadow-sm mb-4">
