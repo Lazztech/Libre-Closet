@@ -61,6 +61,7 @@ export const wireUpPhotoInput = async () => {
     if (bgStatus) bgStatus.classList.remove('hidden');
 
     try {
+      console.log(config);
       const blob = await removeBackground(file, config);
 
       const dt = new DataTransfer();
