@@ -41,15 +41,13 @@ export const initBackgroundRemoval = async () => {
   }
 };
 
-(async function () {
+export const wireUpPhotoInput = async () => {
   const photoInput = document.getElementById('photoInput');
   const nobgInput = document.getElementById('nobgPhotoInput');
   const submitBtn = document.getElementById('photoBtn');
   const bgStatus = document.getElementById('bgStatus');
 
   if (!photoInput || !nobgInput) return;
-
-  await initBackgroundRemoval();
 
   photoInput.addEventListener('change', async function () {
     // Re-enable submit for the "no file" case; it will be gated by html required
@@ -79,4 +77,13 @@ export const initBackgroundRemoval = async () => {
       if (submitBtn) submitBtn.disabled = false;
     }
   });
-})();
+
+  console.log('wired up photo input for background removal');
+};
+
+export default {
+  initBackgroundRemoval,
+  wireUpPhotoInput,
+};
+
+(() => wireUpPhotoInput())();
