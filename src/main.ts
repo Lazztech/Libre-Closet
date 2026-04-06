@@ -23,11 +23,11 @@ async function bootstrap() {
   // Enable cross-origin isolation so the browser grants access to SharedArrayBuffer,
   // which is required for WebAssembly multi-threading (used by onnxruntime-web).
   // https://web.dev/cross-origin-isolation-guide/
-  // app.use((_req, res, next) => {
-  //   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  //   res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-  //   next();
-  // });
+  app.use((_req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+    next();
+  });
 
   // https://docs.nestjs.com/techniques/compression
   app.use(compression());

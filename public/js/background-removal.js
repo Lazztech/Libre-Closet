@@ -15,7 +15,7 @@ const config = {
   debug: false,
   // @imgly/background-removal handles graceful degradation to WASM if navigator.gpu WebGPU is unavailable
   // when set to 'gpu'.
-  device: 'cpu',
+  device: 'gpu',
   proxyToWorker: true,
   // Note when webgpu is used the 'isnet_quint8' 8bit floating point model gets converted at
   // runtime to fp16. Some overhead is incurred in this conversion step.
@@ -29,7 +29,29 @@ const config = {
 let mod = await import('/modules/background-removal/index.mjs');
 let removeBackground = mod.removeBackground;
 
+function iOS() {
+  // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
+  if (
+    [
+      'iPad Simulator',
+      'iPhone Simulator',
+      'iPod Simulator',
+      'iPad',
+      'iPhone',
+      'iPod',
+    ].includes(navigator.platform) ||
+    // iPad on iOS 13 detection
+    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
+  ) {
+    console.log('Detected iOS, bailing out of clientside background removal.');
+    return true;
+  }
+}
+
 export const initBackgroundRemoval = async () => {
+  // Bail out for iPhone users
+  if (iOS()) return;
+
   try {
     mod.preload(config).then(() => {
       console.log('Asset preloading succeeded');
@@ -47,6 +69,12 @@ export const wireUpPhotoInput = async () => {
   const nobgInput = document.getElementById('nobgPhotoInput');
   const submitBtn = document.getElementById('photoBtn');
   const bgStatus = document.getElementById('bgStatus');
+
+  if (iOS()) {
+    if (bgStatus) bgStatus.classList.add('hidden');
+    if (submitBtn) submitBtn.disabled = false;
+    return;
+  }
 
   if (!photoInput || !nobgInput) return;
 
@@ -87,3 +115,6 @@ export default {
   initBackgroundRemoval,
   wireUpPhotoInput,
 };
+
+// Preload clientside background removal models
+(() => initBackgroundRemoval())();
