@@ -46,87 +46,6 @@ export class CalendarService {
     'CALENDAR_DAY_SAT',
   ] as const;
 
-  /** Parses a YYYY-MM-DD query param into a Date, defaulting to today. */
-  private parseWeekParam(param: string | undefined): Date {
-    if (!param) return new Date();
-    const d = new Date(param);
-    return isNaN(d.getTime()) ? new Date() : d;
-  }
-
-  /** Formats a Date as YYYY-MM-DD for use in query params and hidden inputs. */
-  private toWeekParam(d: Date): string {
-    return d.toISOString().slice(0, 10);
-  }
-
-  /** Returns the CSS class for a single calendar date cell. */
-  private calCellClass(
-    dateStr: string,
-    todayStr: string,
-    weekStartStr: string,
-    weekEndStr: string,
-    inMonth: boolean,
-  ): string {
-    if (dateStr === todayStr) return 'cal-today';
-    if (dateStr >= weekStartStr && dateStr <= weekEndStr) return 'cal-in-week';
-    if (!inMonth) return 'cal-out-month';
-    return '';
-  }
-
-  /** Builds the mini-calendar grid rows for the given month. */
-  private buildCalendarWeeks(
-    calYear: number,
-    calMonth: number,
-    todayStr: string,
-    weekStartStr: string,
-    weekEndStr: string,
-  ): { weekParam: string; days: { dayNum: number; calCellClass: string }[] }[] {
-    const monthFirstDay = new Date(Date.UTC(calYear, calMonth, 1));
-    const gridCursor = new Date(monthFirstDay);
-    gridCursor.setUTCDate(gridCursor.getUTCDate() - gridCursor.getUTCDay());
-    const weeks: {
-      weekParam: string;
-      days: { dayNum: number; calCellClass: string }[];
-    }[] = [];
-    for (let w = 0; w < 6; w++) {
-      const rowSunday = new Date(gridCursor);
-      const days: { dayNum: number; calCellClass: string }[] = [];
-      for (let d = 0; d < 7; d++) {
-        const date = new Date(gridCursor);
-        const dateStr = this.toWeekParam(date);
-        days.push({
-          dayNum: date.getUTCDate(),
-          calCellClass: this.calCellClass(
-            dateStr,
-            todayStr,
-            weekStartStr,
-            weekEndStr,
-            date.getUTCMonth() === calMonth,
-          ),
-        });
-        gridCursor.setUTCDate(gridCursor.getUTCDate() + 1);
-      }
-      weeks.push({ weekParam: this.toWeekParam(rowSunday), days });
-      if (gridCursor.getUTCMonth() !== calMonth && gridCursor.getUTCDay() === 0)
-        break;
-    }
-    return weeks;
-  }
-
-  /**
-   * Returns a human-readable week range label, e.g.
-   *   "Mar 25–31, 2026"  (same month)
-   *   "Mar 29 – Apr 4, 2026"  (spans two months)
-   */
-  private formatWeekLabel(start: Date, end: Date, i18n: I18nContext): string {
-    const sm = i18n.t(`lang.${this.MONTH_I18N_KEYS[start.getUTCMonth()]}`);
-    const em = i18n.t(`lang.${this.MONTH_I18N_KEYS[end.getUTCMonth()]}`);
-    const year = end.getUTCFullYear();
-    if (start.getUTCMonth() === end.getUTCMonth()) {
-      return `${sm} ${start.getUTCDate()}\u2013${end.getUTCDate()}, ${year}`;
-    }
-    return `${sm} ${start.getUTCDate()} \u2013 ${em} ${end.getUTCDate()}, ${year}`;
-  }
-
   constructor(
     @InjectRepository(OutfitCalendar)
     private readonly calendarRepository: EntityRepository<OutfitCalendar>,
@@ -291,8 +210,88 @@ export class CalendarService {
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
+  /** Parses a YYYY-MM-DD query param into a Date, defaulting to today. */
+  private parseWeekParam(param: string | undefined): Date {
+    if (!param) return new Date();
+    const d = new Date(param);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }
 
-  // ── Day columns ────────────────────────────────────────────────────
+  /** Formats a Date as YYYY-MM-DD for use in query params and hidden inputs. */
+  private toWeekParam(d: Date): string {
+    return d.toISOString().slice(0, 10);
+  }
+
+  /** Returns the CSS class for a single calendar date cell. */
+  private calCellClass(
+    dateStr: string,
+    todayStr: string,
+    weekStartStr: string,
+    weekEndStr: string,
+    inMonth: boolean,
+  ): string {
+    if (dateStr === todayStr) return 'cal-today';
+    if (dateStr >= weekStartStr && dateStr <= weekEndStr) return 'cal-in-week';
+    if (!inMonth) return 'cal-out-month';
+    return '';
+  }
+
+  /** Builds the mini-calendar grid rows for the given month. */
+  private buildCalendarWeeks(
+    calYear: number,
+    calMonth: number,
+    todayStr: string,
+    weekStartStr: string,
+    weekEndStr: string,
+  ): { weekParam: string; days: { dayNum: number; calCellClass: string }[] }[] {
+    const monthFirstDay = new Date(Date.UTC(calYear, calMonth, 1));
+    const gridCursor = new Date(monthFirstDay);
+    gridCursor.setUTCDate(gridCursor.getUTCDate() - gridCursor.getUTCDay());
+    const weeks: {
+      weekParam: string;
+      days: { dayNum: number; calCellClass: string }[];
+    }[] = [];
+    for (let w = 0; w < 6; w++) {
+      const rowSunday = new Date(gridCursor);
+      const days: { dayNum: number; calCellClass: string }[] = [];
+      for (let d = 0; d < 7; d++) {
+        const date = new Date(gridCursor);
+        const dateStr = this.toWeekParam(date);
+        days.push({
+          dayNum: date.getUTCDate(),
+          calCellClass: this.calCellClass(
+            dateStr,
+            todayStr,
+            weekStartStr,
+            weekEndStr,
+            date.getUTCMonth() === calMonth,
+          ),
+        });
+        gridCursor.setUTCDate(gridCursor.getUTCDate() + 1);
+      }
+      weeks.push({ weekParam: this.toWeekParam(rowSunday), days });
+      if (gridCursor.getUTCMonth() !== calMonth && gridCursor.getUTCDay() === 0)
+        break;
+    }
+    return weeks;
+  }
+
+  /**
+   * Returns a human-readable week range label, e.g.
+   *   "Mar 25–31, 2026"  (same month)
+   *   "Mar 29 – Apr 4, 2026"  (spans two months)
+   */
+  private formatWeekLabel(start: Date, end: Date, i18n: I18nContext): string {
+    const sm = i18n.t(`lang.${this.MONTH_I18N_KEYS[start.getUTCMonth()]}`);
+    const em = i18n.t(`lang.${this.MONTH_I18N_KEYS[end.getUTCMonth()]}`);
+    const year = end.getUTCFullYear();
+    if (start.getUTCMonth() === end.getUTCMonth()) {
+      return `${sm} ${start.getUTCDate()}\u2013${end.getUTCDate()}, ${year}`;
+    }
+    return `${sm} ${start.getUTCDate()} \u2013 ${em} ${end.getUTCDate()}, ${year}`;
+  }
+
+  /** Builds the day columns for the week view. */
   private calDays(
     weekSchedule: WeekSchedule,
     i18n: I18nContext,
@@ -326,7 +325,7 @@ export class CalendarService {
     return days;
   }
 
-  // ── Mini month calendar ────────────────────────────────────────────
+  /** Builds the mini-month calendar for the given week and month. */
   private getMiniMonthCal(
     weekBounds: WeekNavBoundaries,
     weekSchedule: WeekSchedule,
