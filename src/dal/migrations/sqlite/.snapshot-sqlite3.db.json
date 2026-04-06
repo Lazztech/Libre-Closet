@@ -321,6 +321,133 @@
           "length": null,
           "mappedType": "integer"
         },
+        "date": {
+          "name": "date",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": null,
+          "mappedType": "datetime"
+        },
+        "outfit_id": {
+          "name": "outfit_id",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": null,
+          "mappedType": "integer"
+        },
+        "worn_at": {
+          "name": "worn_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": null,
+          "mappedType": "datetime"
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": null,
+          "mappedType": "text"
+        }
+      },
+      "name": "outfit_calendar",
+      "indexes": [
+        {
+          "columnNames": [
+            "outfit_id"
+          ],
+          "composite": false,
+          "keyName": "outfit_calendar_outfit_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "owner_id"
+          ],
+          "composite": false,
+          "keyName": "outfit_calendar_owner_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "primary",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "outfit_calendar_outfit_id_foreign": {
+          "constraintName": "outfit_calendar_outfit_id_foreign",
+          "columnNames": [
+            "outfit_id"
+          ],
+          "localTableName": "outfit_calendar",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "outfit",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "outfit_calendar_owner_id_foreign": {
+          "constraintName": "outfit_calendar_owner_id_foreign",
+          "columnNames": [
+            "owner_id"
+          ],
+          "localTableName": "outfit_calendar",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "user",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "length": null,
+          "mappedType": "integer"
+        },
         "shareable_id": {
           "name": "shareable_id",
           "type": "text",
