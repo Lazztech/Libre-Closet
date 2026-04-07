@@ -70,12 +70,6 @@ export const wireUpPhotoInput = async () => {
   const submitBtn = document.getElementById('photoBtn');
   const bgStatus = document.getElementById('bgStatus');
 
-  if (iOS()) {
-    if (bgStatus) bgStatus.classList.add('hidden');
-    if (submitBtn) submitBtn.disabled = false;
-    return;
-  }
-
   if (!photoInput || !nobgInput) return;
 
   photoInput.addEventListener('change', async function () {
@@ -84,6 +78,14 @@ export const wireUpPhotoInput = async () => {
 
     const file = photoInput.files?.[0];
     if (!file) return;
+
+    if (iOS()) {
+      // Now that it's been confirmed that there's a photo file in the input
+      // It's now safe to re-enable the submit button
+      if (submitBtn) submitBtn.disabled = false;
+      // Then bail out before clientside background removal logic
+      return;
+    }
 
     if (submitBtn) submitBtn.disabled = true;
     if (bgStatus) bgStatus.classList.remove('hidden');
