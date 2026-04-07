@@ -12,7 +12,7 @@
 
 const config = {
   publicPath: location.origin + '/bg-removal-models/',
-  debug: false,
+  debug: true,
   // @imgly/background-removal handles graceful degradation to WASM if navigator.gpu WebGPU is unavailable
   // when set to 'gpu'.
   device: 'gpu',
@@ -29,29 +29,7 @@ const config = {
 let mod = await import('/modules/background-removal/index.mjs');
 let removeBackground = mod.removeBackground;
 
-function iOS() {
-  // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
-  if (
-    [
-      'iPad Simulator',
-      'iPhone Simulator',
-      'iPod Simulator',
-      'iPad',
-      'iPhone',
-      'iPod',
-    ].includes(navigator.platform) ||
-    // iPad on iOS 13 detection
-    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
-  ) {
-    console.log('Detected iOS, bailing out of clientside background removal.');
-    return true;
-  }
-}
-
 export const initBackgroundRemoval = async () => {
-  // Bail out for iPhone users
-  if (iOS()) return;
-
   try {
     mod.preload(config).then(() => {
       console.log('Asset preloading succeeded');
@@ -78,14 +56,6 @@ export const wireUpPhotoInput = async () => {
 
     const file = photoInput.files?.[0];
     if (!file) return;
-
-    if (iOS()) {
-      // Now that it's been confirmed that there's a photo file in the input
-      // It's now safe to re-enable the submit button
-      if (submitBtn) submitBtn.disabled = false;
-      // Then bail out before clientside background removal logic
-      return;
-    }
 
     if (submitBtn) submitBtn.disabled = true;
     if (bgStatus) bgStatus.classList.remove('hidden');
