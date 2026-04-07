@@ -77,6 +77,8 @@ export class OutfitController {
       scheduleDate?: string;
       category?: string | string[];
       garmentId?: string | string[];
+      returnTo?: string;
+      returnToWeek?: string;
     },
     @Req() req: Request,
     @Res() res: Response,
@@ -95,6 +97,10 @@ export class OutfitController {
         { date: new Date(body.scheduleDate), outfitId: outfit.id },
         this.userId(req),
       );
+    }
+    if (body.returnTo === '/calendar') {
+      const week = body.returnToWeek ?? body.scheduleDate;
+      return res.redirect(week ? `/calendar?week=${week}` : '/calendar');
     }
     return res.redirect(`/outfits/${outfit.id}`);
   }
@@ -136,9 +142,11 @@ export class OutfitController {
     ]);
     const selectedGarmentIds = outfit.garments.getItems().map((g) => g.id);
     const returnTo = (req.query['returnTo'] as string) || `/outfits/${id}`;
+    const returnToWeek = (req.query['returnToWeek'] as string) || null;
     return {
       outfit,
       returnTo,
+      returnToWeek,
       categoryRows: this.outfitService.buildCategoryRows(
         garments,
         selectedGarmentIds,
@@ -159,6 +167,8 @@ export class OutfitController {
       scheduleDate?: string;
       category?: string | string[];
       garmentId?: string | string[];
+      returnTo?: string;
+      returnToWeek?: string;
     },
     @Req() req: Request,
     @Res() res: Response,
@@ -178,6 +188,10 @@ export class OutfitController {
         { date: new Date(body.scheduleDate), outfitId: id },
         this.userId(req),
       );
+    }
+    if (body.returnTo === '/calendar') {
+      const week = body.returnToWeek ?? body.scheduleDate;
+      return res.redirect(week ? `/calendar?week=${week}` : '/calendar');
     }
     return res.redirect(`/outfits/${id}`);
   }
