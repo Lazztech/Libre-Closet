@@ -154,6 +154,7 @@
   "NO_GARMENTS_FOR_BUILDER": "Add some garments to your wardrobe to start building outfits.",
   "ADD_TO_CALENDAR": "Add to Calendar",
   "CALENDAR_ADD_OUTFIT_PROMPT": "Add outfit to Calendar?",
+  "CALENDAR_OUTFIT_ADDED": "Outfit added to calendar!",
   "validation": {
     "IS_EMAIL": "Please provide a valid email address",
     "MIN_PASSWORD_LENGTH": "Password must be at least 8 characters long",

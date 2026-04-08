@@ -26,7 +26,13 @@
             <div tabindex="0" class="dropdown-content z-10 card card-compact shadow-lg bg-base-100 border border-base-300 w-64 mt-1">
               <div class="card-body p-4 gap-3">
                 <p class="font-semibold text-sm">{{t 'lang.CALENDAR_ADD_OUTFIT_PROMPT'}}</p>
-                <form action="/calendar" method="POST" class="flex flex-col gap-2">
+                <form
+                  hx-post="/calendar"
+                  hx-swap="none"
+                  hx-push-url="false"
+                  hx-on::after-request="if(event.detail.successful){this.reset();this.closest('.dropdown').querySelector('[tabindex]').blur();var t=document.getElementById('calendar-toast');t.classList.remove('hidden');setTimeout(function(){t.classList.add('hidden')},3000)}"
+                  class="flex flex-col gap-2"
+                >
                   <input type="hidden" name="outfitId" value="{{this.id}}" />
                   <input
                     type="date"
@@ -100,5 +106,14 @@
   </div>
   {{/if}}
 </main>
+
+<div id="calendar-toast" class="toast toast-top toast-center hidden z-20 top-20" aria-live="polite">
+  <div class="alert alert-success shadow-md">
+    <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{{t 'lang.CALENDAR_OUTFIT_ADDED'}}</span>
+  </div>
+</div>
 
 {{>dock}}

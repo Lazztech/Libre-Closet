@@ -154,6 +154,7 @@
   "NO_GARMENTS_FOR_BUILDER": "Aggiungi alcuni capi al tuo guardaroba per iniziare a creare outfit.",
   "ADD_TO_CALENDAR": "Aggiungi al Calendario",
   "CALENDAR_ADD_OUTFIT_PROMPT": "Aggiungere l'outfit al Calendario?",
+  "CALENDAR_OUTFIT_ADDED": "Outfit aggiunto al calendario!",
   "validation": {
     "IS_EMAIL": "Si prega di fornire un indirizzo email valido",
     "MIN_PASSWORD_LENGTH": "La password deve essere lunga almeno 8 caratteri",
