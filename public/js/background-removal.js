@@ -10,6 +10,8 @@
  * installed from the IMG.LY CDN tarball — no runtime CDN required).
  */
 
+let activeProgressHandler = null;
+
 const config = {
   publicPath: location.origin + '/bg-removal-models/',
   debug: true,
@@ -24,6 +26,34 @@ const config = {
   // a compute burden on the client to convert in `imageEncode`.
   // Leave to the default 'image/png' to bypass this.
   // output: { format: 'image/webp', quality: 0.9 },
+  // Stable callback required because init() is memoized by config shape.
+  progress: (key, current, total) => {
+    activeProgressHandler?.(key, current, total);
+  },
+};
+
+const updateStatusText = (bgStatus, bgStatusText, key) => {
+  if (!bgStatus || !bgStatusText) return;
+
+  if (key.startsWith('fetch:') && bgStatus.dataset.textDownloading) {
+    bgStatusText.textContent = bgStatus.dataset.textDownloading;
+    return;
+  }
+  if (key === 'compute:decode' && bgStatus.dataset.textDecoding) {
+    bgStatusText.textContent = bgStatus.dataset.textDecoding;
+    return;
+  }
+  if (key === 'compute:inference' && bgStatus.dataset.textInference) {
+    bgStatusText.textContent = bgStatus.dataset.textInference;
+    return;
+  }
+  if (key === 'compute:mask' && bgStatus.dataset.textMask) {
+    bgStatusText.textContent = bgStatus.dataset.textMask;
+    return;
+  }
+  if (key === 'compute:encode' && bgStatus.dataset.textEncoding) {
+    bgStatusText.textContent = bgStatus.dataset.textEncoding;
+  }
 };
 
 let mod = await import('/modules/background-removal/index.mjs');
@@ -47,6 +77,8 @@ export const wireUpPhotoInput = async () => {
   const nobgInput = document.getElementById('nobgPhotoInput');
   const submitBtn = document.getElementById('photoBtn');
   const bgStatus = document.getElementById('bgStatus');
+  const bgStatusText = document.getElementById('bgStatusText');
+  const bgStatusHint = document.getElementById('bgStatusHint');
 
   if (!photoInput || !nobgInput) return;
 
@@ -59,6 +91,41 @@ export const wireUpPhotoInput = async () => {
 
     if (submitBtn) submitBtn.disabled = true;
     if (bgStatus) bgStatus.classList.remove('hidden');
+
+    if (bgStatusText && bgStatus?.dataset.textDefault) {
+      bgStatusText.textContent = bgStatus.dataset.textDefault;
+    }
+    if (bgStatusHint && bgStatus?.dataset.textHintTypical) {
+      bgStatusHint.textContent = bgStatus.dataset.textHintTypical;
+    }
+
+    const stillWorkingTimer = setTimeout(() => {
+      if (bgStatusHint && bgStatus?.dataset.textHintSlow) {
+        bgStatusHint.textContent = bgStatus.dataset.textHintSlow;
+      }
+    }, 5000);
+
+    // Fallback timeline when progress events are sparse.
+    const fallbackStages = [
+      { delayMs: 700, textKey: 'textDownloading' },
+      { delayMs: 1800, textKey: 'textDecoding' },
+      { delayMs: 3200, textKey: 'textInference' },
+      { delayMs: 5600, textKey: 'textMask' },
+      { delayMs: 7600, textKey: 'textEncoding' },
+    ];
+    let latestProgressEventAt = Date.now();
+    const fallbackTimers = fallbackStages.map(({ delayMs, textKey }) =>
+      setTimeout(() => {
+        if (Date.now() - latestProgressEventAt < 1500) return;
+        const stageText = bgStatus?.dataset[textKey];
+        if (stageText && bgStatusText) bgStatusText.textContent = stageText;
+      }, delayMs),
+    );
+
+    activeProgressHandler = (key) => {
+      latestProgressEventAt = Date.now();
+      updateStatusText(bgStatus, bgStatusText, key);
+    };
 
     try {
       console.log(config);
@@ -75,6 +142,9 @@ export const wireUpPhotoInput = async () => {
       );
       nobgInput.value = '';
     } finally {
+      clearTimeout(stillWorkingTimer);
+      fallbackTimers.forEach(clearTimeout);
+      activeProgressHandler = null;
       if (bgStatus) bgStatus.classList.add('hidden');
       if (submitBtn) submitBtn.disabled = false;
     }
