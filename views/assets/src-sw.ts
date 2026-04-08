@@ -2,7 +2,9 @@ import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute } from 'workbox-precaching';
 import { warmStrategyCache } from 'workbox-recipes';
 import { registerRoute, setCatchHandler } from 'workbox-routing';
-import { CacheFirst, NetworkFirst, NetworkOnly } from 'workbox-strategies';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
+import { ExpirationPlugin } from 'workbox-expiration';
+import { NetworkFirst, NetworkOnly } from 'workbox-strategies';
 
 // https://developer.chrome.com/docs/workbox/modules/workbox-core#clients_claim
 // This clientsClaim() should be at the top level
@@ -47,10 +49,41 @@ registerRoute(
   new NetworkOnly(),
 );
 
-// Background removal model files are content-hashed — cache forever, never revalidate.
+// Background-removal model resources include a stable resources.json URL.
+// Use NetworkFirst to avoid stale metadata/chunk mismatches after deploys.
 registerRoute(
   ({ url }) => url.pathname.startsWith('/bg-removal-models/'),
-  new CacheFirst({ cacheName: 'bg-removal-models' }),
+  new NetworkFirst({
+    cacheName: 'bg-removal-models-v2',
+    plugins: [
+      new CacheableResponsePlugin({ statuses: [200] }),
+      new ExpirationPlugin({
+        maxEntries: 200,
+        maxAgeSeconds: 60 * 60 * 24 * 30,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
+);
+
+// Keep ORT and background-removal runtime modules fresh so JS/WASM assets don't drift.
+registerRoute(
+  ({ url }) =>
+    url.pathname.startsWith('/modules/onnxruntime-web/') ||
+    url.pathname.startsWith('/modules/background-removal/') ||
+    url.pathname.startsWith('/modules/image-blob-reduce/'),
+  new NetworkFirst({
+    cacheName: 'bg-removal-runtime-modules-v1',
+    networkTimeoutSeconds: 3,
+    plugins: [
+      new CacheableResponsePlugin({ statuses: [200] }),
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 60 * 60 * 24 * 7,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  }),
 );
 
 // https://developer.chrome.com/docs/workbox/modules/workbox-routing
