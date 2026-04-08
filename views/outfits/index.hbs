@@ -30,7 +30,7 @@
                   hx-post="/calendar"
                   hx-swap="none"
                   hx-push-url="false"
-                  hx-on::after-request="if(event.detail.successful){this.reset();this.closest('.dropdown').querySelector('[tabindex]').blur();var t=document.getElementById('calendar-toast');t.classList.remove('hidden');setTimeout(function(){t.classList.add('hidden')},3000)}"
+                  hx-on::after-request="if(event.detail.successful){this.reset();if(document.activeElement)document.activeElement.blur();this.closest('.dropdown').querySelectorAll('[tabindex]').forEach(function(el){el.blur()});var t=document.getElementById('calendar-toast');t.classList.remove('hidden');setTimeout(function(){t.classList.add('hidden')},3000)}"
                   class="flex flex-col gap-2"
                 >
                   <input type="hidden" name="outfitId" value="{{this.id}}" />
@@ -39,6 +39,7 @@
                     name="date"
                     class="input input-sm input-bordered w-full"
                     required
+                    onblur="this.closest('form').querySelector('[type=submit]').focus()"
                   />
                   <button type="submit" class="btn btn-primary btn-sm w-full">{{t 'lang.SAVE'}}</button>
                 </form>
