@@ -1,5 +1,5 @@
 diff --git a/node_modules/@imgly/background-removal/dist/index.mjs b/node_modules/@imgly/background-removal/dist/index.mjs
-index 0ea9fb5..1e66af0 100644
+index 0ea9fb5..fa10ad9 100644
 --- a/node_modules/@imgly/background-removal/dist/index.mjs
 +++ b/node_modules/@imgly/background-removal/dist/index.mjs
 @@ -934,14 +934,38 @@ function createCanvas(width, height) {
@@ -36,7 +36,7 @@ index 0ea9fb5..1e66af0 100644
  };
 -var maxNumThreads = () => navigator.hardwareConcurrency ?? 4;
 +var maxNumThreads = () => {
-+  if (iOS()) return (navigator.hardwareConcurrency ?? 4) / 2;
++  if (iOS()) return 1;
 +  navigator.hardwareConcurrency ?? 4
 +};
  
