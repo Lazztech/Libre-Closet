@@ -95,15 +95,10 @@
       <span>{{t 'lang.REMOVING_BACKGROUND'}}</span>
     </div>
   </form>
-  <script type="importmap">
-    {
-      "imports": {
-        "onnxruntime-web": "/modules/onnxruntime-web/dist/ort.webgpu.bundle.min.mjs",
-        "onnxruntime-web/webgpu": "/modules/onnxruntime-web/dist/ort.webgpu.bundle.min.mjs"
-      }
-    }
+  <script type="module">
+    import { wireUpPhotoInput } from '/js/background-removal.js';
+    wireUpPhotoInput();
   </script>
-  <script type="module" src="/js/background-removal.js"></script>
 
   {{!-- Metadata --}}
   <div class="card bg-base-100 shadow-sm mb-4">

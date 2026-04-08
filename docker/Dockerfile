@@ -11,6 +11,7 @@ WORKDIR /app
 # Note when using COPY with more than one source file, 
 # the destination must be a directory and end with a /
 COPY package*.json ./
+COPY patches ./patches
 RUN npm ci
 
 COPY src ./src
@@ -29,6 +30,7 @@ FROM node:22-slim
 WORKDIR /app
 
 COPY package*.json ./
+COPY patches ./patches
 RUN npm ci
 
 # Copy built application from builder stage

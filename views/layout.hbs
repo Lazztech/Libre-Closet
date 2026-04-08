@@ -57,6 +57,14 @@ https://nestjs-i18n.com/quick-start --}}
     <script src="/modules/_hyperscript.min.js"></script>
     <script src="/modules/Sortable.min.js"></script>
     <script src="/modules/sse.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "onnxruntime-web": "/modules/onnxruntime-web/dist/ort.webgpu.bundle.min.mjs",
+          "onnxruntime-web/webgpu": "/modules/onnxruntime-web/dist/ort.webgpu.bundle.min.mjs"
+        }
+      }
+    </script>
     {{#if pwaEnabled}}
     <script type="module" src="/modules/pwa-install.bundle.js"></script>
     {{/if}} {{! Include assets/main.css and build output from

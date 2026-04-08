@@ -1,0 +1,52 @@
+diff --git a/node_modules/@imgly/background-removal/dist/index.mjs b/node_modules/@imgly/background-removal/dist/index.mjs
+index 0ea9fb5..ae94e7c 100644
+--- a/node_modules/@imgly/background-removal/dist/index.mjs
++++ b/node_modules/@imgly/background-removal/dist/index.mjs
+@@ -934,14 +934,38 @@ function createCanvas(width, height) {
+ // src/onnx.ts
+ var import_ndarray3 = __toESM(require_ndarray());
+ 
++function iOS() {
++  // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
++  if (
++    [
++      'iPad Simulator',
++      'iPhone Simulator',
++      'iPod Simulator',
++      'iPad',
++      'iPhone',
++      'iPod',
++    ].includes(navigator.platform) ||
++    // iPad on iOS 13 detection
++    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
++  ) {
++    console.log('Detected iOS, setting numThreads = 1 and device = cpu');
++    return true;
++  }
++}
++
+ // src/capabilities.js
+ var webgpu = async () => {
++  if (iOS())
++    return false;
+   if (navigator.gpu === void 0)
+     return false;
+   const adapter = await navigator.gpu.requestAdapter();
+   return adapter !== null;
+ };
+-var maxNumThreads = () => navigator.hardwareConcurrency ?? 4;
++var maxNumThreads = () => {
++  if (iOS()) return 1;
++  navigator.hardwareConcurrency ?? 4
++};
+ 
+ // src/resource.ts
+ async function loadAsUrl(url, config) {
+@@ -1003,6 +1027,7 @@ var getOrt = async (useWebGPU) => {
+   }
+   return ort;
+ };
++
+ async function createOnnxSession(model, config) {
+   const useWebGPU = config.device === "gpu" && await webgpu();
+   const proxyToWorker = useWebGPU && config.proxyToWorker;
