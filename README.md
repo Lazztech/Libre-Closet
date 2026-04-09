@@ -18,21 +18,18 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 ## News
 
-#### Unreleased (v0.2.0 - Coming 4/10/26!)
+#### `v0.2.0` Released!
 
-The following has now all been merged in and is going through some final testing before release. When it's released `0.2.0` will become the new `latest` tagged Docker image.
+We put a substantial amount of time and energy into the feature development for this version. We hope you find it pleasant and useful. The following features are included in this new release.
 
 - Clueless inspired outfit builder
 - Outfit Scheduling
 - Image background removal (Client-side and Server-side)
-- Customizable categories -->
-
-`v0.2.0` has been released! We put a substantial amount of time and energy into the feature development for this version. We hope you find it pleasant and useful.
+- Customizable categories
 
 #### Released
 
-- `v0.2.0 - ___:` Clueless inspired outfit builder, Outfit Scheduling, Background removal, & Customizable categories
-
+- `v0.2.0 - April 10, 2026:` Clueless inspired outfit builder, Outfit Scheduling, Background removal, & Customizable categories
 - `v0.1.9 - March 19, 2026:` Garment list now orders by most recently added
 - `v0.1.8 - March 13, 2026:` Added French, German, and Spanish language support.
 - `v0.1.7 - March 7, 2026:` Added Italian language support.
