@@ -30,7 +30,15 @@
                   hx-post="/calendar"
                   hx-swap="none"
                   hx-push-url="false"
-                  hx-on::after-request="if(event.detail.successful){this.reset();if(document.activeElement)document.activeElement.blur();this.closest('.dropdown').querySelectorAll('[tabindex]').forEach(function(el){el.blur()});var t=document.getElementById('calendar-toast');t.classList.remove('hidden');setTimeout(function(){t.classList.add('hidden')},3000)}"
+                  _="on htmx:afterRequest[detail.successful]
+                    reset() me
+                    call document.activeElement.blur()
+                    for el in <[tabindex]/> in closest .dropdown
+                      call el.blur()
+                    end
+                    remove .hidden from #calendar-toast
+                    wait 3s
+                    add .hidden to #calendar-toast"
                   class="flex flex-col gap-2"
                 >
                   <input type="hidden" name="outfitId" value="{{this.id}}" />
