@@ -81,7 +81,7 @@
     "ADD_PHOTO": "Foto hinzufügen",
     "UPDATE_PHOTO": "Foto aktualisieren",
     "REMOVING_BACKGROUND": "Hintergrund wird entfernt…",
-    "BG_STAGE_DOWNLOADING": "Modellressourcen werden heruntergeladen…",
+    "BG_STAGE_DOWNLOADING": "Ressourcen werden heruntergeladen…",
     "BG_STAGE_DECODING": "Bild wird dekodiert…",
     "BG_STAGE_INFERENCE": "Hintergrund wird erkannt…",
     "BG_STAGE_MASK": "Maske wird angewendet…",

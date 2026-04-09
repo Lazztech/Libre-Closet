@@ -81,7 +81,7 @@
     "ADD_PHOTO": "Ajouter une photo",
     "UPDATE_PHOTO": "Mettre à jour la photo",
     "REMOVING_BACKGROUND": "Suppression du fond…",
-    "BG_STAGE_DOWNLOADING": "Téléchargement des ressources du modèle…",
+    "BG_STAGE_DOWNLOADING": "Téléchargement des ressources…",
     "BG_STAGE_DECODING": "Décodage de l'image…",
     "BG_STAGE_INFERENCE": "Détection du fond…",
     "BG_STAGE_MASK": "Application du masque…",

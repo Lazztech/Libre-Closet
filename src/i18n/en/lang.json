@@ -81,7 +81,7 @@
   "ADD_PHOTO": "Add Photo",
   "UPDATE_PHOTO": "Update Photo",
   "REMOVING_BACKGROUND": "Removing background…",
-  "BG_STAGE_DOWNLOADING": "Downloading model assets…",
+  "BG_STAGE_DOWNLOADING": "Downloading assets…",
   "BG_STAGE_DECODING": "Decoding image…",
   "BG_STAGE_INFERENCE": "Detecting background…",
   "BG_STAGE_MASK": "Applying mask…",
