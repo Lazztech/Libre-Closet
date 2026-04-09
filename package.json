@@ -32,7 +32,8 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "test:e2e:smoke": "playwright test test/smoke.spec.ts --project=chromium",
-    "precommit": "npm run format && npm run lint && npm run test:cov && npm run test:e2e:smoke && npm run build && npm run lighthouse"
+    "precommit": "npm run format && npm run lint && npm run test:cov && npm run test:e2e:smoke && npm run build && npm run lighthouse",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@aws-sdk/lib-storage": "^3.1009.0",
@@ -109,6 +110,7 @@
     "globals": "^16.0.0",
     "jest": "^30.0.0",
     "npm-check-updates": "^19.1.1",
+    "patch-package": "^8.0.1",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
     "ts-jest": "^29.2.5",

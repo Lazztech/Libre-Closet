@@ -3,13 +3,7 @@
 <main class="p-4 pt-20 pb-24">
 
   {{!-- Responsive grid: 1 col → 2 col (400px+) → 4 col (lg) → 8 col horizontal (2xl) --}}
-  <div id="week-grid" class="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8 gap-3"
-    _="on touchstart set :sx to event.touches[0].clientX
-       on touchend
-         set dx to (event.changedTouches[0].clientX - :sx)
-         if dx > 60 go to url '/calendar?week={{prevWeekParam}}'
-         else if dx < -60 go to url '/calendar?week={{nextWeekParam}}'
-       end">
+  <div id="week-grid" class="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8 gap-3">
 
     {{!-- Slot 1: Mini month calendar ──────────────────────────────────── --}}
     <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
@@ -86,7 +80,7 @@
           class="min-w-0 flex-1 text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border
                  flex items-center gap-1 leading-tight cursor-pointer"
           style="{{#if this.wornAt}}background:hsl({{this.outfit.chipHue}} 65% 55% / 0.22);border-color:hsl({{this.outfit.chipHue}} 65% 60% / 0.45);color:hsl({{this.outfit.chipHue}} 80% 75%){{else}}background:hsl({{this.outfit.chipHue}} 55% 50% / 0.08);border-color:hsl({{this.outfit.chipHue}} 55% 55% / 0.22);color:hsl({{this.outfit.chipHue}} 50% 65%){{/if}}"
-          onclick="window.location.href='/outfits/{{this.outfit.id}}/edit?returnTo=/calendar'"
+          onclick="window.location.href='/outfits/{{this.outfit.id}}/edit?returnTo=/calendar&returnToWeek={{../dateParam}}'"
         >
           {{!-- Left: garment thumbnails if available, else name/untitled fallback --}}
           {{#if this.outfit.garmentPhotos.length}}
@@ -136,7 +130,7 @@
       <a
         href="/outfits/new?scheduleDate={{this.dateParam}}&returnTo=/calendar"
         class="mt-auto pt-2 text-xs text-base-content/30 hover:text-base-content/60 select-none"
-      >+ {{t 'lang.CALENDAR_PLAN_OUTFIT'}}</a>
+      >+ {{t 'lang.BUILD_OUTFIT'}}</a>
 
     </div>{{!-- /inner flex-col --}}
     </div>{{!-- /card --}}

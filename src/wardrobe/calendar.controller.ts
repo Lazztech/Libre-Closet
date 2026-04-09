@@ -62,6 +62,9 @@ export class CalendarController {
       },
       this.userId(req),
     );
+    if (req.headers['hx-request'] === 'true') {
+      return res.status(204).send();
+    }
     return res.redirect(`/calendar?week=${body.week ?? body.date}`);
   }
 

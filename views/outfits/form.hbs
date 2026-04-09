@@ -33,6 +33,8 @@
     action="{{#if outfit}}/outfits/{{outfit.id}}{{else}}/outfits{{/if}}"
     class="flex flex-col gap-4"
   >
+    <input type="hidden" name="returnTo" value="{{returnTo}}" />
+    {{#if returnToWeek}}<input type="hidden" name="returnToWeek" value="{{returnToWeek}}" />{{/if}}
     <div class="card bg-base-100 shadow-sm mb-4">
       <div
         id="outfit-rows-list"

@@ -6,8 +6,9 @@ A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, uploa
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Version](https://img.shields.io/badge/Version-0.1.9-green.svg)](https://github.com/lazztech/libre-closet/tags)
-[![GHCR Pulls](https://img.shields.io/badge/GHCR%20pulls-2.75k-grey?logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet)
+[![GHCR Pulls](https://img.shields.io/badge/GHCR%20pulls-2.85k-grey?logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lazztech/libre-closet?logo=docker&logoColor=959da5&labelColor=333a41&label=Docker%20Pulls)](https://hub.docker.com/r/lazztech/libre-closet)
+[![Join the Discussion](https://img.shields.io/badge/Community-Join%20the%20Discussion-2EA44F?logo=github&logoColor=white&labelColor=1F2937)](https://github.com/Lazztech/Libre-Closet/discussions)
 
 <!-- [![GHCR Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Flazztech%2Flibre-closet%2Flibre-closet.json&query=%24.downloads&label=GHCR%20pulls&logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet) -->
 
@@ -17,7 +18,7 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 ## News
 
-<!-- #### Unreleased (v0.2.0 - Coming very soon!)
+#### Unreleased (v0.2.0 - Coming 4/10/26!)
 
 The following has now all been merged in and is going through some final testing before release. When it's released `0.2.0` will become the new `latest` tagged Docker image.
 

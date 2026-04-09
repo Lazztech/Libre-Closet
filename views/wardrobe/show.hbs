@@ -89,10 +89,23 @@
     </div>
     <div
       id="bgStatus"
-      class="hidden flex items-center gap-2 text-sm text-base-content/60"
+      class="hidden flex flex-col gap-1 text-sm text-base-content/60"
+      data-text-default="{{t 'lang.REMOVING_BACKGROUND'}}"
+      data-text-downloading="{{t 'lang.BG_STAGE_DOWNLOADING'}}"
+      data-text-decoding="{{t 'lang.BG_STAGE_DECODING'}}"
+      data-text-inference="{{t 'lang.BG_STAGE_INFERENCE'}}"
+      data-text-mask="{{t 'lang.BG_STAGE_MASK'}}"
+      data-text-encoding="{{t 'lang.BG_STAGE_ENCODING'}}"
+      data-text-hint-typical="{{t 'lang.BG_HINT_TYPICAL_DURATION'}}"
+      data-text-hint-slow="{{t 'lang.BG_HINT_STILL_WORKING'}}"
     >
-      <span class="loading loading-spinner loading-xs"></span>
-      <span>{{t 'lang.REMOVING_BACKGROUND'}}</span>
+      <div class="flex items-center gap-2">
+        <span class="loading loading-spinner loading-xs"></span>
+        <span id="bgStatusText">{{t 'lang.REMOVING_BACKGROUND'}}</span>
+      </div>
+      <span id="bgStatusHint" class="text-xs opacity-80"
+        >{{t 'lang.BG_HINT_TYPICAL_DURATION'}}</span
+      >
     </div>
   </form>
   <script type="module">
