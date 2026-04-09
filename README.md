@@ -5,7 +5,7 @@
 A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, upload photos, build outfits, and access everything from your phone as an offline-ready PWA — all on your own server.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Version](https://img.shields.io/badge/Version-0.1.9-green.svg)](https://github.com/lazztech/libre-closet/tags)
+[![Version](https://img.shields.io/badge/Version-0.2.0-green.svg)](https://github.com/lazztech/libre-closet/tags)
 [![GHCR Pulls](https://img.shields.io/badge/GHCR%20pulls-2.85k-grey?logo=github&logoColor=959da5&labelColor=333a41)](https://github.com/lazztech/libre-closet/pkgs/container/libre-closet)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lazztech/libre-closet?logo=docker&logoColor=959da5&labelColor=333a41&label=Docker%20Pulls)](https://hub.docker.com/r/lazztech/libre-closet)
 [![Join the Discussion](https://img.shields.io/badge/Community-Join%20the%20Discussion-2EA44F?logo=github&logoColor=white&labelColor=1F2937)](https://github.com/Lazztech/Libre-Closet/discussions)
@@ -20,16 +20,11 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 #### `v0.2.0` Released!
 
-We put a substantial amount of time and energy into the feature development for this version. We hope you find it pleasant and useful. The following features are included in this new release.
-
-- Clueless inspired outfit builder
-- Outfit Scheduling
-- Image background removal (Client-side and Server-side)
-- Customizable categories
+We put a substantial amount of time and energy into the feature development for this version. We hope you find it pleasant and useful.
 
 #### Released
 
-- `v0.2.0 - April 10, 2026:` Clueless inspired outfit builder, Outfit Scheduling, Background removal, & Customizable categories
+- `v0.2.0 - April 10, 2026:` Clueless inspired outfit builder, Outfit Scheduling, Image Background Removal, & Customizable categories
 - `v0.1.9 - March 19, 2026:` Garment list now orders by most recently added
 - `v0.1.8 - March 13, 2026:` Added French, German, and Spanish language support.
 - `v0.1.7 - March 7, 2026:` Added Italian language support.
@@ -70,14 +65,16 @@ Note, these screenshots are taken of the web application viewed as an installed 
 
 ## Features
 
-- **Garment catalog** — name, category, brand, size, colors, notes, photo
-- **Outfit builder** — combine garments into saved looks
-- **Photo uploads** — images auto-converted to optimized WebP
-- **Offline-ready PWA** — install to home screen, works without internet
-- **Optional auth** — run open for personal use or enable JWT accounts for multi-user
-- **S3 or local storage** — local disk by default, swap to any S3-compatible provider
-- **SQLite or PostgreSQL** — SQLite by default, PostgreSQL for scale
-- **Multi-language** — UI available in English, Italian, French, German, and Spanish
+- **Garment catalog** - name, category, brand, size, colors, notes, photo
+- **Customizable categories** - custom category support with filtering and input suggestion as you type
+- **Outfit builder** - combine garments into saved looks with the Clueless inspired outfit builder
+- **Outfit Scheduling** - schedule out multiple outfits for given days through the week and get a view of what you've worn
+- **Image Background Removal** - Images automatically have their backgrounds removed and optimized WebP upon upload
+- **Offline-ready PWA** - install to home screen, works without internet
+- **Optional auth** - run open for personal use or enable JWT accounts for multi-user
+- **S3 or local storage** - local disk by default, swap to any S3-compatible provider
+- **SQLite or PostgreSQL** - SQLite by default, PostgreSQL for scale
+- **Multi-language** - UI available in English, Italian, French, German, and Spanish
 
 ---
 
