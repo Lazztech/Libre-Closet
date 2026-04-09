@@ -59,9 +59,15 @@ Open [http://localhost:3000](http://localhost:3000). No account required by defa
 
 ## Screenshots
 
-| Wardrobe (Viewed as a standalone PWA)           | Garment detail                                  | Outfit builder                                  | Outfit detail                                  |
-| ----------------------------------------------- | ----------------------------------------------- | ----------------------------------------------- | ---------------------------------------------- |
-| ![Wardrobe grid](screenshots/Screenshot_1.webp) | ![Garment detail](screenshots/Screenshot_2.png) | ![Outfit builder](screenshots/Screenshot_3.png) | ![Outfit detail](screenshots/Screenshot_4.png) |
+Note, these screenshots are taken of the web application viewed as an installed standalone PWA. This tool may also be used like a traditional web app in the browser.
+
+| Wardrobe (Mobile - iOS)                                | Outfits (Mobile - iOS)                           | Outfit Schedule (Mobile - iOS)                           | Outfit Builder (Mobile - iOS)                    |
+| ------------------------------------------------------ | ------------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------ |
+| ![Wardrobe grid](screenshots/Screenshot_mobile_1.webp) | ![Outfits](screenshots/Screenshot_mobile_2.webp) | ![Outfit Schedule](screenshots/Screenshot_mobile_3.webp) | ![Outfit ](screenshots/Screenshot_mobile_4.webp) |
+
+| Wardrobe (Desktop)                              | Outfits (Desktop)                         | Outfit Schedule (Desktop)                         | Outfit Builder (Desktop)                        |
+| ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------- | ----------------------------------------------- |
+| ![Wardrobe grid](screenshots/Screenshot_1.webp) | ![Outfits](screenshots/Screenshot_2.webp) | ![Outfit Schedule](screenshots/Screenshot_3.webp) | ![Outfit detail](screenshots/Screenshot_4.webp) |
 
 ---
 
