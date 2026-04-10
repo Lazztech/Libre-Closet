@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- ...
+
+## [0.2.0] - 2026-04-10
+
 #### Added
 
-- Background removal
-- New clueless inspired outfit builder
+- Clueless inspired outfit builder
+- Outfit Scheduling
+- Image background removal (Client-side and Server-side)
+- Customizable categories
 
 ## [0.1.9] - 2026-03-19
 
