@@ -49,7 +49,7 @@ Open [http://localhost:3000](http://localhost:3000). No account required by defa
 
 Note, these screenshots are taken of the web application viewed as an installed standalone PWA. This tool may also be used like a traditional web app in the browser.
 
-| Wardrobe (Mobile - iOS)                                | Outfits (Mobile - iOS)                           | Outfit Schedule (Mobile - iOS)                           | Outfit Builder (Mobile - iOS)                    |
+| Wardrobe (Mobile)                                      | Outfits (Mobile)                                 | Outfit Schedule (Mobile)                                 | Outfit Builder (Mobile)                          |
 | ------------------------------------------------------ | ------------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------ |
 | ![Wardrobe grid](screenshots/Screenshot_mobile_1.webp) | ![Outfits](screenshots/Screenshot_mobile_2.webp) | ![Outfit Schedule](screenshots/Screenshot_mobile_3.webp) | ![Outfit ](screenshots/Screenshot_mobile_4.webp) |
 
