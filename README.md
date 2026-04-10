@@ -10,7 +10,7 @@ A free, open-source, self-hosted wardrobe organizer. Catalog your clothes, uploa
 [![Docker Pulls](https://img.shields.io/docker/pulls/lazztech/libre-closet?logo=docker&logoColor=959da5&labelColor=333a41&label=Docker%20Pulls)](https://hub.docker.com/r/lazztech/libre-closet)
 [![Join the Discussion](https://img.shields.io/badge/Community-Join%20the%20Discussion-2EA44F?logo=github&logoColor=white&labelColor=1F2937)](https://github.com/Lazztech/Libre-Closet/discussions)
 
-Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.tech/about)
+Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.tech/about) 🖤
 
 ---
 
