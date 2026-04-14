@@ -14,7 +14,7 @@
     <div
       class="card bg-base-100 w-96 shadow-sm hover:shadow-md transition-shadow"
     >
-      <div class="card-body p-3" onclick="window.location = '/outfits/{{this.id}}'">
+      <div class="card-body p-3 cursor-pointer" onclick="window.location = '/outfits/{{this.id}}'">
         <div class="flex items-center justify-between gap-2">
           <a href="/outfits/{{this.id}}" class="card-title text-sm hover:underline truncate">{{this.name}}</a>
           <div class="dropdown dropdown-end shrink-0" onclick="event.stopPropagation();">
