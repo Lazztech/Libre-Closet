@@ -72,7 +72,7 @@ export class OutfitController {
   async create(
     @Body()
     body: {
-      name: string;
+      name?: string;
       notes?: string;
       scheduleDate?: string;
       category?: string | string[];

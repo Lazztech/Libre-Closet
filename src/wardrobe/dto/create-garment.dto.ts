@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 
 export interface CreateGarmentDto {
-  name: string;
+  name?: string;
   category: string;
   brand?: string;
   color?: GarmentColor;

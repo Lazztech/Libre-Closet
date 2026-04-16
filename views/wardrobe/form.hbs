@@ -18,13 +18,12 @@
     class="flex flex-col gap-4"
   >
     <div class="form-control">
-      <label class="label"><span class="label-text">{{t 'lang.NAME'}} *</span></label>
+      <label class="label"><span class="label-text">{{t 'lang.NAME'}}</span></label>
       <input
         type="text"
         name="name"
         class="input input-bordered"
         value="{{#if garment}}{{garment.name}}{{/if}}"
-        required
         placeholder="e.g. Black Linen Blazer"
       />
     </div>

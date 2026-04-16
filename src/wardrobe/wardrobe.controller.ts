@@ -94,7 +94,7 @@ export class WardrobeController {
   async create(
     @Body()
     body: {
-      name: string;
+      name?: string;
       category: string;
       brand?: string;
       color?: GarmentColor;

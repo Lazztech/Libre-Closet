@@ -12,19 +12,8 @@ import { Outfit, OutfitSlot } from '../dal/entity/outfit.entity';
 import { User } from '../dal/entity/user.entity';
 import { GarmentCategory } from './garment-category.enum';
 import { GarmentService } from './garment.service';
-
-export interface CreateOutfitDto {
-  name: string;
-  notes?: string;
-  slots?: OutfitSlot[];
-}
-
-export interface UpdateOutfitDto {
-  name?: string;
-  notes?: string;
-  slots?: OutfitSlot[];
-}
-
+import { CreateOutfitDto } from './dto/create-outfit.dto';
+import { UpdateOutfitDto } from './dto/update-outfit.dto';
 @Injectable()
 export class OutfitService {
   private readonly logger = new Logger(OutfitService.name);

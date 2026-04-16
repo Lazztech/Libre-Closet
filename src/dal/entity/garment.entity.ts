@@ -21,8 +21,8 @@ export class Garment extends ShareableId {
   @PrimaryKey()
   public id!: number;
 
-  @Property()
-  public name!: string;
+  @Property({ nullable: true })
+  public name?: string;
 
   @Property()
   public category!: string;
