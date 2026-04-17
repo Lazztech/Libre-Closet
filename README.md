@@ -20,12 +20,11 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 #### Released
 
+- `v0.2.2 - April 17, 2026:` Garment and Outfit names now optional
 - `v0.2.1 - April 15, 2026:` fix empty outfit click area
 - `v0.2.0 - April 10, 2026:` Clueless inspired outfit builder, Outfit Scheduling, Image Background Removal, & Customizable categories
 - `v0.1.9 - March 19, 2026:` Garment list now orders by most recently added
 - `v0.1.8 - March 13, 2026:` Added French, German, and Spanish language support.
-- `v0.1.7 - March 7, 2026:` Added Italian language support.
-- `v0.1.6 - March 6, 2026:` Added garment search and filter.
 
 For full details refer to the [CHANGELOG](CHANGELOG.md).
 

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ...
 
+## [0.2.2] - 2026-04-17
+
+#### Changed
+
+- Garment and Outfit names now optional
+
 ## [0.2.1] - 2026-04-15
 
 #### Fixed
