@@ -125,14 +125,6 @@ export function drawRotatedImageToCanvas(img, rotationDeg) {
     return canvas;
 }
 /**
- * Opens a canvas as an image in a new browser tab for visual inspection.
- * @param {HTMLCanvasElement} canvas - The canvas to show.
- */
-export function showCanvasInNewTab(canvas) {
-    const dataUrl = canvas.toDataURL('image/png');
-    window.open(dataUrl, '_blank');
-}
-/**
  * Counts consecutive fully transparent pixels from an edge using a pixel index generator.
  * @param {(i:number)=>number} getIdx - Function to get the pixel index.
  * @param {number} max - Number of pixels to check.
@@ -305,15 +297,11 @@ export async function createPaddedCanvasBlobAndCounts(img) {
     const canvas = createCenteredSquareCanvas(img, largest);
     console.log('[bg-removal] Dimensiones imagen con padding:', largest, 'x', largest);
 
-    // Show the centered square canvas for debugging
-    //showCanvasInNewTab(canvas);
-
     const transparentCounts = countConsecutiveTransparentFromAllBorders(canvas);
     console.log('[bg-removal] Transparent consecutive pixels from borders:', transparentCounts);
 
     const cropPixels = Math.min(transparentCounts.left, transparentCounts.right, transparentCounts.top, transparentCounts.bottom) / 2;
     const croppedCanvas = cropCanvasByBorders(canvas, { left: cropPixels, right: cropPixels, top: cropPixels, bottom: cropPixels });
-    //showCanvasInNewTab(croppedCanvas);
 
     const blob = await canvasToWebPBlob(croppedCanvas, 1.0);
     return { blob, canvas: croppedCanvas };
