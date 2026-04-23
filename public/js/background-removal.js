@@ -118,6 +118,15 @@ export const wireUpPhotoInput = async () => {
       setControlsEnabled(false);
       rotationState.rotation = (rotationState.rotation + 90) % 360;
       await updateRotatedPreview(previewImg, nobgInput);
+
+      // If user rotates without selecting a new file, backend still expects `photo`.
+      if (!photoInput.files?.length && nobgInput.files?.[0]) {
+        const rotatedFile = nobgInput.files[0];
+        const dt = new DataTransfer();
+        dt.items.add(new File([rotatedFile], rotatedFile.name || 'photo.webp', { type: rotatedFile.type || 'image/webp' }));
+        photoInput.files = dt.files;
+      }
+
       setControlsEnabled(true);
     });
   }
@@ -181,19 +190,10 @@ export const wireUpPhotoInput = async () => {
     try {
       console.log(config);
       const blob = await removeBackground(file, config);
-      
+
       const dt = new DataTransfer();
       dt.items.add(new File([blob], 'nobg.webp', { type: 'image/webp' }));
       nobgInput.files = dt.files;
-
-      // 1. Get original image dimensions
-      const originalImg = await new Promise((resolve, reject) => {
-        const image = new Image();
-        image.onload = () => resolve(image);
-        image.onerror = reject;
-        image.src = URL.createObjectURL(file);
-      });
-      console.log('[bg-removal] Dimensiones imagen original:', originalImg.width, 'x', originalImg.height);
 
       const nobgImg = await new Promise((resolve, reject) => {
         const image = new Image();
@@ -201,7 +201,6 @@ export const wireUpPhotoInput = async () => {
         image.onerror = reject;
         image.src = URL.createObjectURL(blob);
       });
-      console.log('[bg-removal] Dimensiones imagen sin fondo:', nobgImg.width, 'x', nobgImg.height);
       lastNobgImg = nobgImg;
 
       if (smartAdjustSwitch && smartAdjustSwitch.checked) {
