@@ -174,5 +174,8 @@
         "PASSWORD_MUST_CONTAIN": "Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben und eine Zahl enthalten",
         "PASSWORDS_MUST_MATCH": "Die Passwörter müssen übereinstimmen",
         "EMAIL_MUST_MATCH": "Die E-Mail-Adressen müssen übereinstimmen"
-    }
+        },
+    "AUTO_LANGUAGE": "Auto (Browser)",
+    "SMART_ADJUST_LABEL": "Intelligente Anpassung",
+    "SMART_ADJUST_DESC": "Passt den Fotobereich nach automatischer Hintergrundentfernung an."
 }

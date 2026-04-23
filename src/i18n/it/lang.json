@@ -174,5 +174,8 @@
     "PASSWORD_MUST_CONTAIN": "La password deve contenere almeno una lettera maiuscola, una lettera minuscola e un numero",
     "PASSWORDS_MUST_MATCH": "Le password devono corrispondere",
     "EMAIL_MUST_MATCH": "Le email devono corrispondere"
-  }
+    },
+  "SMART_ADJUST_LABEL": "Regolazione intelligente",
+  "SMART_ADJUST_DESC": "Regola automaticamente lo spazio della foto dopo la rimozione dello sfondo.",
+  "AUTO_LANGUAGE": "Auto (Browser)"
 }

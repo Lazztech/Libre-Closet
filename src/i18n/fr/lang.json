@@ -174,5 +174,8 @@
         "PASSWORD_MUST_CONTAIN": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre",
         "PASSWORDS_MUST_MATCH": "Les mots de passe doivent correspondre",
         "EMAIL_MUST_MATCH": "Les adresses e-mail doivent correspondre"
-    }
+        },
+    "AUTO_LANGUAGE": "Auto (Navigateur)",
+    "SMART_ADJUST_LABEL": "Ajustement intelligent",
+    "SMART_ADJUST_DESC": "Ajuste automatiquement l'espacement de la photo après suppression du fond."
 }

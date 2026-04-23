@@ -56,6 +56,10 @@ const updateStatusText = (bgStatus, bgStatusText, key) => {
   }
 };
 
+
+import { createPaddedCanvasBlobAndCounts, drawRotatedImageToCanvas, rotationState, updateRotatedPreview } from './canvas-transparent-utils.js';
+
+
 let mod = await import('/modules/background-removal/index.mjs');
 let removeBackground = mod.removeBackground;
 
@@ -73,23 +77,70 @@ export const initBackgroundRemoval = async () => {
 };
 
 export const wireUpPhotoInput = async () => {
+      const photoLoadingOverlay = document.getElementById('photoLoadingOverlay');
+
+      // Helper to show/hide loading overlay
+      function setPhotoLoadingOverlay(visible) {
+        if (photoLoadingOverlay) photoLoadingOverlay.style.display = visible ? 'flex' : 'none';
+      }
+    // Helper to enable/disable controls
+    function setControlsEnabled(enabled) {
+      if (rotateBtn) rotateBtn.disabled = !enabled;
+      if (photoInput) photoInput.disabled = !enabled;
+      if (submitBtn) submitBtn.disabled = !enabled;
+      setPhotoLoadingOverlay(!enabled);
+    }
   const photoInput = document.getElementById('photoInput');
   const nobgInput = document.getElementById('nobgPhotoInput');
   const submitBtn = document.getElementById('photoBtn');
   const bgStatus = document.getElementById('bgStatus');
   const bgStatusText = document.getElementById('bgStatusText');
   const bgStatusHint = document.getElementById('bgStatusHint');
+  const smartAdjustSwitch = document.getElementById('smartAdjustSwitch');
+  const rotateBtn = document.getElementById('rotateBtn');
+  const previewImg = document.getElementById('garmentPhotoPreview');
+
+  let lastNobgImg = null;
+
+  // Persist and restore smartAdjustSwitch state using localStorage
+  if (smartAdjustSwitch) {
+    const saved = localStorage.getItem('smartAdjustEnabled');
+    smartAdjustSwitch.checked = saved === 'true';
+    smartAdjustSwitch.addEventListener('change', () => {
+      localStorage.setItem('smartAdjustEnabled', smartAdjustSwitch.checked ? 'true' : 'false');
+    });
+  }
+
+  // Manejar rotación por botón
+  if (rotateBtn && previewImg) {
+    rotateBtn.addEventListener('click', async () => {
+      if (rotateBtn.disabled) return;
+      setControlsEnabled(false);
+      rotationState.rotation = (rotationState.rotation + 90) % 360;
+      await updateRotatedPreview(previewImg, nobgInput);
+      setControlsEnabled(true);
+    });
+  }
 
   if (!photoInput || !nobgInput) return;
 
   photoInput.addEventListener('change', async function () {
     // Re-enable submit for the "no file" case; it will be gated by html required
     nobgInput.value = '';
+    rotationState.rotation = 0;
+    if (previewImg) previewImg.style.transform = 'rotate(0deg)';
+    if (rotationState.lastPreviewBlob) { URL.revokeObjectURL(rotationState.lastPreviewBlob); rotationState.lastPreviewBlob = null; }
+    lastNobgImg = null;
+    rotationState.processedCanvas = null;
+
+    setControlsEnabled(false);
 
     const file = photoInput.files?.[0];
-    if (!file) return;
+    if (!file) {
+      setControlsEnabled(true);
+      return;
+    }
 
-    if (submitBtn) submitBtn.disabled = true;
     if (bgStatus) bgStatus.classList.remove('hidden');
 
     if (bgStatusText && bgStatus?.dataset.textDefault) {
@@ -130,23 +181,49 @@ export const wireUpPhotoInput = async () => {
     try {
       console.log(config);
       const blob = await removeBackground(file, config);
-
+      
       const dt = new DataTransfer();
       dt.items.add(new File([blob], 'nobg.webp', { type: 'image/webp' }));
       nobgInput.files = dt.files;
+
+      // 1. Get original image dimensions
+      const originalImg = await new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = URL.createObjectURL(file);
+      });
+      console.log('[bg-removal] Dimensiones imagen original:', originalImg.width, 'x', originalImg.height);
+
+      const nobgImg = await new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = URL.createObjectURL(blob);
+      });
+      console.log('[bg-removal] Dimensiones imagen sin fondo:', nobgImg.width, 'x', nobgImg.height);
+      lastNobgImg = nobgImg;
+
+      if (smartAdjustSwitch && smartAdjustSwitch.checked) {
+        // Smart adjust and save the resulting canvas
+        const result = await createPaddedCanvasBlobAndCounts(nobgImg);
+        rotationState.processedCanvas = result.canvas;
+      } else {
+        // Save the canvas from background removal
+        rotationState.processedCanvas = drawRotatedImageToCanvas(nobgImg, 0);
+      }
+
+      await updateRotatedPreview(previewImg, nobgInput);
     } catch (err) {
       // Processing failed — clear any partial result and let server fallback run
-      console.warn(
-        '[bg-removal] Processing failed, using server fallback:',
-        err,
-      );
+      console.warn('[bg-removal] Processing failed, using server fallback:', err);
       nobgInput.value = '';
     } finally {
       clearTimeout(stillWorkingTimer);
       fallbackTimers.forEach(clearTimeout);
       activeProgressHandler = null;
       if (bgStatus) bgStatus.classList.add('hidden');
-      if (submitBtn) submitBtn.disabled = false;
+      setControlsEnabled(true);
     }
   });
 

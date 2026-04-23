@@ -174,5 +174,8 @@
     "PASSWORD_MUST_CONTAIN": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
     "PASSWORDS_MUST_MATCH": "Passwords must match",
     "EMAIL_MUST_MATCH": "Emails must match"
-  }
+    },
+  "AUTO_LANGUAGE": "Auto (Browser)",
+  "SMART_ADJUST_LABEL": "Smart adjust",
+  "SMART_ADJUST_DESC": "Automatically adjusts photo spacing after background removal."
 }
