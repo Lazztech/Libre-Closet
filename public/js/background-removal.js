@@ -89,6 +89,18 @@ export const wireUpPhotoInput = async () => {
     const file = photoInput.files?.[0];
     if (!file) return;
 
+        const bitmap = await createImageBitmap(file);
+        const size = Math.max(bitmap.width, bitmap.height);
+        const canvas = new OffscreenCanvas(size, size);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(
+          bitmap,
+          Math.floor((size - bitmap.width) / 2),
+          Math.floor((size - bitmap.height) / 2),
+        );
+     bitmap.close();
+     const squareFile = await canvas.convertToBlob({ type: 'image/png' });
+
     if (submitBtn) submitBtn.disabled = true;
     if (bgStatus) bgStatus.classList.remove('hidden');
 
@@ -129,7 +141,7 @@ export const wireUpPhotoInput = async () => {
 
     try {
       console.log(config);
-      const blob = await removeBackground(file, config);
+      const blob = await removeBackground(squareFile, config);
 
       const dt = new DataTransfer();
       dt.items.add(new File([blob], 'nobg.webp', { type: 'image/webp' }));
