@@ -62,6 +62,7 @@
   "COPY_TEXT": "Copia Testo",
   "SHARE": "Condividi",
   "UPLOAD": "Carica",
+  "LOADING": "Caricamento...",
   "COPIED": "Copiato!",
   "SHARING_NOT_SUPPORTED": "La condivisione non è supportata su questo browser",
   "NAME": "Nome",
@@ -86,6 +87,7 @@
   "GARMENTS_IN_OUTFIT": "Capi in questo outfit",
   "ADD_PHOTO": "Aggiungi Foto",
   "UPDATE_PHOTO": "Aggiorna Foto",
+  "ROTATE_IMAGE": "Ruota immagine",
   "REMOVING_BACKGROUND": "Rimozione sfondo…",
   "BG_STAGE_DOWNLOADING": "Download risorse…",
   "BG_STAGE_DECODING": "Decodifica immagine…",
@@ -174,5 +176,8 @@
     "PASSWORD_MUST_CONTAIN": "La password deve contenere almeno una lettera maiuscola, una lettera minuscola e un numero",
     "PASSWORDS_MUST_MATCH": "Le password devono corrispondere",
     "EMAIL_MUST_MATCH": "Le email devono corrispondere"
-  }
+    },
+  "SMART_ADJUST_LABEL": "Regolazione intelligente",
+  "SMART_ADJUST_DESC": "Regola automaticamente lo spazio della foto dopo la rimozione dello sfondo.",
+  "AUTO_LANGUAGE": "Auto (Browser)"
 }

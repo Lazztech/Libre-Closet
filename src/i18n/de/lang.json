@@ -62,6 +62,7 @@
     "COPY_TEXT": "Text kopieren",
     "SHARE": "Teilen",
     "UPLOAD": "Hochladen",
+    "LOADING": "Wird geladen...",
     "COPIED": "Kopiert!",
     "SHARING_NOT_SUPPORTED": "Teilen wird in diesem Browser nicht unterstützt",
     "NAME": "Name",
@@ -86,6 +87,7 @@
     "GARMENTS_IN_OUTFIT": "Kleidungsstücke in diesem Outfit",
     "ADD_PHOTO": "Foto hinzufügen",
     "UPDATE_PHOTO": "Foto aktualisieren",
+    "ROTATE_IMAGE": "Bild drehen",
     "REMOVING_BACKGROUND": "Hintergrund wird entfernt…",
     "BG_STAGE_DOWNLOADING": "Ressourcen werden heruntergeladen…",
     "BG_STAGE_DECODING": "Bild wird dekodiert…",
@@ -174,5 +176,8 @@
         "PASSWORD_MUST_CONTAIN": "Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben und eine Zahl enthalten",
         "PASSWORDS_MUST_MATCH": "Die Passwörter müssen übereinstimmen",
         "EMAIL_MUST_MATCH": "Die E-Mail-Adressen müssen übereinstimmen"
-    }
+        },
+    "AUTO_LANGUAGE": "Auto (Browser)",
+    "SMART_ADJUST_LABEL": "Intelligente Anpassung",
+    "SMART_ADJUST_DESC": "Passt den Fotobereich nach automatischer Hintergrundentfernung an."
 }

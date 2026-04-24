@@ -26,13 +26,24 @@
 
   {{#if garment.photo}}
   <figure
-    class="rounded-box overflow-hidden mb-6 bg-base-200 aspect-square w-full max-w-sm mx-auto"
+    class="rounded-box overflow-hidden mb-6 bg-base-200 aspect-square w-full max-w-sm mx-auto relative"
   >
     <img
+      id="garmentPhotoPreview"
       src="/file/nobg/{{garment.photo.fileName}}"
       alt="{{garment.name}}"
       class="object-cover w-full h-full"
+      style="transition: transform 0.2s;"
     />
+    <!-- Loading overlay label -->
+    <div id="photoLoadingOverlay" class="absolute inset-0 flex items-center justify-center z-20 pointer-events-none" style="display:none;">
+      <span class="bg-base-100/80 rounded px-4 py-2 text-base font-semibold text-base-content">{{t 'lang.LOADING'}}</span>
+    </div>
+    <button type="button" id="rotateBtn" title="{{t 'lang.ROTATE_IMAGE'}}" aria-label="{{t 'lang.ROTATE_IMAGE'}}" class="btn btn-xs btn-circle absolute right-2 bottom-2 z-10 bg-base-100/80">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12a7.5 7.5 0 1 1 7.5 7.5m0 0V21m0-1.5-2-2m2 2 2-2" />
+      </svg>
+    </button>
   </figure>
   {{else}}
   <div
@@ -70,6 +81,14 @@
       class="hidden"
       accept="image/webp"
     />
+
+    <div class="flex flex-col gap-1 mb-2">
+      <label class="flex items-center gap-2 text-sm font-medium">
+        <input type="checkbox" id="smartAdjustSwitch" class="toggle toggle-xs" />
+        <span>{{t 'lang.SMART_ADJUST_LABEL'}}</span>
+      </label>
+      <span class="text-sm text-base-content/60 pl-7">{{t 'lang.SMART_ADJUST_DESC'}}</span>
+    </div>
     <div class="flex gap-2 items-center">
       <input
         type="file"

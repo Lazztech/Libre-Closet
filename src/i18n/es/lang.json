@@ -62,6 +62,7 @@
     "COPY_TEXT": "Copiar texto",
     "SHARE": "Compartir",
     "UPLOAD": "Subir",
+    "LOADING": "Cargando...",
     "COPIED": "¡Copiado!",
     "SHARING_NOT_SUPPORTED": "Compartir no está disponible en este navegador",
     "NAME": "Nombre",
@@ -86,6 +87,7 @@
     "GARMENTS_IN_OUTFIT": "Prendas en este conjunto",
     "ADD_PHOTO": "Añadir foto",
     "UPDATE_PHOTO": "Actualizar foto",
+    "ROTATE_IMAGE": "Rotar imagen",
     "REMOVING_BACKGROUND": "Eliminando fondo…",
     "BG_STAGE_DOWNLOADING": "Descargando recursos…",
     "BG_STAGE_DECODING": "Decodificando imagen…",
@@ -174,5 +176,8 @@
         "PASSWORD_MUST_CONTAIN": "La contraseña debe contener al menos una letra mayúscula, una letra minúscula y un número",
         "PASSWORDS_MUST_MATCH": "Las contraseñas deben coincidir",
         "EMAIL_MUST_MATCH": "Los correos electrónicos deben coincidir"
-    }
+        },
+    "AUTO_LANGUAGE": "Auto (Navegador)",
+    "SMART_ADJUST_LABEL": "Ajuste inteligente",
+    "SMART_ADJUST_DESC": "Ajusta el espaciado de la foto luego de remover el fondo automáticamente."
 }
