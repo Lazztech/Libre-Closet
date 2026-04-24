@@ -77,19 +77,19 @@ export const initBackgroundRemoval = async () => {
 };
 
 export const wireUpPhotoInput = async () => {
-      const photoLoadingOverlay = document.getElementById('photoLoadingOverlay');
+  const photoLoadingOverlay = document.getElementById('photoLoadingOverlay');
 
-      // Helper to show/hide loading overlay
-      function setPhotoLoadingOverlay(visible) {
-        if (photoLoadingOverlay) photoLoadingOverlay.style.display = visible ? 'flex' : 'none';
-      }
-    // Helper to enable/disable controls
-    function setControlsEnabled(enabled) {
-      if (rotateBtn) rotateBtn.disabled = !enabled;
-      if (photoInput) photoInput.disabled = !enabled;
-      if (submitBtn) submitBtn.disabled = !enabled;
-      setPhotoLoadingOverlay(!enabled);
-    }
+  // Helper to show/hide loading overlay
+  function setPhotoLoadingOverlay(visible) {
+    if (photoLoadingOverlay) photoLoadingOverlay.style.display = visible ? 'flex' : 'none';
+  }
+  // Helper to enable/disable controls
+  function setControlsEnabled(enabled) {
+    if (rotateBtn) rotateBtn.disabled = !enabled;
+    if (photoInput) photoInput.disabled = !enabled;
+    if (submitBtn) submitBtn.disabled = !enabled;
+    setPhotoLoadingOverlay(!enabled);
+  }
   const photoInput = document.getElementById('photoInput');
   const nobgInput = document.getElementById('nobgPhotoInput');
   const submitBtn = document.getElementById('photoBtn');
@@ -99,8 +99,6 @@ export const wireUpPhotoInput = async () => {
   const smartAdjustSwitch = document.getElementById('smartAdjustSwitch');
   const rotateBtn = document.getElementById('rotateBtn');
   const previewImg = document.getElementById('garmentPhotoPreview');
-
-  let lastNobgImg = null;
 
   // Persist and restore smartAdjustSwitch state using localStorage
   if (smartAdjustSwitch) {
@@ -139,7 +137,6 @@ export const wireUpPhotoInput = async () => {
     rotationState.rotation = 0;
     if (previewImg) previewImg.style.transform = 'rotate(0deg)';
     if (rotationState.lastPreviewBlob) { URL.revokeObjectURL(rotationState.lastPreviewBlob); rotationState.lastPreviewBlob = null; }
-    lastNobgImg = null;
     rotationState.processedCanvas = null;
 
     setControlsEnabled(false);
@@ -197,11 +194,17 @@ export const wireUpPhotoInput = async () => {
 
       const nobgImg = await new Promise((resolve, reject) => {
         const image = new Image();
-        image.onload = () => resolve(image);
-        image.onerror = reject;
-        image.src = URL.createObjectURL(blob);
+        const objectUrl = URL.createObjectURL(blob);
+        image.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          resolve(image);
+        };
+        image.onerror = (event) => {
+          URL.revokeObjectURL(objectUrl);
+          reject(event);
+        };
+        image.src = objectUrl;
       });
-      lastNobgImg = nobgImg;
 
       if (smartAdjustSwitch && smartAdjustSwitch.checked) {
         // Smart adjust and save the resulting canvas

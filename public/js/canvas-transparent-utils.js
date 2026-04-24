@@ -38,12 +38,21 @@ export function loadImage(src) {
 
 /**
  * Convert a canvas to a WebP Blob.
+ * Rejects if the browser cannot encode the canvas as WebP.
  * @param {HTMLCanvasElement} canvas
  * @param {number} [quality=1.0]
  * @returns {Promise<Blob>}
  */
 export function canvasToWebPBlob(canvas, quality = 1.0) {
-    return new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', quality));
+    return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                reject(new Error('Failed to encode canvas as WebP Blob.'));
+                return;
+            }
+            resolve(blob);
+        }, 'image/webp', quality);
+    });
 }
 
 /**
@@ -288,9 +297,10 @@ export function suggestOpaqueCenter(canvas, alphaThreshold = 16) {
 }
 
 /**
- * Creates a square canvas, centers the given image, and returns a WebP blob and transparency counts from borders.
- * @param {HTMLImageElement} img - The image to pad and center.
- * @returns {Promise<{blob: Blob, counts: {left:number, right:number, top:number, bottom:number}, newWidth:number, newHeight:number}>}
+ * Creates a centered square canvas from the image, crops transparent padding,
+ * and returns both the resulting WebP blob and cropped canvas.
+ * @param {HTMLImageElement} img - The image to process.
+ * @returns {Promise<{blob: Blob, canvas: HTMLCanvasElement}>}
  */
 export async function createPaddedCanvasBlobAndCounts(img) {
     const largest = Math.max(img.width, img.height);
@@ -300,8 +310,19 @@ export async function createPaddedCanvasBlobAndCounts(img) {
     const transparentCounts = countConsecutiveTransparentFromAllBorders(canvas);
     console.log('[bg-removal] Transparent consecutive pixels from borders:', transparentCounts);
 
-    const cropPixels = Math.min(transparentCounts.left, transparentCounts.right, transparentCounts.top, transparentCounts.bottom) / 2;
-    const croppedCanvas = cropCanvasByBorders(canvas, { left: cropPixels, right: cropPixels, top: cropPixels, bottom: cropPixels });
+    const requestedCropPixels = Math.min(
+        transparentCounts.left,
+        transparentCounts.right,
+        transparentCounts.top,
+        transparentCounts.bottom
+    ) / 2;
+    const maxHorizontalCropPerSide = Math.floor((canvas.width - 1) / 2);
+    const maxVerticalCropPerSide = Math.floor((canvas.height - 1) / 2);
+    const maxCropPerSide = Math.max(0, Math.min(maxHorizontalCropPerSide, maxVerticalCropPerSide));
+    const cropPixels = Math.max(0, Math.min(Math.floor(requestedCropPixels), maxCropPerSide));
+    const croppedCanvas = cropPixels > 0
+        ? cropCanvasByBorders(canvas, { left: cropPixels, right: cropPixels, top: cropPixels, bottom: cropPixels })
+        : canvas;
 
     const blob = await canvasToWebPBlob(croppedCanvas, 1.0);
     return { blob, canvas: croppedCanvas };
