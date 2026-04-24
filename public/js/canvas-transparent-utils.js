@@ -89,7 +89,6 @@ export async function getOrCreateProcessedCanvasFromPreview(previewImg) {
  * @param {HTMLInputElement} nobgInput
  */
 export async function updateRotatedPreview(previewImg, nobgInput) {
-    console.log('Updating rotated preview, current state:', rotationState);
     let baseCanvas = await getOrCreateProcessedCanvasFromPreview(previewImg);
     if (!baseCanvas) return;
     const { rotation } = rotationState;
@@ -233,11 +232,8 @@ export function cropCanvasByBorders(canvas, crop) {
     const { left, right, top, bottom } = crop;
     // Calcular centroide opaco antes de recortar
     const centroide = suggestOpaqueCenter(canvas);
-    console.log('[cropCanvasByBorders] Centroide opaco sugerido:', centroide);
     const width = canvas.width - left - right;
     const height = canvas.height - top - bottom;
-    console.log('[cropCanvasByBorders] Restando a cada lado:', { left, right, top, bottom });
-    console.log('[cropCanvasByBorders] Nuevo tamaño canvas:', width, 'x', height);
 
     // Coordenadas del centroide relativo al recorte
     const centroideRecorte = {
@@ -305,10 +301,8 @@ export function suggestOpaqueCenter(canvas, alphaThreshold = 16) {
 export async function createPaddedCanvasBlobAndCounts(img) {
     const largest = Math.max(img.width, img.height);
     const canvas = createCenteredSquareCanvas(img, largest);
-    console.log('[bg-removal] Dimensiones imagen con padding:', largest, 'x', largest);
 
     const transparentCounts = countConsecutiveTransparentFromAllBorders(canvas);
-    console.log('[bg-removal] Transparent consecutive pixels from borders:', transparentCounts);
 
     const requestedCropPixels = Math.min(
         transparentCounts.left,
