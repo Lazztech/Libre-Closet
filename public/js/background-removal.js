@@ -109,7 +109,7 @@ export const wireUpPhotoInput = async () => {
     });
   }
 
-  // Manejar rotación por botón
+  // Handle rotation via button
   if (rotateBtn && previewImg) {
     rotateBtn.addEventListener('click', async () => {
       if (rotateBtn.disabled) return;

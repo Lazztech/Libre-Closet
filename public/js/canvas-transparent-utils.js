@@ -1,5 +1,5 @@
 // --- ROTATION STATE & HELPERS ---
-// Estado de rotación global para integración con background-removal.js
+// Global rotation state for integration with background-removal.js
 export const rotationState = {
     rotation: 0,
     processedCanvas: null,
@@ -84,7 +84,7 @@ export async function getOrCreateProcessedCanvasFromPreview(previewImg) {
 }
 
 /**
- * Rota y actualiza la vista previa y el input oculto.
+ * Rotates and updates the preview image and the hidden input.
  * @param {HTMLImageElement} previewImg
  * @param {HTMLInputElement} nobgInput
  */
@@ -105,7 +105,7 @@ export async function updateRotatedPreview(previewImg, nobgInput) {
 }
 
 /**
- * Inicializa el canvas procesado desde una imagen por defecto.
+ * Initializes the processed canvas from a default image.
  * @param {HTMLImageElement} previewImg
  * @returns {Promise<void>}
  */
@@ -113,10 +113,10 @@ export async function initDefaultProcessedCanvas(previewImg) {
     await getOrCreateProcessedCanvasFromPreview(previewImg);
 }
 /**
- * Rota un canvas o imagen cuadrada los grados indicados (múltiplos de 90).
- * @param {HTMLCanvasElement|HTMLImageElement} img - Canvas o imagen a rotar.
- * @param {number} rotationDeg - Grados a rotar (0, 90, 180, 270).
- * @returns {HTMLCanvasElement} Canvas rotado.
+ * Rotates a square canvas or image by the given degrees (multiples of 90).
+ * @param {HTMLCanvasElement|HTMLImageElement} img - Canvas or image to rotate.
+ * @param {number} rotationDeg - Degrees to rotate (0, 90, 180, 270).
+ * @returns {HTMLCanvasElement} Rotated canvas.
  */
 export function drawRotatedImageToCanvas(img, rotationDeg) {
     const size = Math.max(img.width, img.height);
@@ -230,26 +230,26 @@ export function countConsecutiveTransparentFromAllBorders(canvas) {
  */
 export function cropCanvasByBorders(canvas, crop) {
     const { left, right, top, bottom } = crop;
-    // Calcular centroide opaco antes de recortar
-    const centroide = suggestOpaqueCenter(canvas);
+    // Compute opaque centroid before cropping
+    const centroid = suggestOpaqueCenter(canvas);
     const width = canvas.width - left - right;
     const height = canvas.height - top - bottom;
 
-    // Coordenadas del centroide relativo al recorte
-    const centroideRecorte = {
-        x: centroide.x - left,
-        y: centroide.y - top
+    // Centroid coordinates relative to the crop
+    const croppedCentroid = {
+        x: centroid.x - left,
+        y: centroid.y - top
     };
 
-    // Nuevo canvas cuadrado, centrando el centroide
+    // New square canvas, centering the centroid
     const size = Math.max(width, height);
     const centered = document.createElement('canvas');
     centered.width = size;
     centered.height = size;
     const ctx = centered.getContext('2d');
-    // Offset para que el centroide quede en el centro del canvas
-    const offsetX = Math.round(size / 2 - centroideRecorte.x);
-    const offsetY = Math.round(size / 2 - centroideRecorte.y);
+    // Offset to place the centroid at the center of the canvas
+    const offsetX = Math.round(size / 2 - croppedCentroid.x);
+    const offsetY = Math.round(size / 2 - croppedCentroid.y);
     ctx.clearRect(0, 0, size, size);
     ctx.drawImage(
         canvas,
@@ -260,11 +260,11 @@ export function cropCanvasByBorders(canvas, crop) {
 }
 
 /**
- * Sugerencia de centro de la imagen basado en la concentración de píxeles opacos.
- * Retorna el centroide (x, y) de los píxeles opacos (alpha > threshold).
+ * Suggests the center of the image based on the concentration of opaque pixels.
+ * Returns the centroid (x, y) of opaque pixels (alpha > threshold).
  * @param {HTMLCanvasElement} canvas
- * @param {number} [alphaThreshold=16] - Umbral mínimo para considerar un píxel opaco (0-255).
- * @returns {{x: number, y: number}} Centroide de opacos, relativo al canvas.
+ * @param {number} [alphaThreshold=16] - Minimum threshold to consider a pixel opaque (0-255).
+ * @returns {{x: number, y: number}} Centroid of opaque pixels, relative to the canvas.
  */
 export function suggestOpaqueCenter(canvas, alphaThreshold = 16) {
     const ctx = canvas.getContext('2d');
@@ -283,7 +283,7 @@ export function suggestOpaqueCenter(canvas, alphaThreshold = 16) {
         }
     }
     if (count === 0) {
-        // Si no hay píxeles opacos, devolver el centro geométrico
+        // No opaque pixels found, return geometric center
         return { x: Math.floor(width / 2), y: Math.floor(height / 2) };
     }
     return {
