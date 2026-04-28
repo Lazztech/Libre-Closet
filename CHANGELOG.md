@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ...
 
+## [0.2.4] - 2026-04-28
+
+#### Fixed
+
+- Fix garment photo upload cropping
+
 ## [0.2.3] - 2026-04-20
 
 #### Added

@@ -20,6 +20,7 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 #### Released
 
+- `v0.2.4 - April 28, 2026`: Fix garment photo upload cropping
 - `v0.2.3 - April 20, 2026`: Added Russian language support.
 - `v0.2.2 - April 17, 2026:` Garment and Outfit names now optional
 - `v0.2.1 - April 15, 2026:` fix empty outfit click area
