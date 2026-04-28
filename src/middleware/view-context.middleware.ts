@@ -24,6 +24,8 @@ export class ViewContextMiddleware implements NestMiddleware {
     res.locals.baseUrl = req.baseUrl;
     res.locals.authEnabled = this.configService.get<boolean>('AUTH_ENABLED');
     res.locals.pwaEnabled = this.configService.get<boolean>('PWA_ENABLED');
+    res.locals.signupsDisabled =
+      this.configService.get<string>('DISABLE_REGISTRATION') === 'true';
     // Assign locale for i18n language selection
     const lang = I18nContext.current()?.lang ?? 'en';
     res.locals.locale = lang;

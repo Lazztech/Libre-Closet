@@ -59,11 +59,11 @@
           <a href="/wardrobe" class="btn btn-primary btn-lg"
             >{{t 'lang.GET_STARTED'}}</a
           >
-          {{#if authEnabled}} {{#unless user}}
+          {{#if authEnabled}} {{#unless user}} {{#unless signupsDisabled}}
           <a href="/auth/register" class="btn btn-outline btn-lg"
             >{{t 'lang.REGISTER'}}</a
           >
-          {{/unless}} {{/if}}
+          {{/unless}} {{/unless}} {{/if}}
           <a
             href="https://github.com/lazztech/libre-closet"
             target="_blank"
