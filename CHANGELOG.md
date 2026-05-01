@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ...
 
+## [0.2.5] - 2026-05-1
+
+#### Added
+
+- Option to disable register functionality
+
 ## [0.2.4] - 2026-04-28
 
 #### Fixed
