@@ -8,7 +8,6 @@ import {
   Logger,
   Param,
   Post,
-  Query,
   Render,
   Res,
   UseGuards,
@@ -98,15 +97,8 @@ export class FileController {
 
   @Get('nobg/:fileName')
   @Header('content-type', 'image/webp')
-  async nobg(
-    @Param('fileName') fileName: string,
-    @Query('mode') mode: 'lazy' | 'eager' = 'lazy',
-    @Res() response: Response,
-  ) {
-    const stream = await this.fileService.getOrCreateNobgVariant(
-      fileName,
-      mode,
-    );
+  async nobg(@Param('fileName') fileName: string, @Res() response: Response) {
+    const stream = await this.fileService.getNobgVariant(fileName);
     if (!stream) {
       return response
         .setHeader('Cache-Control', 'no-store')
