@@ -59,6 +59,8 @@ const updateStatusText = (bgStatus, bgStatusText, key) => {
 let mod = await import('/modules/background-removal/index.mjs');
 let removeBackground = mod.removeBackground;
 
+import { openMaskEditor } from '/js/mask-editor.js';
+
 export const initBackgroundRemoval = async () => {
   try {
     mod.preload(config).then(() => {
@@ -141,7 +143,8 @@ export const wireUpPhotoInput = async () => {
 
     try {
       console.log(config);
-      const blob = await removeBackground(squareFile, config);
+      const rawBlob = await removeBackground(squareFile, config);
+      const blob = await openMaskEditor(squareFile, rawBlob);
 
       const dt = new DataTransfer();
       dt.items.add(new File([blob], 'nobg.webp', { type: 'image/webp' }));
