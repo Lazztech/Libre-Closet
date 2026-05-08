@@ -56,6 +56,27 @@ const updateStatusText = (bgStatus, bgStatusText, key) => {
   }
 };
 
+/**
+ * Centre-pads a Blob into a square PNG OffscreenCanvas blob.
+ * This matches the layout produced during the initial upload so that
+ * the mask editor's restore brush samples the correct pixel positions.
+ * @param {Blob} blob
+ * @returns {Promise<Blob>}
+ */
+const squarePadBlob = async (blob) => {
+  const bitmap = await createImageBitmap(blob);
+  const size = Math.max(bitmap.width, bitmap.height);
+  const canvas = new OffscreenCanvas(size, size);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(
+    bitmap,
+    Math.floor((size - bitmap.width) / 2),
+    Math.floor((size - bitmap.height) / 2),
+  );
+  bitmap.close();
+  return canvas.convertToBlob({ type: 'image/png' });
+};
+
 let mod = await import('/modules/background-removal/index.mjs');
 let removeBackground = mod.removeBackground;
 
@@ -91,17 +112,7 @@ export const wireUpPhotoInput = async () => {
     const file = photoInput.files?.[0];
     if (!file) return;
 
-        const bitmap = await createImageBitmap(file);
-        const size = Math.max(bitmap.width, bitmap.height);
-        const canvas = new OffscreenCanvas(size, size);
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(
-          bitmap,
-          Math.floor((size - bitmap.width) / 2),
-          Math.floor((size - bitmap.height) / 2),
-        );
-     bitmap.close();
-     const squareFile = await canvas.convertToBlob({ type: 'image/png' });
+    const squareFile = await squarePadBlob(file);
 
     if (submitBtn) submitBtn.disabled = true;
     if (bgStatus) bgStatus.classList.remove('hidden');
@@ -168,9 +179,60 @@ export const wireUpPhotoInput = async () => {
   console.log('wired up photo input for background removal');
 };
 
+/**
+ * Wires up the edit-mask button on the garment image.
+ * Fetches the existing original + nobg images, opens the mask editor,
+ * then POSTs only the updated nobg variant to /wardrobe/:id/nobg.
+ * @param {string} fileName - The stored filename of the garment photo.
+ * @param {number} garmentId - The garment's database ID.
+ */
+export const wireUpEditMaskBtn = async (fileName, garmentId) => {
+  const btn = document.getElementById('editMaskBtn');
+  if (!btn) return;
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    try {
+      const [origResp, nobgResp] = await Promise.all([
+        fetch(`/file/${fileName}`),
+        fetch(`/file/nobg/${fileName}`),
+      ]);
+      const origBlob = await origResp.blob();
+      const nobgBlob = await nobgResp.blob();
+
+      // Square-pad the original to match the layout used during initial upload,
+      // so the restore brush samples from the correct pixel positions.
+      const squaredBlob = await squarePadBlob(origBlob);
+      const squaredFile = new File([squaredBlob], fileName, { type: 'image/png' });
+
+      const editedBlob = await openMaskEditor(squaredFile, nobgBlob);
+
+      // openMaskEditor resolves with the exact nobgBlob reference on Skip.
+      if (editedBlob === nobgBlob) return;
+
+      const formData = new FormData();
+      formData.append('nobgPhoto', new File([editedBlob], 'nobg.webp', { type: 'image/webp' }));
+      await fetch(`/wardrobe/${garmentId}/nobg`, { method: 'POST', body: formData });
+
+      // Display the edited result directly from the in-memory blob — avoids
+      // any browser cache serving the old nobg image after the POST.
+      const img = btn.closest('figure')?.querySelector('img');
+      if (img) {
+        const objectUrl = URL.createObjectURL(editedBlob);
+        img.src = objectUrl;
+      }
+    } catch (err) {
+      console.warn('[edit-mask] Failed:', err);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+};
+
 export default {
   initBackgroundRemoval,
   wireUpPhotoInput,
+  wireUpEditMaskBtn,
 };
 
 // Preload clientside background removal models

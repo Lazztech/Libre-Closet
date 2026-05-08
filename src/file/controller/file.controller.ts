@@ -104,7 +104,7 @@ export class FileController {
         .setHeader('Cache-Control', 'no-store')
         .redirect(302, `/file/${fileName}`);
     }
-    response.setHeader('Cache-Control', 'public, max-age=86400');
+    response.setHeader('Cache-Control', 'no-store');
     stream.pipe(response).on('error', (err) => {
       this.logger.error(err);
       response.status(500).send(err);

@@ -210,6 +210,19 @@ export class WardrobeController {
     return res.send();
   }
 
+  @Post(':id/nobg')
+  @UseInterceptors(MultipartInterceptor())
+  async updateNobg(
+    @Param('id', ParseIntPipe) id: number,
+    @MultipartFiles('nobgPhoto') nobgPhoto$: Observable<MultipartFileStream>,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    await this.garmentService.updateNobg(id, nobgPhoto$, this.userId(req));
+    res.setHeader('HX-Redirect', `/wardrobe/${id}`);
+    return res.send();
+  }
+
   @Delete(':id')
   @HttpCode(200)
   async remove(

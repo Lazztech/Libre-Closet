@@ -227,6 +227,16 @@ export class GarmentService {
     }
   }
 
+  async updateNobg(
+    id: number,
+    nobgPhoto$: UpdateGarmentDto['nobgPhoto$'],
+    userId?: number,
+  ): Promise<void> {
+    const garment = await this.findOne(id, userId);
+    if (!garment.photo?.fileName) return;
+    await this.streamNobgIfPresent(nobgPhoto$, garment.photo.fileName);
+  }
+
   private streamNobgIfPresent(
     nobgPhoto$: UpdateGarmentDto['nobgPhoto$'],
     photoFileName: string,
