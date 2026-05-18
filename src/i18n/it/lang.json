@@ -144,11 +144,11 @@
   "CALENDAR_CAL_FRI_LETTER": "V",
   "CALENDAR_CAL_SAT_LETTER": "S",
   "CALENDAR_DAY_SUN": "Domenica",
-  "CALENDAR_DAY_MON": "Luned\u00ec",
-  "CALENDAR_DAY_TUE": "Marted\u00ec",
-  "CALENDAR_DAY_WED": "Mercoled\u00ec",
-  "CALENDAR_DAY_THU": "Gioved\u00ec",
-  "CALENDAR_DAY_FRI": "Venerd\u00ec",
+  "CALENDAR_DAY_MON": "Lunedì",
+  "CALENDAR_DAY_TUE": "Martedì",
+  "CALENDAR_DAY_WED": "Mercoledì",
+  "CALENDAR_DAY_THU": "Giovedì",
+  "CALENDAR_DAY_FRI": "Venerdì",
   "CALENDAR_DAY_SAT": "Sabato",
   "CALENDAR": "Pianificazione",
   "CALENDAR_PAGE_TITLE": "Pianificazione outfit",
@@ -174,5 +174,12 @@
     "PASSWORD_MUST_CONTAIN": "La password deve contenere almeno una lettera maiuscola, una lettera minuscola e un numero",
     "PASSWORDS_MUST_MATCH": "Le password devono corrispondere",
     "EMAIL_MUST_MATCH": "Le email devono corrispondere"
-  }
+  },
+  "MASK_EDITOR_TITLE": "Pulisci lo sfondo",
+  "MASK_EDITOR_HINT": "Controlla il risultato. Usa i pennelli cancella e ripristina per correggere eventuali problemi, poi tocca Accetta.",
+  "MASK_EDITOR_SKIP": "Salta",
+  "MASK_EDITOR_ACCEPT": "Accetta",
+  "MASK_BRUSH_ERASE": "Cancella",
+  "MASK_BRUSH_RESTORE": "Ripristina",
+  "MASK_BRUSH_SIZE": "Dimensione"
 }
