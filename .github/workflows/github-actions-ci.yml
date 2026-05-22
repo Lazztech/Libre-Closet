@@ -50,6 +50,19 @@ jobs:
           DATABASE_TYPE: sqlite
           FILE_STORAGE_TYPE: local
 
+      - name: npm test:load local
+        run: |
+          npm run test:load
+        env:
+          CI: true
+          APP_NAME: Lazztech.Boilerplate
+          ACCESS_TOKEN_SECRET: SecretKey
+          PUSH_NOTIFICATION_ENDPOINT: test
+          EMAIL_FROM_ADDRESS: test
+          EMAIL_PASSWORD: test
+          DATABASE_TYPE: sqlite
+          FILE_STORAGE_TYPE: local
+
       - name: start postgresql db
         uses: harmon758/postgresql-action@v1
         with:
@@ -95,6 +108,35 @@ jobs:
           OBJECT_STORAGE_ACCESS_KEY_ID: minioadmin
           OBJECT_STORAGE_SECRET_ACCESS_KEY: minioadmin
           OBJECT_STORAGE_ENDPOINT: http://127.0.0.1:9000
+
+      - name: npm test:load remote
+        run: |
+          npm run test:load
+        env:
+          CI: true
+          APP_NAME: Lazztech.Boilerplate
+          ACCESS_TOKEN_SECRET: SecretKey
+          PUSH_NOTIFICATION_ENDPOINT: test
+          EMAIL_FROM_ADDRESS: test
+          EMAIL_PASSWORD: test
+          DATABASE_TYPE: postgres
+          DATABASE_HOST: localhost
+          DATABASE_PORT: "5432"
+          DATABASE_USER: "test"
+          DATABASE_PASS: "Password123"
+          DATABASE_SCHEMA: "postgres-test"
+          DATABASE_SSL: "false"
+          FILE_STORAGE_TYPE: object
+          OBJECT_STORAGE_BUCKET_NAME: test-lazztech-boilerplate
+          OBJECT_STORAGE_ACCESS_KEY_ID: minioadmin
+          OBJECT_STORAGE_SECRET_ACCESS_KEY: minioadmin
+          OBJECT_STORAGE_ENDPOINT: http://127.0.0.1:9000
+
+      - name: upload load test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results
+          path: scripts/results/
 
       # Performance, best practices, and health check
       - name: run lighthouse

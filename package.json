@@ -32,8 +32,11 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "test:e2e:smoke": "playwright test test/smoke.spec.ts --project=chromium",
-    "precommit": "npm run format && npm run lint && npm run test:cov && npm run test:e2e:smoke && npm run build && npm run lighthouse",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "test:load": "ts-node scripts/load-test.ts",
+    "test:load:baseline": "ts-node scripts/load-test.ts --baseline",
+    "test:load:compare": "ts-node scripts/load-test.ts --compare",
+    "precommit": "npm run format && npm run lint && npm run test:cov && npm run test:e2e:smoke && npm run build && npm run test:load && npm run lighthouse"
   },
   "dependencies": {
     "@aws-sdk/lib-storage": "^3.1009.0",
@@ -100,6 +103,8 @@
     "@types/nodemailer-mailgun-transport": "^1.4.6",
     "@types/sortablejs": "^1.15.9",
     "@types/web-push": "^3.6.4",
+    "autocannon": "^8.0.0",
+    "@types/autocannon": "^7.12.0",
     "concurrently": "^9.2.1",
     "daisyui": "^5.1.27",
     "esbuild": "^0.25.11",
