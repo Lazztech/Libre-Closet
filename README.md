@@ -20,6 +20,7 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 #### Released
 
+- `v0.3.0 - May 21, 2026`: Garment image background touch up tool
 - `v0.2.5 - May 1, 2026`: Added option to disable register functionality
 - `v0.2.4 - April 28, 2026`: Fix garment photo upload cropping
 - `v0.2.3 - April 20, 2026`: Added Russian language support.
