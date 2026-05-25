@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
+import { FastifyRequest } from 'fastify';
 import { FileUrlService } from '../file/file-url/file-url.service';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { File } from '../dal/entity/file.entity';
@@ -30,7 +30,7 @@ export class OpenGraphService {
   public async getShareableTagValues(
     shareableId: string,
     type: string,
-    req: Request,
+    req: FastifyRequest,
   ) {
     if (type == 'file') {
       const file = await this.fileRepository.findOne(
@@ -41,7 +41,7 @@ export class OpenGraphService {
       );
       const createdBy = await file?.createdBy?.load();
       return {
-        ogUrl: `${req.protocol}://${req.get('host')}/file/${shareableId}`,
+        ogUrl: `${req.protocol}://${req.host}/file/${shareableId}`,
         ogTitle: file?.fileName,
         ogDescription: `From ${createdBy?.email}`,
         ogImage: this.fileUrlService.getWatermarkedFileUrl(shareableId, req),

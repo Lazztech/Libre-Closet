@@ -2,11 +2,10 @@ import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
+import { MultipartFile } from '@fastify/multipart';
 import { randomUUID } from 'crypto';
 import { Upload } from '@aws-sdk/lib-storage';
 import { InjectS3, type S3 } from 'nestjs-s3';
-import { lastValueFrom, mergeMap, Observable, tap } from 'rxjs';
 import sharp from 'sharp';
 import Stream, { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
@@ -29,11 +28,20 @@ export class S3FileService extends FileService {
   }
 
   public async storeImageFromFileUpload(
-    upload$: Observable<MultipartFileStream>,
+    upload: MultipartFile | undefined,
     userId: any,
-    fileName?: string,
   ): Promise<File> {
-    const storedFileName = fileName ?? randomUUID() + '.webp';
+    if (!upload) {
+      throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
+    }
+    // https://github.com/fastify/fastify-multipart/issues/497
+    // Unconsumed multipart streams can hang the request; drain before throwing
+    if (!upload.mimetype?.startsWith('image/')) {
+      upload.file.resume();
+      throw new HttpException('Wrong filetype', HttpStatus.BAD_REQUEST);
+    }
+
+    const fileName = randomUUID() + '.webp';
     const transformer = sharp()
       .autoOrient()
       .webp({ quality: 100 })
@@ -44,7 +52,7 @@ export class S3FileService extends FileService {
       client: this.s3,
       params: {
         Bucket: this.bucketName,
-        Key: storedFileName,
+        Key: fileName,
         Body: passThrough,
         ContentType: 'image/webp',
       },
@@ -57,25 +65,7 @@ export class S3FileService extends FileService {
       // the end-of-stream before done() resolves.
       await Promise.all([
         s3Upload.done(),
-        lastValueFrom(
-          upload$.pipe(
-            // https://rxjs.dev/api/operators/tap
-            tap((fileStream: MultipartFileStream) => {
-              if (!fileStream.mimetype?.startsWith('image/')) {
-                throw new HttpException(
-                  'Wrong filetype',
-                  HttpStatus.BAD_REQUEST,
-                );
-              }
-            }),
-            // transform and write using node stream pipeline which returns a Promise
-            // https://rxjs.dev/api/operators/mergeMap
-            mergeMap((fileStream: MultipartFileStream) =>
-              // https://stackoverflow.com/questions/58875655/whats-the-difference-between-pipe-and-pipeline-on-streams
-              pipeline(fileStream, transformer, passThrough),
-            ),
-          ),
-        ),
+        pipeline(upload.file, transformer, passThrough),
       ]);
     } catch (error) {
       passThrough.destroy();
@@ -83,7 +73,7 @@ export class S3FileService extends FileService {
     }
 
     const file = this.fileRepository.create({
-      fileName: storedFileName,
+      fileName,
       createdOn: new Date().toISOString(),
       createdBy: userId,
     });

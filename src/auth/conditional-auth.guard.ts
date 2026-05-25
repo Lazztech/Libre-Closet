@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { FastifyRequest } from 'fastify';
 import { AuthService } from './auth.service';
 
 /**
@@ -23,9 +24,8 @@ export class ConditionalAuthGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
-    const token = request.cookies?.['access_token'] as string;
-
+    const request = context.switchToHttp().getRequest<FastifyRequest>();
+    const token = (request.cookies as Record<string, string>)?.['access_token'];
     if (token) {
       try {
         const payload = await this.jwtService.verifyAsync(token, {

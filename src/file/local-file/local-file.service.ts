@@ -7,13 +7,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
+import { MultipartFile } from '@fastify/multipart';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import * as path from 'path';
-import { lastValueFrom, mergeMap, Observable, tap } from 'rxjs';
 import sharp from 'sharp';
 import { File } from '../../dal/entity/file.entity';
 import { FileService } from '../file-service.abstract';
@@ -35,37 +34,30 @@ export class LocalFileService extends FileService {
   }
 
   async storeImageFromFileUpload(
-    upload$: Observable<MultipartFileStream>,
+    upload: MultipartFile | undefined,
     userId: any,
-    fileName?: string,
   ): Promise<File> {
-    const storedFileName = fileName ?? randomUUID() + '.webp';
+    if (!upload) {
+      throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
+    }
+    // https://github.com/fastify/fastify-multipart/issues/497
+    // Unconsumed multipart streams can hang the request; drain before throwing
+    if (!upload.mimetype?.startsWith('image/')) {
+      upload.file.resume();
+      throw new HttpException('Wrong filetype', HttpStatus.BAD_REQUEST);
+    }
+
+    const fileName = randomUUID() + '.webp';
     const transformer = sharp()
       .autoOrient()
       .webp({ quality: 100 })
       .resize(1080, 1080, { fit: sharp.fit.inside });
     const writeStream = fs.createWriteStream(
-      path.join(this.directory, storedFileName),
+      path.join(this.directory, fileName),
     );
 
     try {
-      // https://rxjs.dev/api/index/function/lastValueFrom
-      await lastValueFrom(
-        upload$.pipe(
-          // https://rxjs.dev/api/operators/tap
-          tap((fileStream: MultipartFileStream) => {
-            if (!fileStream.mimetype?.startsWith('image/')) {
-              throw new HttpException('Wrong filetype', HttpStatus.BAD_REQUEST);
-            }
-          }),
-          // transform and write using node stream pipeline which returns a Promise
-          // https://rxjs.dev/api/operators/mergeMap
-          mergeMap((fileStream: MultipartFileStream) =>
-            // https://stackoverflow.com/questions/58875655/whats-the-difference-between-pipe-and-pipeline-on-streams
-            pipeline(fileStream, transformer, writeStream),
-          ),
-        ),
-      );
+      await pipeline(upload.file, transformer, writeStream);
       writeStream.destroy();
     } catch (error) {
       writeStream.destroy();
@@ -75,7 +67,7 @@ export class LocalFileService extends FileService {
     // repository.create => save pattern used to so that the @BeforeInsert decorated method
     // will fire generating a uuid for the shareableId
     const file = this.fileRepository.create({
-      fileName: storedFileName,
+      fileName,
       createdOn: new Date().toISOString(),
       createdBy: userId,
     });

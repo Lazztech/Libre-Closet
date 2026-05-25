@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
+import { FastifyRequest } from 'fastify';
 
 @Injectable()
 export class FileUrlService {
-  getFileUrl(fileName: string, req: Request): string {
+  getFileUrl(fileName: string, req: FastifyRequest): string {
     if (fileName) {
-      return `${req.protocol}://${req.get('host')}/file/${fileName}`;
+      return `${req.protocol}://${req.host}/file/${fileName}`;
     } else {
       return fileName;
     }
   }
 
-  getWatermarkedFileUrl(shareableId: string, req: Request): string {
-    return `${req.protocol}://${req.get('host')}/file/watermark/${shareableId}`;
+  getWatermarkedFileUrl(shareableId: string, req: FastifyRequest): string {
+    return `${req.protocol}://${req.host}/file/watermark/${shareableId}`;
   }
 }
