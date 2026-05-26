@@ -36,6 +36,7 @@ export class LocalFileService extends FileService {
   async storeImageFromFileUpload(
     upload: MultipartFile | undefined,
     userId: any,
+    fileName?: string,
   ): Promise<File> {
     if (!upload) {
       throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
@@ -47,13 +48,13 @@ export class LocalFileService extends FileService {
       throw new HttpException('Wrong filetype', HttpStatus.BAD_REQUEST);
     }
 
-    const fileName = randomUUID() + '.webp';
+    const storedFileName = fileName ?? randomUUID() + '.webp';
     const transformer = sharp()
       .autoOrient()
       .webp({ quality: 100 })
       .resize(1080, 1080, { fit: sharp.fit.inside });
     const writeStream = fs.createWriteStream(
-      path.join(this.directory, fileName),
+      path.join(this.directory, storedFileName),
     );
 
     try {

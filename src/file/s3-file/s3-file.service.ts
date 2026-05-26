@@ -30,6 +30,7 @@ export class S3FileService extends FileService {
   public async storeImageFromFileUpload(
     upload: MultipartFile | undefined,
     userId: any,
+    fileName?: string,
   ): Promise<File> {
     if (!upload) {
       throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
@@ -41,7 +42,7 @@ export class S3FileService extends FileService {
       throw new HttpException('Wrong filetype', HttpStatus.BAD_REQUEST);
     }
 
-    const fileName = randomUUID() + '.webp';
+    const storedFileName = fileName ?? randomUUID() + '.webp';
     const transformer = sharp()
       .autoOrient()
       .webp({ quality: 100 })
@@ -52,7 +53,7 @@ export class S3FileService extends FileService {
       client: this.s3,
       params: {
         Bucket: this.bucketName,
-        Key: fileName,
+        Key: storedFileName,
         Body: passThrough,
         ContentType: 'image/webp',
       },
@@ -73,7 +74,7 @@ export class S3FileService extends FileService {
     }
 
     const file = this.fileRepository.create({
-      fileName,
+      fileName: storedFileName,
       createdOn: new Date().toISOString(),
       createdBy: userId,
     });

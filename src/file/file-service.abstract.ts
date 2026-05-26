@@ -36,6 +36,7 @@ export abstract class FileService implements FileServiceInterface {
   abstract storeImageFromFileUpload(
     upload: MultipartFile | undefined,
     userId: any,
+    fileName?: string,
   ): Promise<File>;
   abstract delete(fileName: string): Promise<void>;
 
