@@ -96,13 +96,10 @@ async function bootstrap() {
     viewExt: 'hbs',
     layout: 'layout',
     includeViewExtension: true,
-    options: {
-      partials: {
-        dock: 'partials/dock.hbs',
-        navbar: 'partials/navbar.hbs',
-      },
-    },
   });
+
+  // Register partials from views/partials
+  hbs.registerPartials(join(__dirname, '..', 'views', 'partials'));
 
   // Register handlebars helpers after engine setup
   hbs.registerHelper(
