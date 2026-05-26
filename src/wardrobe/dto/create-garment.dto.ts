@@ -1,6 +1,5 @@
+import { MultipartFile } from '@fastify/multipart';
 import { GarmentColor } from '../garment-color.enum';
-import { Observable } from 'rxjs';
-import { MultipartFileStream } from '@proventuslabs/nestjs-multipart-form';
 
 export interface CreateGarmentDto {
   name?: string;
@@ -9,5 +8,5 @@ export interface CreateGarmentDto {
   color?: GarmentColor;
   size?: string;
   notes?: string;
-  photo$?: Observable<MultipartFileStream>;
+  photo?: MultipartFile | undefined;
 }

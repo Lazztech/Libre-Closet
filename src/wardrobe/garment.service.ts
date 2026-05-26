@@ -109,9 +109,9 @@ export class GarmentService {
 
   async create(dto: CreateGarmentDto, userId?: number): Promise<Garment> {
     let photo: File | undefined = undefined;
-    if (dto.photo$) {
+    if (dto.photo) {
       photo = await this.fileService.storeImageFromFileUpload(
-        dto.photo$,
+        dto.photo,
         userId,
       );
     }
@@ -177,19 +177,19 @@ export class GarmentService {
     // piping the stream to disk first (synchronous from the stream's perspective)
     // we consume it before any Postgres round-trip can drain it.
     //
-    // IMPORTANT: photo$ and nobgPhoto$ must be subscribed concurrently, not
+    // IMPORTANT: photo and nobgPhoto must be subscribed concurrently, not
     // sequentially. Both come from the same hot Subject in the multipart
     // interceptor.
     let photo: File | undefined;
-    if (dto.photo$) {
+    if (dto.photo) {
       const photoFileName = `${randomUUID()}.webp`;
       const photoPromise = this.fileService.storeImageFromFileUpload(
-        dto.photo$,
+        dto.photo,
         userId,
         photoFileName,
       );
       const nobgPromise = this.streamNobgIfPresent(
-        dto.nobgPhoto$,
+        dto.nobgPhoto,
         photoFileName,
       );
 
@@ -229,30 +229,23 @@ export class GarmentService {
 
   async updateNobg(
     id: number,
-    nobgPhoto$: UpdateGarmentDto['nobgPhoto$'],
+    nobgPhoto: UpdateGarmentDto['nobgPhoto'],
     userId?: number,
   ): Promise<void> {
     const garment = await this.findOne(id, userId);
     if (!garment.photo?.fileName) return;
-    await this.streamNobgIfPresent(nobgPhoto$, garment.photo.fileName);
+    await this.streamNobgIfPresent(nobgPhoto, garment.photo.fileName);
   }
 
   private streamNobgIfPresent(
-    nobgPhoto$: UpdateGarmentDto['nobgPhoto$'],
+    nobgPhoto: UpdateGarmentDto['nobgPhoto'],
     photoFileName: string,
   ): Promise<void> {
-    if (!nobgPhoto$) return Promise.resolve();
-
-    return lastValueFrom(
-      nobgPhoto$.pipe(
-        mergeMap((fileStream) =>
-          this.fileService.storeNobgVariantFromStream(
-            fileStream,
-            photoFileName,
-          ),
-        ),
-      ),
-      { defaultValue: undefined },
+    if (!nobgPhoto) return Promise.resolve();
+    const fileStream = nobgPhoto.file;
+    return this.fileService.storeNobgVariantFromStream(
+      fileStream,
+      photoFileName,
     );
   }
 

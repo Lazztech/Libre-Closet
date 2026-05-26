@@ -68,7 +68,7 @@ export class LocalFileService extends FileService {
     // repository.create => save pattern used to so that the @BeforeInsert decorated method
     // will fire generating a uuid for the shareableId
     const file = this.fileRepository.create({
-      fileName,
+      fileName: storedFileName,
       createdOn: new Date().toISOString(),
       createdBy: userId,
     });

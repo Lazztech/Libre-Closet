@@ -14,7 +14,6 @@ import {
   Req,
   Res,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { type Request, type Response } from 'express';
 import { I18n, I18nContext } from 'nestjs-i18n';
@@ -24,12 +23,8 @@ import { GarmentCategory } from './garment-category.enum';
 import { GarmentColor } from './garment-color.enum';
 import { GarmentService } from './garment.service';
 import type { SearchGarmentDto } from './dto/search-garment.dto';
-import {
-  MultipartFiles,
-  MultipartFileStream,
-  MultipartInterceptor,
-} from '@proventuslabs/nestjs-multipart-form';
-import { Observable } from 'rxjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import { MultipartFile } from '@fastify/multipart';
 
 @UseGuards(ConditionalAuthGuard)
 @Controller('wardrobe')
@@ -41,7 +36,7 @@ export class WardrobeController {
     private readonly garmentService: GarmentService,
   ) {}
 
-  private userId(req: Request): number | undefined {
+  private userId(req: any): number | undefined {
     return (req['user'] as Payload | undefined)?.userId;
   }
 
@@ -192,35 +187,42 @@ export class WardrobeController {
   }
 
   @Post(':id/photo')
-  @UseInterceptors(MultipartInterceptor())
   async uploadPhoto(
     @Param('id', ParseIntPipe) id: number,
-    @MultipartFiles('photo') photo$: Observable<MultipartFileStream>,
-    @MultipartFiles([['nobgPhoto', false]])
-    nobgPhoto$: Observable<MultipartFileStream>,
-    @Req() req: Request,
-    @Res() res: Response,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
   ) {
+    const files = req.files({ limits: { files: 2 } });
+    let photo: MultipartFile | undefined;
+    let nobgPhoto: MultipartFile | undefined;
+
+    for await (const file of files) {
+      if (file.fieldname === 'photo') {
+        photo = file;
+      } else if (file.fieldname === 'nobgPhoto') {
+        nobgPhoto = file;
+      }
+    }
+
     await this.garmentService.update(
       id,
-      { photo$, nobgPhoto$ },
+      { photo, nobgPhoto },
       this.userId(req),
     );
-    res.setHeader('HX-Redirect', `/wardrobe/${id}`);
-    return res.send();
+    reply.header('HX-Redirect', `/wardrobe/${id}`);
+    return reply.send();
   }
 
   @Post(':id/nobg')
-  @UseInterceptors(MultipartInterceptor())
   async updateNobg(
     @Param('id', ParseIntPipe) id: number,
-    @MultipartFiles('nobgPhoto') nobgPhoto$: Observable<MultipartFileStream>,
-    @Req() req: Request,
-    @Res() res: Response,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
   ) {
-    await this.garmentService.updateNobg(id, nobgPhoto$, this.userId(req));
-    res.setHeader('HX-Redirect', `/wardrobe/${id}`);
-    return res.send();
+    const nobgPhoto = await req.file();
+    await this.garmentService.updateNobg(id, nobgPhoto, this.userId(req));
+    reply.header('HX-Redirect', `/wardrobe/${id}`);
+    return reply.send();
   }
 
   @Delete(':id')
