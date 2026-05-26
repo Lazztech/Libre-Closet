@@ -63,7 +63,7 @@ export class OpenGraphService {
           )
         : undefined;
       return {
-        ogUrl: `${req.protocol}://${req.get('host')}/share?shareableId=${shareableId}&type=garment`,
+        ogUrl: `${req.protocol}://${req.host}/share?shareableId=${shareableId}&type=garment`,
         ogTitle: garment?.name,
         ogDescription: `From ${createdBy?.email}`,
         ogImage,
@@ -88,7 +88,7 @@ export class OpenGraphService {
           )
         : undefined;
       return {
-        ogUrl: `${req.protocol}://${req.get('host')}/share?shareableId=${shareableId}&type=outfit`,
+        ogUrl: `${req.protocol}://${req.host}/share?shareableId=${shareableId}&type=outfit`,
         ogTitle: outfit?.name,
         ogDescription: `From ${createdBy?.email}`,
         ogImage,
