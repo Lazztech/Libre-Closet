@@ -19,13 +19,28 @@ export class ViewContextService {
   ) {}
 
   async buildContext(req: FastifyRequest) {
+    const locale = I18nContext.current()?.lang ?? 'en';
+    const path = req.url.split('?')[0];
+    const canonicalUrl = `${req.protocol}://${req.hostname}${path}`;
+    const ogLocaleMap: Record<string, string> = {
+      en: 'en_US',
+      ru: 'ru_RU',
+      es: 'es_ES',
+      fr: 'fr_FR',
+      it: 'it_IT',
+      de: 'de_DE',
+    };
+
     const context: Record<string, any> = {
       appName: this.configService.get<string>('APP_NAME'),
       siteUrl: req.host,
       baseUrl: req.url === '/' ? '' : req.url,
       authEnabled: this.configService.get<boolean>('AUTH_ENABLED'),
       pwaEnabled: this.configService.get<boolean>('PWA_ENABLED'),
-      locale: I18nContext.current()?.lang,
+      locale,
+      canonicalUrl,
+      ogUrl: canonicalUrl,
+      ogLocale: ogLocaleMap[locale] ?? 'en_US',
     };
 
     try {

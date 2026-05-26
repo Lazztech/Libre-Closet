@@ -13,14 +13,6 @@ https://nestjs-i18n.com/quick-start --}}
     <meta name="description" content="{{t 'lang.APP_DESCRIPTION'}}" />
     {{!-- Canonical URL --}}
     <link rel="canonical" href="{{canonicalUrl}}" />
-    {{!-- hreflang for multilingual SEO: all supported locales point to the same
-    URL since language is negotiated via Accept-Language header --}}
-    <link rel="alternate" hreflang="en" href="{{canonicalUrl}}" />
-    <link rel="alternate" hreflang="it" href="{{canonicalUrl}}" />
-    <link rel="alternate" hreflang="fr" href="{{canonicalUrl}}" />
-    <link rel="alternate" hreflang="de" href="{{canonicalUrl}}" />
-    <link rel="alternate" hreflang="es" href="{{canonicalUrl}}" />
-    <link rel="alternate" hreflang="x-default" href="{{canonicalUrl}}" />
     {{!-- Facebook Open Graph Meta Tags https://ogp.me/ --}}
     <meta property="og:locale" content="{{ogLocale}}" />
     <meta property="og:url" content="{{ogUrl}}" />
