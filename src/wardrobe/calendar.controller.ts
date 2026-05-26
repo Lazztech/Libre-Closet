@@ -13,7 +13,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { type Request, type Response } from 'express';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
@@ -27,7 +27,7 @@ export class CalendarController {
     private readonly calendarService: CalendarService,
   ) {}
 
-  private userId(req: Request): number | undefined {
+  private userId(req: FastifyRequest): number | undefined {
     return (req['user'] as Payload | undefined)?.userId;
   }
 
@@ -36,7 +36,7 @@ export class CalendarController {
   async index(
     @Query('week') weekParam: string | undefined,
     @Query('calMonth') calMonthParam: string | undefined,
-    @Req() req: Request,
+    @Req() req: FastifyRequest,
     @I18n() i18n: I18nContext,
   ) {
     return this.calendarService.buildIndexViewModel(
@@ -51,8 +51,8 @@ export class CalendarController {
   async create(
     @Body()
     body: { date: string; outfitId: string; notes?: string; week?: string },
-    @Req() req: Request,
-    @Res() res: Response,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
   ) {
     await this.calendarService.create(
       {
@@ -63,9 +63,9 @@ export class CalendarController {
       this.userId(req),
     );
     if (req.headers['hx-request'] === 'true') {
-      return res.status(204).send();
+      return reply.status(204).send();
     }
-    return res.redirect(`/calendar?week=${body.week ?? body.date}`);
+    return reply.redirect(`/calendar?week=${body.week ?? body.date}`);
   }
 
   @Post(':id/delete')
@@ -73,20 +73,20 @@ export class CalendarController {
   async remove(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { week?: string },
-    @Req() req: Request,
-    @Res() res: Response,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
   ) {
     await this.calendarService.remove(id, this.userId(req));
-    res.setHeader('HX-Redirect', `/calendar?week=${body.week ?? ''}`);
-    return res.send();
+    reply.header('HX-Redirect', `/calendar?week=${body.week ?? ''}`);
+    return reply.send();
   }
 
   @Post(':id/worn')
   async toggleWorn(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { week?: string },
-    @Req() req: Request,
-    @Res() res: Response,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
     @I18n() i18n: I18nContext,
   ) {
     const entry = await this.calendarService.toggleWorn(id, this.userId(req));
@@ -100,7 +100,7 @@ export class CalendarController {
       const label = isWorn
         ? `✓ ${i18n.t('lang.CALENDAR_WORN')}`
         : i18n.t('lang.CALENDAR_MARK_WORN_PROMPT');
-      return res.render('partials/calendar_worn_button', {
+      return reply.view('partials/calendar_worn_button', {
         layout: false,
         entryId: id,
         week,
@@ -110,6 +110,6 @@ export class CalendarController {
     }
 
     // Non-HTMX fallback: full redirect
-    return res.redirect(303, `/calendar?week=${week}`);
+    return reply.redirect(`/calendar?week=${week}`, 303);
   }
 }

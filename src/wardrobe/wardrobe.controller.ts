@@ -15,7 +15,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { type Request, type Response } from 'express';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
@@ -43,7 +42,7 @@ export class WardrobeController {
   @Get()
   @Render('wardrobe/index')
   async index(
-    @Req() req: Request,
+    @Req() req: FastifyRequest,
     @Query() query: SearchGarmentDto,
     @I18n() i18n: I18nContext,
   ) {
@@ -66,7 +65,7 @@ export class WardrobeController {
 
   @Get('new')
   @Render('wardrobe/form')
-  async newForm(@Req() req: Request, @I18n() i18n: I18nContext) {
+  async newForm(@Req() req: FastifyRequest, @I18n() i18n: I18nContext) {
     const filters = await this.garmentService.findAvailableFilters(
       this.userId(req),
     );
@@ -96,8 +95,8 @@ export class WardrobeController {
       size?: string;
       notes?: string;
     },
-    @Req() req: Request,
-    @Res() res: Response,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
   ) {
     const garment = await this.garmentService.create(
       {
@@ -110,14 +109,14 @@ export class WardrobeController {
       },
       this.userId(req),
     );
-    return res.redirect(`/wardrobe/${garment.id}`);
+    return reply.redirect(`/wardrobe/${garment.id}`);
   }
 
   @Get(':id')
   @Render('wardrobe/show')
   async show(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: Request,
+    @Req() req: FastifyRequest,
     @I18n() i18n: I18nContext,
   ) {
     const garment = await this.garmentService.findOne(id, this.userId(req));
@@ -134,7 +133,7 @@ export class WardrobeController {
   @Render('wardrobe/form')
   async editForm(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: Request,
+    @Req() req: FastifyRequest,
     @I18n() i18n: I18nContext,
   ) {
     const [garment, filters] = await Promise.all([
@@ -168,8 +167,8 @@ export class WardrobeController {
       size?: string;
       notes?: string;
     },
-    @Req() req: Request,
-    @Res() res: Response,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
   ) {
     await this.garmentService.update(
       id,
@@ -183,7 +182,7 @@ export class WardrobeController {
       },
       this.userId(req),
     );
-    return res.redirect(`/wardrobe/${id}`);
+    return reply.redirect(`/wardrobe/${id}`);
   }
 
   @Post(':id/photo')
@@ -229,11 +228,11 @@ export class WardrobeController {
   @HttpCode(200)
   async remove(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: Request,
-    @Res() res: Response,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
   ) {
     await this.garmentService.remove(id, this.userId(req));
-    res.setHeader('HX-Redirect', '/wardrobe');
-    return res.send();
+    reply.header('HX-Redirect', '/wardrobe');
+    return reply.send();
   }
 }
