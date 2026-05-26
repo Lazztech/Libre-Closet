@@ -58,6 +58,7 @@ async function bootstrap() {
       join(__dirname, '..', 'node_modules/hyperscript.org/dist'),
       join(__dirname, '..', 'node_modules/@khmyznikov/pwa-install/dist'),
       join(__dirname, '..', 'node_modules/workbox-window/build'),
+      join(__dirname, '..', 'node_modules/sortablejs'),
     ],
     prefix: '/modules/',
     decorateReply: false,
