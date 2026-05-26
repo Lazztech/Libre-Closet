@@ -13,7 +13,7 @@ export class DisableRegistrationGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     if (this.configService.get<string>('DISABLE_REGISTRATION') === 'true') {
       const response = context.switchToHttp().getResponse();
-      response.redirect('/auth/login');
+      response.redirect('/auth/login', 302);
       return false;
     }
     return true;

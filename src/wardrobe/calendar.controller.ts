@@ -65,7 +65,7 @@ export class CalendarController {
     if (req.headers['hx-request'] === 'true') {
       return reply.status(204).send();
     }
-    return reply.redirect(`/calendar?week=${body.week ?? body.date}`);
+    return reply.redirect(`/calendar?week=${body.week ?? body.date}`, 302);
   }
 
   @Post(':id/delete')

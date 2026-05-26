@@ -109,7 +109,7 @@ export class WardrobeController {
       },
       this.userId(req),
     );
-    return reply.redirect(`/wardrobe/${garment.id}`);
+    return reply.redirect(`/wardrobe/${garment.id}`, 302);
   }
 
   @Get(':id')
@@ -182,7 +182,7 @@ export class WardrobeController {
       },
       this.userId(req),
     );
-    return reply.redirect(`/wardrobe/${id}`);
+    return reply.redirect(`/wardrobe/${id}`, 302);
   }
 
   @Post(':id/photo')

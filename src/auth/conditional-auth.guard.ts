@@ -40,7 +40,7 @@ export class ConditionalAuthGuard implements CanActivate {
     }
 
     const response = context.switchToHttp().getResponse();
-    response.redirect('/auth/login');
+    response.redirect('/auth/login', 302);
     return false;
   }
 }

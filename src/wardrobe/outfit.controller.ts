@@ -103,9 +103,9 @@ export class OutfitController {
     }
     if (body.returnTo === '/calendar') {
       const week = body.returnToWeek ?? body.scheduleDate;
-      return reply.redirect(week ? `/calendar?week=${week}` : '/calendar');
+      return reply.redirect(week ? `/calendar?week=${week}` : '/calendar', 302);
     }
-    return reply.redirect(`/outfits/${outfit.id}`);
+    return reply.redirect(`/outfits/${outfit.id}`, 302);
   }
 
   @Get('row-fragment')
@@ -197,9 +197,9 @@ export class OutfitController {
     }
     if (body.returnTo === '/calendar') {
       const week = body.returnToWeek ?? body.scheduleDate;
-      return reply.redirect(week ? `/calendar?week=${week}` : '/calendar');
+      return reply.redirect(week ? `/calendar?week=${week}` : '/calendar', 302);
     }
-    return reply.redirect(`/outfits/${id}`);
+    return reply.redirect(`/outfits/${id}`, 302);
   }
 
   @Delete(':id')
