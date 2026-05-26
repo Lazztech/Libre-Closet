@@ -1,6 +1,5 @@
 import { EntityRepository, FilterQuery } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { lastValueFrom, mergeMap } from 'rxjs';
 import { randomUUID } from 'node:crypto';
 import {
   ForbiddenException,

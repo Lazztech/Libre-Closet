@@ -19,7 +19,7 @@ import { Payload } from '../../auth/dto/payload.dto';
 import { User } from '../../auth/user.decorator';
 import { User as UserEntity } from '../../dal/entity/user.entity';
 import { FileService } from '../file-service.abstract';
-import { ConditionalAuthGuard } from 'src/auth/conditional-auth.guard';
+import { ConditionalAuthGuard } from '../../auth/conditional-auth.guard';
 
 @Controller('file')
 export class FileController {

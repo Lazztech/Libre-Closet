@@ -68,12 +68,6 @@ async function bootstrap() {
     prefix: '/modules/pulltorefresh',
     decorateReply: false,
   });
-
-  app.useStaticAssets({
-    root: join(__dirname, '..', 'node_modules/pulltorefreshjs/dist'),
-    prefix: '/modules/pulltorefresh',
-    decorateReply: false,
-  });
   app.useStaticAssets({
     root: join(__dirname, '..', 'node_modules/@imgly/background-removal/dist'),
     prefix: '/modules/background-removal',
