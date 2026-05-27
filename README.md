@@ -16,7 +16,7 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 ## News
 
-**`v0.3.1` Significant Performance Improvements - May 25, 2026**
+**`v0.3.1` Significant Performance Improvements - May 26, 2026**
 
 Libre Closet is now more performant, making more efficient use of your existing hardware!
 
@@ -32,7 +32,7 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 #### Released
 
-- `v0.3.1 - May 25, 2026`: Refactored server resulting in nearly a 2x throughput increase and almost half the latency.
+- `v0.3.1 - May 26, 2026`: Refactored server resulting in nearly a 2x throughput increase and almost half the latency.
 - `v0.3.0 - May 21, 2026`: Garment image background touch up tool
 - `v0.2.5 - May 1, 2026`: Added option to disable register functionality
 - `v0.2.4 - April 28, 2026`: Fix garment photo upload cropping
