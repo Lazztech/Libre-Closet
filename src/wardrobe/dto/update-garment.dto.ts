@@ -8,6 +8,5 @@ export interface UpdateGarmentDto {
   color?: GarmentColor;
   size?: string;
   notes?: string;
-  photo?: MultipartFile | undefined;
-  nobgPhoto?: MultipartFile | undefined;
+  files?: AsyncIterableIterator<MultipartFile>;
 }

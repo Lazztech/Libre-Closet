@@ -8,5 +8,5 @@ export interface CreateGarmentDto {
   color?: GarmentColor;
   size?: string;
   notes?: string;
-  photo?: MultipartFile | undefined;
+  files?: AsyncIterableIterator<MultipartFile>;
 }

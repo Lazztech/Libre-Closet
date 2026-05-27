@@ -12,6 +12,7 @@ import { Garment } from '../dal/entity/garment.entity';
 import { File } from '../dal/entity/file.entity';
 import { User } from '../dal/entity/user.entity';
 import { FileService } from '../file/file-service.abstract';
+import { MultipartFile } from '@fastify/multipart';
 import { CreateGarmentDto } from './dto/create-garment.dto';
 import { UpdateGarmentDto } from './dto/update-garment.dto';
 import { SearchGarmentDto } from './dto/search-garment.dto';
@@ -108,11 +109,14 @@ export class GarmentService {
 
   async create(dto: CreateGarmentDto, userId?: number): Promise<Garment> {
     let photo: File | undefined = undefined;
-    if (dto.photo) {
-      photo = await this.fileService.storeImageFromFileUpload(
-        dto.photo,
-        userId,
-      );
+    if (dto.files) {
+      for await (const file of dto.files) {
+        if (file.fieldname === 'photo') {
+          photo = await this.fileService.storeImageFromFileUpload(file, userId);
+        } else {
+          file.file.resume();
+        }
+      }
     }
 
     const garment = this.garmentRepository.create({
@@ -169,30 +173,44 @@ export class GarmentService {
     dto: UpdateGarmentDto,
     userId?: number,
   ): Promise<Garment> {
-    // Process the file upload BEFORE any async DB operations.
-    // The multipart interceptor calls stream.resume() on all file streams before
-    // the controller runs. With Postgres, the async findOne() yields the event
-    // loop long enough for a resume()'d stream to drain/discard its data. By
-    // piping the stream to disk first (synchronous from the stream's perspective)
-    // we consume it before any Postgres round-trip can drain it.
-    //
-    // IMPORTANT: photo and nobgPhoto must be subscribed concurrently, not
-    // sequentially. Both come from the same hot Subject in the multipart
-    // interceptor.
     let photo: File | undefined;
-    if (dto.photo) {
+    if (dto.files) {
+      // Process file uploads BEFORE any async DB operations.
+      // @fastify/multipart yields live streams; if a stream isn't consumed,
+      // the parser backpressures and the async iterator hangs. Each file's
+      // pipeline must be started (not awaited) inside the loop so busboy can
+      // advance to the next part.
+      //
+      // IMPORTANT: photo and nobgPhoto pipelines must be started concurrently,
+      // not sequentially. Both come from the same multipart request body —
+      // awaiting one before starting the other would hang the iterator.
+      let photoPromise: Promise<File> | undefined;
+      let nobgPromise: Promise<void> | undefined;
       const photoFileName = `${randomUUID()}.webp`;
-      const photoPromise = this.fileService.storeImageFromFileUpload(
-        dto.photo,
-        userId,
-        photoFileName,
-      );
-      const nobgPromise = this.streamNobgIfPresent(
-        dto.nobgPhoto,
-        photoFileName,
-      );
 
-      [photo] = await Promise.all([photoPromise, nobgPromise]);
+      for await (const file of dto.files) {
+        if (file.fieldname === 'photo') {
+          photoPromise = this.fileService.storeImageFromFileUpload(
+            file,
+            userId,
+            photoFileName,
+          );
+        } else if (file.fieldname === 'nobgPhoto') {
+          nobgPromise = this.fileService.storeNobgVariantFromStream(
+            file.file,
+            photoFileName,
+          );
+        } else {
+          file.file.resume();
+        }
+      }
+
+      if (photoPromise) {
+        [photo] = await Promise.all([
+          photoPromise,
+          nobgPromise ?? Promise.resolve(),
+        ]);
+      }
     }
 
     const garment = await this.findOne(id, userId);
@@ -228,7 +246,7 @@ export class GarmentService {
 
   async updateNobg(
     id: number,
-    nobgPhoto: UpdateGarmentDto['nobgPhoto'],
+    nobgPhoto: MultipartFile | undefined,
     userId?: number,
   ): Promise<void> {
     const garment = await this.findOne(id, userId);
@@ -237,7 +255,7 @@ export class GarmentService {
   }
 
   private streamNobgIfPresent(
-    nobgPhoto: UpdateGarmentDto['nobgPhoto'],
+    nobgPhoto: MultipartFile | undefined,
     photoFileName: string,
   ): Promise<void> {
     if (!nobgPhoto) return Promise.resolve();

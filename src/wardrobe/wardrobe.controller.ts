@@ -23,7 +23,6 @@ import { GarmentColor } from './garment-color.enum';
 import { GarmentService } from './garment.service';
 import type { SearchGarmentDto } from './dto/search-garment.dto';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { MultipartFile } from '@fastify/multipart';
 
 @UseGuards(ConditionalAuthGuard)
 @Controller('wardrobe')
@@ -191,21 +190,9 @@ export class WardrobeController {
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
   ) {
-    const files = req.files({ limits: { files: 2 } });
-    let photo: MultipartFile | undefined;
-    let nobgPhoto: MultipartFile | undefined;
-
-    for await (const file of files) {
-      if (file.fieldname === 'photo') {
-        photo = file;
-      } else if (file.fieldname === 'nobgPhoto') {
-        nobgPhoto = file;
-      }
-    }
-
     await this.garmentService.update(
       id,
-      { photo, nobgPhoto },
+      { files: req.files({ limits: { files: 2 } }) },
       this.userId(req),
     );
     reply.header('HX-Redirect', `/wardrobe/${id}`);
