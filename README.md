@@ -20,7 +20,7 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 Libre Closet is now more performant, making more efficient use of your existing hardware!
 
-We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) resulting in nearly a 2x throughput increase and almost half the latency.
+We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) resulting in nearly a 2x throughput increase, almost half the latency, and the lighthouse speed score has gone from [68/100](https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1779424001828-3096.report.html) to [99/100](https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1779843850519-27579.report.html).
 
 | Metric       | Before       | After        | Change      |
 | ------------ | ------------ | ------------ | ----------- |
