@@ -113,7 +113,7 @@ async function bootstrap() {
         return;
       }
       return errors
-        ?.filter((error) => error.property === property)
+        .filter((error) => error.property === property)
         .flatMap((e) => Object.values(e.constraints || {}));
     },
   );

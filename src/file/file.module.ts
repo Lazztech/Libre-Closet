@@ -1,7 +1,7 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { FactoryProvider, Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Module, S3ModuleOptions } from 'nestjs-s3';
+import { S3Module } from 'nestjs-s3';
 import { AuthModule } from '../auth/auth.module';
 import { File } from '../dal/entity/file.entity';
 import { User } from '../dal/entity/user.entity';
@@ -36,7 +36,7 @@ import { S3FileService } from './s3-file/s3-file.service';
             region: configService.get('OBJECT_STORAGE_REGION', 'us-east-1'),
             forcePathStyle: true,
           },
-        } as S3ModuleOptions;
+        };
       },
     }),
   ],

@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   HttpCode,
-  Inject,
   Param,
   ParseIntPipe,
   Post,
@@ -22,10 +21,7 @@ import { CalendarService } from './calendar.service';
 @UseGuards(ConditionalAuthGuard)
 @Controller('calendar')
 export class CalendarController {
-  constructor(
-    @Inject()
-    private readonly calendarService: CalendarService,
-  ) {}
+  constructor(private readonly calendarService: CalendarService) {}
 
   private userId(req: FastifyRequest): number | undefined {
     return (req['user'] as Payload | undefined)?.userId;

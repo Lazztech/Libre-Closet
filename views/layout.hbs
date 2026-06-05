@@ -37,6 +37,8 @@ https://nestjs-i18n.com/quick-start --}}
     {{!-- https://htmx.org/reference/#config --}} {{!--
     https://htmx.org/attributes/hx-swap/#modifiers --}}
     <meta name="htmx-config" content='{"globalViewTransitions": "true"}' />
+    {{!-- https://htmx.org/quirks/#attribute-inheritance --}}
+    <meta name="htmx-config" content='{"disableInheritance":true}' />
 
     <title>{{#if pageTitle}}{{pageTitle}}{{else}}{{appName}}{{/if}}</title>
     {{! Used inconjunction with service worker sw.js to enable PWA (Progressive
@@ -68,8 +70,13 @@ https://nestjs-i18n.com/quick-start --}}
   swaps out the body of the html with the response. This results in a smoother
   user experience where the body gets swapped out without a full page reload
   similar to a SPA. https://htmx.org/attributes/hx-boost/
-  https://htmx.org/quirks/#some-people-don-t-like-hx-boost }}
-  <body hx-boost="true" hx-ext="sse" class="h-screen flex flex-col">
+  https://htmx.org/quirks/#some-people-don-t-like-hx-boost
+  safe-area-inset-bottom ensures smartphone nav doesnt interfere with UI. }}
+  <body
+    hx-boost="true"
+    hx-ext="sse"
+    class="h-screen flex flex-col bottom-[calc(4rem+env(safe-area-inset-bottom,0px))]"
+  >
     {{! Caution: Triple brackets in handlebarsjs disables auto-escaping and may
     pose a XSS risk with HTMX. However the exception to this rule is when
     loading hbs rendered content which is pre-santized by the handlebars

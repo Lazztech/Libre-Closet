@@ -58,7 +58,7 @@ export class OpenGraphService {
       const createdBy = await garment?.owner?.load();
       const ogImage = garment?.photo
         ? this.fileUrlService.getWatermarkedFileUrl(
-            garment.photo.shareableId!,
+            garment.photo.shareableId,
             req,
           )
         : undefined;
@@ -83,7 +83,7 @@ export class OpenGraphService {
         .find((g) => g.photo);
       const ogImage = firstPhotoGarment?.photo
         ? this.fileUrlService.getWatermarkedFileUrl(
-            firstPhotoGarment.photo.shareableId!,
+            firstPhotoGarment.photo.shareableId,
             req,
           )
         : undefined;

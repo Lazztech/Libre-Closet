@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  Inject,
   Logger,
   Param,
   ParseIntPipe,
@@ -29,10 +28,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 export class WardrobeController {
   private readonly logger = new Logger(WardrobeController.name);
 
-  constructor(
-    @Inject()
-    private readonly garmentService: GarmentService,
-  ) {}
+  constructor(private readonly garmentService: GarmentService) {}
 
   private userId(req: any): number | undefined {
     return (req['user'] as Payload | undefined)?.userId;

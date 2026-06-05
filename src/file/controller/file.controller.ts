@@ -4,7 +4,6 @@ import {
   Controller,
   Get,
   Header,
-  Inject,
   Logger,
   Param,
   Post,
@@ -26,7 +25,6 @@ export class FileController {
   private logger = new Logger(FileController.name);
 
   constructor(
-    @Inject()
     private readonly fileService: FileService,
     @InjectRepository(UserEntity)
     private readonly userRepository: EntityRepository<UserEntity>,

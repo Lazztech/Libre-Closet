@@ -2,7 +2,7 @@ import { EntityManager } from '@mikro-orm/core';
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { S3Module, S3ModuleOptions } from 'nestjs-s3';
+import { S3Module } from 'nestjs-s3';
 import { File } from '../../dal/entity/file.entity';
 import { S3FileService } from './s3-file.service';
 
@@ -20,7 +20,7 @@ describe('S3FileService', () => {
             s3ForcePathStyle: true,
             signatureVersion: 'v4',
           },
-        } as S3ModuleOptions),
+        }),
       ],
       providers: [
         S3FileService,

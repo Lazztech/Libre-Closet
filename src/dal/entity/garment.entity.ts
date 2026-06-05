@@ -1,6 +1,7 @@
 import {
   Collection,
   Entity,
+  Enum,
   ManyToMany,
   ManyToOne,
   OneToOne,
@@ -27,7 +28,7 @@ export class Garment extends ShareableId {
   @Property()
   public category!: string;
 
-  @Property({ nullable: true })
+  @Enum({ nullable: true })
   public color?: GarmentColor;
 
   @Property({ nullable: true })
@@ -43,7 +44,7 @@ export class Garment extends ShareableId {
     entity: () => File,
     nullable: true,
   })
-  public photo?: File;
+  public photo?: Ref<File>;
 
   @ManyToOne({
     entity: () => User,

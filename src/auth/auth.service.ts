@@ -16,10 +16,14 @@ import { EmailService } from '../email/email.service';
 import { PasswordReset } from '../dal/entity/passwordReset.entity';
 import { randomInt } from 'crypto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import Handlebars from 'handlebars';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class AuthService {
   private logger = new Logger(AuthService.name);
+  private readonly passwordResetTemplate: Handlebars.TemplateDelegate;
 
   constructor(
     @InjectRepository(User)
@@ -29,7 +33,14 @@ export class AuthService {
     private emailService: EmailService,
     @InjectRepository(PasswordReset)
     private passwordResetRepository: EntityRepository<PasswordReset>,
-  ) {}
+  ) {
+    this.passwordResetTemplate = Handlebars.compile(
+      readFileSync(
+        join(__dirname, '..', '..', 'views', 'email', 'password-reset.hbs'),
+        'utf-8',
+      ),
+    );
+  }
 
   async register(email: string, password: string): Promise<string> {
     this.logger.debug(this.register.name);
@@ -121,7 +132,7 @@ export class AuthService {
       to: user.email!,
       subject: `Password reset for ${user.email}`,
       text: `Hello, ${user.email}, please paste in the follow to reset your password: ${pin}`,
-      html: `<b>Hello, <strong>${user.email}</strong>, Please paste in the follow to reset your password: ${pin}</p>`,
+      html: this.passwordResetTemplate({ email: user.email, pin }),
     });
 
     const passwordReset = this.passwordResetRepository.create({ pin, user });

@@ -2,7 +2,7 @@ name: Github Actions CI
 on: [push]
 
 env:
-  NODE_VERSION: "22.x" # set this to the node version to use
+  NODE_VERSION: "24.x" # set this to the node version to use
 
 jobs:
   back-end-ci:

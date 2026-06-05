@@ -9,10 +9,10 @@ import {
   Res,
   Sse,
 } from '@nestjs/common';
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Subject } from 'rxjs';
 import { AppService } from './app.service';
 import { I18n, I18nContext } from 'nestjs-i18n';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 @Controller()
 export class AppController {

@@ -210,6 +210,6 @@ export class AppModule implements OnModuleInit {
   async onModuleInit(): Promise<void> {
     this.logger.log(`NODE_ENV: ${this.configService.get('NODE_ENV')}`);
     this.logger.log(`DATA_PATH: ${this.configService.get('DATA_PATH')}`);
-    await this.orm.getMigrator().up();
+    await this.orm.migrator.up();
   }
 }

@@ -23,12 +23,7 @@
   </div>
   {{/if}}
 
-  <form
-    hx-post="/auth/login"
-    hx-indicator="#loading"
-    hx-trigger="submit"
-    hx-target="body"
-  >
+  <form hx-post="/auth/login" hx-indicator="#loading" hx-trigger="submit">
     <fieldset
       class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
     >

@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  Inject,
   Logger,
   Param,
   ParseIntPipe,
@@ -29,11 +28,8 @@ export class OutfitController {
   private readonly logger = new Logger(OutfitController.name);
 
   constructor(
-    @Inject()
     private readonly outfitService: OutfitService,
-    @Inject()
     private readonly garmentService: GarmentService,
-    @Inject()
     private readonly calendarService: CalendarService,
   ) {}
 
