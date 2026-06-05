@@ -70,12 +70,11 @@ https://nestjs-i18n.com/quick-start --}}
   swaps out the body of the html with the response. This results in a smoother
   user experience where the body gets swapped out without a full page reload
   similar to a SPA. https://htmx.org/attributes/hx-boost/
-  https://htmx.org/quirks/#some-people-don-t-like-hx-boost
-  safe-area-inset-bottom ensures smartphone nav doesnt interfere with UI. }}
+  https://htmx.org/quirks/#some-people-don-t-like-hx-boost }}
   <body
     hx-boost="true"
     hx-ext="sse"
-    class="h-screen flex flex-col bottom-[calc(4rem+env(safe-area-inset-bottom,0px))]"
+    class="h-screen flex flex-col"
   >
     {{! Caution: Triple brackets in handlebarsjs disables auto-escaping and may
     pose a XSS risk with HTMX. However the exception to this rule is when
