@@ -12,6 +12,8 @@
 
 let activeProgressHandler = null;
 
+export const isBgRemovalEnabled = () => localStorage.getItem('bgRemovalEnabled') !== 'false';
+
 const config = {
   publicPath: location.origin + '/bg-removal-models/',
   debug: true,
@@ -83,6 +85,7 @@ let removeBackground = mod.removeBackground;
 import { openMaskEditor } from '/js/mask-editor.js';
 
 export const initBackgroundRemoval = async () => {
+  if (!isBgRemovalEnabled()) return;
   try {
     mod.preload(config).then(() => {
       console.log('Asset preloading succeeded');
@@ -111,6 +114,8 @@ export const wireUpPhotoInput = async () => {
 
     const file = photoInput.files?.[0];
     if (!file) return;
+
+    if (!isBgRemovalEnabled()) return;
 
     const squareFile = await squarePadBlob(file);
 
@@ -187,6 +192,7 @@ export const wireUpPhotoInput = async () => {
  * @param {number} garmentId - The garment's database ID.
  */
 export const wireUpEditMaskBtn = async (fileName, garmentId) => {
+  if (!isBgRemovalEnabled()) return;
   const btn = document.getElementById('editMaskBtn');
   if (!btn) return;
 
@@ -230,10 +236,13 @@ export const wireUpEditMaskBtn = async (fileName, garmentId) => {
 };
 
 export default {
+  isBgRemovalEnabled,
   initBackgroundRemoval,
   wireUpPhotoInput,
   wireUpEditMaskBtn,
 };
 
-// Preload clientside background removal models
-(() => initBackgroundRemoval())();
+// Preload clientside background removal models when enabled
+if (isBgRemovalEnabled()) {
+  (() => initBackgroundRemoval())();
+}

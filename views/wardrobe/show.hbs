@@ -106,6 +106,10 @@
         class="htmx-indicator loading loading-ring loading-sm"
       ></span>
     </div>
+    <label class="flex items-center gap-2 cursor-pointer select-none">
+      <input type="checkbox" id="bgRemovalToggle" class="toggle toggle-sm" checked />
+      <span class="text-sm">{{t 'lang.BG_REMOVAL_TOGGLE'}}</span>
+    </label>
     <div
       id="bgStatus"
       class="hidden flex flex-col gap-1 text-sm text-base-content/60"
@@ -128,10 +132,26 @@
     </div>
   </form>
   <script type="module">
-    import { wireUpPhotoInput, wireUpEditMaskBtn } from '/js/background-removal.js';
+    import { wireUpPhotoInput, wireUpEditMaskBtn, isBgRemovalEnabled } from '/js/background-removal.js';
+
+    const toggle = document.getElementById('bgRemovalToggle');
+    const stored = localStorage.getItem('bgRemovalEnabled');
+    toggle.checked = stored === null ? true : stored !== 'false';
+    localStorage.setItem('bgRemovalEnabled', toggle.checked);
+
+    toggle.addEventListener('change', () => {
+      localStorage.setItem('bgRemovalEnabled', toggle.checked);
+      const editBtn = document.getElementById('editMaskBtn');
+      if (editBtn) editBtn.style.display = toggle.checked ? '' : 'none';
+    });
+
     wireUpPhotoInput();
     {{#if garment.photo}}
-    wireUpEditMaskBtn('{{garment.photo.fileName}}', {{garment.id}});
+    if (isBgRemovalEnabled()) {
+      wireUpEditMaskBtn('{{garment.photo.fileName}}', {{garment.id}});
+    } else {
+      document.getElementById('editMaskBtn')?.style.setProperty('display', 'none');
+    }
     {{/if}}
   </script>
 
