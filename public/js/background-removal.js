@@ -115,7 +115,10 @@ export const wireUpPhotoInput = async () => {
     const file = photoInput.files?.[0];
     if (!file) return;
 
-    if (!isBgRemovalEnabled()) return;
+    if (!isBgRemovalEnabled()) {
+      if (submitBtn) submitBtn.disabled = false;
+      return;
+    }
 
     const squareFile = await squarePadBlob(file);
 
