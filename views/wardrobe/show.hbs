@@ -143,13 +143,19 @@
       localStorage.setItem('bgRemovalEnabled', toggle.checked);
       const editBtn = document.getElementById('editMaskBtn');
       if (editBtn) editBtn.style.display = toggle.checked ? '' : 'none';
+
+      if (toggle.checked) {
+        const photoInput = document.getElementById('photoInput');
+        if (photoInput?.files?.length) {
+          photoInput.dispatchEvent(new Event('change'));
+        }
+      }
     });
 
     wireUpPhotoInput();
     {{#if garment.photo}}
-    if (isBgRemovalEnabled()) {
-      wireUpEditMaskBtn('{{garment.photo.fileName}}', {{garment.id}});
-    } else {
+    wireUpEditMaskBtn('{{garment.photo.fileName}}', {{garment.id}});
+    if (!isBgRemovalEnabled()) {
       document.getElementById('editMaskBtn')?.style.setProperty('display', 'none');
     }
     {{/if}}
