@@ -14,6 +14,7 @@ import { EmailModule } from './email/email.module';
 import { AcceptLanguageResolver, I18nModule } from 'nestjs-i18n';
 import { OpenGraphModule } from './open-graph/open-graph.module';
 import { WardrobeModule } from './wardrobe/wardrobe.module';
+import { WardrobeShareModule } from './wardrobe-share/wardrobe-share.module';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { User } from './dal/entity/user.entity';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -183,6 +184,7 @@ import { ViewContextModule } from './view-context/view-context.module';
     NotificationModule,
     OpenGraphModule,
     WardrobeModule,
+    WardrobeShareModule,
     ViewContextModule,
   ],
   controllers: [AppController],

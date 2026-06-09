@@ -1,0 +1,53 @@
+{{>navbar}}
+
+<main class="flex flex-col justify-center items-center min-h-[80vh] px-4">
+  <div class="card bg-base-100 shadow-md w-full max-w-md">
+    <div class="card-body">
+      {{#if error}}
+        <div class="alert alert-error mb-4">
+          <span>{{message}}</span>
+        </div>
+        <a href="/" class="btn btn-primary btn-sm">{{t 'lang.RETURN_TO_HOME'}}</a>
+      {{else}}
+        <h1 class="text-2xl font-bold mb-2">{{t 'lang.WARDROBE_INVITE'}}</h1>
+        <p class="text-base-content/60 mb-4">
+          {{t 'lang.INVITE_FROM'}} <strong>{{grantorName}}</strong>
+        </p>
+
+        <div class="mb-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="badge {{#ifEquals share.permission 'VIEW'}}badge-outline{{else}}badge-primary{{/ifEquals}}">
+              {{permissionLabel}}
+            </span>
+          </div>
+          <p class="text-sm text-base-content/60">
+            {{#ifEquals share.permission 'VIEW'}}
+              {{t 'lang.INVITE_VIEW_DESC'}}
+            {{else}}
+              {{t 'lang.INVITE_MANAGE_DESC'}}
+            {{/ifEquals}}
+          </p>
+        </div>
+
+        {{#if isLoggedIn}}
+          <div class="flex gap-2">
+            <form method="post" action="/wardrobe-share/invite/{{token}}/accept" class="flex-1">
+              <button type="submit" class="btn btn-primary w-full">{{t 'lang.ACCEPT'}}</button>
+            </form>
+            <form method="post" action="/wardrobe-share/invite/{{token}}/decline" class="flex-1">
+              <button type="submit" class="btn btn-ghost w-full">{{t 'lang.DECLINE'}}</button>
+            </form>
+          </div>
+        {{else}}
+          <div class="flex flex-col gap-2">
+            <p class="text-sm text-base-content/60 mb-2">{{t 'lang.INVITE_LOGIN_REQUIRED'}}</p>
+            <a href="/auth/login" class="btn btn-primary">{{t 'lang.LOGIN'}}</a>
+            {{#unless signupsDisabled}}
+            <a href="/auth/register" class="btn btn-outline">{{t 'lang.REGISTER'}}</a>
+            {{/unless}}
+          </div>
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+</main>

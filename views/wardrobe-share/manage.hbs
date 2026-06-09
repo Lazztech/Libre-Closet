@@ -1,0 +1,125 @@
+{{>navbar}}
+
+<main class="p-4 pt-20 pb-24 max-w-2xl mx-auto">
+  <h1 class="text-2xl font-bold mb-6">{{t 'lang.WARDROBE_SHARING'}}</h1>
+
+  {{!-- Create new share --}}
+  <div class="card bg-base-100 shadow-sm mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{{t 'SHARE_WARDROBE'}}</h2>
+      <p class="text-sm text-base-content/60 mb-4">{{t 'SHARE_WARDROBE_DESC'}}</p>
+
+      {{!-- Share by email --}}
+      <form method="post" action="/wardrobe-share/create" class="flex flex-col gap-3">
+        <div class="flex gap-2">
+          <input type="email" name="granteeEmail" placeholder="{{t 'lang.EMAIL'}}" class="input input-bordered input-sm flex-1" required>
+          <select name="permission" class="select select-bordered select-sm">
+            <option value="VIEW">{{t 'lang.PERMISSION_VIEW'}}</option>
+            <option value="MANAGE">{{t 'lang.PERMISSION_MANAGE'}}</option>
+          </select>
+          <button type="submit" class="btn btn-primary btn-sm">{{t 'lang.SHARE'}}</button>
+        </div>
+      </form>
+
+      <div class="divider text-xs text-base-content/40">{{t 'lang.OR'}}</div>
+
+      {{!-- Create invite link --}}
+      <form method="post" action="/wardrobe-share/create-invite-link" class="flex gap-2 items-center">
+        <select name="permission" class="select select-bordered select-sm">
+          <option value="VIEW">{{t 'lang.PERMISSION_VIEW'}}</option>
+          <option value="MANAGE">{{t 'lang.PERMISSION_MANAGE'}}</option>
+        </select>
+        <button type="submit" class="btn btn-outline btn-sm">{{t 'lang.CREATE_INVITE_LINK'}}</button>
+      </form>
+    </div>
+  </div>
+
+  {{!-- Outbound shares (your shared wardrobes) --}}
+  {{#if outbound.length}}
+  <div class="card bg-base-100 shadow-sm mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{{t 'lang.YOUR_SHARED_WARDROBES'}}</h2>
+      <ul class="divide-y divide-base-200">
+        {{#each outbound}}
+        <li class="py-3 flex items-center justify-between">
+          <div>
+            <span class="font-medium">{{#if this.grantee}}{{this.grantee.email}}{{else}}{{t 'lang.PENDING_INVITE'}}{{/if}}</span>
+            <span class="badge badge-sm {{#ifEquals this.permission 'VIEW'}}badge-outline{{else}}badge-primary{{/ifEquals}} ml-2">{{this.permission}}</span>
+            {{#unless this.acceptedAt}}
+            <span class="badge badge-ghost badge-sm ml-1">{{t 'lang.PENDING'}}</span>
+            {{/unless}}
+          </div>
+          <form method="post" action="/wardrobe-share/{{this.id}}/remove" class="inline">
+            <button type="submit" class="btn btn-ghost btn-xs text-error">{{t 'lang.REVOKE'}}</button>
+          </form>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Pending incoming shares --}}
+  {{#if pending.length}}
+  <div class="card bg-base-100 shadow-sm mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{{t 'lang.PENDING_INVITES'}}</h2>
+      <ul class="divide-y divide-base-200">
+        {{#each pending}}
+        <li class="py-3 flex items-center justify-between">
+          <div>
+            <span class="font-medium">{{this.grantor.email}}</span>
+            <span class="badge badge-sm {{#ifEquals this.permission 'VIEW'}}badge-outline{{else}}badge-primary{{/ifEquals}} ml-2">{{this.permission}}</span>
+          </div>
+          <div class="flex gap-2">
+            <form method="post" action="/wardrobe-share/invite/{{this.inviteToken}}/accept" class="inline">
+              <button type="submit" class="btn btn-primary btn-xs">{{t 'lang.ACCEPT'}}</button>
+            </form>
+            <form method="post" action="/wardrobe-share/invite/{{this.inviteToken}}/decline" class="inline">
+              <button type="submit" class="btn btn-ghost btn-xs text-error">{{t 'lang.DECLINE'}}</button>
+            </form>
+          </div>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Inbound shares (wardrobes shared with you) --}}
+  {{#if inbound.length}}
+  <div class="card bg-base-100 shadow-sm mb-6">
+    <div class="card-body">
+      <h2 class="card-title text-lg">{{t 'lang.SHARED_WITH_YOU'}}</h2>
+      <ul class="divide-y divide-base-200">
+        {{#each inbound}}
+        <li class="py-3 flex items-center justify-between">
+          <div>
+            <a href="/wardrobe?ownerId={{this.grantor.id}}" class="font-medium link link-primary">{{this.grantor.email}}</a>
+            <span class="badge badge-sm {{#ifEquals this.permission 'VIEW'}}badge-outline{{else}}badge-primary{{/ifEquals}} ml-2">{{this.permission}}</span>
+          </div>
+          <form method="post" action="/wardrobe-share/{{this.id}}/remove" class="inline">
+            <button type="submit" class="btn btn-ghost btn-xs text-error">{{t 'lang.LEAVE'}}</button>
+          </form>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+  {{/if}}
+
+  {{#unless outbound.length}}
+  {{#unless inbound.length}}
+  {{#unless pending.length}}
+  <div class="text-center text-base-content/40 py-12">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-16 mx-auto mb-4">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.935-2.185 2.25 2.25 0 0 0-3.935 2.185Z" />
+    </svg>
+    <p>{{t 'lang.NO_SHARES_YET'}}</p>
+  </div>
+  {{/unless}}
+  {{/unless}}
+  {{/unless}}
+</main>
+
+{{>dock}}

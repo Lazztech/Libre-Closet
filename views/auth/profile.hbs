@@ -5,6 +5,9 @@
   <a class="link" href="/auth/reset?email={{user.email}}"
     >{{t 'lang.CHANGE_PASSWORD'}}</a
   >
+  {{#if authEnabled}}
+  <a class="link" href="/wardrobe-share/manage">{{t 'lang.WARDROBE_SHARING'}}</a>
+  {{/if}}
   <a class="link" href="/auth/delete-account">{{t 'lang.DELETE_ACCOUNT'}}</a>
 </main>
 {{>dock}}

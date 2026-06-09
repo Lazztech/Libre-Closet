@@ -72,7 +72,8 @@
       />
     </svg>
   </div>
-  {{/if}} {{!-- Photo upload --}}
+  {{/if}} {{#if canEdit}}
+  {{!-- Photo upload --}}
   <form
     hx-post="/wardrobe/{{garment.id}}/photo"
     hx-encoding="multipart/form-data"
@@ -134,6 +135,7 @@
     wireUpEditMaskBtn('{{garment.photo.fileName}}', {{garment.id}});
     {{/if}}
   </script>
+  {{/if}}
 
   {{!-- Metadata --}}
   <div class="card bg-base-100 shadow-sm mb-4">
@@ -166,14 +168,16 @@
     </div>
   </div>
   {{!-- Edit --}}
+  {{#if canEdit}}
   <div class="flex gap-2 mb-6">
     <a
-      href="/wardrobe/{{garment.id}}/edit"
+      href="/wardrobe/{{garment.id}}/edit{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
       class="btn btn-outline btn-sm flex-1"
     >
       {{t 'lang.EDIT'}}
     </a>
   </div>
+  {{/if}}
 
   {{!-- Share --}}
   <div class="flex gap-2 mb-6">
@@ -200,6 +204,7 @@
   </div>
 
   {{!-- Delete --}}
+  {{#if canDelete}}
   <button
     class="btn btn-error btn-outline btn-sm w-full"
     hx-delete="/wardrobe/{{garment.id}}"
@@ -208,6 +213,7 @@
   >
     {{t 'lang.DELETE'}}
   </button>
+  {{/if}}
   {{!-- Mask editor dialog --}}
   <dialog id="maskEditorDialog" class="modal">
     <div class="modal-box w-full max-w-lg p-4 flex flex-col gap-4">

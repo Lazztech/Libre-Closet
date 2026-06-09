@@ -17,6 +17,7 @@ import { CreateGarmentDto } from './dto/create-garment.dto';
 import { UpdateGarmentDto } from './dto/update-garment.dto';
 import { SearchGarmentDto } from './dto/search-garment.dto';
 import { GarmentCategory } from './garment-category.enum';
+import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
 
 const CANONICAL_SIZES = [
   'XX-Small',
@@ -41,6 +42,7 @@ export class GarmentService {
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
     private readonly fileService: FileService,
+    private readonly shareService: WardrobeShareService,
   ) {}
 
   resolveCategoryLabel(value: string, i18n: I18nContext): string {
@@ -54,6 +56,7 @@ export class GarmentService {
   async findAll(
     userId?: number,
     dto: SearchGarmentDto = {},
+    viewOwner?: number,
   ): Promise<Garment[]> {
     const normalizedSize = this.normalizeSize(dto.size);
     const searchConditions: FilterQuery<Garment> = {
@@ -70,7 +73,14 @@ export class GarmentService {
           }
         : {}),
     };
+
     if (userId != null) {
+      if (viewOwner != null && viewOwner !== userId) {
+        return this.garmentRepository.find(
+          { owner: { id: viewOwner }, ...searchConditions },
+          { populate: ['photo'], orderBy: { id: 'DESC' } },
+        );
+      }
       return this.garmentRepository.find(
         { owner: { id: userId }, ...searchConditions },
         { populate: ['photo'], orderBy: { id: 'DESC' } },
@@ -83,14 +93,24 @@ export class GarmentService {
     );
   }
 
-  async findOne(id: number, userId?: number): Promise<Garment> {
+  async findOne(
+    id: number,
+    userId?: number,
+    viewOwner?: number,
+  ): Promise<Garment> {
     const garment = await this.garmentRepository.findOne(id, {
       populate: ['photo', 'outfits'],
     });
     if (!garment) throw new NotFoundException('Garment not found');
     if (userId != null) {
-      // auth mode: must be the owner
-      if (garment.owner?.id !== userId) throw new ForbiddenException();
+      // auth mode: must be the owner or have a share
+      if (garment.owner?.id === userId) return garment;
+      if (viewOwner != null && garment.owner?.id === viewOwner) {
+        if (await this.shareService.canView(userId, viewOwner)) {
+          return garment;
+        }
+      }
+      throw new ForbiddenException();
     } else {
       // no-auth mode: only allow ownerless garments
       if (garment.owner != null) throw new ForbiddenException();
