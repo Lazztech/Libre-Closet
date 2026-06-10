@@ -2,7 +2,7 @@ name: Github Actions CI
 on: [push]
 
 env:
-  NODE_VERSION: "24.x" # set this to the node version to use
+  NODE_VERSION: '22.x' # set this to the node version to use
 
 jobs:
   back-end-ci:
@@ -66,10 +66,10 @@ jobs:
       - name: start postgresql db
         uses: harmon758/postgresql-action@v1
         with:
-          postgresql version: "11" # See https://hub.docker.com/_/postgres for available versions
-          postgresql db: "postgres-test"
-          postgresql user: "test"
-          postgresql password: "Password123"
+          postgresql version: '11' # See https://hub.docker.com/_/postgres for available versions
+          postgresql db: 'postgres-test'
+          postgresql user: 'test'
+          postgresql password: 'Password123'
 
       - name: start minio s3 object storage
         run: |
@@ -98,11 +98,11 @@ jobs:
           EMAIL_PASSWORD: test
           DATABASE_TYPE: postgres
           DATABASE_HOST: localhost
-          DATABASE_PORT: "5432"
-          DATABASE_USER: "test"
-          DATABASE_PASS: "Password123"
-          DATABASE_SCHEMA: "postgres-test"
-          DATABASE_SSL: "false"
+          DATABASE_PORT: '5432'
+          DATABASE_USER: 'test'
+          DATABASE_PASS: 'Password123'
+          DATABASE_SCHEMA: 'postgres-test'
+          DATABASE_SSL: 'false'
           FILE_STORAGE_TYPE: object
           OBJECT_STORAGE_BUCKET_NAME: test-lazztech-boilerplate
           OBJECT_STORAGE_ACCESS_KEY_ID: minioadmin
@@ -121,11 +121,11 @@ jobs:
           EMAIL_PASSWORD: test
           DATABASE_TYPE: postgres
           DATABASE_HOST: localhost
-          DATABASE_PORT: "5432"
-          DATABASE_USER: "test"
-          DATABASE_PASS: "Password123"
-          DATABASE_SCHEMA: "postgres-test"
-          DATABASE_SSL: "false"
+          DATABASE_PORT: '5432'
+          DATABASE_USER: 'test'
+          DATABASE_PASS: 'Password123'
+          DATABASE_SCHEMA: 'postgres-test'
+          DATABASE_SSL: 'false'
           FILE_STORAGE_TYPE: object
           OBJECT_STORAGE_BUCKET_NAME: test-lazztech-boilerplate
           OBJECT_STORAGE_ACCESS_KEY_ID: minioadmin
