@@ -117,8 +117,8 @@ export class WardrobeShareController {
       share,
       permissionLabel,
       grantorName:
-        (share.grantor as any)?.firstName ||
-        (share.grantor as any)?.email ||
+        share.grantor.unwrap().firstName ||
+        share.grantor.unwrap().email ||
         'A user',
       token,
       isLoggedIn: !!payload,
