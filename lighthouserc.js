@@ -5,6 +5,9 @@ module.exports = {
       startServerReadyPattern: 'Nest application successfully started',
       url: ['http://localhost:3000'],
       numberOfRuns: 1,
+      settings: {
+        chromeFlags: '--no-sandbox --disable-dev-shm-usage',
+      },
     },
     assert: {
       // https://googlechrome.github.io/lighthouse-ci/docs/configuration.html#preset
