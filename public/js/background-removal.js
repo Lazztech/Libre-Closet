@@ -12,6 +12,8 @@
 
 let activeProgressHandler = null;
 
+export const isBgRemovalEnabled = () => localStorage.getItem('bgRemovalEnabled') !== 'false';
+
 const config = {
   publicPath: location.origin + '/bg-removal-models/',
   debug: true,
@@ -111,6 +113,11 @@ export const wireUpPhotoInput = async () => {
 
     const file = photoInput.files?.[0];
     if (!file) return;
+
+    if (!isBgRemovalEnabled()) {
+      if (submitBtn) submitBtn.disabled = false;
+      return;
+    }
 
     const squareFile = await squarePadBlob(file);
 
@@ -230,6 +237,7 @@ export const wireUpEditMaskBtn = async (fileName, garmentId) => {
 };
 
 export default {
+  isBgRemovalEnabled,
   initBackgroundRemoval,
   wireUpPhotoInput,
   wireUpEditMaskBtn,

@@ -32,11 +32,11 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 #### Released
 
+- `v0.3.2 - June 09, 2026`: Added background removal toggle for garment image uploads.
 - `v0.3.1 - May 26, 2026`: Refactored server resulting in nearly a 2x throughput increase and almost half the latency.
 - `v0.3.0 - May 21, 2026`: Garment image background touch up tool
 - `v0.2.5 - May 1, 2026`: Added option to disable register functionality
 - `v0.2.4 - April 28, 2026`: Fix garment photo upload cropping
-- `v0.2.3 - April 20, 2026`: Added Russian language support.
 
 For full details refer to the [CHANGELOG](CHANGELOG.md).
 

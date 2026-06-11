@@ -86,6 +86,7 @@
   "GARMENTS_IN_OUTFIT": "Вещи в этом образе",
   "ADD_PHOTO": "Добавить фото",
   "UPDATE_PHOTO": "Обновить фото",
+  "BG_REMOVAL_TOGGLE": "Автоудаление фона",
   "REMOVING_BACKGROUND": "Удаление фона…",
   "BG_STAGE_DOWNLOADING": "Загрузка ресурсов…",
   "BG_STAGE_DECODING": "Декодирование изображения…",
