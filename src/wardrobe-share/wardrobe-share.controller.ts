@@ -33,7 +33,11 @@ export class WardrobeShareController {
   @UseGuards(AuthGuard)
   @Get('manage')
   @Render('wardrobe-share/manage')
-  async manage(@User() payload: Payload, @Req() req: FastifyRequest, @Query('error') error: string | undefined) {
+  async manage(
+    @User() payload: Payload,
+    @Req() req: FastifyRequest,
+    @Query('error') error: string | undefined,
+  ) {
     const [outbound, inbound, pending] = await Promise.all([
       this.shareService.getOutboundShares(payload.userId),
       this.shareService.getInboundShares(payload.userId),

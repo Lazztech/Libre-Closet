@@ -178,7 +178,9 @@ export class WardrobeShareService {
       throw new ForbiddenException('This invite was not sent to you.');
     }
     if (!share.grantee && share.grantor.id !== userId) {
-      throw new ForbiddenException('Only the grantor can revoke open invite links.');
+      throw new ForbiddenException(
+        'Only the grantor can revoke open invite links.',
+      );
     }
     await this.shareRepository.getEntityManager().removeAndFlush(share);
   }

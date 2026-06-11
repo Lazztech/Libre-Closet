@@ -325,7 +325,12 @@ export class WardrobeController {
     }
 
     const nobgPhoto = await req.file();
-    await this.garmentService.updateNobg(id, nobgPhoto, viewOwner ?? userId, userId);
+    await this.garmentService.updateNobg(
+      id,
+      nobgPhoto,
+      viewOwner ?? userId,
+      userId,
+    );
     const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
     reply.header('HX-Redirect', `/wardrobe/${id}${redirectSuffix}`);
     return reply.send();
