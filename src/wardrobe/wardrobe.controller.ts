@@ -100,9 +100,19 @@ export class WardrobeController {
 
   @Get('new')
   @Render('wardrobe/form')
-  async newForm(@Req() req: FastifyRequest, @I18n() i18n: I18nContext) {
+  async newForm(
+    @Req() req: FastifyRequest,
+    @I18n() i18n: I18nContext,
+    @Query('ownerId') ownerId: string | undefined,
+  ) {
+    const userId = this.userId(req);
+    const viewOwner = ownerId ? parseInt(ownerId, 10) : undefined;
+    if (userId != null && viewOwner != null && viewOwner !== userId) {
+      const canManage = await this.shareService.canManage(userId, viewOwner);
+      if (!canManage) throw new ForbiddenException();
+    }
     const filters = await this.garmentService.findAvailableFilters(
-      this.userId(req),
+      viewOwner ?? userId,
     );
     const enumValues = Object.values(GarmentCategory) as string[];
     const customCategories = filters.categories.filter(
@@ -116,6 +126,7 @@ export class WardrobeController {
       categories,
       colors: Object.values(GarmentColor),
       garment: null,
+      viewOwner,
     };
   }
 
@@ -132,7 +143,16 @@ export class WardrobeController {
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
+    @Query('ownerId') ownerId: string | undefined,
   ) {
+    const userId = this.userId(req);
+    const viewOwner = ownerId ? parseInt(ownerId, 10) : undefined;
+
+    if (userId != null && viewOwner != null && viewOwner !== userId) {
+      const canManage = await this.shareService.canManage(userId, viewOwner);
+      if (!canManage) throw new ForbiddenException();
+    }
+
     const garment = await this.garmentService.create(
       {
         name: body.name,
@@ -142,9 +162,10 @@ export class WardrobeController {
         size: body.size,
         notes: body.notes,
       },
-      this.userId(req),
+      viewOwner ?? userId,
     );
-    return reply.redirect(`/wardrobe/${garment.id}`, 302);
+    const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
+    return reply.redirect(`/wardrobe/${garment.id}${redirectSuffix}`, 302);
   }
 
   @Get(':id')
@@ -281,6 +302,7 @@ export class WardrobeController {
       id,
       { files: req.files({ limits: { files: 2 } }) },
       viewOwner ?? userId,
+      userId,
     );
     const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
     reply.header('HX-Redirect', `/wardrobe/${id}${redirectSuffix}`);

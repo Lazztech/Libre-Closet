@@ -4,7 +4,7 @@
   <div class="flex items-center justify-between mb-6 px-2">
     <h1 class="text-2xl font-bold">{{t 'lang.WARDROBE'}}</h1>
     {{#if canEdit}}
-    <a href="/wardrobe/new" class="btn btn-primary btn-sm">+ {{t 'lang.NEW_GARMENT'}}</a>
+    <a href="/wardrobe/new{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}" class="btn btn-primary btn-sm">+ {{t 'lang.NEW_GARMENT'}}</a>
     {{/if}}
   </div>
 
@@ -52,7 +52,7 @@
     </svg>
     <p>{{t 'lang.NO_GARMENTS'}}</p>
     {{#if canEdit}}
-    <a href="/wardrobe/new" class="btn btn-primary btn-sm">{{t 'lang.ADD_FIRST_GARMENT'}}</a>
+    <a href="/wardrobe/new{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}" class="btn btn-primary btn-sm">{{t 'lang.ADD_FIRST_GARMENT'}}</a>
     {{/if}}
   </div>
   {{/if}}
@@ -72,19 +72,19 @@
     </button>
 
     {{#if search.category}}
-    <a href="/wardrobe?keyword={{search.keyword}}&color={{search.color}}&size={{search.size}}"
+    <a href="/wardrobe?keyword={{search.keyword}}&color={{search.color}}&size={{search.size}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
       class="badge badge-primary badge-sm gap-1 cursor-pointer capitalize no-underline">
       {{search.category}} &times;
     </a>
     {{/if}}
     {{#if search.color}}
-    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&size={{search.size}}"
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&size={{search.size}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
       class="badge badge-secondary badge-sm gap-1 cursor-pointer capitalize no-underline">
       {{search.color}} &times;
     </a>
     {{/if}}
     {{#if search.size}}
-    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&color={{search.color}}"
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&color={{search.color}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
       class="badge badge-accent badge-sm gap-1 cursor-pointer no-underline">
       {{search.size}} &times;
     </a>
@@ -96,6 +96,7 @@
     <input type="hidden" name="category" id="active-category" value="{{search.category}}">
     <input type="hidden" name="color" id="active-color" value="{{search.color}}">
     <input type="hidden" name="size" id="active-size" value="{{search.size}}">
+    {{#if viewOwner}}<input type="hidden" name="ownerId" value="{{viewOwner}}">{{/if}}
     <input
       type="text"
       name="keyword"

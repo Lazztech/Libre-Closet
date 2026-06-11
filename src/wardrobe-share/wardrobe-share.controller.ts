@@ -39,11 +39,20 @@ export class WardrobeShareController {
       this.shareService.getPendingShares(payload.userId),
     ]);
 
+    const mapShare = (s: any) => ({
+      id: s.id,
+      grantor: s.grantor?.unwrap?.() ?? s.grantor,
+      grantee: s.grantee?.unwrap?.() ?? s.grantee,
+      permission: s.permission,
+      inviteToken: s.inviteToken,
+      acceptedAt: s.acceptedAt,
+    });
+
     return {
-      outbound,
-      inbound,
-      pending,
-      baseUrl: `${req.protocol}://${req.hostname}`,
+      outbound: outbound.map(mapShare),
+      inbound: inbound.map(mapShare),
+      pending: pending.map(mapShare),
+      baseUrl: `${req.protocol}://${req.headers.host}`,
     };
   }
 
@@ -59,7 +68,7 @@ export class WardrobeShareController {
       payload.userId,
       body.permission || SharePermission.VIEW,
     );
-    const inviteUrl = `${req.protocol}://${req.hostname}/wardrobe-share/invite/${share.inviteToken}`;
+    const inviteUrl = `${req.protocol}://${req.headers.host}/wardrobe-share/invite/${share.inviteToken}`;
 
     if (req.headers['hx-request']) {
       return reply.view('wardrobe-share/partials/invite-link-result', {

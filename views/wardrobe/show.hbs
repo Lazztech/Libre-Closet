@@ -75,7 +75,7 @@
   {{/if}} {{#if canEdit}}
   {{!-- Photo upload --}}
   <form
-    hx-post="/wardrobe/{{garment.id}}/photo"
+    hx-post="/wardrobe/{{garment.id}}/photo{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
     hx-encoding="multipart/form-data"
     hx-indicator="#loading"
     hx-target="main"

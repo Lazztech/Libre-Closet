@@ -232,7 +232,7 @@ export class GarmentService {
       }
     }
 
-    const garment = await this.findOne(id, requestingUserId ?? userId);
+    const garment = await this.findOne(id, requestingUserId, userId);
 
     if (photo) {
       await this.deleteOldPhoto(garment);
@@ -269,7 +269,7 @@ export class GarmentService {
     userId?: number,
     requestingUserId?: number,
   ): Promise<void> {
-    const garment = await this.findOne(id, requestingUserId ?? userId);
+    const garment = await this.findOne(id, requestingUserId, userId);
     if (!garment.photo?.fileName) return;
     await this.streamNobgIfPresent(nobgPhoto, garment.photo.fileName);
   }
