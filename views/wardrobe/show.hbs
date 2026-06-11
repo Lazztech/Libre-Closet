@@ -206,6 +206,7 @@
   {{/if}}
 
   {{!-- Share --}}
+  {{#if canEdit}}
   <div class="flex gap-2 mb-6">
     <button
       class="btn btn-outline btn-sm flex-1"
@@ -228,6 +229,7 @@
       {{t 'lang.SHARE'}}
     </button>
   </div>
+  {{/if}}
 
   {{!-- Delete --}}
   {{#if canDelete}}

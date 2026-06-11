@@ -9,6 +9,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Render,
   Req,
   Res,
@@ -32,7 +33,7 @@ export class WardrobeShareController {
   @UseGuards(AuthGuard)
   @Get('manage')
   @Render('wardrobe-share/manage')
-  async manage(@User() payload: Payload, @Req() req: FastifyRequest) {
+  async manage(@User() payload: Payload, @Req() req: FastifyRequest, @Query('error') error: string | undefined) {
     const [outbound, inbound, pending] = await Promise.all([
       this.shareService.getOutboundShares(payload.userId),
       this.shareService.getInboundShares(payload.userId),
@@ -53,6 +54,7 @@ export class WardrobeShareController {
       inbound: inbound.map(mapShare),
       pending: pending.map(mapShare),
       baseUrl: `${req.protocol}://${req.headers.host}`,
+      error: error ?? null,
     };
   }
 

@@ -62,6 +62,24 @@ export class WardrobeShareService {
       );
     }
 
+    const existing = await this.shareRepository.findOne({
+      grantor: { id: share.grantor.id },
+      grantee: { id: granteeId },
+      acceptedAt: { $ne: null },
+    });
+
+    if (existing) {
+      if (
+        share.permission === SharePermission.MANAGE &&
+        existing.permission === SharePermission.VIEW
+      ) {
+        existing.permission = SharePermission.MANAGE;
+      }
+      await this.shareRepository.getEntityManager().removeAndFlush(share);
+      await this.shareRepository.getEntityManager().flush();
+      return existing;
+    }
+
     share.grantee = granteeId as any;
     share.acceptedAt = new Date();
     share.inviteToken = null as any;
