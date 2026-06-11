@@ -10,14 +10,13 @@
 
   {{!-- Shared wardrobe switcher --}}
   {{#if sharedWardrobes.length}}
-  <div class="flex flex-wrap gap-2 mb-4 px-2">
-    <a href="/wardrobe" class="btn btn-sm {{#unless viewOwner}}btn-primary{{else}}btn-ghost{{/unless}}">{{t 'lang.MY_WARDROBE'}}</a>
-    {{#each sharedWardrobes}}
-    <a href="/wardrobe?ownerId={{this.grantorId}}" class="btn btn-sm {{#ifEquals ../viewOwner this.grantorId}}btn-primary{{else}}btn-ghost{{/ifEquals}}">
-      {{this.grantorName}}
-      <span class="badge badge-xs {{#ifEquals this.permission 'VIEW'}}badge-outline{{else}}badge-secondary{{/ifEquals}}">{{this.permission}}</span>
-    </a>
-    {{/each}}
+  <div class="mb-4 px-2">
+    <select class="select select-bordered select-sm w-full" onchange="location.href=this.value">
+      <option value="/wardrobe" {{#unless viewOwner}}selected{{/unless}}>{{t 'lang.MY_WARDROBE'}}</option>
+      {{#each sharedWardrobes}}
+      <option value="/wardrobe?ownerId={{this.grantorId}}" {{#ifEquals ../viewOwner this.grantorId}}selected{{/ifEquals}}>{{this.grantorName}} ({{this.permission}})</option>
+      {{/each}}
+    </select>
   </div>
   {{/if}}
 
