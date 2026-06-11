@@ -189,6 +189,7 @@
   "PERMISSION_VIEW": "Только просмотр",
   "PERMISSION_MANAGE": "Можно редактировать",
   "CREATE_INVITE_LINK": "Создать Ссылку-Приглашение",
+  "COPY_INVITE_LINK": "Копировать ссылку",
   "OR": "или",
   "YOUR_SHARED_WARDROBES": "Ваши Общие Гардеробы",
   "PENDING_INVITE": "Ожидает приглашения",

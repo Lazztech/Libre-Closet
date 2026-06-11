@@ -189,6 +189,7 @@
   "PERMISSION_VIEW": "Solo ver",
   "PERMISSION_MANAGE": "Puede editar",
   "CREATE_INVITE_LINK": "Crear Enlace de Invitación",
+  "COPY_INVITE_LINK": "Copiar enlace",
   "OR": "o",
   "YOUR_SHARED_WARDROBES": "Tus Guardarropas Compartidos",
   "PENDING_INVITE": "Invitación pendiente",

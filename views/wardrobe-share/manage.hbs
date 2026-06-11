@@ -24,13 +24,19 @@
       <div class="divider text-xs text-base-content/40">{{t 'lang.OR'}}</div>
 
       {{!-- Create invite link --}}
-      <form method="post" action="/wardrobe-share/create-invite-link" class="flex gap-2 items-center">
+      <form
+        hx-post="/wardrobe-share/create-invite-link"
+        hx-target="#invite-link-result"
+        hx-swap="innerHTML"
+        class="flex gap-2 items-center"
+      >
         <select name="permission" class="select select-bordered select-sm">
           <option value="VIEW">{{t 'lang.PERMISSION_VIEW'}}</option>
           <option value="MANAGE">{{t 'lang.PERMISSION_MANAGE'}}</option>
         </select>
         <button type="submit" class="btn btn-outline btn-sm">{{t 'lang.CREATE_INVITE_LINK'}}</button>
       </form>
+      <div id="invite-link-result"></div>
     </div>
   </div>
 
@@ -42,12 +48,33 @@
       <ul class="divide-y divide-base-200">
         {{#each outbound}}
         <li class="py-3 flex items-center justify-between">
-          <div>
-            <span class="font-medium">{{#if this.grantee}}{{this.grantee.email}}{{else}}{{t 'lang.PENDING_INVITE'}}{{/if}}</span>
-            <span class="badge badge-sm {{#ifEquals this.permission 'VIEW'}}badge-outline{{else}}badge-primary{{/ifEquals}} ml-2">{{this.permission}}</span>
-            {{#unless this.acceptedAt}}
-            <span class="badge badge-ghost badge-sm ml-1">{{t 'lang.PENDING'}}</span>
-            {{/unless}}
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <span class="font-medium">{{#if this.grantee}}{{this.grantee.email}}{{else}}{{t 'lang.PENDING_INVITE'}}{{/if}}</span>
+              <span class="badge badge-sm {{#ifEquals this.permission 'VIEW'}}badge-outline{{else}}badge-primary{{/ifEquals}}">{{this.permission}}</span>
+              {{#unless this.acceptedAt}}
+              <span class="badge badge-ghost badge-sm">{{t 'lang.PENDING'}}</span>
+              {{/unless}}
+            </div>
+            {{#if this.inviteToken}}
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                class="input input-bordered input-xs flex-1"
+                value="{{../baseUrl}}/wardrobe-share/invite/{{this.inviteToken}}"
+                readonly
+                _="on click select()"
+              />
+              <button
+                class="btn btn-ghost btn-xs"
+                _="on click
+                     writeText(@previousElementSibling.value) into navigator.clipboard
+                     then add .btn-success then remove .btn-ghost
+                     wait 2s
+                     then remove .btn-success then add .btn-ghost"
+              >{{t 'lang.COPY_INVITE_LINK'}}</button>
+            </div>
+            {{/if}}
           </div>
           <form method="post" action="/wardrobe-share/{{this.id}}/remove" class="inline">
             <button type="submit" class="btn btn-ghost btn-xs text-error">{{t 'lang.REVOKE'}}</button>

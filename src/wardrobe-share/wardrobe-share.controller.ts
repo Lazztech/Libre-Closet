@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Render,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -16,7 +17,7 @@ import { User } from '../auth/user.decorator';
 import { WardrobeShareService } from './wardrobe-share.service';
 import { CreateShareDto } from './dto/create-share.dto';
 import { SharePermission } from '../dal/entity/wardrobe-share.entity';
-import type { FastifyReply } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 @UseGuards(ConditionalAuthGuard)
 @Controller('wardrobe-share')
@@ -28,7 +29,7 @@ export class WardrobeShareController {
   @UseGuards(AuthGuard)
   @Get('manage')
   @Render('wardrobe-share/manage')
-  async manage(@User() payload: Payload) {
+  async manage(@User() payload: Payload, @Req() req: FastifyRequest) {
     const [outbound, inbound, pending] = await Promise.all([
       this.shareService.getOutboundShares(payload.userId),
       this.shareService.getInboundShares(payload.userId),
@@ -39,6 +40,7 @@ export class WardrobeShareController {
       outbound,
       inbound,
       pending,
+      baseUrl: `${req.protocol}://${req.hostname}`,
     };
   }
 
@@ -62,12 +64,22 @@ export class WardrobeShareController {
   async createInviteLink(
     @User() payload: Payload,
     @Body() body: { permission: SharePermission },
+    @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
   ) {
-    await this.shareService.createInviteLink(
+    const share = await this.shareService.createInviteLink(
       payload.userId,
       body.permission || SharePermission.VIEW,
     );
+    const inviteUrl = `${req.protocol}://${req.hostname}/wardrobe-share/invite/${share.inviteToken}`;
+
+    if (req.headers['hx-request']) {
+      return reply.view('wardrobe-share/partials/invite-link-result', {
+        layout: false,
+        inviteUrl,
+      });
+    }
+
     return reply.redirect('/wardrobe-share/manage', 302);
   }
 

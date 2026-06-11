@@ -1,0 +1,24 @@
+{{!-- HTMX partial: shown after invite link creation --}}
+<div class="flex flex-col gap-3" id="invite-link-result">
+  <div class="flex items-center gap-2">
+    <input
+      type="text"
+      class="input input-bordered input-sm flex-1"
+      value="{{inviteUrl}}"
+      readonly
+      _="on click select()"
+    />
+    <button
+      class="btn btn-primary btn-sm"
+      _="on click
+           writeText(@input.value) into navigator.clipboard
+           add .btn-success
+           remove .btn-primary
+           add .btn-outline
+           wait 2s
+           remove .btn-success
+           add .btn-primary
+           remove .btn-outline"
+    >{{t 'lang.COPIED'}}</button>
+  </div>
+</div>
