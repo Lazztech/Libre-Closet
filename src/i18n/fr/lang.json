@@ -22,6 +22,8 @@
   "FEATURE_DOCKER_DESC": "Auto-hébergez en quelques secondes avec Docker. Vos données, votre infrastructure.",
   "FEATURE_I18N_TITLE": "Multilingue",
   "FEATURE_I18N_DESC": "Disponible en anglais, italien, français, russe, allemand et espagnol. Traductions communautaires bienvenues.",
+  "FEATURE_SHARING_TITLE": "Partage de garde-robe",
+  "FEATURE_SHARING_DESC": "Partagez votre garde-robe avec des amis ou un styliste. VIEW pour parcourir, MANAGE pour modifier.",
   "SELF_HOST_TITLE": "Auto-hébergez en quelques secondes",
   "SELF_HOST_DESC": "Exécutez Libre Closet sur votre propre serveur, NAS ou Raspberry Pi avec une seule commande Docker.",
   "SELF_HOST_NOTE": "Consultez le README pour les options docker-compose et les variables d'environnement.",

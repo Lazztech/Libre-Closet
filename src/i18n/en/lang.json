@@ -22,6 +22,8 @@
   "FEATURE_DOCKER_DESC": "Self-host in seconds with Docker. Your data, your infrastructure.",
   "FEATURE_I18N_TITLE": "Multilingual",
   "FEATURE_I18N_DESC": "Available in English, Italian, French, Russian, German, and Spanish. Community translations welcome.",
+  "FEATURE_SHARING_TITLE": "Wardrobe sharing",
+  "FEATURE_SHARING_DESC": "Share your wardrobe with friends or a stylist. VIEW for browsing, MANAGE for editing.",
   "SELF_HOST_TITLE": "Self-host in seconds",
   "SELF_HOST_DESC": "Run Libre Closet on your own server, NAS, or Raspberry Pi with a single Docker command.",
   "SELF_HOST_NOTE": "See the README for docker-compose and environment variable options.",

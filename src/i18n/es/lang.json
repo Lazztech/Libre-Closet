@@ -22,6 +22,8 @@
   "FEATURE_DOCKER_DESC": "Autoaloja en segundos con Docker. Tus datos, tu infraestructura.",
   "FEATURE_I18N_TITLE": "Multilingüe",
   "FEATURE_I18N_DESC": "Disponible en inglés, italiano, francés, ruso, alemán y español. Las traducciones de la comunidad son bienvenidas.",
+  "FEATURE_SHARING_TITLE": "Compartir armario",
+  "FEATURE_SHARING_DESC": "Comparte tu armario con amigos o un estilista. VIEW para navegar, MANAGE para editar.",
   "SELF_HOST_TITLE": "Autoaloja en segundos",
   "SELF_HOST_DESC": "Ejecuta Libre Closet en tu propio servidor, NAS o Raspberry Pi con un solo comando Docker.",
   "SELF_HOST_NOTE": "Consulta el README para las opciones de docker-compose y variables de entorno.",
