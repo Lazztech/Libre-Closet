@@ -15,7 +15,6 @@ import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { User } from '../auth/user.decorator';
 import { WardrobeShareService } from './wardrobe-share.service';
-import { CreateShareDto } from './dto/create-share.dto';
 import { SharePermission } from '../dal/entity/wardrobe-share.entity';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
@@ -42,21 +41,6 @@ export class WardrobeShareController {
       pending,
       baseUrl: `${req.protocol}://${req.hostname}`,
     };
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('create')
-  async createShare(
-    @User() payload: Payload,
-    @Body() body: CreateShareDto,
-    @Res() reply: FastifyReply,
-  ) {
-    try {
-      await this.shareService.createShare(payload.userId, body);
-    } catch (e) {
-      this.logger.warn(e);
-    }
-    return reply.redirect('/wardrobe-share/manage', 302);
   }
 
   @UseGuards(AuthGuard)

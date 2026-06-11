@@ -3,27 +3,12 @@
 <main class="p-4 pt-20 pb-24 max-w-2xl mx-auto">
   <h1 class="text-2xl font-bold mb-6">{{t 'lang.WARDROBE_SHARING'}}</h1>
 
-  {{!-- Create new share --}}
+  {{!-- Create invite link --}}
   <div class="card bg-base-100 shadow-sm mb-6">
     <div class="card-body">
       <h2 class="card-title text-lg">{{t 'lang.SHARE_WARDROBE'}}</h2>
       <p class="text-sm text-base-content/60 mb-4">{{t 'lang.SHARE_WARDROBE_DESC'}}</p>
 
-      {{!-- Share by email --}}
-      <form method="post" action="/wardrobe-share/create" class="flex flex-col gap-3">
-        <div class="flex gap-2">
-          <input type="email" name="granteeEmail" placeholder="{{t 'lang.EMAIL'}}" class="input input-bordered input-sm flex-1" required>
-          <select name="permission" class="select select-bordered select-sm">
-            <option value="VIEW">{{t 'lang.PERMISSION_VIEW'}}</option>
-            <option value="MANAGE">{{t 'lang.PERMISSION_MANAGE'}}</option>
-          </select>
-          <button type="submit" class="btn btn-primary btn-sm">{{t 'lang.SHARE'}}</button>
-        </div>
-      </form>
-
-      <div class="divider text-xs text-base-content/40">{{t 'lang.OR'}}</div>
-
-      {{!-- Create invite link --}}
       <form
         hx-post="/wardrobe-share/create-invite-link"
         hx-target="#invite-link-result"
@@ -34,7 +19,7 @@
           <option value="VIEW">{{t 'lang.PERMISSION_VIEW'}}</option>
           <option value="MANAGE">{{t 'lang.PERMISSION_MANAGE'}}</option>
         </select>
-        <button type="submit" class="btn btn-outline btn-sm">{{t 'lang.CREATE_INVITE_LINK'}}</button>
+        <button type="submit" class="btn btn-primary btn-sm">{{t 'lang.CREATE_INVITE_LINK'}}</button>
       </form>
       <div id="invite-link-result"></div>
     </div>

@@ -11,7 +11,6 @@ import {
   SharePermission,
 } from '../dal/entity/wardrobe-share.entity';
 import { User } from '../dal/entity/user.entity';
-import { CreateShareDto } from './dto/create-share.dto';
 import { randomUUID } from 'node:crypto';
 
 @Injectable()
@@ -24,60 +23,6 @@ export class WardrobeShareService {
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
   ) {}
-
-  async createShare(
-    grantorId: number,
-    dto: CreateShareDto,
-  ): Promise<WardrobeShare> {
-    if (dto.granteeEmail) {
-      const grantee = await this.userRepository.findOne({
-        email: dto.granteeEmail,
-      });
-      if (!grantee) {
-        throw new NotFoundException(
-          'No account found with that email address.',
-        );
-      }
-      if (grantee.id === grantorId) {
-        throw new ForbiddenException(
-          'You cannot share your wardrobe with yourself.',
-        );
-      }
-
-      const existing = await this.shareRepository.findOne({
-        grantor: { id: grantorId },
-        grantee: { id: grantee.id },
-      });
-      if (existing) {
-        if (existing.acceptedAt) {
-          throw new ForbiddenException(
-            'You have already shared your wardrobe with this user.',
-          );
-        }
-        existing.permission = dto.permission;
-        await this.shareRepository.getEntityManager().flush();
-        return existing;
-      }
-
-      const share = this.shareRepository.create({
-        grantor: grantorId,
-        grantee: grantee.id,
-        permission: dto.permission,
-        inviteToken: randomUUID(),
-      } as unknown as WardrobeShare);
-      await this.shareRepository.getEntityManager().persistAndFlush(share);
-      return share;
-    }
-
-    const share = this.shareRepository.create({
-      grantor: grantorId,
-      grantee: null as any,
-      permission: dto.permission,
-      inviteToken: randomUUID(),
-    } as unknown as WardrobeShare);
-    await this.shareRepository.getEntityManager().persistAndFlush(share);
-    return share;
-  }
 
   async createInviteLink(
     grantorId: number,
