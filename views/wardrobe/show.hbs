@@ -2,7 +2,7 @@
 
 <main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
   <div class="flex items-center gap-3 mb-6">
-    <a href="/wardrobe" class="btn btn-ghost btn-sm btn-circle">
+    <a href="/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}" class="btn btn-ghost btn-sm btn-circle">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

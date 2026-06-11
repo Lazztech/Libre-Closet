@@ -1,5 +1,6 @@
-import { EntityRepository } from '@mikro-orm/core';
+import { EntityRepository, UniqueConstraintException } from '@mikro-orm/core';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   Logger,
@@ -64,7 +65,17 @@ export class WardrobeShareService {
     share.grantee = granteeId as any;
     share.acceptedAt = new Date();
     share.inviteToken = null as any;
-    await this.shareRepository.getEntityManager().flush();
+
+    try {
+      await this.shareRepository.getEntityManager().flush();
+    } catch (e) {
+      if (e instanceof UniqueConstraintException) {
+        throw new BadRequestException(
+          'You already have access to this wardrobe.',
+        );
+      }
+      throw e;
+    }
     return share;
   }
 
@@ -140,13 +151,16 @@ export class WardrobeShareService {
   async declineInvite(token: string, userId: number): Promise<void> {
     const share = await this.shareRepository.findOne(
       { inviteToken: token },
-      { populate: ['grantee'] },
+      { populate: ['grantor', 'grantee'] },
     );
     if (!share) {
       throw new NotFoundException('Invite not found.');
     }
     if (share.grantee && share.grantee.id !== userId) {
       throw new ForbiddenException('This invite was not sent to you.');
+    }
+    if (!share.grantee && share.grantor.id !== userId) {
+      throw new ForbiddenException('Only the grantor can revoke open invite links.');
     }
     await this.shareRepository.getEntityManager().removeAndFlush(share);
   }

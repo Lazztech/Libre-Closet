@@ -57,8 +57,8 @@ export class WardrobeController {
       sharedWardrobes = await this.shareService.getInboundShares(userId);
       sharedWardrobes = sharedWardrobes.map((s) => ({
         id: s.id,
-        grantorId: s.grantor.id,
-        grantorName: s.grantor.firstName || s.grantor.email,
+        grantorId: s.grantor.unwrap().id,
+        grantorName: s.grantor.unwrap().firstName || s.grantor.unwrap().email,
         permission: s.permission,
       }));
     }
@@ -256,6 +256,7 @@ export class WardrobeController {
         notes: body.notes,
       },
       viewOwner ?? userId,
+      userId,
     );
     const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
     return reply.redirect(`/wardrobe/${id}${redirectSuffix}`, 302);
@@ -302,7 +303,7 @@ export class WardrobeController {
     }
 
     const nobgPhoto = await req.file();
-    await this.garmentService.updateNobg(id, nobgPhoto, viewOwner ?? userId);
+    await this.garmentService.updateNobg(id, nobgPhoto, viewOwner ?? userId, userId);
     const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
     reply.header('HX-Redirect', `/wardrobe/${id}${redirectSuffix}`);
     return reply.send();

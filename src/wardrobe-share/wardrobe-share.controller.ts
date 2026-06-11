@@ -1,9 +1,13 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Logger,
+  NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Render,
   Req,
@@ -71,14 +75,10 @@ export class WardrobeShareController {
   @Post(':id/remove')
   async removeShare(
     @User() payload: Payload,
-    @Param('id') shareId: number,
+    @Param('id', ParseIntPipe) shareId: number,
     @Res() reply: FastifyReply,
   ) {
-    try {
-      await this.shareService.removeShare(shareId, payload.userId);
-    } catch (e) {
-      this.logger.warn(e);
-    }
+    await this.shareService.removeShare(shareId, payload.userId);
     return reply.redirect('/wardrobe-share/manage', 302);
   }
 
@@ -119,6 +119,16 @@ export class WardrobeShareController {
     try {
       await this.shareService.acceptInvite(token, payload.userId);
     } catch (e) {
+      if (
+        e instanceof BadRequestException ||
+        e instanceof ForbiddenException ||
+        e instanceof NotFoundException
+      ) {
+        return reply.redirect(
+          `/wardrobe-share/manage?error=${encodeURIComponent(e.message)}`,
+          302,
+        );
+      }
       this.logger.warn(e);
     }
     return reply.redirect('/wardrobe-share/manage', 302);

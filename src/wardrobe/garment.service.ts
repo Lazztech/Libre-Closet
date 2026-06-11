@@ -103,7 +103,6 @@ export class GarmentService {
     });
     if (!garment) throw new NotFoundException('Garment not found');
     if (userId != null) {
-      // auth mode: must be the owner or have a share
       if (garment.owner?.id === userId) return garment;
       if (viewOwner != null && garment.owner?.id === viewOwner) {
         if (await this.shareService.canView(userId, viewOwner)) {
@@ -112,7 +111,6 @@ export class GarmentService {
       }
       throw new ForbiddenException();
     } else {
-      // no-auth mode: only allow ownerless garments
       if (garment.owner != null) throw new ForbiddenException();
     }
     return garment;
@@ -192,6 +190,7 @@ export class GarmentService {
     id: number,
     dto: UpdateGarmentDto,
     userId?: number,
+    requestingUserId?: number,
   ): Promise<Garment> {
     let photo: File | undefined;
     if (dto.files) {
@@ -233,7 +232,7 @@ export class GarmentService {
       }
     }
 
-    const garment = await this.findOne(id, userId);
+    const garment = await this.findOne(id, requestingUserId ?? userId);
 
     if (photo) {
       await this.deleteOldPhoto(garment);
@@ -268,8 +267,9 @@ export class GarmentService {
     id: number,
     nobgPhoto: MultipartFile | undefined,
     userId?: number,
+    requestingUserId?: number,
   ): Promise<void> {
-    const garment = await this.findOne(id, userId);
+    const garment = await this.findOne(id, requestingUserId ?? userId);
     if (!garment.photo?.fileName) return;
     await this.streamNobgIfPresent(nobgPhoto, garment.photo.fileName);
   }
