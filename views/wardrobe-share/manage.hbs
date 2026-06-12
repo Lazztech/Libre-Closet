@@ -54,12 +54,12 @@
                 class="input input-bordered input-xs flex-1"
                 value="{{../baseUrl}}/wardrobe-share/invite/{{this.inviteToken}}"
                 readonly
-                _="on click select()"
+                _="on click call me.select()"
               />
               <button
                 class="btn btn-ghost btn-xs"
-                _="on click
-                     writeText(@previousElementSibling.value) into navigator.clipboard
+_="on click
+                     call navigator.clipboard.writeText(@previousElementSibling.value)
                      then add .btn-success then remove .btn-ghost
                      wait 2s
                      then remove .btn-success then add .btn-ghost"
