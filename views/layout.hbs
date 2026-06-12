@@ -164,5 +164,20 @@ https://nestjs-i18n.com/quick-start --}}
       var pwaInstall = document.getElementById('pwa-install');
     </script>
     {{/if}}
+    <script>
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    </script>
   </body>
 </html>

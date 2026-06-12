@@ -53,16 +53,12 @@
                 type="text"
                 class="input input-bordered input-xs flex-1"
                 value="{{../baseUrl}}/wardrobe-share/invite/{{this.inviteToken}}"
-                readonly
-                _="on click call me.select()"
-              />
+readonly
+                  onclick="this.select()"
+                />
               <button
                 class="btn btn-ghost btn-xs"
-_="on click
-                     call navigator.clipboard.writeText(@previousElementSibling.value)
-                     then add .btn-success then remove .btn-ghost
-                     wait 2s
-                     then remove .btn-success then add .btn-ghost"
+                onclick="copyText('{{../baseUrl}}/wardrobe-share/invite/{{this.inviteToken}}'); alert('{{t 'lang.COPIED'}}')"
               >{{t 'lang.COPY_INVITE_LINK'}}</button>
             </div>
             {{/if}}

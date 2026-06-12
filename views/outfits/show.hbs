@@ -88,7 +88,7 @@
     </a>
 
     <button
-      onclick="navigator.clipboard.writeText('{{siteUrl}}/share?shareableId={{outfit.shareableId}}&type=outfit'); alert('{{t 'lang.COPIED'}}')"
+      onclick="copyText('{{siteUrl}}/share?shareableId={{outfit.shareableId}}&type=outfit'); alert('{{t 'lang.COPIED}}')"
       class="btn btn-outline btn-sm"
     >
       <svg

@@ -12,7 +12,7 @@
         <div class="card-actions justify-end">
           <button
             class="btn btn-primary"
-            onclick="navigator.clipboard.writeText('{{../siteUrl}}/share?shareableId={{this.shareableId}}&type=file'); alert('{{t 'lang.COPIED'}}')"
+            onclick="copyText('{{../siteUrl}}/share?shareableId={{this.shareableId}}&type=file'); alert('{{t 'lang.COPIED}}')"
           >
             {{t 'lang.COPY_TEXT'}}
           </button>

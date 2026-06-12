@@ -6,19 +6,11 @@
       class="input input-bordered input-sm flex-1"
       value="{{inviteUrl}}"
       readonly
-      _="on click call me.select()"
+      onclick="this.select()"
     />
     <button
       class="btn btn-primary btn-sm"
-_="on click
-          call navigator.clipboard.writeText(@input.value)
-          add .btn-success
-          remove .btn-primary
-          add .btn-outline
-          wait 2s
-          remove .btn-success
-          add .btn-primary
-          remove .btn-outline"
+      onclick="copyText('{{inviteUrl}}'); alert('{{t 'lang.COPIED'}}')"
     >{{t 'lang.COPY_TEXT'}}</button>
   </div>
 </div>
