@@ -210,7 +210,7 @@
   <div class="flex gap-2 mb-6">
     <button
       class="btn btn-outline btn-sm flex-1"
-      onclick="copyText('{{siteUrl}}/share?shareableId={{garment.shareableId}}&type=garment'); alert('{{t 'lang.COPIED'}}')"
+      onclick="navigator.clipboard.writeText('{{siteUrl}}/share?shareableId={{garment.shareableId}}&type=garment'); alert('{{t 'lang.COPIED'}}')"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
