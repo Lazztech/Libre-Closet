@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ...
 
+## 0.4.0 - 2026-06-13
+
+#### Added
+
+- Wardrobe sharing from one user to another with either view only or edit permissions
+
 ## [0.3.2] - 2026-06-09
 
 #### Added
