@@ -11,11 +11,11 @@
     <button
       class="btn btn-primary btn-sm"
 _="on click
-          call navigator.clipboard.writeText(@input.value)
+          call navigator.clipboard.writeText('{{inviteUrl}}')
           add .btn-success
           remove .btn-primary
           add .btn-outline
-          wait 2s
+          wait 1s
           remove .btn-success
           add .btn-primary
           remove .btn-outline"

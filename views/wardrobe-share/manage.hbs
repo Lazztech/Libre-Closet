@@ -59,9 +59,9 @@
               <button
                 class="btn btn-ghost btn-xs"
 _="on click
-                     call navigator.clipboard.writeText(@previousElementSibling.value)
+                     call navigator.clipboard.writeText('{{../baseUrl}}/wardrobe-share/invite/{{this.inviteToken}}')
                      then add .btn-success then remove .btn-ghost
-                     wait 2s
+                     wait 1s
                      then remove .btn-success then add .btn-ghost"
               >{{t 'lang.COPY_INVITE_LINK'}}</button>
             </div>
