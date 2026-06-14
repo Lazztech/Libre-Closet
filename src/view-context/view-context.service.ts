@@ -36,8 +36,7 @@ export class ViewContextService {
       siteUrl: req.host,
       baseUrl: req.url === '/' ? '' : req.url,
       authEnabled: this.configService.get<boolean>('AUTH_ENABLED'),
-      signupsDisabled:
-        this.configService.get<string>('DISABLE_REGISTRATION') === 'true',
+      signupsDisabled: this.configService.get<boolean>('DISABLE_REGISTRATION'),
       pwaEnabled: this.configService.get<boolean>('PWA_ENABLED'),
       locale,
       canonicalUrl,
