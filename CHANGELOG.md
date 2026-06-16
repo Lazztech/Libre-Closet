@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ...
 
+## 0.4.1 - 2026-06-15
+
+#### Fixed
+
+- Fix DISABLE_REGISTRATION logic
+
 ## 0.4.0 - 2026-06-13
 
 #### Added

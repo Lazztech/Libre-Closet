@@ -40,11 +40,11 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 #### Released
 
-- `v0.4.0`: Added wardrobe sharing from one user to another with either view only or edit permissions
+- `v0.4.1 - June 15, 2025`: Fixed disable register functionality
+- `v0.4.0 - June 13, 2026`: Added wardrobe sharing from one user to another with either view only or edit permissions
 - `v0.3.2 - June 09, 2026`: Added background removal toggle for garment image uploads.
 - `v0.3.1 - May 26, 2026`: Refactored server resulting in nearly a 2x throughput increase and almost half the latency.
 - `v0.3.0 - May 21, 2026`: Garment image background touch up tool
-- `v0.2.5 - May 1, 2026`: Added option to disable register functionality
 
 For full details refer to the [CHANGELOG](CHANGELOG.md).
 
@@ -147,7 +147,7 @@ npm run start:prod
 | `APP_NAME`                         | Display name shown in the UI and navbar        | `Libre Closet` | `My awesome Closet manager`                                                               |
 | `DATA_PATH`                        | Directory for SQLite DB and uploaded files     | `./data`       | `./libre-closet-data`                                                                     |
 | `AUTH_ENABLED`                     | Enable JWT user accounts and login             | `false`        | `true`                                                                                    |
-| `DISABLE_REGISTRATION` | Disallows user sign ups when true | `false` | `true` |
+| `DISABLE_REGISTRATION`             | Disallows user sign ups when true              | `false`        | `true`                                                                                    |
 | `PWA_ENABLED`                      | Enable service worker and PWA install prompt   | `false`        | `true`                                                                                    |
 | `ACCESS_TOKEN_SECRET`              | JWT signing secret - **change for production** | `ChangeMe!`    | `u9n8c2y847rfctb23468tcb689f243`                                                          |
 | `DATABASE_TYPE`                    | `sqlite` or `postgres`                         | `sqlite`       | `postgres`                                                                                |
