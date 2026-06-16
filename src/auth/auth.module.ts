@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { ConditionalAuthGuard } from './conditional-auth.guard';
-import { DisableRegistrationGuard } from './disable-registration.guard';
+import { RegistrationGuard } from './registration.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
@@ -30,7 +30,7 @@ import { ViewContextModule } from '../view-context/view-context.module';
     AuthService,
     AuthGuard,
     ConditionalAuthGuard,
-    DisableRegistrationGuard,
+    RegistrationGuard,
     ViewContextModule,
   ],
   exports: [JwtModule, AuthService, AuthGuard, ConditionalAuthGuard],

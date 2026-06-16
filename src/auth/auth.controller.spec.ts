@@ -8,6 +8,7 @@ import { User } from '../dal/entity/user.entity';
 import { EmailService } from '../email/email.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { RegistrationGuard } from './registration.guard';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -28,8 +29,6 @@ describe('AuthController', () => {
           provide: EntityManager,
           useValue: {
             query: jest.fn(),
-            // you can mock other functions inside
-            // the entity manager object, my case only needed query method
           },
         },
         {
@@ -56,5 +55,21 @@ describe('AuthController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('RegistrationGuard', () => {
+    const guardedMethods = [
+      'postRegister',
+      'postRegisterValidate',
+      'getRegister',
+    ];
+
+    guardedMethods.forEach((method) => {
+      it(`applies RegistrationGuard to ${method}`, () => {
+        const guards: any[] = Reflect.getMetadata('__guards__', controller[method]) ?? [];
+        const guardTypes = guards.map((g: any) => typeof g === 'function' ? g : g.constructor);
+        expect(guardTypes).toContain(RegistrationGuard);
+      });
+    });
   });
 });

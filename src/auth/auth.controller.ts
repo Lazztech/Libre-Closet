@@ -14,7 +14,7 @@ import { plainToInstance } from 'class-transformer';
 import type { FastifyReply } from 'fastify';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { AuthGuard } from './auth.guard';
-import { DisableRegistrationGuard } from './disable-registration.guard';
+import { RegistrationGuard } from './registration.guard';
 import { AuthService } from './auth.service';
 import { EmailDto } from './dto/email.dto';
 import { LoginDto } from './dto/login.dto';
@@ -31,7 +31,7 @@ export class AuthController {
 
   constructor(private authService: AuthService) {}
 
-  @UseGuards(DisableRegistrationGuard)
+  @UseGuards(RegistrationGuard)
   @Post('register')
   async postRegister(
     @I18n() i18n: I18nContext,
@@ -58,7 +58,7 @@ export class AuthController {
     return reply.redirect('/auth/profile', 302);
   }
 
-  @UseGuards(DisableRegistrationGuard)
+  @UseGuards(RegistrationGuard)
   @Render('auth/register')
   @Post('validate/register')
   async postRegisterValidate(
@@ -190,7 +190,7 @@ export class AuthController {
     return reply.redirect('/auth/login', 302);
   }
 
-  @UseGuards(DisableRegistrationGuard)
+  @UseGuards(RegistrationGuard)
   @Get('register')
   @Render('auth/register')
   getRegister(): any {}
