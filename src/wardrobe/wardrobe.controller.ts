@@ -202,6 +202,7 @@ export class WardrobeController {
       ),
       canEdit,
       canDelete,
+      canClone: true,
       viewOwner: viewOwner ?? null,
     };
   }
@@ -240,6 +241,73 @@ export class WardrobeController {
       colors: Object.values(GarmentColor),
       viewOwner: viewOwner ?? null,
     };
+  }
+
+  @Get(':id/clone')
+  @Render('wardrobe/form')
+  async cloneForm(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: FastifyRequest,
+    @I18n() i18n: I18nContext,
+    @Query('ownerId') ownerId: string | undefined,
+  ) {
+    const userId = this.userId(req);
+    const viewOwner = ownerId ? parseInt(ownerId, 10) : undefined;
+    const [garment, filters] = await Promise.all([
+      this.garmentService.findOne(id, userId, viewOwner),
+      this.garmentService.findAvailableFilters(viewOwner ?? userId),
+    ]);
+    const enumValues = Object.values(GarmentCategory) as string[];
+    const customCategories = filters.categories.filter(
+      (c) => !enumValues.includes(c),
+    );
+    const categories = [...enumValues, ...customCategories].map((value) => ({
+      value,
+      label: this.garmentService.resolveCategoryLabel(value, i18n),
+    }));
+    return {
+      garment,
+      isClone: true,
+      cloneName: garment.name ? `${garment.name} (cloned)` : undefined,
+      categories,
+      colors: Object.values(GarmentColor),
+      viewOwner: viewOwner ?? null,
+    };
+  }
+
+  @Post(':id/clone')
+  async cloneCreate(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    body: {
+      name?: string;
+      category: string;
+      brand?: string;
+      color?: GarmentColor;
+      size?: string;
+      notes?: string;
+    },
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
+    @Query('ownerId') ownerId: string | undefined,
+  ) {
+    const userId = this.userId(req);
+    const viewOwner = ownerId ? parseInt(ownerId, 10) : undefined;
+    // Verify the requesting user has access to the source garment
+    await this.garmentService.findOne(id, userId, viewOwner);
+    const cloned = await this.garmentService.clone(
+      id,
+      {
+        name: body.name,
+        category: body.category,
+        brand: body.brand,
+        color: body.color,
+        size: body.size,
+        notes: body.notes,
+      },
+      userId,
+    );
+    return reply.redirect(`/wardrobe/${cloned.id}`, 302);
   }
 
   @Post(':id')

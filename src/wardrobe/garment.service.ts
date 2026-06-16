@@ -156,6 +156,60 @@ export class GarmentService {
     return garment;
   }
 
+  async clone(
+    sourceId: number,
+    dto: {
+      name?: string;
+      category: string;
+      brand?: string;
+      color?: string;
+      size?: string;
+      notes?: string;
+    },
+    userId?: number,
+  ): Promise<Garment> {
+    const source = await this.garmentRepository.findOne(sourceId, {
+      populate: ['photo'],
+    });
+    if (!source) throw new NotFoundException('Garment not found');
+
+    let photo: File | undefined;
+    if (source.photo?.fileName) {
+      photo = await this.fileService.copyImage(source.photo.fileName, userId);
+      if (photo) {
+        const nobgSourceName = this.fileService.nobgFileName(
+          source.photo.fileName,
+        );
+        const nobgStream = await this.fileService
+          .get(nobgSourceName)
+          .catch(() => undefined);
+        if (nobgStream) {
+          await this.fileService
+            .storeNobgVariantFromStream(nobgStream, photo.fileName)
+            .catch((err) => this.logger.warn(err));
+        }
+      }
+    }
+
+    const garment = this.garmentRepository.create({
+      name: dto.name,
+      category: dto.category,
+      brand: dto.brand,
+      color: dto.color as any,
+      size: this.normalizeSize(dto.size),
+      notes: dto.notes,
+      photo: photo ?? undefined,
+    });
+
+    if (userId != null) {
+      const user = await this.userRepository.findOneOrFail(userId);
+      garment.owner = user as any;
+    }
+
+    await this.garmentRepository.getEntityManager().persistAndFlush(garment);
+    return garment;
+  }
+
   async findAvailableFilters(userId?: number): Promise<{
     brands: string[];
     sizes: string[];

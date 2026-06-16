@@ -8,13 +8,13 @@
       </svg>
     </a>
     <h1 class="text-2xl font-bold">
-      {{#if garment}}{{t 'lang.EDIT_GARMENT'}}{{else}}{{t 'lang.NEW_GARMENT'}}{{/if}}
+      {{#if isClone}}{{t 'lang.CLONE_GARMENT'}}{{else if garment}}{{t 'lang.EDIT_GARMENT'}}{{else}}{{t 'lang.NEW_GARMENT'}}{{/if}}
     </h1>
   </div>
 
   <form
     method="POST"
-    action="{{#if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
+    action="{{#if isClone}}/wardrobe/{{garment.id}}/clone{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
     class="flex flex-col gap-4"
   >
     <div class="form-control">
@@ -23,7 +23,7 @@
         type="text"
         name="name"
         class="input input-bordered"
-        value="{{#if garment}}{{garment.name}}{{/if}}"
+        value="{{#if isClone}}{{cloneName}}{{else if garment}}{{garment.name}}{{/if}}"
         placeholder="e.g. Black Linen Blazer"
       />
     </div>

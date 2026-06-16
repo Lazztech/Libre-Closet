@@ -205,6 +205,18 @@
   </div>
   {{/if}}
 
+  {{!-- Clone --}}
+  {{#if canClone}}
+  <div class="flex gap-2 mb-6">
+    <a
+      href="/wardrobe/{{garment.id}}/clone{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
+      class="btn btn-outline btn-sm flex-1"
+    >
+      {{t 'lang.CLONE_GARMENT'}}
+    </a>
+  </div>
+  {{/if}}
+
   {{!-- Share --}}
   {{#if canEdit}}
   <div class="flex gap-2 mb-6">
