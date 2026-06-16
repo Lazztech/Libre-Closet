@@ -66,8 +66,11 @@ describe('AuthController', () => {
 
     guardedMethods.forEach((method) => {
       it(`applies RegistrationGuard to ${method}`, () => {
-        const guards: any[] = Reflect.getMetadata('__guards__', controller[method]) ?? [];
-        const guardTypes = guards.map((g: any) => typeof g === 'function' ? g : g.constructor);
+        const guards: any[] =
+          Reflect.getMetadata('__guards__', controller[method]) ?? [];
+        const guardTypes = guards.map((g: any) =>
+          typeof g === 'function' ? g : g.constructor,
+        );
         expect(guardTypes).toContain(RegistrationGuard);
       });
     });
