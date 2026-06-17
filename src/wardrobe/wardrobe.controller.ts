@@ -137,7 +137,7 @@ export class WardrobeController {
       name?: string;
       category: string;
       brand?: string;
-      color?: GarmentColor;
+      color?: string | string[];
       size?: string;
       notes?: string;
     },
@@ -153,17 +153,29 @@ export class WardrobeController {
       if (!canManage) throw new ForbiddenException();
     }
 
+    const validColors = new Set(Object.values(GarmentColor));
+
+    // Fastify gives string if one checkbox, string[] if multiple — normalise both
+    const rawColors = Array.isArray(body.color)
+      ? body.color
+      : body.color?.split(',').map((c) => c.trim()).filter(Boolean) ?? [];
+
+    // Keep known enum values; silently drop anything invalid
+    // Remove the filter entirely if you want to allow custom values through
+    const sanitized = rawColors.filter((c) => validColors.has(c as GarmentColor));
+
     const garment = await this.garmentService.create(
       {
         name: body.name,
         category: body.category,
         brand: body.brand,
-        color: body.color,
+        color: sanitized.join(',') as GarmentColor, // TODO: migrate entity to string[]
         size: body.size,
         notes: body.notes,
       },
       viewOwner ?? userId,
     );
+
     const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
     return reply.redirect(`/wardrobe/${garment.id}${redirectSuffix}`, 302);
   }

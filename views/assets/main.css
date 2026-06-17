@@ -53,3 +53,245 @@ body {
   min-height: 100vh;
   min-height: 100dvh; /* Use dynamic viewport height */
 }
+
+/* color-multiselect.css
+   Drop into your public/css folder and link in your layout */
+
+.color-ms {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid oklab(0.97807 -0.00659901 -0.0282392 / 0.2);
+  border-radius: 4px;
+  background: hsl(var(--b1));
+}
+
+.color-ms:focus-within {
+  outline: 2px solid var(--input-color);
+  outline-offset: 2px;
+  isolation: isolate;
+}
+
+.color-ms[open] {
+  border-color: hsl(var(--bc) / 0.4);
+}
+
+.color-ms summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  min-height: 3rem;
+  min-width: 0;
+  gap: 0.5rem;
+}
+
+.color-ms summary::-webkit-details-marker {
+  display: none;
+}
+
+.ms-placeholder {
+  color: hsl(var(--bc) / 0.4);
+  font-size: 0.875rem;
+}
+.ms-pills {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 0;
+  flex-wrap: wrap;
+}
+
+.ms-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem 0.125rem 0.5rem;
+  border-radius: var(--rounded-badge, 1.9rem);
+  background: hsl(var(--b2));
+  border: 1px solid hsl(var(--bc) / 0.15);
+  color: hsl(var(--bc));
+  line-height: 1.4;
+}
+
+.ms-pill-remove {
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.ms-pill-remove:hover {
+  opacity: 1;
+}
+
+.ms-chevron {
+  color: hsl(var(--bc) / 0.4);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.color-ms[open] .ms-chevron {
+  transform: rotate(180deg);
+}
+
+.ms-dropdown {
+  border-top: 1px solid hsl(var(--bc) / 0.1);
+  padding: 0.25rem 0;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.ms-search {
+  margin: 0.375rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid hsl(var(--bc) / 0.2);
+  border-radius: var(--rounded-btn, 0.5rem);
+  padding: 0.25rem 0.5rem;
+  background: hsl(var(--b2));
+  color: hsl(var(--bc) / 0.4);
+}
+
+.ms-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.8125rem;
+  color: hsl(var(--bc));
+  width: 100%;
+  padding: 0;
+}
+
+.ms-options {
+  padding: 0.125rem 0;
+}
+
+.ms-option {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.4375rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.ms-option:hover {
+  background: hsl(var(--b2));
+}
+
+.ms-option input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: hsl(var(--p));
+}
+
+.ms-option span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: hsl(var(--bc));
+  flex: 1;
+}
+
+.ms-option.hidden {
+  display: none;
+}
+
+/* Swatch */
+.ms-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  min-width: 0.75rem;
+  min-height: 0.75rem;
+  max-width: 0.75rem;
+  max-height: 0.75rem;
+  border-radius: 50%;
+  border: 1px solid hsl(var(--bc) / 0.2);
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Known enum colors — CSS color names work directly */
+.ms-swatch--red    { background: red; }
+.ms-swatch--pink   { background: pink; }
+.ms-swatch--orange { background: orange; }
+.ms-swatch--yellow { background: yellow; }
+.ms-swatch--green  { background: green; }
+.ms-swatch--blue   { background: blue; }
+.ms-swatch--purple { background: purple; }
+.ms-swatch--black  { background: black; }
+.ms-swatch--white  { background: white; }
+.ms-swatch--grey   { background: grey; }
+.ms-swatch--beige  { background: beige; }
+.ms-swatch--brown  { background: brown; }
+.ms-swatch--gold   { background: gold; }
+.ms-swatch--silver { background: silver; }
+.ms-swatch--pattern {
+  background: repeating-linear-gradient(
+    45deg,
+    #ccc,
+    #ccc 2px,
+    #fff 2px,
+    #fff 6px
+  );
+}
+/* other + any custom value = neutral fallback (no class match) */
+.ms-swatch--other  { background: hsl(var(--bc) / 0.2); }
+
+/* Create row */
+.ms-create {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: hsl(var(--su, 158 64% 52%));
+  border-top: 1px solid hsl(var(--bc) / 0.1);
+  margin-top: 0.25rem;
+}
+
+.ms-create:hover {
+  background: hsl(var(--su, 158 64% 52%) / 0.1);
+}
+
+/* Empty state */
+.ms-empty {
+  padding: 0.625rem 0.75rem;
+  font-size: 0.8125rem;
+  color: hsl(var(--bc) / 0.4);
+  text-align: center;
+}
+
+/* Footer */
+.ms-footer {
+  border-top: 1px solid hsl(var(--bc) / 0.1);
+  padding: 0.375rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ms-count {
+  font-size: 0.75rem;
+  color: hsl(var(--bc) / 0.5);
+}
+
+.ms-clear {
+  font-size: 0.75rem;
+  color: hsl(var(--p));
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.ms-clear:hover {
+  text-decoration: underline;
+}

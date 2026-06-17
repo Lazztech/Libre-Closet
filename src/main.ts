@@ -120,6 +120,17 @@ async function bootstrap() {
   hbs.registerHelper('json', function (context: unknown) {
     return JSON.stringify(context);
   });
+  hbs.registerHelper('ifInArray', function (
+    item: string,
+    value: string | string[] | undefined,
+    options: Handlebars.HelperOptions,
+  ) {
+    if (!value) return options.inverse(this);
+    const arr = Array.isArray(value)
+      ? value
+      : value.split(',').map((s) => s.trim());
+    return arr.includes(item) ? options.fn(this) : options.inverse(this);
+  });
   hbs.registerHelper(
     'ifEquals',
     function (arg1: unknown, arg2: unknown, options: HelperOptions) {
