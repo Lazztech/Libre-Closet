@@ -182,16 +182,19 @@ export class WardrobeController {
 
     let canEdit = true;
     let canDelete = true;
+    let canClone = true;
     if (userId != null && viewOwner != null && viewOwner !== userId) {
       const perm = await this.shareService.getSharePermission(
         userId,
         viewOwner,
       );
       canEdit = perm === SharePermission.MANAGE;
+      canClone = perm === SharePermission.MANAGE;
       canDelete = false;
     } else if (userId != null && garment.owner?.id !== userId) {
       canEdit = false;
       canDelete = false;
+      canClone = false;
     }
 
     return {
@@ -202,7 +205,7 @@ export class WardrobeController {
       ),
       canEdit,
       canDelete,
-      canClone: true,
+      canClone,
       viewOwner: viewOwner ?? null,
     };
   }
