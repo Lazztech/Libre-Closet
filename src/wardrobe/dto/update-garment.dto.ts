@@ -9,5 +9,6 @@ export interface UpdateGarmentDto {
   size?: string;
   notes?: string;
   washingDetails?: string;
+  dateAquired?: string;
   files?: AsyncIterableIterator<MultipartFile>;
 }

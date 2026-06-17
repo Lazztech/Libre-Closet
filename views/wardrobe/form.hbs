@@ -87,6 +87,13 @@
         rows="3"
         placeholder="Wash at 30°C, do not tumble dry, do not iron…"
       >{{#if garment}}{{garment.washingDetails}}{{/if}}</textarea>
+      <label class="label"><span class="label-text">{{t 'lang.DATE_AQUIRED'}}</span></label>
+      <input
+        type="date"
+        name="dateAquired"
+        class="input input-bordered"
+        value="{{formatDate garment.dateAquired}}"
+      />
     </div>
 
     <div class="form-control">
