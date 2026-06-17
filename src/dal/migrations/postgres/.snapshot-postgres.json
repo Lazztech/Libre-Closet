@@ -882,6 +882,22 @@
           "enumItems": [],
           "mappedType": "string"
         },
+        "date_aquired": {
+          "name": "date_aquired",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 6,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        },
         "notes": {
           "name": "notes",
           "type": "varchar(255)",
@@ -898,21 +914,21 @@
           "enumItems": [],
           "mappedType": "string"
         },
-        "archived": {
-          "name": "archived",
-          "type": "boolean",
+        "washing_details": {
+          "name": "washing_details",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
           "length": null,
           "precision": null,
           "scale": null,
-          "default": "false",
+          "default": null,
           "comment": null,
           "enumItems": [],
-          "mappedType": "boolean"
+          "mappedType": "text"
         },
         "photo_id": {
           "name": "photo_id",

@@ -37,11 +37,16 @@ export class Garment extends ShareableId {
   @Property({ nullable: true })
   public size?: string;
 
+  @Property({ type: Date, nullable: true })
+  public dateAquired?: Date;
+
   @Property({ nullable: true })
   public notes?: string;
 
   @Property({ default: false })
   public archived = false;
+  @Property({ nullable: true, columnType: 'text' })
+  public washingDetails?: string;
 
   @OneToOne({
     entity: () => File,

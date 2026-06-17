@@ -103,6 +103,8 @@
   "SHOW_ARCHIVED": "Mostra archiviati",
   "CONFIRM_ARCHIVE": "Archiviare questo indumento? Sarà nascosto dal guardaroba.",
   "CONFIRM_UNARCHIVE": "Ripristinare questo indumento? Apparirà di nuovo nel guardaroba.",
+  "WASHING_DETAILS": "Istruzioni di Lavaggio",
+  "DATE_AQUIRED": "Data di Acquisizione",
   "CONFIRM_DELETE": "Sei sicuro di voler eliminare questo?",
   "SEARCH_PLACEHOLDER": "Cerca capi...",
   "SEARCH": "Cerca",

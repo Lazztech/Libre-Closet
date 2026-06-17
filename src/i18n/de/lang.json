@@ -103,6 +103,8 @@
   "SHOW_ARCHIVED": "Archivierte anzeigen",
   "CONFIRM_ARCHIVE": "Dieses Kleidungsstück archivieren? Es wird aus deiner Garderobe ausgeblendet.",
   "CONFIRM_UNARCHIVE": "Dieses Kleidungsstück wiederherstellen? Es wird wieder in deiner Garderobe angezeigt.",
+  "WASHING_DETAILS": "Waschhinweise",
+  "DATE_AQUIRED": "Erworben am",
   "CONFIRM_DELETE": "Bist du sicher, dass du das löschen möchtest?",
   "SEARCH_PLACEHOLDER": "Kleidungsstücke suchen...",
   "SEARCH": "Suchen",

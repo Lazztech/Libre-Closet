@@ -126,6 +126,11 @@ async function bootstrap() {
       return arg1 == arg2 ? options.fn(this) : options.inverse(this);
     },
   );
+  hbs.registerHelper('formatDate', (date: string | Date | undefined) => {
+    if (!date) return '';
+    const d = date instanceof Date ? date : new Date(date);
+    return d.toISOString().split('T')[0];
+  });
   hbs.registerHelper('uri', (str: string) =>
     encodeURIComponent(String(str ?? '')),
   );
