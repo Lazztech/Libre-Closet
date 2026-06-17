@@ -97,6 +97,7 @@
   "BG_STAGE_ENCODING": "Кодирование результата…",
   "BG_HINT_TYPICAL_DURATION": "Это может занять некоторое время на мобильных устройствах.",
   "BG_HINT_STILL_WORKING": "Всё ещё работаем. Особенно долго это может занимать на iPhone и iPad.",
+  "DATE_AQUIRED": "Дата приобретения",
   "CONFIRM_DELETE": "Вы уверены, что хотите удалить это?",
   "SEARCH_PLACEHOLDER": "Поиск вещей...",
   "SEARCH": "Поиск",

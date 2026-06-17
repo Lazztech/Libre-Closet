@@ -97,6 +97,7 @@
   "BG_STAGE_ENCODING": "Encodage du résultat…",
   "BG_HINT_TYPICAL_DURATION": "Cela peut prendre un moment sur mobile.",
   "BG_HINT_STILL_WORKING": "Toujours en cours. En particulier sur iPhone et iPad, cela peut prendre un peu de temps.",
+  "DATE_AQUIRED": "Date d'Acquisition",
   "CONFIRM_DELETE": "Êtes-vous sûr de vouloir supprimer ceci ?",
   "SEARCH_PLACEHOLDER": "Rechercher des vêtements...",
   "SEARCH": "Rechercher",

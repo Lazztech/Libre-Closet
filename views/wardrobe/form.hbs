@@ -80,6 +80,16 @@
     </div>
 
     <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.DATE_AQUIRED'}}</span></label>
+      <input
+        type="date"
+        name="dateAquired"
+        class="input input-bordered"
+        value="{{formatDate garment.dateAquired}}"
+      />
+    </div>
+
+    <div class="form-control">
       <label class="label"><span class="label-text">{{t 'lang.NOTES'}}</span></label>
       <textarea
         name="notes"

@@ -180,10 +180,15 @@
         <span class="text-base-content/60 text-sm">{{t 'lang.SIZE'}}</span>
         <span class="font-medium">{{garment.size}}</span>
       </div>
-      {{/if}} {{#if garment.color}}
+      {{/if}}       {{#if garment.color}}
       <div class="flex justify-between">
         <span class="text-base-content/60 text-sm">{{t 'lang.COLOR'}}</span>
         <span class="capitalize font-medium">{{garment.color}}</span>
+      </div>
+      {{/if}} {{#if garment.dateAquired}}
+      <div class="flex justify-between">
+        <span class="text-base-content/60 text-sm">{{t 'lang.DATE_AQUIRED'}}</span>
+        <span class="font-medium">{{formatDate garment.dateAquired}}</span>
       </div>
       {{/if}} {{#if garment.notes}}
       <div class="flex flex-col gap-1">

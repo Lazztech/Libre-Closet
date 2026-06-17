@@ -914,6 +914,22 @@
           "enumItems": [],
           "mappedType": "text"
         },
+        "date_aquired": {
+          "name": "date_aquired",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        },
         "notes": {
           "name": "notes",
           "type": "text",
