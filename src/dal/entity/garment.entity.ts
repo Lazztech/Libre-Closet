@@ -40,6 +40,9 @@ export class Garment extends ShareableId {
   @Property({ nullable: true })
   public notes?: string;
 
+  @Property({ default: false })
+  public archived = false;
+
   @OneToOne({
     entity: () => File,
     nullable: true,

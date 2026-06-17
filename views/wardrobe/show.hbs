@@ -231,6 +231,18 @@
   </div>
   {{/if}}
 
+  {{!-- Archive --}}
+  {{#if canDelete}}
+  <button
+    class="btn btn-outline btn-sm w-full mb-2"
+    hx-post="/wardrobe/{{garment.id}}/archive"
+    hx-confirm="{{#if garment.archived}}{{t 'lang.CONFIRM_UNARCHIVE'}}{{else}}{{t 'lang.CONFIRM_ARCHIVE'}}{{/if}}"
+    hx-indicator="#loading"
+  >
+    {{#if garment.archived}}{{t 'lang.UNARCHIVE'}}{{else}}{{t 'lang.ARCHIVE'}}{{/if}}
+  </button>
+  {{/if}}
+
   {{!-- Delete --}}
   {{#if canDelete}}
   <button

@@ -63,6 +63,7 @@ export class GarmentService {
       ...(dto.category ? { category: dto.category } : {}),
       ...(dto.color ? { color: dto.color } : {}),
       ...(normalizedSize ? { size: normalizedSize } : {}),
+      ...(dto.archived !== 'true' ? { archived: false } : {}),
       ...(dto.keyword
         ? {
             $or: [
@@ -289,6 +290,13 @@ export class GarmentService {
   async remove(id: number, userId?: number): Promise<void> {
     const garment = await this.findOne(id, userId);
     await this.garmentRepository.getEntityManager().removeAndFlush(garment);
+  }
+
+  async archive(id: number, userId?: number): Promise<Garment> {
+    const garment = await this.findOne(id, userId);
+    garment.archived = !garment.archived;
+    await this.garmentRepository.getEntityManager().flush();
+    return garment;
   }
 
   private normalizeSize(input?: string): string | undefined {

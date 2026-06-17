@@ -309,6 +309,27 @@ export class WardrobeController {
     return reply.send();
   }
 
+  @Post(':id/archive')
+  async archive(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
+    @Query('ownerId') ownerId: string | undefined,
+  ) {
+    const userId = this.userId(req);
+    const viewOwner = ownerId ? parseInt(ownerId, 10) : undefined;
+
+    // Archive/unarchive is only allowed for the owner
+    if (viewOwner != null && viewOwner !== userId) {
+      throw new ForbiddenException();
+    }
+
+    await this.garmentService.archive(id, userId);
+    const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
+    reply.header('HX-Redirect', `/wardrobe${redirectSuffix}`);
+    return reply.send();
+  }
+
   @Post(':id/nobg')
   async updateNobg(
     @Param('id', ParseIntPipe) id: number,
