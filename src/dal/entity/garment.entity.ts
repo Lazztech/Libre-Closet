@@ -40,6 +40,9 @@ export class Garment extends ShareableId {
   @Property({ nullable: true })
   public notes?: string;
 
+  @Property({ nullable: true, columnType: 'text' })
+  public washingDetails?: string;
+
   @OneToOne({
     entity: () => File,
     nullable: true,

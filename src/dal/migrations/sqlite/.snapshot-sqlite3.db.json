@@ -930,6 +930,22 @@
           "enumItems": [],
           "mappedType": "text"
         },
+        "washing_details": {
+          "name": "washing_details",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
         "photo_id": {
           "name": "photo_id",
           "type": "integer",

@@ -140,6 +140,7 @@ export class WardrobeController {
       color?: GarmentColor;
       size?: string;
       notes?: string;
+      washingDetails?: string;
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
@@ -161,6 +162,7 @@ export class WardrobeController {
         color: body.color,
         size: body.size,
         notes: body.notes,
+        washingDetails: body.washingDetails,
       },
       viewOwner ?? userId,
     );
@@ -253,6 +255,7 @@ export class WardrobeController {
       color?: GarmentColor;
       size?: string;
       notes?: string;
+      washingDetails?: string;
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
@@ -275,6 +278,7 @@ export class WardrobeController {
         color: body.color,
         size: body.size,
         notes: body.notes,
+        washingDetails: body.washingDetails,
       },
       viewOwner ?? userId,
       userId,

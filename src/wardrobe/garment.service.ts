@@ -144,6 +144,7 @@ export class GarmentService {
       color: dto.color,
       size: this.normalizeSize(dto.size),
       notes: dto.notes,
+      washingDetails: dto.washingDetails,
       photo: photo ?? undefined,
     });
 
@@ -245,6 +246,7 @@ export class GarmentService {
     if ('color' in dto) garment.color = dto.color;
     if ('size' in dto) garment.size = this.normalizeSize(dto.size);
     if ('notes' in dto) garment.notes = dto.notes;
+    if ('washingDetails' in dto) garment.washingDetails = dto.washingDetails;
 
     await this.garmentRepository.getEntityManager().flush();
     return garment;
