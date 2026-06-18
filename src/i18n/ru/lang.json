@@ -219,5 +219,13 @@
   "INVITE_VIEW_DESC": "Они могут просматривать все ваши вещи, но не могут редактировать, добавлять или удалять что-либо.",
   "INVITE_MANAGE_DESC": "Они могут просматривать, добавлять и редактировать вещи в вашем гардеробе, но не могут их удалять.",
   "INVITE_LOGIN_REQUIRED": "Вам необходимо войти или создать аккаунт, чтобы принять это приглашение.",
-  "MY_WARDROBE": "Мой Гардероб"
+  "MY_WARDROBE": "Мой Гардероб",
+  "SCREENSHOT_WARDROBE_ALT": "Гардероб - вид сеткой на мобильном",
+  "SCREENSHOT_WARDROBE_CAPTION": "Гардероб",
+  "SCREENSHOT_GARMENT_ALT": "Образы на мобильном",
+  "SCREENSHOT_GARMENT_CAPTION": "Образы",
+  "SCREENSHOT_OUTFIT_BUILDER_ALT": "Календарь образов на мобильном",
+  "SCREENSHOT_OUTFIT_BUILDER_CAPTION": "Календарь",
+  "SCREENSHOT_OUTFIT_ALT": "Конструктор образов на мобильном",
+  "SCREENSHOT_OUTFIT_CAPTION": "Конструктор"
 }
