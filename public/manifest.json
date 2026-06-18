@@ -44,14 +44,14 @@
   "screenshots": [
     {
       "src": "/assets/screenshots/wardrobe-desktop.webp",
-      "sizes": "1280x800",
+      "sizes": "2300x2034",
       "type": "image/webp",
       "form_factor": "wide",
       "label": "Wardrobe view with garment catalog"
     },
     {
       "src": "/assets/screenshots/wardrobe-mobile.webp",
-      "sizes": "750x1334",
+      "sizes": "1179x2556",
       "type": "image/webp",
       "form_factor": "narrow",
       "label": "Wardrobe view on mobile"
