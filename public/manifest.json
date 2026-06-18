@@ -43,14 +43,14 @@
   "description": "A free, open-source digital wardrobe organizer. Catalog your clothing, build outfits, and share looks — self-hostable and privacy-first.",
   "screenshots": [
     {
-      "src": "/assets/screenshots/wardrobe-desktop.webp",
+      "src": "/assets/screenshots/Screenshot_1.webp",
       "sizes": "2300x2034",
       "type": "image/webp",
       "form_factor": "wide",
       "label": "Wardrobe view with garment catalog"
     },
     {
-      "src": "/assets/screenshots/wardrobe-mobile.webp",
+      "src": "/assets/screenshots/Screenshot_mobile_1.webp",
       "sizes": "1179x2556",
       "type": "image/webp",
       "form_factor": "narrow",
