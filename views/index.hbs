@@ -1,6 +1,24 @@
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Lazztech",
+    "url": "https://lazztech.com",
+    "sameAs": ["https://github.com/lazztech"]
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{{appName}}",
+    "url": "{{canonicalUrl}}",
+    "description": "{{t 'lang.APP_DESCRIPTION'}}"
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "{{appName}}",
     "applicationCategory": "LifestyleApplication",
@@ -333,6 +351,16 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  {{!-- Why self-host section --}}
+  <section class="py-20 px-4 bg-base-200">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-6">{{t 'lang.WHY_SELF_HOST_TITLE'}}</h2>
+      <p class="text-base-content/70 leading-relaxed">
+        {{t 'lang.WHY_SELF_HOST_DESC'}}
+      </p>
     </div>
   </section>
 

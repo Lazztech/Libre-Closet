@@ -29,6 +29,7 @@ https://nestjs-i18n.com/quick-start --}}
     <meta name="twitter:image" content="{{ogImage}}" />
     <meta property="og:site_name" content="{{appName}}" />
 
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     {{!--
     https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
     https://developer.chrome.com/docs/lighthouse/pwa/apple-touch-icon --}}
@@ -61,8 +62,11 @@ https://nestjs-i18n.com/quick-start --}}
     </script>
     {{#if pwaEnabled}}
     <script type="module" src="/modules/pwa-install.bundle.js"></script>
-    {{/if}} {{! Include assets/main.css and build output from
+    {{/if}}     {{! Resource hint for CDN analytics }}
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" />
+    {{! Include assets/main.css and build output from
     TailwindCSS/DaisyUI }}
+    <link href="/bundle.css" rel="preload" as="style" />
     <link href="/bundle.css" rel="stylesheet" />
   </head>
 

@@ -33,6 +33,18 @@ async function bootstrap() {
     (reply as any).locals = await viewContextService.buildContext(req);
   });
 
+  // Security headers on all responses
+  fastify.addHook('onSend', async (_request, reply, payload) => {
+    reply.header('X-Content-Type-Options', 'nosniff');
+    reply.header('X-Frame-Options', 'DENY');
+    reply.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+    reply.header(
+      'Strict-Transport-Security',
+      'max-age=31536000; includeSubDomains',
+    );
+    return payload;
+  });
+
   await app.register(fastifyCookie);
   // https://docs.nestjs.com/techniques/compression
   await app.register(fastifyCompress);

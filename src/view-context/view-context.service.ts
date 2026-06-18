@@ -21,7 +21,10 @@ export class ViewContextService {
   async buildContext(req: FastifyRequest) {
     const locale = I18nContext.current()?.lang ?? 'en';
     const path = req.url.split('?')[0];
-    const canonicalUrl = `${req.protocol}://${req.hostname}${path}`;
+    const protocol =
+      (req.headers['x-forwarded-proto'] as string) ?? req.protocol;
+    const host = (req.headers['x-forwarded-host'] as string) ?? req.hostname;
+    const canonicalUrl = `${protocol}://${host}${path}`;
     const ogLocaleMap: Record<string, string> = {
       en: 'en_US',
       ru: 'ru_RU',
@@ -31,9 +34,16 @@ export class ViewContextService {
       de: 'de_DE',
     };
 
+    const siteUrl = this.configService.get<string>('SITE_URL') ?? host;
+    const baseUrl = `${protocol}://${host}`;
+    const appName = this.configService.get<string>('APP_NAME');
+    const appDescription =
+      'Self-hosted wardrobe organizer. Catalog clothes with photos, build outfits, and install as an offline PWA. Free and open-source. No subscription, no ads.';
+    const ogImage = `${baseUrl}/assets/lazztech_title.svg`;
+
     const context: Record<string, any> = {
-      appName: this.configService.get<string>('APP_NAME'),
-      siteUrl: req.host,
+      appName,
+      siteUrl,
       baseUrl: req.url === '/' ? '' : req.url,
       authEnabled: this.configService.get<boolean>('AUTH_ENABLED'),
       signupsDisabled: this.configService.get<boolean>('DISABLE_REGISTRATION'),
@@ -42,6 +52,9 @@ export class ViewContextService {
       canonicalUrl,
       ogUrl: canonicalUrl,
       ogLocale: ogLocaleMap[locale] ?? 'en_US',
+      ogTitle: appName,
+      ogDescription: appDescription,
+      ogImage,
     };
 
     try {

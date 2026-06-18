@@ -1,0 +1,8 @@
+# Libre Closet
+> Self-hosted, open-source wardrobe organizer. Catalog clothing, build outfits, and schedule looks — privacy-first, no subscription.
+## Docs
+- GitHub: https://github.com/lazztech/libre-closet
+- README: https://github.com/lazztech/libre-closet#readme
+## Optional
+- PWA: /wardrobe
+- Register: /auth/register

@@ -102,7 +102,10 @@ export class AppController {
 
   @Get('sitemap.xml')
   sitemap(@Req() req: FastifyRequest, @Res() reply: FastifyReply): void {
-    const baseUrl = `${req.protocol}://${req.host}`;
+    const protocol =
+      (req.headers['x-forwarded-proto'] as string) ?? req.protocol;
+    const host = (req.headers['x-forwarded-host'] as string) ?? req.host;
+    const baseUrl = `${protocol}://${host}`;
     reply.header('Content-Type', 'application/xml; charset=utf-8');
     reply.send(
       `<?xml version="1.0" encoding="UTF-8"?>
@@ -111,6 +114,16 @@ export class AppController {
     <loc>${baseUrl}/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/auth/register</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/auth/login</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>`,
     );

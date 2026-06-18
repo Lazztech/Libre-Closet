@@ -1,8 +1,32 @@
 User-agent: *
 Allow: /
+Allow: /auth/register
+Allow: /auth/login
 Disallow: /wardrobe
 Disallow: /outfits
 Disallow: /auth
 Disallow: /files
 Disallow: /notification
 Disallow: /chat
+
+User-agent: GPTBot
+Allow: /
+Allow: /auth/register
+Allow: /auth/login
+
+User-agent: Claude-Web
+Allow: /
+Allow: /auth/register
+Allow: /auth/login
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /auth/register
+Allow: /auth/login
+
+User-agent: Google-Extended
+Allow: /
+Allow: /auth/register
+Allow: /auth/login
+
+Sitemap: https://librecloset.lazz.tech/sitemap.xml
