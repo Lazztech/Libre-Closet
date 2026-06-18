@@ -24,6 +24,8 @@
   "FEATURE_I18N_DESC": "Verfügbar auf Englisch, Italienisch, Französisch, Russisch, Deutsch und Spanisch. Community-Übersetzungen willkommen.",
   "FEATURE_SHARING_TITLE": "Garderobenteilung",
   "FEATURE_SHARING_DESC": "Teilen Sie Ihre Garderobe mit Freunden oder einem Stylisten. VIEW zum Durchsuchen, MANAGE zum Bearbeiten.",
+  "WHY_SELF_HOST_TITLE": "Warum deinen Kleiderschrank selbst hosten?",
+  "WHY_SELF_HOST_DESC": "Die meisten Kleiderschrank-Apps sind SaaS-Produkte, die deine Kleidungsdaten auf ihren Servern speichern, deine Vorlieben für Werbung analysieren und über Nacht verschwinden können – und deinen Katalog mitnehmen. Libre Closet geht einen anderen Weg: Es läuft auf deiner eigenen Hardware, speichert Daten in einer lokalen SQLite- oder Postgres-Datenbank, die du kontrollierst, und ist unter der AGPL-3.0 lizenziert, um sicherzustellen, dass es für immer frei und offen bleibt. Du erhältst alle Funktionen eines modernen Kleiderschrank-Organizers – visuelles Outfit-Building, Hintergrundentfernung, Planung, Teilen – ohne deine persönlichen Stildaten einem Unternehmen zu überlassen.",
   "SELF_HOST_TITLE": "Selbst hosten in Sekunden",
   "SELF_HOST_DESC": "Betreibe Libre Closet auf deinem eigenen Server, NAS oder Raspberry Pi mit einem einzigen Docker-Befehl.",
   "SELF_HOST_NOTE": "Siehe README für Docker-Compose- und Umgebungsvariablen-Optionen.",
