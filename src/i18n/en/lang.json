@@ -15,7 +15,7 @@
   "FEATURE_SCHEDULING_TITLE": "Outfit scheduling",
   "FEATURE_SCHEDULING_DESC": "Plan what to wear ahead of time on a visual calendar. Schedule outfits for the week, track what you've worn, and avoid repeating looks unintentionally.",
   "FEATURE_BG_REMOVAL_TITLE": "Background removal",
-  "FEATURE_BG_REMOVAL_DESC": "Clean up garment photos automatically with on-device AI background removal. No image editing skills needed - snap a photo and let the ML model isolate your clothing on any background.",
+  "FEATURE_BG_REMOVAL_DESC": "Clean up garment photos automatically with on-device AI background removal. No image editing skills needed - snap a photo and let the ML model isolate your clothing on any background. Runs entirely client-side, so your server doesn't need a GPU.",
   "FEATURE_CATEGORIES_TITLE": "Custom categories",
   "FEATURE_CATEGORIES_DESC": "Adapt garment categories to your own closet rather than forcing your style into rigid defaults. Create custom types, rename existing ones, and organize your wardrobe your way.",
   "FEATURE_DOCKER_TITLE": "One-command deploy",
