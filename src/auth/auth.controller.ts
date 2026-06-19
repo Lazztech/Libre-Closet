@@ -112,7 +112,12 @@ export class AuthController {
 
   @Get('login')
   @Render('auth/login')
-  getLogin(): any {}
+  getLogin(@I18n() i18n: I18nContext): any {
+    return {
+      ogTitle: i18n.t('lang.LOGIN_OG_TITLE'),
+      ogDescription: i18n.t('lang.LOGIN_OG_DESC'),
+    };
+  }
 
   @Get('reset')
   @Render('auth/reset')
@@ -193,7 +198,12 @@ export class AuthController {
   @UseGuards(RegistrationGuard)
   @Get('register')
   @Render('auth/register')
-  getRegister(): any {}
+  getRegister(@I18n() i18n: I18nContext): any {
+    return {
+      ogTitle: i18n.t('lang.REGISTER_OG_TITLE'),
+      ogDescription: i18n.t('lang.REGISTER_OG_DESC'),
+    };
+  }
 
   @UseGuards(AuthGuard)
   @Get('profile')

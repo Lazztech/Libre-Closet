@@ -31,19 +31,31 @@ export class AppController {
   @Get('privacy')
   @Render('privacy')
   privacy(@I18n() i18n: I18nContext): any {
-    return { pageTitle: i18n.t('lang.PRIVACY_TITLE') };
+    return {
+      pageTitle: i18n.t('lang.PRIVACY_TITLE'),
+      ogTitle: i18n.t('lang.PRIVACY_OG_TITLE'),
+      ogDescription: i18n.t('lang.PRIVACY_OG_DESC'),
+    };
   }
 
   @Get('about')
   @Render('about')
   about(@I18n() i18n: I18nContext): any {
-    return { pageTitle: i18n.t('lang.ABOUT_TITLE') };
+    return {
+      pageTitle: i18n.t('lang.ABOUT_TITLE'),
+      ogTitle: i18n.t('lang.ABOUT_OG_TITLE'),
+      ogDescription: i18n.t('lang.ABOUT_OG_DESC'),
+    };
   }
 
   @Get('terms')
   @Render('terms')
   terms(@I18n() i18n: I18nContext): any {
-    return { pageTitle: i18n.t('lang.TERMS_TITLE') };
+    return {
+      pageTitle: i18n.t('lang.TERMS_TITLE'),
+      ogTitle: i18n.t('lang.TERMS_OG_TITLE'),
+      ogDescription: i18n.t('lang.TERMS_OG_DESC'),
+    };
   }
 
   @Get('chat')

@@ -231,6 +231,8 @@
   "MY_WARDROBE": "My Wardrobe",
   "PRIVACY_TITLE": "Privacy Policy",
   "PRIVACY_HEADING": "Privacy Policy",
+  "PRIVACY_OG_TITLE": "Privacy Policy — Libre Closet",
+  "PRIVACY_OG_DESC": "Libre Closet privacy policy. How your data is handled on the public cloud instance and on self-hosted instances. No tracking, no ads, no third parties.",
   "PRIVACY_INTRO": "Libre Closet is designed to put you in control of your data, whether you use the public cloud instance hosted by Lazztech or run the software on your own server. This page explains how your data is handled in each scenario.",
   "PRIVACY_PUBLIC_HEADING": "Public Cloud Instance",
   "PRIVACY_PUBLIC_DATA_COLLECTED": "Data we collect",
@@ -254,6 +256,8 @@
   "PRIVACY_CONTACT_DESC": "For privacy questions, open an issue on GitHub or contact Lazztech LLC.",
   "ABOUT_TITLE": "About",
   "ABOUT_HEADING": "About Libre Closet",
+  "ABOUT_OG_TITLE": "About Libre Closet — Self-Hosted Wardrobe Organizer",
+  "ABOUT_OG_DESC": "Learn about Libre Closet, the free open-source self-hosted wardrobe organizer built by Lazztech. Our story, technology, and mission.",
   "ABOUT_INTRO": "Libre Closet is a free, open-source, self-hosted wardrobe organizer built by Lazztech LLC.",
   "ABOUT_STORY": "Our story",
   "ABOUT_STORY_DESC": "We built Libre Closet because we were tired of wardrobe apps that lock your personal style data behind subscriptions, mine your preferences for advertising, and can disappear overnight. We believe your wardrobe data belongs to you, on your hardware, under your control, forever.",
@@ -264,6 +268,8 @@
   "ABOUT_LINK": "Visit Lazztech",
   "TERMS_TITLE": "Terms of Service",
   "TERMS_HEADING": "Terms of Service",
+  "TERMS_OG_TITLE": "Terms of Service — Libre Closet",
+  "TERMS_OG_DESC": "Terms of service for Libre Closet, the AGPL-3.0 licensed self-hosted wardrobe organizer. License, warranty, and contact information.",
   "TERMS_INTRO": "By using Libre Closet, you agree to these terms. Libre Closet is free and open-source software licensed under the AGPL-3.0.",
   "TERMS_SERVICE": "Service description",
   "TERMS_SERVICE_DESC": "Libre Closet is a self-hosted wardrobe organizer. When you self-host, you run the software on your own infrastructure. Lazztech LLC provides the source code and optional hosted public instance but does not control your self-hosted instance or your data.",
@@ -272,5 +278,9 @@
   "TERMS_NO_WARRANTY": "No warranty",
   "TERMS_NO_WARRANTY_DESC": "The software is provided \"as is\", without warranty of any kind. Lazztech LLC is not liable for any damages arising from the use of the software.",
   "TERMS_CONTACT": "Contact",
-  "TERMS_CONTACT_DESC": "For questions about these terms, open an issue on GitHub or contact Lazztech LLC."
+  "TERMS_CONTACT_DESC": "For questions about these terms, open an issue on GitHub or contact Lazztech LLC.",
+  "LOGIN_OG_TITLE": "Sign In — Libre Closet",
+  "LOGIN_OG_DESC": "Sign in to your Libre Closet account to manage your wardrobe, build outfits, and schedule looks.",
+  "REGISTER_OG_TITLE": "Register — Libre Closet",
+  "REGISTER_OG_DESC": "Create your free Libre Closet account. Self-hosted, open-source wardrobe organizer. No subscription, no ads, no tracking."
 }
