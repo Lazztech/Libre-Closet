@@ -29,4 +29,13 @@ Allow: /
 Allow: /auth/register
 Allow: /auth/login
 
+User-agent: AI2Bot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 Sitemap: https://librecloset.lazz.tech/sitemap.xml

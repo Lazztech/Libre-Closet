@@ -25,7 +25,10 @@ export class AppController {
   @Get()
   @Render('index')
   index(@I18n() i18n: I18nContext): any {
-    return { pageTitle: i18n.t('lang.PAGE_TITLE_HOME') };
+    return {
+      pageTitle: i18n.t('lang.PAGE_TITLE_HOME'),
+      ogTitle: i18n.t('lang.PAGE_TITLE_HOME'),
+    };
   }
 
   @Get('privacy')
