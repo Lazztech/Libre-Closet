@@ -24,8 +24,20 @@ export class AppController {
 
   @Get()
   @Render('index')
-  index(@I18n() i18n: I18nContext) {
+  index(@I18n() i18n: I18nContext): any {
     return { pageTitle: i18n.t('lang.PAGE_TITLE_HOME') };
+  }
+
+  @Get('privacy')
+  @Render('privacy')
+  privacy(@I18n() i18n: I18nContext): any {
+    return { pageTitle: i18n.t('lang.PRIVACY_TITLE') };
+  }
+
+  @Get('about')
+  @Render('about')
+  about(@I18n() i18n: I18nContext): any {
+    return { pageTitle: i18n.t('lang.ABOUT_TITLE') };
   }
 
   @Get('chat')
@@ -127,6 +139,18 @@ export class AppController {
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/privacy</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/about</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>`,
     );

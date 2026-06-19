@@ -42,6 +42,10 @@ async function bootstrap() {
       'Strict-Transport-Security',
       'max-age=31536000; includeSubDomains',
     );
+    reply.header(
+      'Content-Security-Policy',
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.hugeicons.com; font-src 'self'; connect-src 'self' https://static.cloudflareinsights.com; frame-ancestors 'none';",
+    );
     return payload;
   });
 
