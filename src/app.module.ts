@@ -81,7 +81,7 @@ import { ViewContextModule } from './view-context/view-context.module';
         PRIVATE_VAPID_KEY: Joi.optional().default(
           'UUxI4O8-FbRouAevSmBQ6o18hgE4nSG3qwvJTfKc-ls',
         ),
-        SITE_URL: Joi.string().default('https://mysite.com'),
+        SITE_URL: Joi.string().default('https://librecloset.lazz.tech'),
         ICON_NAME: Joi.string().default('lazztech_icon.webp'),
         DATA_PATH: Joi.string().default(path.join(process.cwd(), 'data')),
         DATABASE_TYPE: Joi.string()
