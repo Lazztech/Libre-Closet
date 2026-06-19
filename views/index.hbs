@@ -1,29 +1,44 @@
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@id": "{{canonicalUrl}}#organization",
     "@type": "Organization",
     "name": "Lazztech",
     "url": "https://lazztech.com",
     "logo": "https://librecloset.lazz.tech/assets/lazztech_icon.webp",
-    "sameAs": ["https://github.com/lazztech"]
+    "description": "Creator of Libre Closet — free, open-source, self-hosted wardrobe organizer.",
+    "sameAs": [
+      "https://github.com/lazztech",
+      "https://github.com/lazztech/libre-closet"
+    ]
   }
 </script>
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@id": "{{canonicalUrl}}#website",
     "@type": "WebSite",
     "name": "{{appName}}",
     "url": "{{canonicalUrl}}",
-    "description": "{{t 'lang.APP_DESCRIPTION'}}"
+    "description": "{{t 'lang.APP_DESCRIPTION'}}",
+    "inLanguage": "{{ogLocale}}",
+    "publisher": {
+      "@id": "{{canonicalUrl}}#organization"
+    }
   }
 </script>
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
+    "@id": "{{canonicalUrl}}#software",
+    "@type": "WebApplication",
     "name": "{{appName}}",
     "applicationCategory": "LifestyleApplication",
-    "operatingSystem": "Web",
+    "operatingSystem": "Linux, Web",
+    "browserRequirements": "Requires a modern browser with Service Worker support",
+    "author": {
+      "@id": "{{canonicalUrl}}#organization"
+    },
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -31,7 +46,8 @@
     },
     "url": "{{canonicalUrl}}",
     "description": "{{t 'lang.APP_DESCRIPTION'}}",
-    "license": "https://www.gnu.org/licenses/agpl-3.0.html"
+    "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+    "featureList": "{{canonicalUrl}}#features"
   }
 </script>
 
@@ -189,7 +205,7 @@
   </section>
 
   {{!-- Features --}}
-  <section class="py-20 px-4 bg-base-100">
+  <section id="features" class="py-20 px-4 bg-base-100">
     <div class="max-w-5xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-12">
         {{t 'lang.FEATURES_TITLE'}}

@@ -20,6 +20,8 @@ https://nestjs-i18n.com/quick-start --}}
     <meta property="og:title" content="{{ogTitle}}" />
     <meta property="og:description" content="{{ogDescription}}" />
     <meta property="og:image" content="{{ogImage}}" />
+    <meta property="og:image:width" content="1000" />
+    <meta property="og:image:height" content="1000" />
     {{!-- Twitter Open Graph Meta Tags https://ogp.me/ --}}
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="twitter:domain" content="{{siteUrl}}" />
@@ -41,10 +43,11 @@ https://nestjs-i18n.com/quick-start --}}
     {{!-- https://htmx.org/quirks/#attribute-inheritance --}}
     <meta name="htmx-config" content='{"disableInheritance":true}' />
 
-    <title>{{#if pageTitle}}{{pageTitle}}{{else}}{{appName}}{{/if}}</title>
+    <title>{{#if pageTitle}}{{pageTitle}}{{else}}{{appName}} — Free Self-Hosted Wardrobe Organizer{{/if}}</title>
     {{! Used inconjunction with service worker sw.js to enable PWA (Progressive
     Web App) functionality. }}
     <link rel="manifest" href="/manifest.json" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     {{! Served modules from node_modules, look to main.ts to see how this is
     performed. https://htmx.org/docs/#installing
     https://blog.wesleyac.com/posts/why-not-javascript-cdn }}
