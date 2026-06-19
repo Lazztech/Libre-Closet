@@ -40,6 +40,12 @@ export class AppController {
     return { pageTitle: i18n.t('lang.ABOUT_TITLE') };
   }
 
+  @Get('terms')
+  @Render('terms')
+  terms(@I18n() i18n: I18nContext): any {
+    return { pageTitle: i18n.t('lang.TERMS_TITLE') };
+  }
+
   @Get('chat')
   @Render('chat')
   getChat(): any {
@@ -148,6 +154,12 @@ export class AppController {
   </url>
   <url>
     <loc>${baseUrl}/about</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/terms</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

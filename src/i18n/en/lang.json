@@ -251,5 +251,16 @@
   "ABOUT_OPEN_SOURCE_DESC": "Libre Closet is licensed under the AGPL-3.0, guaranteeing it remains free and open forever. The full source code is available on GitHub. Contributions, translations, and feature requests are welcome from the community.",
   "ABOUT_TECH": "Technology",
   "ABOUT_TECH_DESC": "Built with NestJS, HTMX, SQLite/PostgreSQL, Docker, and ONNX runtime for client-side AI background removal. The progressive web app works offline on desktop and mobile.",
-  "ABOUT_LINK": "Visit Lazztech"
+  "ABOUT_LINK": "Visit Lazztech",
+  "TERMS_TITLE": "Terms of Service",
+  "TERMS_HEADING": "Terms of Service",
+  "TERMS_INTRO": "By using Libre Closet, you agree to these terms. Libre Closet is free and open-source software licensed under the AGPL-3.0.",
+  "TERMS_SERVICE": "Service description",
+  "TERMS_SERVICE_DESC": "Libre Closet is a self-hosted wardrobe organizer. When you self-host, you run the software on your own infrastructure. Lazztech LLC provides the source code and optional hosted demo but does not control your instance or your data.",
+  "TERMS_LICENSE": "License",
+  "TERMS_LICENSE_DESC": "Libre Closet is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). You are free to use, modify, and distribute the software under the terms of this license.",
+  "TERMS_NO_WARRANTY": "No warranty",
+  "TERMS_NO_WARRANTY_DESC": "The software is provided \"as is\", without warranty of any kind. Lazztech LLC is not liable for any damages arising from the use of the software.",
+  "TERMS_CONTACT": "Contact",
+  "TERMS_CONTACT_DESC": "For questions about these terms, open an issue on GitHub or contact Lazztech LLC."
 }
