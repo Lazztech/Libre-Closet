@@ -1,0 +1,72 @@
+# Libre Closet — Full Content
+
+> Free, self-hosted, open-source wardrobe organizer. Catalog clothing with photos, build outfits with a drag-and-drop interface, schedule looks on a calendar, and share wardrobes.
+
+## Your wardrobe. Your data.
+
+Libre Closet is a free, open-source, self-hosted wardrobe organizer. Catalog your clothes with photos, build outfits, and keep your style data on your own server — no subscriptions, no ads, and no third-party tracking.
+
+## Features
+
+### Clueless-inspired outfit builder
+Mix and match garments with a visual, drag-and-drop outfit builder. Inspired by the Clueless closet interface, compose complete looks in seconds and save them for later.
+
+### Outfit scheduling
+Plan what to wear ahead of time on a visual calendar. Schedule outfits for the week, track what you've worn, and avoid repeating looks unintentionally.
+
+### Background removal
+Clean up garment photos automatically with on-device AI background removal. No image editing skills needed — snap a photo and let the ML model isolate your clothing on any background. Runs client-side via ONNX runtime, so your server needs no GPU or expensive hardware.
+
+### Custom categories
+Adapt garment categories to your own closet rather than forcing your style into rigid defaults. Create custom types, rename existing ones, and organize your wardrobe your way.
+
+### Privacy first
+Your wardrobe data never leaves your server. Unlike SaaS alternatives that mine your clothing preferences, Libre Closet runs entirely on your hardware with no tracking, no ads, and no third parties.
+
+### Offline-ready PWA
+Install to your home screen and use it without an internet connection. The progressive web app works on desktop and mobile, syncing data locally for instant access even when you're offline.
+
+### One-command deploy
+Self-host in seconds with Docker on any Linux server, NAS, or Raspberry Pi. Your data stays on your infrastructure — no vendor lock-in, no monthly bills.
+
+### Multilingual
+Available in English, Italian, French, Russian, German, and Spanish with community-contributed translations. Use Libre Closet in your preferred language.
+
+### Wardrobe sharing
+Share your wardrobe with friends, family, or a personal stylist. Grant VIEW access for browsing or MANAGE access for collaborative editing — you control the permissions.
+
+## Why self-host your wardrobe?
+
+Most wardrobe apps are SaaS products that store your clothing data on their servers, analyze your preferences for advertising, and can disappear overnight taking your catalog with them. Libre Closet takes a different approach: it runs on your own hardware, stores data in a local SQLite or Postgres database you control, and is licensed under the AGPL-3.0 to guarantee it remains free and open forever. You get all the features of a modern wardrobe organizer — visual outfit building, background removal, scheduling, sharing — without surrendering your personal style data to a corporation.
+
+## Self-host in seconds
+
+Run Libre Closet on your own server, NAS, or Raspberry Pi with a single Docker command:
+
+```bash
+docker run -d \
+  -p 3000:3000 \
+  -v librecloset_data:/app/data \
+  ghcr.io/lazztech/libre-closet
+```
+
+See the README for docker-compose and environment variable options.
+
+## Tech Stack
+
+- **License:** AGPL-3.0 (Free Software)
+- **Backend:** NestJS (TypeScript)
+- **Frontend:** HTMX + hyperscript + DaisyUI (server-rendered, no client framework)
+- **Database:** SQLite or PostgreSQL
+- **AI:** ONNX runtime for client-side background removal
+- **Offline:** Workbox service worker for PWA
+- **Storage:** S3-compatible file storage
+- **Auth:** JWT-based authentication (optional)
+- **Deploy:** Docker, docker-compose, GHCR container images
+
+## Links
+
+- Website: https://librecloset.lazz.tech
+- GitHub: https://github.com/lazztech/libre-closet
+- Container: ghcr.io/lazztech/libre-closet
+- Lazztech: https://lazztech.com

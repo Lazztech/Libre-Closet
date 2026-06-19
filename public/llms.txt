@@ -1,8 +1,51 @@
 # Libre Closet
-> Self-hosted, open-source wardrobe organizer. Catalog clothing, build outfits, and schedule looks — privacy-first, no subscription.
-## Docs
+
+> Free, self-hosted, open-source wardrobe organizer. Catalog clothing with photos, build outfits with a drag-and-drop interface, schedule looks on a calendar, and share wardrobes. Privacy-first — your data stays on your server, no subscriptions, no ads, no third-party tracking.
+
+## What It Does
+
+Libre Closet is a digital wardrobe manager you host yourself. Photograph your clothes, organize them into custom categories, and build outfits with a Clueless-inspired visual builder. Schedule what to wear on a calendar, share your wardrobe with friends or a stylist, and use it offline as a PWA. Runs on any Linux server, NAS, or Raspberry Pi via a single Docker command.
+
+## Key Features
+
+- Clueless-inspired drag-and-drop outfit builder
+- Outfit scheduling on a visual calendar
+- On-device AI background removal (ONNX runtime, client-side, no GPU needed)
+- Custom garment categories adapted to your wardrobe
+- Privacy-first: data stays on your server, no analytics SDKs, no ads
+- Offline-ready Progressive Web App (install to home screen, works without internet)
+- One-command Docker deploy (runs on Linux, NAS, Raspberry Pi)
+- Multilingual: English, Italian, French, Russian, German, Spanish
+- Wardrobe sharing with VIEW or MANAGE permissions
+- HTMX-powered SPA with server-rendered HTML for fast page loads
+
+## Pricing
+
+- **Free**: Full app, no restrictions. Self-hosted under AGPL-3.0 license.
+
+## Tech Stack
+
+- Open source (AGPL-3.0 license)
+- Self-hosted with Docker
+- NestJS backend (TypeScript)
+- HTMX + hyperscript frontend (server-rendered, no client framework)
+- SQLite or PostgreSQL database
+- ONNX runtime for client-side AI background removal
+- Workbox service worker for offline PWA
+- S3-compatible file storage
+- JWT-based authentication (optional)
+
+## Platforms
+
+- Progressive Web App (any modern browser, desktop or mobile)
+- Install to home screen via PWA manifest
+- Self-hosted via Docker or docker-compose
+
+## Links
+
+- Website: https://librecloset.lazz.tech
 - GitHub: https://github.com/lazztech/libre-closet
-- README: https://github.com/lazztech/libre-closet#readme
-## Optional
-- PWA: /wardrobe
-- Register: /auth/register
+- Documentation: https://github.com/lazztech/libre-closet#readme
+- Open Wardrobe (demo): https://librecloset.lazz.tech/wardrobe
+- Register: https://librecloset.lazz.tech/auth/register
+- Lazztech: https://lazztech.com
