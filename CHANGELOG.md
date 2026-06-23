@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ...
 
+## 0.5.0 - 2026-06-15
+
+#### Added
+
+- Garment washing details
+- Garment acquisition date
+- Garment archival
+- Garment cloning
+
+#### Fixed
+
+- Visual bug on outfit builder
+
 ## 0.4.1 - 2026-06-15
 
 #### Fixed

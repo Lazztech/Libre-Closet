@@ -40,11 +40,11 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 #### Released
 
-- `v0.4.1 - June 15, 2025`: Fixed disable register functionality
+- `v0.5.0 - June 23, 2026`: etc.
+- `v0.4.1 - June 15, 2026`: Fixed disable register functionality
 - `v0.4.0 - June 13, 2026`: Added wardrobe sharing from one user to another with either view only or edit permissions
 - `v0.3.2 - June 09, 2026`: Added background removal toggle for garment image uploads.
 - `v0.3.1 - May 26, 2026`: Refactored server resulting in nearly a 2x throughput increase and almost half the latency.
-- `v0.3.0 - May 21, 2026`: Garment image background touch up tool
 
 For full details refer to the [CHANGELOG](CHANGELOG.md).
 
@@ -69,12 +69,12 @@ Open [http://localhost:3000](http://localhost:3000). No account required by defa
 
 Note, these screenshots are taken of the web application viewed as an installed standalone PWA. This tool may also be used like a traditional web app in the browser.
 
-| Wardrobe (Mobile)                                      | Outfits (Mobile)                                 | Outfit Schedule (Mobile)                                 | Outfit Builder (Mobile)                          |
-| ------------------------------------------------------ | ------------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------ |
+| Wardrobe (Mobile)                                                    | Outfits (Mobile)                                               | Outfit Schedule (Mobile)                                               | Outfit Builder (Mobile)                                        |
+| -------------------------------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------- |
 | ![Wardrobe grid](public/assets/screenshots/Screenshot_mobile_1.webp) | ![Outfits](public/assets/screenshots/Screenshot_mobile_2.webp) | ![Outfit Schedule](public/assets/screenshots/Screenshot_mobile_3.webp) | ![Outfit ](public/assets/screenshots/Screenshot_mobile_4.webp) |
 
-| Wardrobe (Desktop)                              | Outfits (Desktop)                         | Outfit Schedule (Desktop)                         | Outfit Builder (Desktop)                        |
-| ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------- | ----------------------------------------------- |
+| Wardrobe (Desktop)                                            | Outfits (Desktop)                                       | Outfit Schedule (Desktop)                                       | Outfit Builder (Desktop)                                      |
+| ------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
 | ![Wardrobe grid](public/assets/screenshots/Screenshot_1.webp) | ![Outfits](public/assets/screenshots/Screenshot_2.webp) | ![Outfit Schedule](public/assets/screenshots/Screenshot_3.webp) | ![Outfit detail](public/assets/screenshots/Screenshot_4.webp) |
 
 ---
