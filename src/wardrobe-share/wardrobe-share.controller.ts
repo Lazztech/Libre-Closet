@@ -77,8 +77,7 @@ export class WardrobeShareController {
     const inviteUrl = `${req.protocol}://${req.headers.host}/wardrobe-share/invite/${share.inviteToken}`;
 
     if (req.headers['hx-request']) {
-      return reply.view('wardrobe-share/partials/invite-link-result', {
-        layout: false,
+      return reply.viewPartial('wardrobe-share/partials/invite-link-result', {
         inviteUrl,
       });
     }

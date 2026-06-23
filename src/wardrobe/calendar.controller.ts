@@ -96,8 +96,7 @@ export class CalendarController {
       const label = isWorn
         ? `✓ ${i18n.t('lang.CALENDAR_WORN')}`
         : i18n.t('lang.CALENDAR_MARK_WORN_PROMPT');
-      return reply.view('partials/calendar_worn_button', {
-        layout: false,
+      return reply.viewPartial('partials/calendar_worn_button', {
         entryId: id,
         week,
         btnClass,

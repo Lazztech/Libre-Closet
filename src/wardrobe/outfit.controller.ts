@@ -118,7 +118,7 @@ export class OutfitController {
     const count = items.length;
     const idx = Math.min(Math.max(parseInt(indexStr) || 0, 0), count);
     const row = this.outfitService.buildRow(category, items, idx, i18n);
-    return reply.view('partials/outfit_row', { layout: false, row });
+    return reply.viewPartial('partials/outfit_row', { row });
   }
 
   @Get(':id')
