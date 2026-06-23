@@ -35,7 +35,8 @@ async function bootstrap() {
   });
 
   // Security headers on all responses
-  fastify.addHook('onSend', (_request, reply, payload) => {
+  // eslint-disable-next-line @typescript-eslint/require-await -- Fastify onSend hook must return a Promise if not using the callback (next) pattern
+  fastify.addHook('onSend', async (_request, reply, payload) => {
     reply.header('X-Content-Type-Options', 'nosniff');
     reply.header('X-Frame-Options', 'DENY');
     reply.header('Referrer-Policy', 'strict-origin-when-cross-origin');
