@@ -40,7 +40,7 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 #### Released
 
-- `v0.4.1 - June 15, 2025`: Fixed disable register functionality
+- `v0.4.1 - June 15, 2026`: Fixed disable register functionality
 - `v0.4.0 - June 13, 2026`: Added wardrobe sharing from one user to another with either view only or edit permissions
 - `v0.3.2 - June 09, 2026`: Added background removal toggle for garment image uploads.
 - `v0.3.1 - May 26, 2026`: Refactored server resulting in nearly a 2x throughput increase and almost half the latency.
