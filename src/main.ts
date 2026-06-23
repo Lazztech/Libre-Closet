@@ -31,11 +31,11 @@ async function bootstrap() {
   const fastify = app.getHttpAdapter().getInstance();
   fastify.decorateReply('locals', null);
   fastify.addHook('preHandler', async (req, reply) => {
-    (reply as any).locals = await viewContextService.buildContext(req);
+    reply.locals = await viewContextService.buildContext(req);
   });
 
   // Security headers on all responses
-  fastify.addHook('onSend', async (_request, reply, payload) => {
+  fastify.addHook('onSend', (_request, reply, payload) => {
     reply.header('X-Content-Type-Options', 'nosniff');
     reply.header('X-Frame-Options', 'DENY');
     reply.header('Referrer-Policy', 'strict-origin-when-cross-origin');
