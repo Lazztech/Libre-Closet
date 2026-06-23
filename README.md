@@ -38,7 +38,7 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 | Latency p99  | 18.00 ms     | 11.00 ms     | **–38.89%** |
 | Throughput   | 26.39 MB/sec | 44.30 MB/sec | **+67.87%** |
 
-#### Released
+#### Release
 
 - `v0.5.0 - June 23, 2026`: etc.
 - `v0.4.1 - June 15, 2026`: Fixed disable register functionality
