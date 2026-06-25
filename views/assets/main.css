@@ -312,16 +312,26 @@ body {
 }
 
 .ms-clear {
-  font-size: 0.75rem;
-  color: var(--color-primary);
   cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 30%, transparent);
+  border-radius: var(--radius-field);
+  background: color-mix(in oklch, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
 .ms-clear:hover {
-  text-decoration: underline;
+  background: color-mix(in oklch, var(--color-primary) 18%, transparent);
+  border-color: color-mix(in oklch, var(--color-primary) 45%, transparent);
+}
+
+.ms-clear:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* REPLACE with this */
