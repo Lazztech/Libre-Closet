@@ -34,11 +34,13 @@
       }
       checked.forEach(function (cb) {
         const pill = document.createElement('span');
-        pill.className = 'ms-pill';
+        // pill.className = 'ms-pill';
+        pill.className = 'ms-pill badge badge-ghost';
         pill.innerHTML =
           swatch(cb.value) +
           '<span class="capitalize">' + cb.value + '</span>' +
-          '<span class="ms-pill-remove" data-val="' + cb.value + '">\u00d7</span>';
+          '<span class="ms-pill-remove badge badge-sm badge-neutral" data-val="' + cb.value + '">\u00d7</span>'
+          // '<span class="ms-pill-remove" data-val="' + cb.value + '">\u00d7</span>';
         pillsEl.appendChild(pill);
       });
       countEl.textContent = checked.length + ' selected';
