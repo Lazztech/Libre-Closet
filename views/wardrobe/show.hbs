@@ -2,7 +2,10 @@
 
 <main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
   <div class="flex items-center gap-3 mb-6">
-    <a href="/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}" class="btn btn-ghost btn-sm btn-circle">
+    <a
+      href="/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
+      class="btn btn-ghost btn-sm btn-circle"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -72,8 +75,7 @@
       />
     </svg>
   </div>
-  {{/if}} {{#if canEdit}}
-  {{!-- Photo upload --}}
+  {{/if}} {{#if canEdit}} {{!-- Photo upload --}}
   <form
     hx-post="/wardrobe/{{garment.id}}/photo{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
     hx-encoding="multipart/form-data"
@@ -108,7 +110,12 @@
       ></span>
     </div>
     <label class="flex items-center gap-2 cursor-pointer select-none">
-      <input type="checkbox" id="bgRemovalToggle" class="toggle toggle-sm" checked />
+      <input
+        type="checkbox"
+        id="bgRemovalToggle"
+        class="toggle toggle-sm"
+        checked
+      />
       <span class="text-sm">{{t 'lang.BG_REMOVAL_TOGGLE'}}</span>
     </label>
     <div
@@ -161,9 +168,7 @@
     }
     {{/if}}
   </script>
-  {{/if}}
-
-  {{!-- Metadata --}}
+  {{/if}} {{!-- Metadata --}}
   <div class="card bg-base-100 shadow-sm mb-4">
     <div class="card-body gap-3">
       <div class="flex justify-between">
@@ -183,7 +188,9 @@
       {{/if}}       {{#if garment.color}}
       <div class="flex justify-between">
         <span class="text-base-content/60 text-sm">{{t 'lang.COLOR'}}</span>
-        <span class="capitalize font-medium">{{garment.color}}</span>
+        <span class="capitalize font-medium"
+          >{{formatColors garment.color}}</span
+        >
       </div>
       {{/if}} {{#if garment.washingDetails}}
       <div class="flex flex-col gap-1">
@@ -202,8 +209,7 @@
       {{/if}}
     </div>
   </div>
-  {{!-- Edit --}}
-  {{#if canEdit}}
+  {{!-- Edit --}} {{#if canEdit}}
   <div class="flex gap-2 mb-6">
     <a
       href="/wardrobe/{{garment.id}}/edit{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
@@ -274,8 +280,7 @@
   >
     {{t 'lang.DELETE'}}
   </button>
-  {{/if}}
-  {{!-- Mask editor dialog --}}
+  {{/if}} {{!-- Mask editor dialog --}}
   <dialog id="maskEditorDialog" class="modal">
     <div class="modal-box w-full max-w-lg p-4 flex flex-col gap-4">
       <h3 class="font-bold text-lg">{{t 'lang.MASK_EDITOR_TITLE'}}</h3>
@@ -290,7 +295,9 @@
           </button>
         </div>
         <div class="flex items-center gap-2 flex-1 min-w-32">
-          <span class="text-xs text-base-content/60 shrink-0">{{t 'lang.MASK_BRUSH_SIZE'}}</span>
+          <span class="text-xs text-base-content/60 shrink-0"
+            >{{t 'lang.MASK_BRUSH_SIZE'}}</span
+          >
           <input
             id="maskBrushSize"
             type="range"
@@ -305,7 +312,20 @@
         <canvas
           id="maskEditorCanvas"
           class="block max-w-full mx-auto cursor-crosshair"
-          style="background-image: linear-gradient(45deg, #cccccc 25%, transparent 25%), linear-gradient(-45deg, #cccccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #cccccc 75%), linear-gradient(-45deg, transparent 75%, #cccccc 75%); background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0px; background-color: #ffffff;"
+          style="
+            background-image:
+              linear-gradient(45deg, #cccccc 25%, transparent 25%),
+              linear-gradient(-45deg, #cccccc 25%, transparent 25%),
+              linear-gradient(45deg, transparent 75%, #cccccc 75%),
+              linear-gradient(-45deg, transparent 75%, #cccccc 75%);
+            background-size: 16px 16px;
+            background-position:
+              0 0,
+              0 8px,
+              8px -8px,
+              -8px 0px;
+            background-color: #ffffff;
+          "
         ></canvas>
       </div>
       <div class="modal-action mt-0">

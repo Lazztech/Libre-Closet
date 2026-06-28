@@ -55,6 +55,7 @@ https://nestjs-i18n.com/quick-start --}}
     <script defer src="/modules/_hyperscript.min.js"></script>
     <script defer src="/modules/Sortable.min.js"></script>
     <script defer src="/modules/sse.js"></script>
+    <script defer src="/js/color-multiselect.js" defer></script>
     <script type="importmap">
       {
         "imports": {
@@ -71,6 +72,9 @@ https://nestjs-i18n.com/quick-start --}}
     TailwindCSS/DaisyUI }}
     <link href="/bundle.css" rel="preload" as="style" />
     <link href="/bundle.css" rel="stylesheet" />
+    <script>
+      window.KNOWN_COLORS = new Set({{{knownColors}}});
+    </script>
   </head>
 
   {{! hx-boost 'automagically' replaces all anchor tags with htmx logic that

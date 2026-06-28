@@ -53,3 +53,298 @@ body {
   min-height: 100vh;
   min-height: 100dvh; /* Use dynamic viewport height */
 }
+
+/* color-multiselect.css
+   DaisyUI v5 compatible — uses --color-* variables throughout */
+
+.color-ms {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid color-mix(in oklch, var(--color-base-content) 20%, transparent);
+  border-radius: var(--radius-field);
+  background: var(--color-base-100);
+}
+
+.color-ms[open],
+.color-ms:focus-within {
+  z-index: 20;
+  border-color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
+}
+
+.color-ms summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0.625rem 0.75rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  min-height: 3rem;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.color-ms summary::-webkit-details-marker {
+  display: none;
+}
+
+.ms-placeholder {
+  color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
+  font-size: 0.875rem;
+}
+
+.ms-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.25rem;
+  flex: 1 1 0;
+  min-width: 0;
+  width: 0;
+  padding: 0.125rem 0;
+  max-height: 6rem; /* ~3 rows of pills */
+  overflow-y: auto;
+}
+
+.ms-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem 0.125rem 0.5rem;
+  border-radius: var(--radius-selector, 1.9rem);
+  background: var(--color-base-200);
+  border: 1px solid color-mix(in oklch, var(--color-base-content) 15%, transparent);
+  color: var(--color-base-content);
+  line-height: 1.4;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.ms-pill-remove {
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: 0.875rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  min-height: 1.4rem;
+  margin: -0.125rem -0.375rem -0.125rem 0;
+  border-radius: 0 var(--radius-selector, 1.9rem) var(--radius-selector, 1.9rem) 0;
+  background: color-mix(in oklch, var(--color-base-content) 10%, transparent);
+  align-self: stretch;
+}
+
+.ms-pill-remove:hover {
+  opacity: 1;
+  background: color-mix(in oklch, var(--color-base-content) 20%, transparent);
+}
+
+.ms-chevron {
+  color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.color-ms[open] .ms-chevron {
+  transform: rotate(180deg);
+}
+
+.ms-dropdown-anchor {
+  position: relative;
+  height: 0;
+  overflow: visible;
+}
+
+.ms-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.25rem);
+  z-index: 30;
+  border: 1px solid color-mix(in oklch, var(--color-base-content) 20%, transparent);
+  border-radius: 0 0 var(--radius-field) var(--radius-field);
+  box-shadow: 0 4px 12px color-mix(in oklch, var(--color-base-content) 10%, transparent);
+  background: var(--color-base-100);
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 0.25rem 0;
+}
+
+.ms-search {
+  margin: 0.375rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid color-mix(in oklch, var(--color-base-content) 20%, transparent);
+  border-radius: var(--radius-field);
+  padding: 0.25rem 0.5rem;
+  background: var(--color-base-200);
+  color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
+}
+
+.ms-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.8125rem;
+  color: var(--color-base-content);
+  width: 100%;
+  padding: 0;
+}
+
+.ms-options {
+  padding: 0.125rem 0;
+}
+
+.ms-option {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.4375rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--color-base-content);
+}
+
+.ms-option:hover {
+  background: var(--color-base-200);
+}
+
+.ms-option input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.ms-option.hidden {
+  display: none;
+}
+
+/* Swatch */
+.ms-swatch {
+  /* Change to display: block; to display color dots for each color */
+  display: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  min-width: 0.75rem;
+  min-height: 0.75rem;
+  max-width: 0.75rem;
+  max-height: 0.75rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklch, var(--color-base-content) 20%, transparent);
+  flex-shrink: 0;
+}
+
+/* Known enum colors — CSS color names work directly */
+.ms-swatch--red    { background: red; }
+.ms-swatch--pink   { background: pink; }
+.ms-swatch--orange { background: orange; }
+.ms-swatch--yellow { background: yellow; }
+.ms-swatch--green  { background: green; }
+.ms-swatch--blue   { background: blue; }
+.ms-swatch--purple { background: purple; }
+.ms-swatch--black  { background: black; }
+.ms-swatch--white  { background: white; }
+.ms-swatch--grey   { background: grey; }
+.ms-swatch--beige  { background: beige; }
+.ms-swatch--brown  { background: brown; }
+.ms-swatch--gold   { background: gold; }
+.ms-swatch--silver { background: silver; }
+.ms-swatch--pattern {
+  background: repeating-linear-gradient(
+    45deg,
+    #ccc,
+    #ccc 2px,
+    #fff 2px,
+    #fff 6px
+  );
+}
+/* other + any custom value = neutral fallback */
+.ms-swatch--other {
+  background: color-mix(in oklch, var(--color-base-content) 20%, transparent);
+}
+
+/* Empty state */
+.ms-empty {
+  padding: 0.625rem 0.75rem;
+  font-size: 0.8125rem;
+  color: color-mix(in oklch, var(--color-base-content) 40%, transparent);
+  text-align: center;
+}
+
+/* Create row */
+.ms-create {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--color-primary);
+  border-top: 1px solid color-mix(in oklch, var(--color-base-content) 10%, transparent);
+  margin-top: 0.25rem;
+}
+
+.ms-create:hover {
+  background: color-mix(in oklch, var(--color-success) 10%, transparent);
+}
+
+/* Footer */
+.ms-footer {
+  border-top: 1px solid color-mix(in oklch, var(--color-base-content) 10%, transparent);
+  padding: 0.375rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ms-count {
+  font-size: 0.75rem;
+  color: color-mix(in oklch, var(--color-base-content) 50%, transparent);
+}
+
+.ms-clear {
+  cursor: pointer;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 30%, transparent);
+  border-radius: var(--radius-field);
+  background: color-mix(in oklch, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.ms-clear:hover {
+  background: color-mix(in oklch, var(--color-primary) 18%, transparent);
+  border-color: color-mix(in oklch, var(--color-primary) 45%, transparent);
+}
+
+.ms-clear:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* REPLACE with this */
+.color-ms:focus-within {
+  --input-color: var(--color-base-content);
+  outline: 2px solid var(--input-color);
+  outline-offset: 2px;
+  isolation: isolate;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .color-ms:focus-within {
+    box-shadow: 0 1px color-mix(in oklab, var(--input-color) calc(var(--depth) * 10%), #0000);
+  }
+}

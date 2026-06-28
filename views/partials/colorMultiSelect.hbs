@@ -1,0 +1,57 @@
+<script>
+  window.KNOWN_COLORS = new Set({{{json colors}}});
+</script>
+<div class="form-control w-full min-w-0">
+  <label class="label">
+    <span class="label-text">{{t 'lang.COLOR'}}</span>
+  </label>
+
+  <details class="color-ms w-full min-w-0" id="color-ms-{{@index}}">
+    <summary>
+      <span class="ms-pills" id="color-pills-{{@index}}">
+        <span class="ms-placeholder">{{t 'lang.SELECT_COLOR'}}</span>
+      </span>
+      <svg class="ms-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </summary>
+
+    <div class="ms-dropdown-anchor">
+      <div class="ms-dropdown">
+        <div class="ms-search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="ms-search-input" placeholder="{{t 'lang.SEARCH_OR_CREATE'}}" autocomplete="off">
+        </div>
+
+          <div class="ms-options">
+            {{#each colors}}
+            <label class="ms-option">
+              <input type="checkbox" name="color" value="{{this}}"
+                {{#ifInArray this ../garment.color}}checked{{/ifInArray}}>
+              <span class="ms-swatch ms-swatch--{{this}}"></span>
+              <span class="capitalize">{{this}}</span>
+            </label>
+            {{/each}}
+
+            {{#each customColors}}
+            <label class="ms-option">
+              <input type="checkbox" name="color" value="{{this}}" checked>
+              <span class="ms-swatch ms-swatch--other"></span>
+              <span class="capitalize">{{this}}</span>
+            </label>
+            {{/each}}
+          </div>
+
+        <div class="ms-empty" style="display:none">{{t 'lang.NO_MATCHES'}}</div>
+
+        <div class="ms-create" style="display:none">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>{{t 'lang.CREATE'}} "<strong class="ms-create-label"></strong>"</span>
+        </div>
+
+        <div class="ms-footer">
+          <span class="ms-count">0 {{t 'lang.SELECTED'}}</span>
+          <button type="button" class="ms-clear">{{t 'lang.CLEAR_ALL'}}</button>
+        </div>
+      </div>
+    </div>
+  </details>
+</div>

@@ -13,6 +13,7 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import { Logger } from 'nestjs-pino';
 import { ViewContextService } from './view-context/view-context.service';
+import { GarmentColor } from './wardrobe/garment-color.enum';
 
 async function bootstrap() {
   // https://docs.nestjs.com/security/rate-limiting#proxies
@@ -114,6 +115,9 @@ async function bootstrap() {
     viewExt: 'hbs',
     layout: 'layout',
     includeViewExtension: true,
+    defaultContext: {
+      knownColors: JSON.stringify(Object.values(GarmentColor)),
+    },
   });
 
   // Register partials from views/partials
@@ -150,6 +154,27 @@ async function bootstrap() {
   );
   hbs.registerHelper('json', function (context: unknown) {
     return JSON.stringify(context);
+  });
+  hbs.registerHelper(
+    'ifInArray',
+    function (
+      item: string,
+      value: string | string[] | undefined,
+      options: Handlebars.HelperOptions,
+    ) {
+      if (!value) return options.inverse(this);
+      const arr = Array.isArray(value)
+        ? value
+        : value.split(',').map((s) => s.trim());
+      return arr.includes(item) ? options.fn(this) : options.inverse(this);
+    },
+  );
+  hbs.registerHelper('formatColors', function (value: string | undefined) {
+    if (!value) return '';
+    return value
+      .split(',')
+      .map((s) => s.trim())
+      .join(', ');
   });
   hbs.registerHelper(
     'ifEquals',
