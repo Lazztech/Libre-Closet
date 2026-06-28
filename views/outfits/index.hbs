@@ -31,7 +31,7 @@
                   hx-swap="none"
                   hx-push-url="false"
                   _="on htmx:afterRequest[detail.successful]
-                    reset() me
+                    reset me
                     call document.activeElement.blur()
                     for el in <[tabindex]/> in closest .dropdown
                       call el.blur()
