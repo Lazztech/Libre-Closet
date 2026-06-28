@@ -25,7 +25,7 @@
   {{#if garments.length}}
   <div class="flex flex-wrap gap-4 justify-center">
     {{#each garments}}
-    <a href="/wardrobe/{{this.id}}{{#if ../viewOwner}}?ownerId={{../viewOwner}}{{/if}}" class="card bg-base-100 w-40 sm:w-44 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+    <a href="/wardrobe/{{this.id}}{{#if ../viewOwner}}?ownerId={{../viewOwner}}{{/if}}" class="card bg-base-100 w-40 sm:w-44 shadow-sm hover:shadow-md transition-shadow cursor-pointer {{#if this.archived}}opacity-50{{/if}}">
       <figure class="aspect-square bg-base-200">
         {{#if this.photo}}
         <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}" class="object-cover w-full h-full" />
@@ -88,6 +88,12 @@
       {{search.size}} &times;
     </a>
     {{/if}}
+    {{#if search.archived}}
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&color={{search.color}}&size={{search.size}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+      class="badge badge-warning badge-sm gap-1 cursor-pointer no-underline">
+      {{t 'lang.ARCHIVED'}} &times;
+    </a>
+    {{/if}}
   </div>
 
   {{!-- Search input row --}}
@@ -95,6 +101,7 @@
     <input type="hidden" name="category" id="active-category" value="{{search.category}}">
     <input type="hidden" name="color" id="active-color" value="{{search.color}}">
     <input type="hidden" name="size" id="active-size" value="{{search.size}}">
+    <input type="hidden" name="archived" id="active-archived" value="{{search.archived}}">
     {{#if viewOwner}}<input type="hidden" name="ownerId" value="{{viewOwner}}">{{/if}}
     <input
       type="text"
@@ -156,6 +163,16 @@
     </div>
     {{/if}}
 
+    {{!-- Archived --}}
+    <div class="mb-5">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.ARCHIVED'}}</h4>
+      <label class="cursor-pointer flex items-center gap-2">
+        <input type="checkbox" name="modal-archived" value="true" class="checkbox checkbox-sm"
+          {{#if search.archived}}checked{{/if}}>
+        <span class="text-sm">{{t 'lang.SHOW_ARCHIVED'}}</span>
+      </label>
+    </div>
+
     <div class="modal-action">
       <button type="button"
         class="btn btn-ghost btn-sm"
@@ -169,9 +186,11 @@
           for el in <input[name='modal-size']/>
             set el.checked to false
           end
+          set <input[name='modal-archived']/>.checked to false
           set #active-category.value to ''
           set #active-color.value to ''
           set #active-size.value to ''
+          set #active-archived.value to ''
           call #filter-modal.close()
           call #search-form.submit()">
         {{t 'lang.CLEAR_FILTERS'}}
@@ -188,9 +207,13 @@
           set size to ''
           get the first <input[name='modal-size']:checked/>
           if it then set size to it.value end
+          set archived to ''
+          get the first <input[name='modal-archived']:checked/>
+          if it then set archived to 'true' end
           set #active-category.value to category
           set #active-color.value to color
           set #active-size.value to size
+          set #active-archived.value to archived
           call #filter-modal.close()
           call #search-form.submit()">
         {{t 'lang.APPLY_FILTERS'}}

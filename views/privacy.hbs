@@ -1,0 +1,55 @@
+{{>navbar}}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{siteUrl}}/"},
+      {"@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": "{{siteUrl}}/privacy"}
+    ]
+  }
+</script>
+
+<main class="flex flex-col items-center py-16 px-4">
+  <div class="max-w-2xl w-full prose">
+    <h1 class="text-3xl font-bold mb-8">{{t 'lang.PRIVACY_HEADING'}}</h1>
+
+    <p class="mb-6">{{t 'lang.PRIVACY_INTRO'}}</p>
+
+    {{!-- Public Cloud Instance --}}
+    <h2 class="text-2xl font-bold mt-12 mb-6">{{t 'lang.PRIVACY_PUBLIC_HEADING'}}</h2>
+
+    <h3 class="text-lg font-semibold mt-6 mb-2">{{t 'lang.PRIVACY_PUBLIC_DATA_COLLECTED'}}</h3>
+    <p class="mb-4">{{t 'lang.PRIVACY_PUBLIC_DATA_ITEMS'}}</p>
+
+    <h3 class="text-lg font-semibold mt-6 mb-2">{{t 'lang.PRIVACY_PUBLIC_DATA_STORAGE'}}</h3>
+    <p class="mb-4">{{t 'lang.PRIVACY_PUBLIC_DATA_STORAGE_DESC'}}</p>
+
+    <h3 class="text-lg font-semibold mt-6 mb-2">{{t 'lang.PRIVACY_PUBLIC_THIRD_PARTY'}}</h3>
+    <p class="mb-4">{{t 'lang.PRIVACY_PUBLIC_THIRD_PARTY_DESC'}}</p>
+
+    <h3 class="text-lg font-semibold mt-6 mb-2">{{t 'lang.PRIVACY_PUBLIC_RIGHTS'}}</h3>
+    <p class="mb-6">{{t 'lang.PRIVACY_PUBLIC_RIGHTS_DESC'}}</p>
+
+    {{!-- Self-Hosted Instances --}}
+    <h2 class="text-2xl font-bold mt-12 mb-6">{{t 'lang.PRIVACY_SELF_HOSTED_HEADING'}}</h2>
+
+    <h3 class="text-lg font-semibold mt-6 mb-2">{{t 'lang.PRIVACY_SELF_HOSTED_DATA_COLLECTED'}}</h3>
+    <p class="mb-4">{{t 'lang.PRIVACY_SELF_HOSTED_DATA_ITEMS'}}</p>
+
+    <h3 class="text-lg font-semibold mt-6 mb-2">{{t 'lang.PRIVACY_SELF_HOSTED_DATA_STORAGE'}}</h3>
+    <p class="mb-4">{{t 'lang.PRIVACY_SELF_HOSTED_DATA_STORAGE_DESC'}}</p>
+
+    <h3 class="text-lg font-semibold mt-6 mb-2">{{t 'lang.PRIVACY_SELF_HOSTED_THIRD_PARTY'}}</h3>
+    <p class="mb-4">{{t 'lang.PRIVACY_SELF_HOSTED_THIRD_PARTY_DESC'}}</p>
+
+    <h3 class="text-lg font-semibold mt-6 mb-2">{{t 'lang.PRIVACY_SELF_HOSTED_RIGHTS'}}</h3>
+    <p class="mb-6">{{t 'lang.PRIVACY_SELF_HOSTED_RIGHTS_DESC'}}</p>
+
+    <h2 class="text-xl font-semibold mt-12 mb-3">{{t 'lang.PRIVACY_CONTACT'}}</h2>
+    <p class="mb-6">{{t 'lang.PRIVACY_CONTACT_DESC'}}</p>
+  </div>
+</main>
+
+{{>dock}}

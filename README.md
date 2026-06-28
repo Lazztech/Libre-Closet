@@ -40,7 +40,7 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 #### Released
 
-- `v0.4.1 - June 15, 2025`: Fixed disable register functionality
+- `v0.4.1 - June 15, 2026`: Fixed disable register functionality
 - `v0.4.0 - June 13, 2026`: Added wardrobe sharing from one user to another with either view only or edit permissions
 - `v0.3.2 - June 09, 2026`: Added background removal toggle for garment image uploads.
 - `v0.3.1 - May 26, 2026`: Refactored server resulting in nearly a 2x throughput increase and almost half the latency.
@@ -71,11 +71,11 @@ Note, these screenshots are taken of the web application viewed as an installed 
 
 | Wardrobe (Mobile)                                      | Outfits (Mobile)                                 | Outfit Schedule (Mobile)                                 | Outfit Builder (Mobile)                          |
 | ------------------------------------------------------ | ------------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------ |
-| ![Wardrobe grid](screenshots/Screenshot_mobile_1.webp) | ![Outfits](screenshots/Screenshot_mobile_2.webp) | ![Outfit Schedule](screenshots/Screenshot_mobile_3.webp) | ![Outfit ](screenshots/Screenshot_mobile_4.webp) |
+| ![Wardrobe grid](public/assets/screenshots/Screenshot_mobile_1.webp) | ![Outfits](public/assets/screenshots/Screenshot_mobile_2.webp) | ![Outfit Schedule](public/assets/screenshots/Screenshot_mobile_3.webp) | ![Outfit ](public/assets/screenshots/Screenshot_mobile_4.webp) |
 
 | Wardrobe (Desktop)                              | Outfits (Desktop)                         | Outfit Schedule (Desktop)                         | Outfit Builder (Desktop)                        |
 | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------- | ----------------------------------------------- |
-| ![Wardrobe grid](screenshots/Screenshot_1.webp) | ![Outfits](screenshots/Screenshot_2.webp) | ![Outfit Schedule](screenshots/Screenshot_3.webp) | ![Outfit detail](screenshots/Screenshot_4.webp) |
+| ![Wardrobe grid](public/assets/screenshots/Screenshot_1.webp) | ![Outfits](public/assets/screenshots/Screenshot_2.webp) | ![Outfit Schedule](public/assets/screenshots/Screenshot_3.webp) | ![Outfit detail](public/assets/screenshots/Screenshot_4.webp) |
 
 ---
 

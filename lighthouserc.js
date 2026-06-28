@@ -27,6 +27,9 @@ module.exports = {
         // Pre-existing homepage issues unrelated to wardrobe feature
         'font-size': 'warn',
         'color-contrast': 'warn',
+        // These audits return null (not applicable) and cannot use minScore
+        redirects: 'warn',
+        'third-party-facades': 'warn',
       },
     },
     upload: {

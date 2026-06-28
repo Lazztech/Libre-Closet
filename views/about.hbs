@@ -1,0 +1,37 @@
+{{>navbar}}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{siteUrl}}/"},
+      {"@type": "ListItem", "position": 2, "name": "About", "item": "{{siteUrl}}/about"}
+    ]
+  }
+</script>
+
+<main class="flex flex-col items-center py-16 px-4">
+  <div class="max-w-2xl w-full prose">
+    <h1 class="text-3xl font-bold mb-8">{{t 'lang.ABOUT_HEADING'}}</h1>
+
+    <p class="mb-6">{{t 'lang.ABOUT_INTRO'}}</p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-3">{{t 'lang.ABOUT_STORY'}}</h2>
+    <p class="mb-6">{{t 'lang.ABOUT_STORY_DESC'}}</p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-3">{{t 'lang.ABOUT_OPEN_SOURCE'}}</h2>
+    <p class="mb-6">{{t 'lang.ABOUT_OPEN_SOURCE_DESC'}}</p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-3">{{t 'lang.ABOUT_TECH'}}</h2>
+    <p class="mb-6">{{t 'lang.ABOUT_TECH_DESC'}}</p>
+
+    <div class="mt-8">
+      <a href="https://lazz.tech" target="_blank" rel="noopener" hx-boost="false" class="btn btn-outline">
+        {{t 'lang.ABOUT_LINK'}}
+      </a>
+    </div>
+  </div>
+</main>
+
+{{>dock}}

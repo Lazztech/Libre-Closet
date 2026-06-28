@@ -1,6 +1,19 @@
 {{>navbar}}
 
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Register — Libre Closet",
+    "description": "Create your free Libre Closet account. Self-hosted, open-source wardrobe organizer — no subscription, no ads, no tracking.",
+    "isPartOf": {
+      "@id": "{{siteUrl}}/#website"
+    }
+  }
+</script>
+
 <main class="flex flex-col justify-center items-center h-full">
+  <h1 class="text-2xl font-bold mb-4">{{t 'lang.REGISTER_OG_TITLE'}}</h1>
   <form hx-post="/auth/register" hx-indicator="#loading" hx-trigger="submit">
     <fieldset
       class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"

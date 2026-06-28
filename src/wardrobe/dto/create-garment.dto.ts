@@ -6,5 +6,7 @@ export interface CreateGarmentDto {
   color?: string;
   size?: string;
   notes?: string;
+  washingDetails?: string;
+  dateAquired?: string;
   files?: AsyncIterableIterator<MultipartFile>;
 }

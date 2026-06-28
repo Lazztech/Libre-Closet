@@ -1,10 +1,49 @@
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
+    "@id": "{{canonicalUrl}}#organization",
+    "@type": "Organization",
+    "name": "Lazztech",
+    "url": "https://lazztech.com",
+    "logo": "https://librecloset.lazz.tech/assets/lazztech_icon.webp",
+    "description": "Creator of Libre Closet — free, open-source, self-hosted wardrobe organizer.",
+    "sameAs": [
+      "https://github.com/lazztech",
+      "https://github.com/lazztech/libre-closet"
+    ]
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@id": "{{canonicalUrl}}#website",
+    "@type": "WebSite",
+    "name": "{{appName}}",
+    "url": "{{canonicalUrl}}",
+    "description": "{{t 'lang.APP_DESCRIPTION'}}",
+    "inLanguage": "{{ogLocale}}",
+    "publisher": {
+      "@id": "{{canonicalUrl}}#organization"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{{canonicalUrl}}/wardrobe?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@id": "{{canonicalUrl}}#software",
+    "@type": "WebApplication",
     "name": "{{appName}}",
     "applicationCategory": "LifestyleApplication",
-    "operatingSystem": "Web",
+    "operatingSystem": "Linux, Web",
+    "browserRequirements": "Requires a modern browser with Service Worker support",
+    "author": {
+      "@id": "{{canonicalUrl}}#organization"
+    },
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -12,7 +51,8 @@
     },
     "url": "{{canonicalUrl}}",
     "description": "{{t 'lang.APP_DESCRIPTION'}}",
-    "license": "https://www.gnu.org/licenses/agpl-3.0.html"
+    "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+    "featureList": "{{canonicalUrl}}#features"
   }
 </script>
 
@@ -88,8 +128,89 @@
     </div>
   </section>
 
+  {{!-- Screenshots --}}
+  <section class="py-20 bg-base-100 overflow-hidden">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">
+        {{t 'lang.SCREENSHOTS_TITLE'}}
+      </h2>
+    </div>
+    <div class="carousel carousel-center w-full gap-6 px-8 pb-4">
+      <div
+        id="screenshot-1"
+        class="carousel-item flex flex-col gap-2 w-[85vw] md:w-auto"
+      >
+        <img
+          src="/assets/screenshots/Screenshot_mobile_1.webp"
+          alt="{{t 'lang.SCREENSHOT_WARDROBE_ALT'}}"
+          width="1179"
+          height="2556"
+          class="rounded-xl shadow-md w-full h-auto md:h-[36rem] md:w-auto object-cover"
+          loading="lazy"
+        />
+        <figcaption class="text-xs text-center text-base-content/60">
+          {{t 'lang.SCREENSHOT_WARDROBE_CAPTION'}}
+        </figcaption>
+      </div>
+      <div
+        id="screenshot-2"
+        class="carousel-item flex flex-col gap-2 w-[85vw] md:w-auto"
+      >
+        <img
+          src="/assets/screenshots/Screenshot_mobile_2.webp"
+          alt="{{t 'lang.SCREENSHOT_GARMENT_ALT'}}"
+          width="1179"
+          height="2556"
+          class="rounded-xl shadow-md w-full h-auto md:h-[36rem] md:w-auto object-cover"
+          loading="lazy"
+        />
+        <figcaption class="text-xs text-center text-base-content/60">
+          {{t 'lang.SCREENSHOT_GARMENT_CAPTION'}}
+        </figcaption>
+      </div>
+      <div
+        id="screenshot-3"
+        class="carousel-item flex flex-col gap-2 w-[85vw] md:w-auto"
+      >
+        <img
+          src="/assets/screenshots/Screenshot_mobile_3.webp"
+          alt="{{t 'lang.SCREENSHOT_OUTFIT_BUILDER_ALT'}}"
+          width="1179"
+          height="2556"
+          class="rounded-xl shadow-md w-full h-auto md:h-[36rem] md:w-auto object-cover"
+          loading="lazy"
+        />
+        <figcaption class="text-xs text-center text-base-content/60">
+          {{t 'lang.SCREENSHOT_OUTFIT_BUILDER_CAPTION'}}
+        </figcaption>
+      </div>
+      <div
+        id="screenshot-4"
+        class="carousel-item flex flex-col gap-2 w-[85vw] md:w-auto"
+      >
+        <img
+          src="/assets/screenshots/Screenshot_mobile_4.webp"
+          alt="{{t 'lang.SCREENSHOT_OUTFIT_ALT'}}"
+          width="1179"
+          height="2556"
+          class="rounded-xl shadow-md w-full h-auto md:h-[36rem] md:w-auto object-cover"
+          loading="lazy"
+        />
+        <figcaption class="text-xs text-center text-base-content/60">
+          {{t 'lang.SCREENSHOT_OUTFIT_CAPTION'}}
+        </figcaption>
+      </div>
+    </div>
+    <div class="flex justify-center gap-2 mt-4">
+      <a href="#screenshot-1" class="btn btn-xs btn-circle">1</a>
+      <a href="#screenshot-2" class="btn btn-xs btn-circle">2</a>
+      <a href="#screenshot-3" class="btn btn-xs btn-circle">3</a>
+      <a href="#screenshot-4" class="btn btn-xs btn-circle">4</a>
+    </div>
+  </section>
+
   {{!-- Features --}}
-  <section class="py-20 px-4 bg-base-100">
+  <section id="features" class="py-20 px-4 bg-base-100">
     <div class="max-w-5xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-12">
         {{t 'lang.FEATURES_TITLE'}}
@@ -336,6 +457,16 @@
     </div>
   </section>
 
+  {{!-- Why self-host section --}}
+  <section class="py-20 px-4 bg-base-200">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-6">{{t 'lang.WHY_SELF_HOST_TITLE'}}</h2>
+      <p class="text-base-content/70 leading-relaxed">
+        {{t 'lang.WHY_SELF_HOST_DESC'}}
+      </p>
+    </div>
+  </section>
+
   {{!-- Self-host section --}}
   <section class="py-20 px-4 bg-base-200">
     <div class="max-w-2xl mx-auto text-center">
@@ -385,6 +516,13 @@
           class="link link-hover"
           >GitHub</a
         >
+      </p>
+      <p>
+        <a href="/privacy" class="link link-hover text-xs">Privacy</a>
+        &nbsp;&middot;&nbsp;
+        <a href="/terms" class="link link-hover text-xs">Terms</a>
+        &nbsp;&middot;&nbsp;
+        <a href="/about" class="link link-hover text-xs">About</a>
       </p>
       <p>
         Made with ♥ by

@@ -1,0 +1,34 @@
+{{>navbar}}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{siteUrl}}/"},
+      {"@type": "ListItem", "position": 2, "name": "Terms of Service", "item": "{{siteUrl}}/terms"}
+    ]
+  }
+</script>
+
+<main class="flex flex-col items-center py-16 px-4">
+  <div class="max-w-2xl w-full prose">
+    <h1 class="text-3xl font-bold mb-8">{{t 'lang.TERMS_HEADING'}}</h1>
+
+    <p class="mb-6">{{t 'lang.TERMS_INTRO'}}</p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-3">{{t 'lang.TERMS_SERVICE'}}</h2>
+    <p class="mb-6">{{t 'lang.TERMS_SERVICE_DESC'}}</p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-3">{{t 'lang.TERMS_LICENSE'}}</h2>
+    <p class="mb-6">{{t 'lang.TERMS_LICENSE_DESC'}}</p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-3">{{t 'lang.TERMS_NO_WARRANTY'}}</h2>
+    <p class="mb-6">{{t 'lang.TERMS_NO_WARRANTY_DESC'}}</p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-3">{{t 'lang.TERMS_CONTACT'}}</h2>
+    <p class="mb-6">{{t 'lang.TERMS_CONTACT_DESC'}}</p>
+  </div>
+</main>
+
+{{>dock}}

@@ -105,6 +105,38 @@ export class S3FileService extends FileService {
     return this.fileRepository.getEntityManager().removeAndFlush(file);
   }
 
+  async copyImage(
+    sourceFileName: string,
+    userId?: number,
+  ): Promise<File | undefined> {
+    let source: Readable | undefined;
+    try {
+      source = await this.get(sourceFileName);
+    } catch {
+      return undefined;
+    }
+    if (!source) return undefined;
+
+    const newFileName = `${randomUUID()}.webp`;
+    const transformer = sharp()
+      .webp({ quality: 100 })
+      .resize(1080, 1080, { fit: sharp.fit.inside });
+    const passThrough = new Stream.PassThrough();
+    const storePromise = this.store(newFileName, passThrough);
+    source.on('error', (err) => passThrough.destroy(err));
+    transformer.on('error', (err) => passThrough.destroy(err));
+    source.pipe(transformer).pipe(passThrough);
+    await storePromise;
+
+    const file = this.fileRepository.create({
+      fileName: newFileName,
+      createdOn: new Date().toISOString(),
+      createdBy: userId,
+    });
+    await this.em.persistAndFlush(file);
+    return file;
+  }
+
   async get(fileName: string): Promise<Readable | undefined> {
     const result = await this.s3.getObject({
       Bucket: this.bucketName,

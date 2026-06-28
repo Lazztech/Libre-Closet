@@ -76,6 +76,42 @@ export class LocalFileService extends FileService {
     return file;
   }
 
+  async copyImage(
+    sourceFileName: string,
+    userId?: number,
+  ): Promise<File | undefined> {
+    let source: Readable | undefined;
+    try {
+      source = await this.get(sourceFileName);
+    } catch {
+      return undefined;
+    }
+    if (!source) return undefined;
+
+    const newFileName = `${randomUUID()}.webp`;
+    const transformer = sharp()
+      .webp({ quality: 100 })
+      .resize(1080, 1080, { fit: sharp.fit.inside });
+    const writeStream = fs.createWriteStream(
+      path.join(this.directory, newFileName),
+    );
+    try {
+      await pipeline(source, transformer, writeStream);
+      writeStream.destroy();
+    } catch (error) {
+      writeStream.destroy();
+      throw error;
+    }
+
+    const file = this.fileRepository.create({
+      fileName: newFileName,
+      createdOn: new Date().toISOString(),
+      createdBy: userId,
+    });
+    await this.em.persistAndFlush(file);
+    return file;
+  }
+
   async get(fileName: string): Promise<Readable | undefined> {
     if (fs.existsSync(path.join(this.directory, fileName))) {
       return new Promise((resolve) =>

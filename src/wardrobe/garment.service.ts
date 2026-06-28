@@ -63,6 +63,7 @@ export class GarmentService {
       ...(dto.category ? { category: dto.category } : {}),
       ...(dto.color ? { color: dto.color } : {}),
       ...(normalizedSize ? { size: normalizedSize } : {}),
+      ...(dto.archived !== 'true' ? { archived: false } : {}),
       ...(dto.keyword
         ? {
             $or: [
@@ -142,6 +143,62 @@ export class GarmentService {
       category: dto.category,
       brand: dto.brand,
       color: dto.color,
+      size: this.normalizeSize(dto.size),
+      notes: dto.notes,
+      washingDetails: dto.washingDetails,
+      dateAquired: dto.dateAquired ? new Date(dto.dateAquired) : undefined,
+      photo: photo ?? undefined,
+    });
+
+    if (userId != null) {
+      const user = await this.userRepository.findOneOrFail(userId);
+      garment.owner = user as any;
+    }
+
+    await this.garmentRepository.getEntityManager().persistAndFlush(garment);
+    return garment;
+  }
+
+  async clone(
+    sourceId: number,
+    dto: {
+      name?: string;
+      category: string;
+      brand?: string;
+      color?: string;
+      size?: string;
+      notes?: string;
+    },
+    userId?: number,
+  ): Promise<Garment> {
+    const source = await this.garmentRepository.findOne(sourceId, {
+      populate: ['photo'],
+    });
+    if (!source) throw new NotFoundException('Garment not found');
+
+    let photo: File | undefined;
+    if (source.photo?.fileName) {
+      photo = await this.fileService.copyImage(source.photo.fileName, userId);
+      if (photo) {
+        const nobgSourceName = this.fileService.nobgFileName(
+          source.photo.fileName,
+        );
+        const nobgStream = await this.fileService
+          .get(nobgSourceName)
+          .catch(() => undefined);
+        if (nobgStream) {
+          await this.fileService
+            .storeNobgVariantFromStream(nobgStream, photo.fileName)
+            .catch((err) => this.logger.warn(err));
+        }
+      }
+    }
+
+    const garment = this.garmentRepository.create({
+      name: dto.name,
+      category: dto.category,
+      brand: dto.brand,
+      color: dto.color as any,
       size: this.normalizeSize(dto.size),
       notes: dto.notes,
       photo: photo ?? undefined,
@@ -245,6 +302,11 @@ export class GarmentService {
     if ('color' in dto) garment.color = dto.color;
     if ('size' in dto) garment.size = this.normalizeSize(dto.size);
     if ('notes' in dto) garment.notes = dto.notes;
+    if ('washingDetails' in dto) garment.washingDetails = dto.washingDetails;
+    if ('dateAquired' in dto)
+      garment.dateAquired = dto.dateAquired
+        ? new Date(dto.dateAquired)
+        : undefined;
 
     await this.garmentRepository.getEntityManager().flush();
     return garment;
@@ -289,6 +351,13 @@ export class GarmentService {
   async remove(id: number, userId?: number): Promise<void> {
     const garment = await this.findOne(id, userId);
     await this.garmentRepository.getEntityManager().removeAndFlush(garment);
+  }
+
+  async archive(id: number, userId?: number): Promise<Garment> {
+    const garment = await this.findOne(id, userId);
+    garment.archived = !garment.archived;
+    await this.garmentRepository.getEntityManager().flush();
+    return garment;
   }
 
   private normalizeSize(input?: string): string | undefined {

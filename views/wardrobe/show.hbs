@@ -185,12 +185,21 @@
         <span class="text-base-content/60 text-sm">{{t 'lang.SIZE'}}</span>
         <span class="font-medium">{{garment.size}}</span>
       </div>
-      {{/if}} {{#if garment.color}}
+      {{/if}}       {{#if garment.color}}
       <div class="flex justify-between">
         <span class="text-base-content/60 text-sm">{{t 'lang.COLOR'}}</span>
         <span class="capitalize font-medium"
           >{{formatColors garment.color}}</span
         >
+      </div>
+      {{/if}} {{#if garment.washingDetails}}
+      <div class="flex flex-col gap-1">
+        <span class="text-base-content/60 text-sm">{{t 'lang.WASHING_DETAILS'}}</span>
+        <p class="text-sm">{{garment.washingDetails}}</p>
+      {{/if}} {{#if garment.dateAquired}}
+      <div class="flex justify-between">
+        <span class="text-base-content/60 text-sm">{{t 'lang.DATE_AQUIRED'}}</span>
+        <span class="font-medium">{{formatDate garment.dateAquired}}</span>
       </div>
       {{/if}} {{#if garment.notes}}
       <div class="flex flex-col gap-1">
@@ -209,7 +218,22 @@
       {{t 'lang.EDIT'}}
     </a>
   </div>
-  {{/if}} {{!-- Share --}} {{#if canEdit}}
+  {{/if}}
+
+  {{!-- Clone --}}
+  {{#if canClone}}
+  <div class="flex gap-2 mb-6">
+    <a
+      href="/wardrobe/{{garment.id}}/clone{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
+      class="btn btn-outline btn-sm flex-1"
+    >
+      {{t 'lang.CLONE_GARMENT'}}
+    </a>
+  </div>
+  {{/if}}
+
+  {{!-- Share --}}
+  {{#if canEdit}}
   <div class="flex gap-2 mb-6">
     <button
       class="btn btn-outline btn-sm flex-1"
@@ -232,7 +256,22 @@
       {{t 'lang.SHARE'}}
     </button>
   </div>
-  {{/if}} {{!-- Delete --}} {{#if canDelete}}
+  {{/if}}
+
+  {{!-- Archive --}}
+  {{#if canDelete}}
+  <button
+    class="btn btn-outline btn-sm w-full mb-6"
+    hx-post="/wardrobe/{{garment.id}}/archive"
+    hx-confirm="{{#if garment.archived}}{{t 'lang.CONFIRM_UNARCHIVE'}}{{else}}{{t 'lang.CONFIRM_ARCHIVE'}}{{/if}}"
+    hx-indicator="#loading"
+  >
+    {{#if garment.archived}}{{t 'lang.UNARCHIVE'}}{{else}}{{t 'lang.ARCHIVE'}}{{/if}}
+  </button>
+  {{/if}}
+
+  {{!-- Delete --}}
+  {{#if canDelete}}
   <button
     class="btn btn-error btn-outline btn-sm w-full"
     hx-delete="/wardrobe/{{garment.id}}"

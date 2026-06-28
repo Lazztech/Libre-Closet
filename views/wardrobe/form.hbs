@@ -22,14 +22,13 @@
       </svg>
     </a>
     <h1 class="text-2xl font-bold">
-      {{#if garment}}{{t 'lang.EDIT_GARMENT'}}{{else}}{{t
-      'lang.NEW_GARMENT'}}{{/if}}
+      {{#if isClone}}{{t 'lang.CLONE_GARMENT'}}{{else if garment}}{{t 'lang.EDIT_GARMENT'}}{{else}}{{t 'lang.NEW_GARMENT'}}{{/if}}
     </h1>
   </div>
 
   <form
     method="POST"
-    action="{{#if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
+    action="{{#if isClone}}/wardrobe/{{garment.id}}/clone{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
     class="flex flex-col gap-4"
   >
     <div class="form-control">
@@ -40,7 +39,7 @@
         type="text"
         name="name"
         class="input input-bordered"
-        value="{{#if garment}}{{garment.name}}{{/if}}"
+        value="{{#if isClone}}{{cloneName}}{{else if garment}}{{garment.name}}{{/if}}"
         placeholder="e.g. Black Linen Blazer"
       />
     </div>
@@ -95,9 +94,24 @@
     </div>
 
     <div class="form-control">
-      <label class="label"
-        ><span class="label-text">{{t 'lang.NOTES'}}</span></label
-      >
+      <label class="label"><span class="label-text">{{t 'lang.WASHING_DETAILS'}}</span></label>
+      <textarea
+        name="washingDetails"
+        class="textarea textarea-bordered"
+        rows="3"
+        placeholder="Wash at 30°C, do not tumble dry, do not iron…"
+      >{{#if garment}}{{garment.washingDetails}}{{/if}}</textarea>
+      <label class="label"><span class="label-text">{{t 'lang.DATE_AQUIRED'}}</span></label>
+      <input
+        type="date"
+        name="dateAquired"
+        class="input input-bordered"
+        value="{{formatDate garment.dateAquired}}"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.NOTES'}}</span></label>
       <textarea
         name="notes"
         class="textarea textarea-bordered"

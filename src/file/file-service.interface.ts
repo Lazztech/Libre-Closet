@@ -12,6 +12,7 @@ export interface FileServiceInterface {
     upload: MultipartFile | undefined,
     userId: any,
   ): Promise<File>;
+  copyImage(sourceFileName: string, userId?: number): Promise<File | undefined>;
   delete(fileName: string): Promise<void>;
   deleteById(fileId: any, userId: any): Promise<any>;
   get(fileName: string): Promise<Readable | undefined>;
