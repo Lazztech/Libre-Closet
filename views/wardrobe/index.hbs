@@ -177,16 +177,16 @@
       <button type="button"
         class="btn btn-ghost btn-sm"
         _="on click
-          for el in <input[name='modal-category']/>
+          for el in <input[name='modal-category']>
             set el.checked to false
           end
-          for el in <input[name='modal-color']/>
+          for el in <input[name='modal-color']>
             set el.checked to false
           end
-          for el in <input[name='modal-size']/>
+          for el in <input[name='modal-size']>
             set el.checked to false
           end
-          set <input[name='modal-archived']/>.checked to false
+          set <input[name='modal-archived']>.checked to false
           set #active-category.value to ''
           set #active-color.value to ''
           set #active-size.value to ''
@@ -199,16 +199,16 @@
         class="btn btn-primary btn-sm"
         _="on click
           set category to ''
-          get the first <input[name='modal-category']:checked/>
+          get the first <input[name='modal-category']:checked>
           if it then set category to it.value end
           set color to ''
-          get the first <input[name='modal-color']:checked/>
+          get the first <input[name='modal-color']:checked>
           if it then set color to it.value end
           set size to ''
-          get the first <input[name='modal-size']:checked/>
+          get the first <input[name='modal-size']:checked>
           if it then set size to it.value end
           set archived to ''
-          get the first <input[name='modal-archived']:checked/>
+          get the first <input[name='modal-archived']:checked>
           if it then set archived to 'true' end
           set #active-category.value to category
           set #active-color.value to color

@@ -37,7 +37,7 @@ index 0ea9fb5..fa10ad9 100644
 -var maxNumThreads = () => navigator.hardwareConcurrency ?? 4;
 +var maxNumThreads = () => {
 +  if (iOS()) return 1;
-+  navigator.hardwareConcurrency ?? 4
++  return navigator.hardwareConcurrency ?? 4;
 +};
  
  // src/resource.ts
