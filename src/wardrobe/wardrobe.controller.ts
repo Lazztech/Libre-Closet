@@ -153,23 +153,20 @@ export class WardrobeController {
       if (!canManage) throw new ForbiddenException();
     }
 
-    const validColors = new Set(Object.values(GarmentColor));
-
     // Fastify gives string if one checkbox, string[] if multiple — normalise both
     const rawColors = Array.isArray(body.color)
       ? body.color
-      : body.color?.split(',').map((c) => c.trim()).filter(Boolean) ?? [];
-
-    // Keep known enum values; silently drop anything invalid
-    // Remove the filter entirely if you want to allow custom values through
-    const sanitized = rawColors.filter((c) => validColors.has(c as GarmentColor));
+      : (body.color
+          ?.split(',')
+          .map((c) => c.trim())
+          .filter(Boolean) ?? []);
 
     const garment = await this.garmentService.create(
       {
         name: body.name,
         category: body.category,
         brand: body.brand,
-        color: sanitized.join(',') as GarmentColor, // TODO: migrate entity to string[]
+        color: rawColors.join(','),
         size: body.size,
         notes: body.notes,
       },
@@ -246,10 +243,21 @@ export class WardrobeController {
       value,
       label: this.garmentService.resolveCategoryLabel(value, i18n),
     }));
+    const colorEnumValues = Object.values(GarmentColor) as string[];
+    const savedColors =
+      garment.color
+        ?.split(',')
+        .map((c) => c.trim())
+        .filter(Boolean) ?? [];
+    const customColors = savedColors.filter(
+      (c) => !colorEnumValues.includes(c),
+    );
+
     return {
       garment,
       categories,
-      colors: Object.values(GarmentColor),
+      colors: colorEnumValues,
+      customColors,
       viewOwner: viewOwner ?? null,
     };
   }

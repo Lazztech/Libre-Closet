@@ -1,3 +1,6 @@
+<script>
+  window.KNOWN_COLORS = new Set({{{json colors}}});
+</script>
 <div class="form-control w-full min-w-0">
   <label class="label">
     <span class="label-text">{{t 'lang.COLOR'}}</span>
@@ -18,16 +21,24 @@
           <input type="text" class="ms-search-input" placeholder="{{t 'lang.SEARCH_OR_CREATE'}}" autocomplete="off">
         </div>
 
-        <div class="ms-options">
-          {{#each colors}}
-          <label class="ms-option">
-            <input type="checkbox" name="color" value="{{this}}"
-              {{#ifInArray this ../garment.colors}}checked{{/ifInArray}}>
-            <span class="ms-swatch ms-swatch--{{this}}"></span>
-            <span class="capitalize">{{this}}</span>
-          </label>
-          {{/each}}
-        </div>
+          <div class="ms-options">
+            {{#each colors}}
+            <label class="ms-option">
+              <input type="checkbox" name="color" value="{{this}}"
+                {{#ifInArray this ../garment.color}}checked{{/ifInArray}}>
+              <span class="ms-swatch ms-swatch--{{this}}"></span>
+              <span class="capitalize">{{this}}</span>
+            </label>
+            {{/each}}
+
+            {{#each customColors}}
+            <label class="ms-option">
+              <input type="checkbox" name="color" value="{{this}}" checked>
+              <span class="ms-swatch ms-swatch--other"></span>
+              <span class="capitalize">{{this}}</span>
+            </label>
+            {{/each}}
+          </div>
 
         <div class="ms-empty" style="display:none">{{t 'lang.NO_MATCHES'}}</div>
 

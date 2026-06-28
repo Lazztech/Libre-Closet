@@ -1,13 +1,6 @@
-// color-multiselect.js
-// Drop into public/js and include in your layout before </body>
-// Works with multiple instances on the same page.
 
 (function () {
-  const KNOWN = new Set([
-    'red','pink','orange','yellow','green','blue','purple',
-    'black','white','grey','beige','brown','gold','silver',
-    'pattern','other',
-  ]);
+  const KNOWN = window.KNOWN_COLORS
 
   function swatch(value) {
     const cls = KNOWN.has(value) ? 'ms-swatch ms-swatch--' + value : 'ms-swatch ms-swatch--other';
@@ -34,13 +27,11 @@
       }
       checked.forEach(function (cb) {
         const pill = document.createElement('span');
-        // pill.className = 'ms-pill';
         pill.className = 'ms-pill badge badge-ghost';
         pill.innerHTML =
           swatch(cb.value) +
           '<span class="capitalize">' + cb.value + '</span>' +
           '<span class="ms-pill-remove badge badge-sm badge-neutral" data-val="' + cb.value + '">\u00d7</span>'
-          // '<span class="ms-pill-remove" data-val="' + cb.value + '">\u00d7</span>';
         pillsEl.appendChild(pill);
       });
       countEl.textContent = checked.length + ' selected';

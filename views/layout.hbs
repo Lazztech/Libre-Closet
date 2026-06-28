@@ -66,6 +66,9 @@ https://nestjs-i18n.com/quick-start --}}
     {{/if}} {{! Include assets/main.css and build output from
     TailwindCSS/DaisyUI }}
     <link href="/bundle.css" rel="stylesheet" />
+    <script>
+      window.KNOWN_COLORS = new Set({{{knownColors}}});
+    </script>
   </head>
 
   {{! hx-boost 'automagically' replaces all anchor tags with htmx logic that

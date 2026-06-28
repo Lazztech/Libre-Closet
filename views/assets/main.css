@@ -231,6 +231,8 @@ body {
 
 /* Swatch */
 .ms-swatch {
+  /* Change to display: block; to display color dots for each color */
+  display: none;
   width: 0.75rem;
   height: 0.75rem;
   min-width: 0.75rem;
@@ -240,7 +242,6 @@ body {
   border-radius: 50%;
   border: 1px solid color-mix(in oklch, var(--color-base-content) 20%, transparent);
   flex-shrink: 0;
-  display: block;
 }
 
 /* Known enum colors — CSS color names work directly */
@@ -288,7 +289,7 @@ body {
   padding: 0.4375rem 0.75rem;
   cursor: pointer;
   font-size: 0.875rem;
-  color: var(--color-success);
+  color: var(--color-primary);
   border-top: 1px solid color-mix(in oklch, var(--color-base-content) 10%, transparent);
   margin-top: 0.25rem;
 }
