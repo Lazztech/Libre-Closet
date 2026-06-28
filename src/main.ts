@@ -131,7 +131,6 @@ async function bootstrap() {
       value: string | string[] | undefined,
       options: Handlebars.HelperOptions,
     ) {
-      console.log('ifInArray', { item, value });
       if (!value) return options.inverse(this);
       const arr = Array.isArray(value)
         ? value
