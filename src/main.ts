@@ -47,7 +47,7 @@ async function bootstrap() {
     );
     reply.header(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://static.cloudflareinsights.com; frame-ancestors 'none';",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://static.cloudflareinsights.com; worker-src 'self' blob:; frame-ancestors 'none';",
     );
     return payload;
   });

@@ -186,7 +186,9 @@
           for el in <input[name='modal-size']/>
             set el.checked to false
           end
-          set <input[name='modal-archived']/>.checked to false
+          for el in <input[name='modal-archived']/>
+            set el.checked to false
+          end
           set #active-category.value to ''
           set #active-color.value to ''
           set #active-size.value to ''
