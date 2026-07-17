@@ -11,6 +11,7 @@ import { DalModule } from './dal/dal.module';
 import { NotificationModule } from './notification/notification.module';
 import { FileModule } from './file/file.module';
 import { EmailModule } from './email/email.module';
+import { WeatherModule } from './weather/weather.module';
 import { AcceptLanguageResolver, I18nModule } from 'nestjs-i18n';
 import { OpenGraphModule } from './open-graph/open-graph.module';
 import { WardrobeModule } from './wardrobe/wardrobe.module';
@@ -183,6 +184,7 @@ import { ViewContextModule } from './view-context/view-context.module';
     EmailModule,
     NotificationModule,
     OpenGraphModule,
+    WeatherModule,
     WardrobeModule,
     WardrobeShareModule,
     ViewContextModule,
