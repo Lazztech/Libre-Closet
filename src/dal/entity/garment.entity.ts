@@ -9,6 +9,7 @@ import {
   Property,
   type Ref,
 } from '@mikro-orm/core';
+import { Drawer } from './drawer.entity';
 import { File } from './file.entity';
 import { Outfit } from './outfit.entity';
 import { ShareableId } from './shareableId.entity';
@@ -64,4 +65,7 @@ export class Garment extends ShareableId {
 
   @ManyToMany(() => Outfit, (outfit) => outfit.garments)
   public outfits = new Collection<Outfit>(this);
+
+  @ManyToMany(() => Drawer, (drawer) => drawer.garments)
+  public drawers = new Collection<Drawer>(this);
 }

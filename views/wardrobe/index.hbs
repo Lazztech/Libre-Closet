@@ -94,6 +94,12 @@
       {{t 'lang.ARCHIVED'}} &times;
     </a>
     {{/if}}
+    {{#if search.drawerId}}
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&color={{search.color}}&size={{search.size}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+      class="badge badge-neutral badge-sm gap-1 cursor-pointer no-underline">
+      {{#each availableDrawers}}{{#ifEquals this.id ../search.drawerId}}{{this.name}}{{/ifEquals}}{{/each}} &times;
+    </a>
+    {{/if}}
   </div>
 
   {{!-- Search input row --}}
@@ -102,6 +108,7 @@
     <input type="hidden" name="color" id="active-color" value="{{search.color}}">
     <input type="hidden" name="size" id="active-size" value="{{search.size}}">
     <input type="hidden" name="archived" id="active-archived" value="{{search.archived}}">
+    <input type="hidden" name="drawerId" id="active-drawer" value="{{search.drawerId}}">
     {{#if viewOwner}}<input type="hidden" name="ownerId" value="{{viewOwner}}">{{/if}}
     <input
       type="text"
@@ -163,6 +170,22 @@
     </div>
     {{/if}}
 
+    {{!-- Drawers --}}
+    {{#if availableDrawers.length}}
+    <div class="mb-5">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.DRAWERS'}}</h4>
+      <div class="flex flex-wrap gap-2">
+        {{#each availableDrawers}}
+        <label class="cursor-pointer">
+          <input type="radio" name="modal-drawer" value="{{this.id}}" class="hidden peer"
+            {{#ifEquals this.id ../search.drawerId}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-neutral select-none">{{this.name}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
     {{!-- Archived --}}
     <div class="mb-5">
       <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.ARCHIVED'}}</h4>
@@ -189,10 +212,14 @@
           for el in <input[name='modal-archived']/>
             set el.checked to false
           end
+          for el in <input[name='modal-drawer']/>
+            set el.checked to false
+          end
           set #active-category.value to ''
           set #active-color.value to ''
           set #active-size.value to ''
           set #active-archived.value to ''
+          set #active-drawer.value to ''
           call #filter-modal.close()
           call #search-form.submit()">
         {{t 'lang.CLEAR_FILTERS'}}
@@ -212,10 +239,14 @@
           set archived to ''
           get the first <input[name='modal-archived']:checked/>
           if it then set archived to 'true' end
+          set drawerId to ''
+          get the first <input[name='modal-drawer']:checked/>
+          if it then set drawerId to it.value end
           set #active-category.value to category
           set #active-color.value to color
           set #active-size.value to size
           set #active-archived.value to archived
+          set #active-drawer.value to drawerId
           call #filter-modal.close()
           call #search-form.submit()">
         {{t 'lang.APPLY_FILTERS'}}

@@ -21,6 +21,7 @@ import { Payload } from '../auth/dto/payload.dto';
 import { GarmentCategory } from './garment-category.enum';
 import { GarmentColor } from './garment-color.enum';
 import { GarmentService } from './garment.service';
+import { DrawerService } from './drawer.service';
 import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
 import { SharePermission } from '../dal/entity/wardrobe-share.entity';
 import type { SearchGarmentDto } from './dto/search-garment.dto';
@@ -34,6 +35,7 @@ export class WardrobeController {
   constructor(
     private readonly garmentService: GarmentService,
     private readonly shareService: WardrobeShareService,
+    private readonly drawerService: DrawerService,
   ) {}
 
   private userId(req: any): number | undefined {
@@ -78,9 +80,10 @@ export class WardrobeController {
       }
     }
 
-    const [garments, filters] = await Promise.all([
+    const [garments, filters, availableDrawers] = await Promise.all([
       this.garmentService.findAll(userId, query, viewOwner),
       this.garmentService.findAvailableFilters(viewOwner ?? userId),
+      this.drawerService.findAll(viewOwner ?? userId),
     ]);
     const availableCategories = filters.categories.map((value) => ({
       value,
@@ -91,6 +94,10 @@ export class WardrobeController {
       availableCategories,
       colors: Object.values(GarmentColor),
       availableSizes: filters.sizes,
+      availableDrawers: availableDrawers.map((d) => ({
+        id: d.id,
+        name: d.name,
+      })),
       search: query,
       sharedWardrobes,
       viewOwner: viewOwner ?? null,

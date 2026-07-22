@@ -7,4 +7,5 @@ export interface SearchGarmentDto {
   brand?: string;
   size?: string;
   archived?: string;
+  drawerId?: string;
 }

@@ -64,6 +64,7 @@ export class GarmentService {
       ...(dto.color ? { color: dto.color } : {}),
       ...(normalizedSize ? { size: normalizedSize } : {}),
       ...(dto.archived !== 'true' ? { archived: false } : {}),
+      ...(dto.drawerId ? { drawers: { id: Number(dto.drawerId) } } : {}),
       ...(dto.keyword
         ? {
             $or: [
