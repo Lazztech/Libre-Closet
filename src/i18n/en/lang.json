@@ -100,6 +100,8 @@
   "GARMENTS_IN_OUTFIT": "Garments in this outfit",
   "ADD_PHOTO": "Add Photo",
   "UPDATE_PHOTO": "Update Photo",
+  "GARMENT_SAVED": "Garment saved!",
+  "PHOTO_SAVED": "Photo saved!",
   "BG_REMOVAL_TOGGLE": "Auto-remove background",
   "REMOVING_BACKGROUND": "Removing background…",
   "BG_STAGE_DOWNLOADING": "Downloading assets…",

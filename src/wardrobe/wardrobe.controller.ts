@@ -177,8 +177,9 @@ export class WardrobeController {
       viewOwner ?? userId,
     );
 
-    const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
-    return reply.redirect(`/wardrobe/${garment.id}${redirectSuffix}`, 302);
+    const params = new URLSearchParams({ created: '1' });
+    if (viewOwner) params.set('ownerId', String(viewOwner));
+    return reply.redirect(`/wardrobe/${garment.id}?${params}`, 302);
   }
 
   @Get(':id')
@@ -188,6 +189,8 @@ export class WardrobeController {
     @Req() req: FastifyRequest,
     @I18n() i18n: I18nContext,
     @Query('ownerId') ownerId: string | undefined,
+    @Query('created') created: string | undefined,
+    @Query('photoSaved') photoSaved: string | undefined,
   ) {
     const userId = this.userId(req);
     const viewOwner = ownerId ? parseInt(ownerId, 10) : undefined;
@@ -220,6 +223,8 @@ export class WardrobeController {
       canDelete,
       canClone,
       viewOwner: viewOwner ?? null,
+      justCreated: created === '1',
+      justSavedPhoto: photoSaved === '1',
     };
   }
 
@@ -403,8 +408,9 @@ export class WardrobeController {
       viewOwner ?? userId,
       userId,
     );
-    const redirectSuffix = viewOwner ? `?ownerId=${viewOwner}` : '';
-    reply.header('HX-Redirect', `/wardrobe/${id}${redirectSuffix}`);
+    const params = new URLSearchParams({ photoSaved: '1' });
+    if (viewOwner) params.set('ownerId', String(viewOwner));
+    reply.header('HX-Redirect', `/wardrobe/${id}?${params}`);
     return reply.send();
   }
 
