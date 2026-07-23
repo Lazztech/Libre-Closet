@@ -80,8 +80,12 @@ export class WardrobeController {
       }
     }
 
-    const [garments, filters, availableDrawers] = await Promise.all([
-      this.garmentService.findAll(userId, query, viewOwner),
+    const [
+      { items: garments, total, page, totalPages },
+      filters,
+      availableDrawers,
+    ] = await Promise.all([
+      this.garmentService.findAllPaginated(userId, query, viewOwner),
       this.garmentService.findAvailableFilters(viewOwner ?? userId),
       this.drawerService.findAll(viewOwner ?? userId),
     ]);
@@ -89,8 +93,30 @@ export class WardrobeController {
       value,
       label: this.garmentService.resolveCategoryLabel(value, i18n),
     }));
+
+    // Preserve active filters (minus page) across prev/next links.
+    const filterParams = new URLSearchParams();
+    if (query.keyword) filterParams.set('keyword', query.keyword);
+    if (query.category) filterParams.set('category', query.category);
+    if (query.color) filterParams.set('color', query.color);
+    if (query.size) filterParams.set('size', query.size);
+    if (query.archived) filterParams.set('archived', query.archived);
+    if (query.drawerId) filterParams.set('drawerId', query.drawerId);
+    if (viewOwner) filterParams.set('ownerId', String(viewOwner));
+    const filterQueryString = filterParams.toString();
+    const pageUrl = (targetPage: number) =>
+      `/wardrobe?${filterQueryString ? filterQueryString + '&' : ''}page=${targetPage}`;
+
     return {
       garments,
+      total,
+      page,
+      totalPages,
+      showPagination: totalPages > 1,
+      hasPrevPage: page > 1,
+      hasNextPage: page < totalPages,
+      prevPageUrl: pageUrl(page - 1),
+      nextPageUrl: pageUrl(page + 1),
       availableCategories,
       colors: Object.values(GarmentColor),
       availableSizes: filters.sizes,

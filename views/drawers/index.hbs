@@ -19,17 +19,18 @@
         <div class="flex items-center justify-between gap-2">
           <span class="card-title text-sm truncate">{{this.name}}</span>
           <span class="text-xs text-base-content/60 shrink-0"
-            >{{this.garments.length}} {{t 'lang.ITEMS'}}</span
+            >{{this.totalGarmentCount}} {{t 'lang.ITEMS'}}</span
           >
         </div>
         {{#if this.notes}}
         <p class="text-xs text-base-content/60 line-clamp-2">{{this.notes}}</p>
         {{/if}}
         <div class="flex flex-wrap gap-1 mt-1">
-          {{#each this.garments}} {{#if this.photo}}
+          {{#each this.previewGarments}} {{#if this.photo}}
           <img
             src="/file/nobg/{{this.photo.fileName}}"
             alt="{{this.name}}"
+            loading="lazy"
             class="size-20 rounded object-cover"
           />
           {{else}}
@@ -52,6 +53,13 @@
             </svg>
           </div>
           {{/if}} {{/each}}
+          {{#if this.overflowCount}}
+          <div
+            class="size-20 rounded bg-base-200 flex items-center justify-center text-xs font-medium text-base-content/60"
+          >
+            +{{this.overflowCount}} {{t 'lang.MORE'}}
+          </div>
+          {{/if}}
         </div>
       </div>
     </a>

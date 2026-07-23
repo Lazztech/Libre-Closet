@@ -8,14 +8,17 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Render,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
+import { GarmentCategory } from './garment-category.enum';
 import { DrawerService } from './drawer.service';
 import { GarmentService } from './garment.service';
 
@@ -42,27 +45,54 @@ export class DrawerController {
     return ids.map(Number).filter((id) => !Number.isNaN(id));
   }
 
+  private async availableCategories(
+    userId: number | undefined,
+    i18n: I18nContext,
+  ) {
+    const filters = await this.garmentService.findAvailableFilters(userId);
+    const enumValues = Object.values(GarmentCategory) as string[];
+    const customCategories = filters.categories.filter(
+      (c) => !enumValues.includes(c),
+    );
+    return [...enumValues, ...customCategories].map((value) => ({
+      value,
+      label: this.garmentService.resolveCategoryLabel(value, i18n),
+    }));
+  }
+
   @Get()
   @Render('drawers/index')
   async index(@Req() req: FastifyRequest) {
     const drawers = await this.drawerService.findAll(this.userId(req));
-    // Collection.length is a prototype getter Handlebars' proto-access guard
-    // blocks, so expose plain arrays instead of the raw MikroORM Collection.
-    return {
-      drawers: drawers.map((d) => ({
-        id: d.id,
-        name: d.name,
-        notes: d.notes,
-        garments: d.garments.getItems(),
-      })),
-    };
+    // Preview thumbnails are capped so a large drawer doesn't turn its index
+    // card into a multi-screen-tall block that pushes other drawers off-screen.
+    const drawersWithPreview = await Promise.all(
+      drawers.map(async (d) => {
+        const { items, total } = await this.drawerService.findPreviewGarments(
+          d.id,
+        );
+        return {
+          id: d.id,
+          name: d.name,
+          notes: d.notes,
+          previewGarments: items,
+          totalGarmentCount: total,
+          overflowCount: Math.max(0, total - items.length),
+        };
+      }),
+    );
+    return { drawers: drawersWithPreview };
   }
 
   @Get('new')
   @Render('drawers/form')
-  async newForm(@Req() req: FastifyRequest) {
-    const garments = await this.garmentService.findAll(this.userId(req));
-    return { drawer: null, garments, selectedGarmentIds: [] };
+  async newForm(@Req() req: FastifyRequest, @I18n() i18n: I18nContext) {
+    const userId = this.userId(req);
+    const [garments, categories] = await Promise.all([
+      this.garmentService.findAll(userId),
+      this.availableCategories(userId, i18n),
+    ]);
+    return { drawer: null, garments, selectedGarmentIds: [], categories };
   }
 
   @Post()
@@ -92,11 +122,34 @@ export class DrawerController {
   async show(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: FastifyRequest,
+    @Query('page') page: string | undefined,
   ) {
-    const drawer = await this.drawerService.findOne(id, this.userId(req));
-    // Collection.length is a prototype getter Handlebars' proto-access guard
-    // blocks, so expose a plain array instead of the raw MikroORM Collection.
-    return { drawer, garments: drawer.garments.getItems() };
+    const userId = this.userId(req);
+    // findOneMeta checks access without populating the (potentially huge)
+    // garments collection; the paginated garment page is fetched separately
+    // so DOM/HTML size stays bounded regardless of drawer size.
+    const drawer = await this.drawerService.findOneMeta(id, userId);
+    const {
+      items,
+      total,
+      page: currentPage,
+      totalPages,
+    } = await this.garmentService.findAllPaginated(userId, {
+      drawerId: String(id),
+      page,
+    });
+    return {
+      drawer,
+      garments: items,
+      total,
+      page: currentPage,
+      totalPages,
+      showPagination: totalPages > 1,
+      hasPrevPage: currentPage > 1,
+      hasNextPage: currentPage < totalPages,
+      prevPageUrl: `/drawers/${id}?page=${currentPage - 1}`,
+      nextPageUrl: `/drawers/${id}?page=${currentPage + 1}`,
+    };
   }
 
   @Get(':id/edit')
@@ -104,13 +157,16 @@ export class DrawerController {
   async editForm(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: FastifyRequest,
+    @I18n() i18n: I18nContext,
   ) {
-    const [drawer, garments] = await Promise.all([
-      this.drawerService.findOne(id, this.userId(req)),
-      this.garmentService.findAll(this.userId(req)),
+    const userId = this.userId(req);
+    const [drawer, garments, categories] = await Promise.all([
+      this.drawerService.findOne(id, userId),
+      this.garmentService.findAll(userId),
+      this.availableCategories(userId, i18n),
     ]);
     const selectedGarmentIds = drawer.garments.getItems().map((g) => g.id);
-    return { drawer, garments, selectedGarmentIds };
+    return { drawer, garments, selectedGarmentIds, categories };
   }
 
   @Post(':id')

@@ -8,4 +8,6 @@ export interface SearchGarmentDto {
   size?: string;
   archived?: string;
   drawerId?: string;
+  page?: string;
+  limit?: string;
 }

@@ -53,11 +53,11 @@ export class GarmentService {
     return value;
   }
 
-  async findAll(
+  private buildWhere(
     userId?: number,
     dto: SearchGarmentDto = {},
     viewOwner?: number,
-  ): Promise<Garment[]> {
+  ): FilterQuery<Garment> {
     const normalizedSize = this.normalizeSize(dto.size);
     const searchConditions: FilterQuery<Garment> = {
       ...(dto.category ? { category: dto.category } : {}),
@@ -78,21 +78,63 @@ export class GarmentService {
 
     if (userId != null) {
       if (viewOwner != null && viewOwner !== userId) {
-        return this.garmentRepository.find(
-          { owner: { id: viewOwner }, ...searchConditions },
-          { populate: ['photo'], orderBy: { id: 'DESC' } },
-        );
+        return { owner: { id: viewOwner }, ...searchConditions };
       }
-      return this.garmentRepository.find(
-        { owner: { id: userId }, ...searchConditions },
-        { populate: ['photo'], orderBy: { id: 'DESC' } },
-      );
+      return { owner: { id: userId }, ...searchConditions };
     }
     // AUTH_ENABLED=false: only return garments that belong to no user
+    return { owner: null, ...searchConditions };
+  }
+
+  async findAll(
+    userId?: number,
+    dto: SearchGarmentDto = {},
+    viewOwner?: number,
+  ): Promise<Garment[]> {
     return this.garmentRepository.find(
-      { owner: null, ...searchConditions },
-      { populate: ['photo'], orderBy: { id: 'DESC' } },
+      this.buildWhere(userId, dto, viewOwner),
+      {
+        populate: ['photo'],
+        orderBy: { id: 'DESC' },
+      },
     );
+  }
+
+  private clampLimit(input?: string): number {
+    const n = Number(input);
+    if (!Number.isFinite(n) || n <= 0) return 48;
+    return Math.min(Math.floor(n), 96);
+  }
+
+  private clampPage(input: string | undefined, totalPages: number): number {
+    const n = Number(input);
+    if (!Number.isFinite(n) || n < 1) return 1;
+    return Math.min(Math.floor(n), totalPages);
+  }
+
+  async findAllPaginated(
+    userId?: number,
+    dto: SearchGarmentDto = {},
+    viewOwner?: number,
+  ): Promise<{
+    items: Garment[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const where = this.buildWhere(userId, dto, viewOwner);
+    const limit = this.clampLimit(dto.limit);
+    const total = await this.garmentRepository.count(where);
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+    const page = this.clampPage(dto.page, totalPages);
+    const items = await this.garmentRepository.find(where, {
+      populate: ['photo'],
+      orderBy: { id: 'DESC' },
+      limit,
+      offset: (page - 1) * limit,
+    });
+    return { items, total, page, limit, totalPages };
   }
 
   async findOne(

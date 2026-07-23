@@ -25,30 +25,51 @@ export class DrawerService {
     private readonly userRepository: EntityRepository<User>,
   ) {}
 
+  private static readonly PREVIEW_LIMIT = 6;
+
   async findAll(userId?: number): Promise<Drawer[]> {
-    if (userId != null) {
-      return this.drawerRepository.find(
-        { owner: { id: userId } },
-        { populate: ['garments', 'garments.photo'], orderBy: { name: 'ASC' } },
-      );
-    }
-    // AUTH_ENABLED=false: only return drawers that belong to no user
-    return this.drawerRepository.find(
-      { owner: null },
-      { populate: ['garments', 'garments.photo'], orderBy: { name: 'ASC' } },
-    );
+    // Preview thumbnails are fetched separately (findPreviewGarments) so this
+    // list doesn't have to populate every garment in every drawer just to
+    // render the drawers index.
+    const where = userId != null ? { owner: { id: userId } } : { owner: null };
+    return this.drawerRepository.find(where, { orderBy: { name: 'ASC' } });
   }
 
-  async findOne(id: number, userId?: number): Promise<Drawer> {
-    const drawer = await this.drawerRepository.findOne(id, {
-      populate: ['garments', 'garments.photo'],
-    });
+  async findPreviewGarments(
+    drawerId: number,
+    limit = DrawerService.PREVIEW_LIMIT,
+  ): Promise<{ items: Garment[]; total: number }> {
+    const [items, total] = await this.garmentRepository.findAndCount(
+      { drawers: { id: drawerId } },
+      { populate: ['photo'], orderBy: { id: 'DESC' }, limit },
+    );
+    return { items, total };
+  }
+
+  private checkAccess(
+    drawer: Drawer | null,
+    userId?: number,
+  ): asserts drawer is Drawer {
     if (!drawer) throw new NotFoundException('Drawer not found');
     if (userId != null) {
       if (drawer.owner?.id !== userId) throw new ForbiddenException();
     } else {
       if (drawer.owner != null) throw new ForbiddenException();
     }
+  }
+
+  /** Drawer metadata (name/notes/owner) without populating its garments collection. */
+  async findOneMeta(id: number, userId?: number): Promise<Drawer> {
+    const drawer = await this.drawerRepository.findOne(id);
+    this.checkAccess(drawer, userId);
+    return drawer;
+  }
+
+  async findOne(id: number, userId?: number): Promise<Drawer> {
+    const drawer = await this.drawerRepository.findOne(id, {
+      populate: ['garments', 'garments.photo'],
+    });
+    this.checkAccess(drawer, userId);
     return drawer;
   }
 

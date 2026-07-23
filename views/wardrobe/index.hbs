@@ -20,7 +20,7 @@
   </div>
   {{/if}}
 
-  <p class="text-sm text-base-content/60 mb-4 px-2">{{garments.length}} {{t 'lang.RESULTS'}}</p>
+  <p class="text-sm text-base-content/60 mb-4 px-2">{{total}} {{t 'lang.RESULTS'}}</p>
 
   {{#if garments.length}}
   <div class="flex flex-wrap gap-4 justify-center">
@@ -28,7 +28,7 @@
     <a href="/wardrobe/{{this.id}}{{#if ../viewOwner}}?ownerId={{../viewOwner}}{{/if}}" class="card bg-base-100 w-40 sm:w-44 shadow-sm hover:shadow-md transition-shadow cursor-pointer {{#if this.archived}}opacity-50{{/if}}">
       <figure class="aspect-square bg-base-200">
         {{#if this.photo}}
-        <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}" class="object-cover w-full h-full" />
+        <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}" loading="lazy" class="object-cover w-full h-full" />
         {{else}}
         <div class="flex items-center justify-center w-full h-full text-base-content/30">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-12">
@@ -44,6 +44,23 @@
     </a>
     {{/each}}
   </div>
+
+  {{#if showPagination}}
+  <div class="flex items-center justify-center gap-4 mt-6">
+    {{#if hasPrevPage}}
+    <a href="{{prevPageUrl}}" class="btn btn-sm btn-outline">&larr; {{t 'lang.PREVIOUS'}}</a>
+    {{else}}
+    <button class="btn btn-sm btn-outline btn-disabled" disabled>&larr; {{t 'lang.PREVIOUS'}}</button>
+    {{/if}}
+    <span class="text-sm text-base-content/60">{{t 'lang.PAGE'}} {{page}} / {{totalPages}}</span>
+    {{#if hasNextPage}}
+    <a href="{{nextPageUrl}}" class="btn btn-sm btn-outline">{{t 'lang.NEXT'}} &rarr;</a>
+    {{else}}
+    <button class="btn btn-sm btn-outline btn-disabled" disabled>{{t 'lang.NEXT'}} &rarr;</button>
+    {{/if}}
+  </div>
+  {{/if}}
+
   {{else}}
   <div class="flex flex-col items-center justify-center gap-4 pt-20 text-base-content/40">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-16">

@@ -66,11 +66,51 @@
         ></label
       >
       {{#if garments.length}}
+      <div class="flex gap-2 mb-2">
+        <input
+          type="text"
+          id="picker-search"
+          placeholder="{{t 'lang.SEARCH_PLACEHOLDER'}}"
+          autocomplete="off"
+          class="picker-filter-control input input-bordered input-sm flex-1"
+        />
+        <select id="picker-category" class="picker-filter-control select select-bordered select-sm">
+          <option value="">{{t 'lang.ALL_CATEGORIES'}}</option>
+          {{#each categories}}
+          <option value="{{this.value}}">{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <p id="picker-empty" class="hidden text-sm text-base-content/40 italic mb-2">
+        {{t 'lang.NO_GARMENTS_MATCH'}}
+      </p>
       <div
+        id="garment-picker-grid"
         class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-96 overflow-y-auto p-1 border border-base-300 rounded-box"
+        _="on input from .picker-filter-control or change from .picker-filter-control debounced at 150ms
+             set q to #picker-search.value.toLowerCase().trim()
+             set cat to #picker-category.value
+             set shown to 0
+             for el in <.garment-card/>
+               if (q is '' or el.dataset.name.toLowerCase().includes(q)) and (cat is '' or el.dataset.category is cat)
+                 remove .hidden from el
+                 increment shown
+               else
+                 add .hidden to el
+               end
+             end
+             if shown is 0
+               remove .hidden from #picker-empty
+             else
+               add .hidden to #picker-empty
+             end"
       >
         {{#each garments}}
-        <label class="cursor-pointer flex flex-col items-center gap-1">
+        <label
+          class="garment-card cursor-pointer flex flex-col items-center gap-1"
+          data-name="{{this.name}}"
+          data-category="{{this.category}}"
+        >
           <input
             type="checkbox"
             name="garmentId"
