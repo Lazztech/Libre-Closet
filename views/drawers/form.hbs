@@ -72,9 +72,9 @@
           id="picker-search"
           placeholder="{{t 'lang.SEARCH_PLACEHOLDER'}}"
           autocomplete="off"
-          class="picker-filter-control input input-bordered input-sm flex-1"
+          class="picker-filter-control input input-bordered input-sm flex-1 min-w-0"
         />
-        <select id="picker-category" class="picker-filter-control select select-bordered select-sm">
+        <select id="picker-category" class="picker-filter-control select select-bordered select-sm w-28 sm:w-40 shrink-0">
           <option value="">{{t 'lang.ALL_CATEGORIES'}}</option>
           {{#each categories}}
           <option value="{{this.value}}">{{this.label}}</option>
