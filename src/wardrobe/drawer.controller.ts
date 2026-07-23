@@ -88,11 +88,63 @@ export class DrawerController {
   @Render('drawers/form')
   async newForm(@Req() req: FastifyRequest, @I18n() i18n: I18nContext) {
     const userId = this.userId(req);
-    const [garments, categories] = await Promise.all([
-      this.garmentService.findAll(userId),
-      this.availableCategories(userId, i18n),
-    ]);
-    return { drawer: null, garments, selectedGarmentIds: [], categories };
+    const [{ items: garments, total, page, totalPages }, categories] =
+      await Promise.all([
+        this.garmentService.findAllPaginated(userId, { limit: '48' }),
+        this.availableCategories(userId, i18n),
+      ]);
+    return {
+      drawer: null,
+      garments,
+      selectedGarmentIds: [],
+      selectedGarments: [],
+      categories,
+      total,
+      page,
+      totalPages,
+      showPagination: totalPages > 1,
+      hasPrevPage: page > 1,
+      hasNextPage: page < totalPages,
+      prevPageUrl: `/drawers/picker?page=${page - 1}`,
+      nextPageUrl: `/drawers/picker?page=${page + 1}`,
+    };
+  }
+
+  // Backs the search/category-filtered, paginated picker grid on
+  // /drawers/new and /drawers/:id/edit so the DOM stays bounded regardless
+  // of how many garments the user owns (see LIB-8/LIB-10).
+  @Get('picker')
+  async picker(
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
+    @Query('keyword') keyword: string | undefined,
+    @Query('category') category: string | undefined,
+    @Query('page') page: string | undefined,
+    @Query('garmentId') garmentId: string | string[] | undefined,
+  ) {
+    const userId = this.userId(req);
+    const selectedGarmentIds = this.parseGarmentIds(garmentId);
+    const {
+      items: garments,
+      page: currentPage,
+      totalPages,
+    } = await this.garmentService.findAllPaginated(userId, {
+      keyword,
+      category,
+      page,
+      limit: '48',
+    });
+    return reply.viewPartial('partials/garment_picker_grid', {
+      garments,
+      selectedGarmentIds,
+      page: currentPage,
+      totalPages,
+      showPagination: totalPages > 1,
+      hasPrevPage: currentPage > 1,
+      hasNextPage: currentPage < totalPages,
+      prevPageUrl: `/drawers/picker?page=${currentPage - 1}`,
+      nextPageUrl: `/drawers/picker?page=${currentPage + 1}`,
+    });
   }
 
   @Post()
@@ -160,13 +212,32 @@ export class DrawerController {
     @I18n() i18n: I18nContext,
   ) {
     const userId = this.userId(req);
-    const [drawer, garments, categories] = await Promise.all([
-      this.drawerService.findOne(id, userId),
-      this.garmentService.findAll(userId),
-      this.availableCategories(userId, i18n),
-    ]);
-    const selectedGarmentIds = drawer.garments.getItems().map((g) => g.id);
-    return { drawer, garments, selectedGarmentIds, categories };
+    const [drawer, { items: garments, total, page, totalPages }, categories] =
+      await Promise.all([
+        this.drawerService.findOne(id, userId),
+        this.garmentService.findAllPaginated(userId, { limit: '48' }),
+        this.availableCategories(userId, i18n),
+      ]);
+    const selectedGarments = drawer.garments.getItems().map((g) => ({
+      id: g.id,
+      name: g.name,
+    }));
+    const selectedGarmentIds = selectedGarments.map((g) => g.id);
+    return {
+      drawer,
+      garments,
+      selectedGarmentIds,
+      selectedGarments,
+      categories,
+      total,
+      page,
+      totalPages,
+      showPagination: totalPages > 1,
+      hasPrevPage: page > 1,
+      hasNextPage: page < totalPages,
+      prevPageUrl: `/drawers/picker?page=${page - 1}`,
+      nextPageUrl: `/drawers/picker?page=${page + 1}`,
+    };
   }
 
   @Post(':id')

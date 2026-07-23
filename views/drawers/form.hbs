@@ -60,98 +60,54 @@
     </div>
 
     <div class="form-control">
-      <label class="label"
-        ><span class="label-text"
-          >{{t 'lang.GARMENTS_IN_DRAWER'}}</span
-        ></label
-      >
-      {{#if garments.length}}
-      <div class="flex gap-2 mb-2">
+      <div class="flex items-center justify-between label pb-1">
+        <span class="label-text">{{t 'lang.GARMENTS_IN_DRAWER'}}</span>
+        <span
+          id="picker-selected-count"
+          class="text-xs text-base-content/50"
+          >{{selectedGarmentIds.length}} {{t 'lang.SELECTED'}}</span
+        >
+      </div>
+      {{#if total}}
+      <div class="flex flex-col sm:flex-row gap-2 mb-2">
         <input
           type="text"
           id="picker-search"
+          name="keyword"
           placeholder="{{t 'lang.SEARCH_PLACEHOLDER'}}"
           autocomplete="off"
-          class="picker-filter-control input input-bordered input-sm flex-1 min-w-0"
+          class="input input-bordered input-sm w-full sm:flex-1 min-w-0"
         />
-        <select id="picker-category" class="picker-filter-control select select-bordered select-sm w-28 sm:w-40 shrink-0">
+        <select
+          id="picker-category"
+          name="category"
+          class="select select-bordered select-sm w-full sm:w-40 sm:shrink-0"
+        >
           <option value="">{{t 'lang.ALL_CATEGORIES'}}</option>
           {{#each categories}}
           <option value="{{this.value}}">{{this.label}}</option>
           {{/each}}
         </select>
       </div>
-      <p id="picker-empty" class="hidden text-sm text-base-content/40 italic mb-2">
-        {{t 'lang.NO_GARMENTS_MATCH'}}
-      </p>
       <div
         id="garment-picker-grid"
-        class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-96 overflow-y-auto p-1 border border-base-300 rounded-box"
-        _="on input from .picker-filter-control or change from .picker-filter-control debounced at 150ms
-             set q to #picker-search.value.toLowerCase().trim()
-             set cat to #picker-category.value
-             set shown to 0
-             for el in <.garment-card/>
-               if (q is '' or el.dataset.name.toLowerCase().includes(q)) and (cat is '' or el.dataset.category is cat)
-                 remove .hidden from el
-                 increment shown
-               else
-                 add .hidden to el
-               end
-             end
-             if shown is 0
-               remove .hidden from #picker-empty
-             else
-               add .hidden to #picker-empty
-             end"
+        class="max-h-96 overflow-y-auto p-1 border border-base-300 rounded-box"
+        hx-get="/drawers/picker"
+        hx-trigger="input changed delay:300ms from:#picker-search, change from:#picker-category"
+        hx-include="#picker-search, #picker-category, .selected-hidden"
+        hx-swap="innerHTML"
       >
-        {{#each garments}}
-        <label
-          class="garment-card cursor-pointer flex flex-col items-center gap-1"
+        {{> garment_picker_grid garments=garments selectedGarmentIds=selectedGarmentIds page=page totalPages=totalPages showPagination=showPagination hasPrevPage=hasPrevPage hasNextPage=hasNextPage prevPageUrl=prevPageUrl nextPageUrl=nextPageUrl}}
+      </div>
+      <div id="selected-inputs">
+        {{#each selectedGarments}}
+        <input
+          type="hidden"
+          name="garmentId"
+          class="selected-hidden"
+          value="{{this.id}}"
           data-name="{{this.name}}"
-          data-category="{{this.category}}"
-        >
-          <input
-            type="checkbox"
-            name="garmentId"
-            value="{{this.id}}"
-            class="hidden peer"
-            {{#ifContains ../selectedGarmentIds this.id}}checked{{/ifContains}}
-          />
-          <div
-            class="size-16 rounded-box bg-base-200 overflow-hidden ring-2 ring-transparent peer-checked:ring-primary"
-          >
-            {{#if this.photo}}
-            <img
-              src="/file/nobg/{{this.photo.fileName}}"
-              alt="{{this.name}}"
-              class="w-full h-full object-cover"
-            />
-            {{else}}
-            <div
-              class="w-full h-full flex items-center justify-center text-base-content/30"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3"
-                />
-              </svg>
-            </div>
-            {{/if}}
-          </div>
-          <span class="text-xs text-center line-clamp-2 leading-tight"
-            >{{this.name}}</span
-          >
-        </label>
+        />
         {{/each}}
       </div>
       {{else}}
@@ -160,6 +116,54 @@
       </p>
       {{/if}}
     </div>
+
+    <script>
+      (function () {
+        var grid = document.getElementById('garment-picker-grid');
+        var selectedInputs = document.getElementById('selected-inputs');
+        var counter = document.getElementById('picker-selected-count');
+        if (!grid || !selectedInputs) return;
+
+        function updateCounter() {
+          var count = selectedInputs.querySelectorAll('.selected-hidden').length;
+          if (counter) counter.textContent = count + ' {{t "lang.SELECTED"}}';
+        }
+
+        function addSelected(id, name) {
+          if (selectedInputs.querySelector('.selected-hidden[value="' + id + '"]'))
+            return;
+          var input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'garmentId';
+          input.className = 'selected-hidden';
+          input.value = id;
+          input.dataset.name = name || '';
+          selectedInputs.appendChild(input);
+        }
+
+        function removeSelected(id) {
+          var existing = selectedInputs.querySelector(
+            '.selected-hidden[value="' + id + '"]',
+          );
+          if (existing) existing.remove();
+        }
+
+        grid.addEventListener('change', function (event) {
+          var checkbox = event.target.closest('.picker-checkbox');
+          if (!checkbox) return;
+          var card = checkbox.closest('.garment-card');
+          var id = checkbox.value;
+          if (checkbox.checked) {
+            addSelected(id, card && card.dataset.name);
+          } else {
+            removeSelected(id);
+          }
+          updateCounter();
+        });
+
+        updateCounter();
+      })();
+    </script>
 
     <div class="flex gap-2 mt-2">
       <button type="submit" class="btn btn-primary flex-1">

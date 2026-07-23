@@ -1,0 +1,96 @@
+{{#if garments.length}}
+<div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+  {{#each garments}}
+  <label
+    class="garment-card cursor-pointer flex flex-col items-center gap-1"
+    data-id="{{this.id}}"
+    data-name="{{this.name}}"
+  >
+    <input
+      type="checkbox"
+      class="hidden peer picker-checkbox"
+      value="{{this.id}}"
+      {{#ifContains ../selectedGarmentIds this.id}}checked{{/ifContains}}
+    />
+    <div
+      class="size-16 rounded-box bg-base-200 overflow-hidden ring-2 ring-transparent peer-checked:ring-primary"
+    >
+      {{#if this.photo}}
+      <img
+        src="/file/nobg/{{this.photo.fileName}}"
+        alt="{{this.name}}"
+        loading="lazy"
+        class="w-full h-full object-cover"
+      />
+      {{else}}
+      <div
+        class="w-full h-full flex items-center justify-center text-base-content/30"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3"
+          />
+        </svg>
+      </div>
+      {{/if}}
+    </div>
+    <span class="text-xs text-center line-clamp-2 leading-tight"
+      >{{this.name}}</span
+    >
+  </label>
+  {{/each}}
+</div>
+
+{{#if showPagination}}
+<div class="flex items-center justify-between gap-2 mt-2">
+  {{#if hasPrevPage}}
+  <button
+    type="button"
+    class="btn btn-ghost btn-xs"
+    hx-get="{{prevPageUrl}}"
+    hx-include="#picker-search, #picker-category, .selected-hidden"
+    hx-target="#garment-picker-grid"
+    hx-swap="innerHTML"
+  >
+    &larr; {{t 'lang.PREVIOUS'}}
+  </button>
+  {{else}}
+  <button type="button" class="btn btn-ghost btn-xs btn-disabled" disabled>
+    &larr; {{t 'lang.PREVIOUS'}}
+  </button>
+  {{/if}}
+  <span class="text-xs text-base-content/60"
+    >{{t 'lang.PAGE'}} {{page}} / {{totalPages}}</span
+  >
+  {{#if hasNextPage}}
+  <button
+    type="button"
+    class="btn btn-ghost btn-xs"
+    hx-get="{{nextPageUrl}}"
+    hx-include="#picker-search, #picker-category, .selected-hidden"
+    hx-target="#garment-picker-grid"
+    hx-swap="innerHTML"
+  >
+    {{t 'lang.NEXT'}} &rarr;
+  </button>
+  {{else}}
+  <button type="button" class="btn btn-ghost btn-xs btn-disabled" disabled>
+    {{t 'lang.NEXT'}} &rarr;
+  </button>
+  {{/if}}
+</div>
+{{/if}}
+{{else}}
+<p class="text-sm text-base-content/40 italic p-2">
+  {{t 'lang.NO_GARMENTS_MATCH'}}
+</p>
+{{/if}}
