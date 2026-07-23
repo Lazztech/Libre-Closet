@@ -25,9 +25,11 @@
   <p class="text-base-content/60 text-sm mb-6 px-1">{{drawer.notes}}</p>
   {{/if}}
 
-  <div class="flex items-center justify-between mb-3">
+  <div class="flex items-center justify-between gap-2 mb-3">
     <h2 class="font-semibold">{{t 'lang.GARMENTS_IN_DRAWER'}}</h2>
-    <a href="/wardrobe?drawerId={{drawer.id}}" class="text-sm link"
+    <a
+      href="/wardrobe?drawerId={{drawer.id}}"
+      class="text-xs text-base-content/60 shrink-0 underline"
       >{{t 'lang.VIEW_IN_WARDROBE'}}</a
     >
   </div>
