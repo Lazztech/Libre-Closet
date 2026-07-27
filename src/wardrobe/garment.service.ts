@@ -80,7 +80,6 @@ constructor(
           }
         : {}),
     };
-
 if (userId != null) {
   if (viewOwner != null && viewOwner !== userId) {
     return this.garmentRepository.find(
@@ -88,8 +87,6 @@ if (userId != null) {
       { populate: ['photo'], orderBy: { id: 'DESC' } },
     );
   }
-
-  console.log("findAll userId =", userId);
 
   return this.garmentRepository.find(
     { owner: { id: userId }, ...searchConditions },
