@@ -131,15 +131,21 @@ export class OutfitController {
     return { outfit };
   }
 
-  @Get(':id/edit')
-  @Render('outfits/form')
-  async editForm(
-    @Param('id', ParseIntPipe) id: number,
-    @Req() req: FastifyRequest,
-    @I18n() i18n: I18nContext,
-    @Query('returnTo') returnTo?: string,
-    @Query('returnToWeek') returnToWeek?: string,
-  ) {
+@Get(':id/edit')
+@Render('outfits/form')
+async editForm(
+  @Param('id', ParseIntPipe) id: number,
+  @Req() req: FastifyRequest,
+  @I18n() i18n: I18nContext,
+  @Query('returnTo') returnTo?: string,
+  @Query('returnToWeek') returnToWeek?: string,
+) {
+  console.log("=== OUTFIT EDIT ROUTE HIT ===");
+  console.log("ID:", id);
+  console.log("USER:", this.userId(req));
+  console.log("RAW USER:", req['user']);
+
+
     const [outfit, garments] = await Promise.all([
       this.outfitService.findOne(id, this.userId(req)),
       this.garmentService.findAll(this.userId(req)),

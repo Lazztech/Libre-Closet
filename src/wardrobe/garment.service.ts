@@ -94,7 +94,7 @@ if (userId != null) {
   );
 }
 
-// AUTH_ENABLED=false: only return garments that belong to no user
+// AUTH_ENABLED=false
 return this.garmentRepository.find(
   { owner: null, ...searchConditions },
   { populate: ['photo'], orderBy: { id: 'DESC' } },

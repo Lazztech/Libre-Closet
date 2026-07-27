@@ -41,21 +41,36 @@ export class OutfitService {
       { populate: ['garments', 'garments.photo'] },
     );
   }
+async findOne(id: number, userId: number | string) {
+  console.log("=== FIND ONE OUTFIT ===");
+  console.log("OUTFIT ID:", id);
+  console.log("USER ID:", userId);
 
-  async findOne(id: number, userId?: number): Promise<Outfit> {
-    const outfit = await this.outfitRepository.findOne(id, {
-      populate: ['garments', 'garments.photo'],
-    });
-    if (!outfit) throw new NotFoundException('Outfit not found');
-    if (userId != null) {
-      // auth mode: must be the owner
-      if (outfit.owner?.id !== userId) throw new ForbiddenException();
-    } else {
-      // no-auth mode: only allow ownerless outfits
-      if (outfit.owner != null) throw new ForbiddenException();
-    }
-    return outfit;
+  const outfit = await this.outfitRepository.findOne(
+    { id },
+    { populate: ['garments', 'garments.photo', 'owner'] },
+  );
+
+  console.log("OUTFIT FOUND:", outfit);
+
+  if (!outfit) {
+    throw new NotFoundException();
   }
+
+  const ownerId = outfit.owner?.id;
+
+  console.log("OWNER ID:", ownerId);
+  console.log("OWNER ID TYPE:", typeof ownerId);
+  console.log("USER ID TYPE:", typeof userId);
+  console.log("EQUAL CHECK:", ownerId === Number(userId));
+
+  if (ownerId !== Number(userId)) {
+    console.log("BLOCKED: USER DOES NOT OWN OUTFIT");
+    throw new ForbiddenException();
+  }
+
+  return outfit;
+}
 
   async findOneByShareableId(shareableId: string): Promise<Outfit> {
     const outfit = await this.outfitRepository.findOne(
