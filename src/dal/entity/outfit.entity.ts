@@ -3,11 +3,13 @@ import {
   Entity,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryKey,
   Property,
   type Ref,
 } from '@mikro-orm/core';
 import { Garment } from './garment.entity';
+import { OutfitCalendar } from './outfit-calendar.entity';
 import { ShareableId } from './shareableId.entity';
 import { User } from './user.entity';
 
@@ -32,6 +34,12 @@ export class Outfit extends ShareableId {
 
   @ManyToMany(() => Garment, (garment) => garment.outfits, { owner: true })
   public garments = new Collection<Garment>(this);
+
+  @OneToMany(
+    () => OutfitCalendar,
+    (calendar) => calendar.outfit,
+  )
+  public calendar = new Collection<OutfitCalendar>(this);
 
   @ManyToOne({
     entity: () => User,

@@ -18,6 +18,7 @@ import { UpdateGarmentDto } from './dto/update-garment.dto';
 import { SearchGarmentDto } from './dto/search-garment.dto';
 import { GarmentCategory } from './garment-category.enum';
 import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
+import { OutfitCalendar } from '../dal/entity/outfit-calendar.entity';
 
 const CANONICAL_SIZES = [
   'XX-Small',
@@ -36,14 +37,19 @@ const CANONICAL_SIZES = [
 export class GarmentService {
   private readonly logger = new Logger(GarmentService.name);
 
-  constructor(
-    @InjectRepository(Garment)
-    private readonly garmentRepository: EntityRepository<Garment>,
-    @InjectRepository(User)
-    private readonly userRepository: EntityRepository<User>,
-    private readonly fileService: FileService,
-    private readonly shareService: WardrobeShareService,
-  ) {}
+constructor(
+  @InjectRepository(Garment)
+  private readonly garmentRepository: EntityRepository<Garment>,
+
+  @InjectRepository(User)
+  private readonly userRepository: EntityRepository<User>,
+
+  @InjectRepository(OutfitCalendar)
+  private readonly calendarRepository: EntityRepository<OutfitCalendar>,
+
+  private readonly fileService: FileService,
+  private readonly shareService: WardrobeShareService,
+) {}
 
   resolveCategoryLabel(value: string, i18n: I18nContext): string {
     const normalized = value.toLowerCase();
@@ -75,25 +81,28 @@ export class GarmentService {
         : {}),
     };
 
-    if (userId != null) {
-      if (viewOwner != null && viewOwner !== userId) {
-        return this.garmentRepository.find(
-          { owner: { id: viewOwner }, ...searchConditions },
-          { populate: ['photo'], orderBy: { id: 'DESC' } },
-        );
-      }
-      return this.garmentRepository.find(
-        { owner: { id: userId }, ...searchConditions },
-        { populate: ['photo'], orderBy: { id: 'DESC' } },
-      );
-    }
-    // AUTH_ENABLED=false: only return garments that belong to no user
+if (userId != null) {
+  if (viewOwner != null && viewOwner !== userId) {
     return this.garmentRepository.find(
-      { owner: null, ...searchConditions },
+      { owner: { id: viewOwner }, ...searchConditions },
       { populate: ['photo'], orderBy: { id: 'DESC' } },
     );
   }
 
+  console.log("findAll userId =", userId);
+
+  return this.garmentRepository.find(
+    { owner: { id: userId }, ...searchConditions },
+    { populate: ['photo'], orderBy: { id: 'DESC' } },
+  );
+}
+
+// AUTH_ENABLED=false: only return garments that belong to no user
+return this.garmentRepository.find(
+  { owner: null, ...searchConditions },
+  { populate: ['photo'], orderBy: { id: 'DESC' } },
+);
+  }
   async findOne(
     id: number,
     userId?: number,
@@ -379,4 +388,33 @@ export class GarmentService {
     if (['xxs', '2xs', '2xsmall', 'xxsmall'].includes(s)) return 'XX-Small';
     return input.trim();
   }
-}
+
+ async getWearStats(userId: number) {
+  const garments = await this.garmentRepository.find(
+    { owner: { id: userId } },
+    { populate: ['outfits'] },
+  );
+
+  return Promise.all(
+    garments.map(async (garment) => {
+      let wearCount = 0;
+
+      for (const outfit of garment.outfits) {
+        const worn = await this.calendarRepository.find({
+          outfit: outfit.id,
+          owner: userId,
+          wornAt: { $ne: null },
+        });
+
+        wearCount += worn.length;
+      }
+
+      return {
+        name: garment.name,
+        category: garment.category,
+        wearCount,
+      };
+    }),
+  );
+}}
+

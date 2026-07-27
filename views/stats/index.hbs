@@ -1,0 +1,35 @@
+{{>navbar}}
+
+<main class="p-4 pt-20">
+
+<h1 class="text-2xl font-bold">
+Wardrobe Statistics
+</h1>
+
+<div class="grid gap-4 mt-6">
+
+{{#each stats}}
+
+<div class="card bg-base-100 shadow p-4">
+
+<h2 class="font-bold">
+{{this.name}}
+</h2>
+
+<p>
+Category: {{this.category}}
+</p>
+
+<p>
+Worn {{this.wearCount}} times
+</p>
+
+</div>
+
+{{/each}}
+
+</div>
+
+</main>
+
+{{>dock}}

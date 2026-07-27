@@ -49,6 +49,7 @@ export class WardrobeController {
     @I18n() i18n: I18nContext,
   ) {
     const userId = this.userId(req);
+    console.log("wardrobe user id:", userId);
     let viewOwner: number | undefined;
     let sharedWardrobes: any[] = [];
     let canEdit = true;

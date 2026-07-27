@@ -20,11 +20,13 @@ export class ConditionalAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<FastifyRequest>();
+
     if (!this.configService.get<boolean>('AUTH_ENABLED')) {
+      request['user'] = { userId: 1 };
       return true;
     }
 
-    const request = context.switchToHttp().getRequest<FastifyRequest>();
     const token = (request.cookies as Record<string, string>)?.['access_token'];
     if (token) {
       try {
