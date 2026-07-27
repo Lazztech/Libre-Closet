@@ -23,18 +23,26 @@ export class ConditionalAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
 
     if (!this.configService.get<boolean>('AUTH_ENABLED')) {
-      request['user'] = { userId: 1 };
+      const devUserId = this.configService.get<number>('DEV_USER_ID');
+
+      if (devUserId) {
+        request['user'] = { userId: devUserId };
+      }
+
       return true;
     }
 
     const token = (request.cookies as Record<string, string>)?.['access_token'];
+
     if (token) {
       try {
         const payload = await this.jwtService.verifyAsync(token, {
           secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
         });
+
         await this.authService.verifyPwf(payload);
         request['user'] = payload;
+
         return true;
       } catch {
         // invalid/expired token or fingerprint mismatch — fall through to redirect
