@@ -1,19 +1,20 @@
 name: "Libre Closet"
-version: "0.4.1"
-slug: "libre_closet"
+version: "0.5.0"
+slug: "libre-closet"
 description: "Self-hosted wardrobe organizer for Home Assistant"
-url: "https://github.com/Lazztech/Libre-Closet"
+url: "https://github.com/Lazztech/Libre-Closet/tree/ha-addon/libre-closet"
 arch:
   - amd64
   - aarch64
-startup: services
+startup: application
 boot: auto
 ingress: true
 ingress_port: 3000
 ingress_stream: true
 panel_icon: "mdi:wardrobe"
 panel_title: "Libre Closet"
-image: "ghcr.io/lazztech/libre-closet:latest"
+image: "ghcr.io/lazztech/libre-closet"
+init: false
 environment:
   DATA_PATH: "/data"
   PWA_ENABLED: "false"
