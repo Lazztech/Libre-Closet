@@ -4,7 +4,7 @@
     {{#each files}}
     <div class="card bg-base-100 w-96 shadow-sm">
       <figure>
-        <img src="{{ingressPath}}/file/{{this.fileName}}" alt="File upload" />
+        <img src="/file/{{this.fileName}}" alt="File upload" />
       </figure>
       <div class="card-body">
         <h2 class="card-title">{{this.fileName}}</h2>
@@ -34,7 +34,7 @@
     <form
       id="form"
       hx-encoding="multipart/form-data"
-      hx-post="{{ingressPath}}/file/upload"
+      hx-post="/file/upload"
       hx-indicator="#loading"
       hx-target="main"
       hx-select="main"

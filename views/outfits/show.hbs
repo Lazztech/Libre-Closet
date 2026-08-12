@@ -2,7 +2,7 @@
 
 <main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
   <div class="flex items-center gap-3 mb-6">
-    <a href="{{ingressPath}}/outfits" class="btn btn-ghost btn-sm btn-circle">
+    <a href="/outfits" class="btn btn-ghost btn-sm btn-circle">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -29,12 +29,12 @@
   <div class="flex flex-wrap gap-3 mb-8">
     {{#each outfit.garments}}
     <a
-      href="{{ingressPath}}/wardrobe/{{this.id}}"
+      href="/wardrobe/{{this.id}}"
       class="flex flex-col items-center gap-1 w-24"
     >
       {{#if this.photo}}
       <img
-        src="{{ingressPath}}/file/nobg/{{this.photo.fileName}}"
+        src="/file/nobg/{{this.photo.fileName}}"
         alt="{{this.name}}"
         class="size-20 rounded-box object-cover shadow-sm"
       />
@@ -69,7 +69,7 @@
   {{/if}} {{!-- Actions --}}
   <div class="divider"></div>
   <div class="flex gap-3 justify-between items-center">
-    <a href="{{ingressPath}}/outfits/{{outfit.id}}/edit?returnTo={{ingressPath}}/outfits/{{outfit.id}}" class="btn btn-outline btn-sm">
+    <a href="/outfits/{{outfit.id}}/edit?returnTo=/outfits/{{outfit.id}}" class="btn btn-outline btn-sm">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -109,7 +109,7 @@
     </button>
 
     <button
-      hx-delete="{{ingressPath}}/outfits/{{outfit.id}}"
+      hx-delete="/outfits/{{outfit.id}}"
       hx-confirm="{{t 'lang.CONFIRM_DELETE'}}"
       class="btn btn-error btn-sm btn-outline"
     >

@@ -38,8 +38,8 @@ async function bootstrap() {
   // Security headers on all responses
   // eslint-disable-next-line @typescript-eslint/require-await -- Fastify onSend hook must return a Promise if not using the callback (next) pattern
   fastify.addHook('onSend', async (request, reply, payload) => {
-    const isHomeAssistantIngress =
-      request.headers['x-ingress-path'] !== undefined;
+    const ingressPath = request.headers['x-ingress-path'];
+    const isHomeAssistantIngress = ingressPath !== undefined;
     reply.header('X-Content-Type-Options', 'nosniff');
     reply.header(
       'X-Frame-Options',
@@ -56,6 +56,21 @@ async function bootstrap() {
         ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://static.cloudflareinsights.com; worker-src 'self' blob:; frame-ancestors 'self';"
         : "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://static.cloudflareinsights.com; worker-src 'self' blob:; frame-ancestors 'none';",
     );
+
+    const contentType = reply.getHeader('content-type');
+    if (
+      typeof ingressPath === 'string' &&
+      typeof contentType === 'string' &&
+      contentType.includes('text/html') &&
+      (typeof payload === 'string' || Buffer.isBuffer(payload))
+    ) {
+      const prefix = ingressPath.replace(/\/$/, '');
+      const escapedPrefix = prefix.slice(1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const rootPath = new RegExp(`(["'=])/(?!/|${escapedPrefix}/)`, 'g');
+      const html = Buffer.isBuffer(payload) ? payload.toString() : payload;
+      return html.replace(rootPath, `$1${prefix}/`);
+    }
+
     return payload;
   });
 

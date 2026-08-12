@@ -3,7 +3,7 @@
   <div class="w-full p-2 gap-2 pt-20 shadow-md bg-base-200 flex justify-center">
     {{#if user}}
     <button
-      hx-post="{{ingressPath}}/notification/test"
+      hx-post="/notification/test"
       hx-indicator="#loading"
       hx-swap="none"
       class="btn btn-neutral btn-sm"
@@ -33,7 +33,7 @@
     <div class="flex flex-row gap-2 items-center justify-center">
       <form
         id="messageForm"
-        hx-post="{{ingressPath}}/message"
+        hx-post="/message"
         hx-indicator="#loading"
         hx-trigger="submit"
         hx-swap="beforeend"

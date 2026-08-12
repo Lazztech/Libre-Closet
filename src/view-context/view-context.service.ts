@@ -41,12 +41,9 @@ export class ViewContextService {
       'Self-hosted wardrobe organizer. Catalog clothes with photos, build outfits, and install as an offline PWA. Free and open-source. No subscription, no ads.';
     const ogImage = `${baseUrl}/assets/lazztech_icon.png`;
 
-    const ingressPath = (req.headers['x-ingress-path'] as string) ?? '';
-
     const context: Record<string, any> = {
       appName,
       siteUrl,
-      ingressPath,
       baseUrl: req.url === '/' ? '' : req.url,
       authEnabled: this.configService.get<boolean>('AUTH_ENABLED'),
       signupsDisabled: this.configService.get<boolean>('DISABLE_REGISTRATION'),

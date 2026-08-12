@@ -3,7 +3,7 @@
 <main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
   <div class="flex items-center gap-3 mb-6">
     <a
-      href="{{ingressPath}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
+      href="/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
       class="btn btn-ghost btn-sm btn-circle"
     >
       <svg
@@ -29,7 +29,7 @@
     class="relative rounded-box overflow-hidden mb-6 bg-base-200 aspect-square w-full max-w-sm mx-auto"
   >
     <img
-      src="{{ingressPath}}/file/nobg/{{garment.photo.fileName}}"
+      src="/file/nobg/{{garment.photo.fileName}}"
       alt="{{garment.name}}"
       class="object-cover w-full h-full"
     />
@@ -77,7 +77,7 @@
   </div>
   {{/if}} {{#if canEdit}} {{!-- Photo upload --}}
   <form
-    hx-post="{{ingressPath}}/wardrobe/{{garment.id}}/photo{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
+    hx-post="/wardrobe/{{garment.id}}/photo{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
     hx-encoding="multipart/form-data"
     hx-indicator="#loading"
     hx-target="main"
@@ -212,7 +212,7 @@
   {{!-- Edit --}} {{#if canEdit}}
   <div class="flex gap-2 mb-6">
     <a
-      href="{{ingressPath}}/wardrobe/{{garment.id}}/edit{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
+      href="/wardrobe/{{garment.id}}/edit{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
       class="btn btn-outline btn-sm flex-1"
     >
       {{t 'lang.EDIT'}}
@@ -224,7 +224,7 @@
   {{#if canClone}}
   <div class="flex gap-2 mb-6">
     <a
-      href="{{ingressPath}}/wardrobe/{{garment.id}}/clone{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
+      href="/wardrobe/{{garment.id}}/clone{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
       class="btn btn-outline btn-sm flex-1"
     >
       {{t 'lang.CLONE_GARMENT'}}
@@ -262,7 +262,7 @@
   {{#if canDelete}}
   <button
     class="btn btn-outline btn-sm w-full mb-6"
-    hx-post="{{ingressPath}}/wardrobe/{{garment.id}}/archive"
+    hx-post="/wardrobe/{{garment.id}}/archive"
     hx-confirm="{{#if garment.archived}}{{t 'lang.CONFIRM_UNARCHIVE'}}{{else}}{{t 'lang.CONFIRM_ARCHIVE'}}{{/if}}"
     hx-indicator="#loading"
   >
@@ -274,7 +274,7 @@
   {{#if canDelete}}
   <button
     class="btn btn-error btn-outline btn-sm w-full"
-    hx-delete="{{ingressPath}}/wardrobe/{{garment.id}}"
+    hx-delete="/wardrobe/{{garment.id}}"
     hx-confirm="{{t 'lang.CONFIRM_DELETE'}}"
     hx-indicator="#loading"
   >
