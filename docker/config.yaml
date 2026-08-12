@@ -2,7 +2,7 @@ name: "Libre Closet"
 version: "0.5.0"
 slug: "libre-closet"
 description: "Self-hosted wardrobe organizer for Home Assistant"
-url: "https://github.com/Lazztech/Libre-Closet/tree/ha-addon/ha-addon"
+url: "https://github.com/Lazztech/Libre-Closet/tree/ha-addon/docker"
 arch:
   - amd64
   - aarch64
