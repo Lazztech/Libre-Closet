@@ -58,7 +58,7 @@
   <button
     type="button"
     class="btn btn-ghost btn-sm btn-circle shrink-0"
-    hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.prevIndex}}"
+    hx-get="{{ingressPath}}/outfits/row-fragment?category={{uri row.value}}&index={{row.prevIndex}}"
     hx-target="closest .outfit-row"
     hx-swap="outerHTML"
   >
@@ -68,7 +68,7 @@
   <button
     type="button"
     class="flex-1 flex flex-col items-center gap-1 min-w-0 overflow-hidden"
-    data-garment-href="/wardrobe/{{row.currentGarment.id}}"
+    data-garment-href="{{ingressPath}}/wardrobe/{{row.currentGarment.id}}"
     data-garment-name="{{row.currentGarment.name}}"
     data-garment-photo="{{#if row.currentGarment.photo}}{{row.currentGarment.photo}}{{/if}}"
     data-garment-brand="{{#if row.currentGarment.brand}}{{row.currentGarment.brand}}{{/if}}"
@@ -116,7 +116,7 @@
   <button
     type="button"
     class="btn btn-ghost btn-sm btn-circle shrink-0"
-    hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.nextIndex}}"
+    hx-get="{{ingressPath}}/outfits/row-fragment?category={{uri row.value}}&index={{row.nextIndex}}"
     hx-target="closest .outfit-row"
     hx-swap="outerHTML"
   >

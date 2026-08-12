@@ -23,7 +23,7 @@
   {{/if}}
 
   <form
-    hx-post="/auth/delete-account"
+    hx-post="{{ingressPath}}/auth/delete-account"
     hx-indicator="#loading"
     hx-trigger="submit"
     hx-confirm="{{t 'lang.DELETE_ACCOUNT_CONFIRMATION'}}"

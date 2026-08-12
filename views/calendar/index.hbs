@@ -11,7 +11,7 @@
       {{!-- Month header with prev/next navigation --}}
       <div class="flex items-center justify-between px-3 py-2 bg-base-300 border-b border-base-300">
         <a
-          href="/calendar?week={{prevMonthWeekParam}}&calMonth={{prevMonthParam}}"
+          href="{{ingressPath}}/calendar?week={{prevMonthWeekParam}}&calMonth={{prevMonthParam}}"
           class="btn btn-ghost btn-xs btn-square"
           aria-label="Previous month"
         >‹</a>
@@ -19,7 +19,7 @@
           {{monthName}} {{year}}
         </p>
         <a
-          href="/calendar?week={{nextMonthWeekParam}}&calMonth={{nextMonthParam}}"
+          href="{{ingressPath}}/calendar?week={{nextMonthWeekParam}}&calMonth={{nextMonthParam}}"
           class="btn btn-ghost btn-xs btn-square"
           aria-label="Next month"
         >›</a>
@@ -44,7 +44,7 @@
             {{#each this.days}}
             <td class="text-center p-0">
               <a
-                href="/calendar?week={{../weekParam}}"
+                href="{{ingressPath}}/calendar?week={{../weekParam}}"
                 class="flex items-center justify-center size-5 mx-auto my-0.5 rounded-full text-[10px] {{this.calCellClass}}"
               >{{this.dayNum}}</a>
             </td>
@@ -80,13 +80,13 @@
           class="min-w-0 flex-1 text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border
                  flex items-center gap-1 leading-tight cursor-pointer"
           style="{{#if this.wornAt}}background:hsl({{this.outfit.chipHue}} 65% 55% / 0.22);border-color:hsl({{this.outfit.chipHue}} 65% 60% / 0.45);color:hsl({{this.outfit.chipHue}} 80% 75%){{else}}background:hsl({{this.outfit.chipHue}} 55% 50% / 0.08);border-color:hsl({{this.outfit.chipHue}} 55% 55% / 0.22);color:hsl({{this.outfit.chipHue}} 50% 65%){{/if}}"
-          onclick="window.location.href='/outfits/{{this.outfit.id}}/edit?returnTo=/calendar&returnToWeek={{../dateParam}}'"
+          onclick="window.location.href='{{ingressPath}}/outfits/{{this.outfit.id}}/edit?returnTo={{ingressPath}}/calendar&returnToWeek={{../dateParam}}'"
         >
           {{!-- Left: garment thumbnails if available, else name/untitled fallback --}}
           {{#if this.outfit.garmentPhotos.length}}
           <span class="flex items-center gap-0.5 min-w-0 overflow-hidden flex-1">
             {{#each this.outfit.garmentPhotos}}
-            <img src="/file/nobg/{{this}}" alt="" class="size-6 rounded object-cover shrink-0" />
+            <img src="{{ingressPath}}/file/nobg/{{this}}" alt="" class="size-6 rounded object-cover shrink-0" />
             {{/each}}
             {{#if this.outfit.morePhotos}}<span class="shrink-0 text-base-content/40 leading-none">…</span>{{/if}}
           </span>
@@ -94,8 +94,8 @@
           <span class="truncate flex-1">{{#if this.outfit.name}}{{this.outfit.name}}{{else}}{{t 'lang.UNTITLED_OUTFIT'}}{{/if}}</span>
           {{/if}}
           {{!-- Delete button inside the bar --}}
-          <form method="post" action="/calendar/{{this.id}}/delete"
-            hx-post="/calendar/{{this.id}}/delete"
+          <form method="post" action="{{ingressPath}}/calendar/{{this.id}}/delete"
+            hx-post="{{ingressPath}}/calendar/{{this.id}}/delete"
             hx-confirm="{{t 'lang.CALENDAR_DELETE_CONFIRM'}}"
             hx-vals='{"week": "{{../dateParam}}"}'
           >
@@ -109,8 +109,8 @@
           </form>
         </div>
         {{!-- Mark worn pill button, to the right of the bar --}}
-        <form method="post" action="/calendar/{{this.id}}/worn" class="shrink-0"
-          hx-post="/calendar/{{this.id}}/worn"
+        <form method="post" action="{{ingressPath}}/calendar/{{this.id}}/worn" class="shrink-0"
+          hx-post="{{ingressPath}}/calendar/{{this.id}}/worn"
           hx-target="this"
           hx-swap="outerHTML"
         >
@@ -128,7 +128,7 @@
 
       {{!-- Plan outfit --}}
       <a
-        href="/outfits/new?scheduleDate={{this.dateParam}}&returnTo=/calendar"
+        href="{{ingressPath}}/outfits/new?scheduleDate={{this.dateParam}}&returnTo={{ingressPath}}/calendar"
         class="mt-auto pt-2 text-xs text-base-content/30 hover:text-base-content/60 select-none"
       >+ {{t 'lang.BUILD_OUTFIT'}}</a>
 

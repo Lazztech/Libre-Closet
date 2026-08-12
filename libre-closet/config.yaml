@@ -13,7 +13,6 @@ ingress_port: 3000
 ingress_stream: true
 panel_icon: "mdi:wardrobe"
 panel_title: "Libre Closet"
-image: "ghcr.io/lazztech/libre-closet"
 init: false
 environment:
   DATA_PATH: "/data"

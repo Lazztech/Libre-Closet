@@ -16,7 +16,7 @@
       <p class="text-sm text-base-content/60 mb-4">{{t 'lang.SHARE_WARDROBE_DESC'}}</p>
 
       <form
-        hx-post="/wardrobe-share/create-invite-link"
+        hx-post="{{ingressPath}}/wardrobe-share/create-invite-link"
         hx-target="#invite-link-result"
         hx-swap="innerHTML"
         class="flex gap-2 items-center"
@@ -67,7 +67,7 @@ _="on click
             </div>
             {{/if}}
           </div>
-          <form method="post" action="/wardrobe-share/{{this.id}}/remove" class="inline">
+          <form method="post" action="{{ingressPath}}/wardrobe-share/{{this.id}}/remove" class="inline">
             <button type="submit" class="btn btn-ghost btn-xs text-error">{{t 'lang.REVOKE'}}</button>
           </form>
         </li>
@@ -90,10 +90,10 @@ _="on click
             <span class="badge badge-sm {{#ifEquals this.permission 'VIEW'}}badge-outline{{else}}badge-primary{{/ifEquals}} ml-2">{{this.permission}}</span>
           </div>
           <div class="flex gap-2">
-            <form method="post" action="/wardrobe-share/invite/{{this.inviteToken}}/accept" class="inline">
+            <form method="post" action="{{ingressPath}}/wardrobe-share/invite/{{this.inviteToken}}/accept" class="inline">
               <button type="submit" class="btn btn-primary btn-xs">{{t 'lang.ACCEPT'}}</button>
             </form>
-            <form method="post" action="/wardrobe-share/invite/{{this.inviteToken}}/decline" class="inline">
+            <form method="post" action="{{ingressPath}}/wardrobe-share/invite/{{this.inviteToken}}/decline" class="inline">
               <button type="submit" class="btn btn-ghost btn-xs text-error">{{t 'lang.DECLINE'}}</button>
             </form>
           </div>
@@ -113,10 +113,10 @@ _="on click
         {{#each inbound}}
         <li class="py-3 flex items-center justify-between">
           <div>
-            <a href="/wardrobe?ownerId={{this.grantor.id}}" class="font-medium link link-primary">{{this.grantor.email}}</a>
+            <a href="{{ingressPath}}/wardrobe?ownerId={{this.grantor.id}}" class="font-medium link link-primary">{{this.grantor.email}}</a>
             <span class="badge badge-sm {{#ifEquals this.permission 'VIEW'}}badge-outline{{else}}badge-primary{{/ifEquals}} ml-2">{{this.permission}}</span>
           </div>
-          <form method="post" action="/wardrobe-share/{{this.id}}/remove" class="inline">
+          <form method="post" action="{{ingressPath}}/wardrobe-share/{{this.id}}/remove" class="inline">
             <button type="submit" class="btn btn-ghost btn-xs text-error">{{t 'lang.LEAVE'}}</button>
           </form>
         </li>

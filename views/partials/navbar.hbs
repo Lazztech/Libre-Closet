@@ -27,9 +27,9 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
           </svg>
         </label>
       </div>
-      <a class="mx-2 flex flex-row gap-2 pt-1" href="/">
+      <a class="mx-2 flex flex-row gap-2 pt-1" href="{{ingressPath}}/">
         <img
-          src="/assets/lazztech_title.svg"
+          src="{{ingressPath}}/assets/lazztech_title.svg"
           alt="Lazztech"
           class="h-6 w-auto dark:invert"
           width="1370"
@@ -50,11 +50,11 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
         <ul class="menu menu-horizontal">
           <!-- Navbar menu content here -->
           {{#if authEnabled}} {{#if user}}
-          <li><a href="/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
-          <li><a href="/auth/profile">{{user.email}}</a></li>
+          <li><a href="{{ingressPath}}/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
+          <li><a href="{{ingressPath}}/auth/profile">{{user.email}}</a></li>
           {{else}}
-          {{#unless signupsDisabled}}<li><a href="/auth/register">{{t 'lang.REGISTER'}}</a></li>{{/unless}}
-          <li><a href="/auth/login">{{t 'lang.LOGIN'}}</a></li>
+          {{#unless signupsDisabled}}<li><a href="{{ingressPath}}/auth/register">{{t 'lang.REGISTER'}}</a></li>{{/unless}}
+          <li><a href="{{ingressPath}}/auth/login">{{t 'lang.LOGIN'}}</a></li>
           {{/if}} {{/if}}
         </ul>
       </div>
@@ -69,11 +69,11 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
     <ul class="menu bg-base-200 min-h-full w-80 p-4 pt-8">
       <!-- Sidebar content here -->
       {{#if authEnabled}} {{#if user}}
-      <li><a href="/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
-      <li><a href="/auth/profile">{{user.email}}</a></li>
+      <li><a href="{{ingressPath}}/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
+      <li><a href="{{ingressPath}}/auth/profile">{{user.email}}</a></li>
       {{else}}
-      {{#unless signupsDisabled}}<li><a href="/auth/register">{{t 'lang.REGISTER'}}</a></li>{{/unless}}
-      <li><a href="/auth/login">{{t 'lang.LOGIN'}}</a></li>
+      {{#unless signupsDisabled}}<li><a href="{{ingressPath}}/auth/register">{{t 'lang.REGISTER'}}</a></li>{{/unless}}
+      <li><a href="{{ingressPath}}/auth/login">{{t 'lang.LOGIN'}}</a></li>
       {{/if}} {{/if}}
     </ul>
   </div>
