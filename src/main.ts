@@ -37,9 +37,14 @@ async function bootstrap() {
 
   // Security headers on all responses
   // eslint-disable-next-line @typescript-eslint/require-await -- Fastify onSend hook must return a Promise if not using the callback (next) pattern
-  fastify.addHook('onSend', async (_request, reply, payload) => {
+  fastify.addHook('onSend', async (request, reply, payload) => {
+    const isHomeAssistantIngress =
+      request.headers['x-ingress-path'] !== undefined;
     reply.header('X-Content-Type-Options', 'nosniff');
-    reply.header('X-Frame-Options', 'DENY');
+    reply.header(
+      'X-Frame-Options',
+      isHomeAssistantIngress ? 'SAMEORIGIN' : 'DENY',
+    );
     reply.header('Referrer-Policy', 'strict-origin-when-cross-origin');
     reply.header(
       'Strict-Transport-Security',
@@ -47,7 +52,9 @@ async function bootstrap() {
     );
     reply.header(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://static.cloudflareinsights.com; worker-src 'self' blob:; frame-ancestors 'none';",
+      isHomeAssistantIngress
+        ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://static.cloudflareinsights.com; worker-src 'self' blob:; frame-ancestors 'self';"
+        : "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' blob: https://static.cloudflareinsights.com; worker-src 'self' blob:; frame-ancestors 'none';",
     );
     return payload;
   });
