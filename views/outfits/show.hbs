@@ -25,9 +25,9 @@
   <p class="text-base-content/60 text-sm mb-6 px-1">{{outfit.notes}}</p>
   {{/if}} {{!-- Garments grid --}}
   <h2 class="font-semibold mb-3">{{t 'lang.GARMENTS_IN_OUTFIT'}}</h2>
-  {{#if outfit.garments.length}}
+  {{#if garments.length}}
   <div class="flex flex-wrap gap-3 mb-8">
-    {{#each outfit.garments}}
+    {{#each garments}}
     <a
       href="/wardrobe/{{this.id}}"
       class="flex flex-col items-center gap-1 w-24"

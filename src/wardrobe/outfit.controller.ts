@@ -116,7 +116,8 @@ export class OutfitController {
     const garments = await this.garmentService.findAll(this.userId(req));
     const items = garments.filter((g) => g.category === category);
     const count = items.length;
-    const idx = Math.min(Math.max(parseInt(indexStr) || 0, 0), count);
+    const rawIdx = indexStr !== undefined && indexStr !== '' ? parseInt(indexStr) : 1;
+    const idx = Math.min(Math.max(isNaN(rawIdx) ? 1 : rawIdx, 0), count);
     const row = this.outfitService.buildRow(category, items, idx, i18n);
     return reply.viewPartial('partials/outfit_row', { row });
   }
@@ -128,7 +129,8 @@ export class OutfitController {
     @Req() req: FastifyRequest,
   ) {
     const outfit = await this.outfitService.findOne(id, this.userId(req));
-    return { outfit };
+    const garments = outfit.garments.getItems();
+    return { outfit, garments };
   }
 
   @Get(':id/edit')
