@@ -22,9 +22,7 @@ test('garment photo upload offers a direct camera capture entry point', async ({
   const createResponse = await page.request.post('/wardrobe', {
     form: { name: 'Camera Test Garment', category: 'shirt' },
   });
-  const garmentId = new URL(createResponse.url()).pathname
-    .split('/')
-    .pop();
+  const garmentId = new URL(createResponse.url()).pathname.split('/').pop();
 
   await page.goto(`/wardrobe/${garmentId}`);
 
