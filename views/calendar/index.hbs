@@ -141,3 +141,57 @@
 </main>
 
 {{>dock}}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var STORAGE_KEY = 'lc_weather_coords';
+  var params = new URLSearchParams(window.location.search);
+
+  // Coords are already in the URL (the server baked in weather data) — nothing to do.
+  if (params.has('lat') && params.has('lon')) return;
+
+  function loadWeatherGrid(lat, lon) {
+    params.set('lat', lat.toFixed(4));
+    params.set('lon', lon.toFixed(4));
+    var newUrl = window.location.pathname + '?' + params.toString();
+    // Keep the address bar in sync so week-nav links preserve the coords.
+    history.replaceState(null, '', newUrl);
+    // Swap only the week grid — avoids a full page reload.
+    htmx.ajax('GET', newUrl, {
+      target: '#week-grid',
+      swap: 'outerHTML',
+      select: '#week-grid',
+    });
+  }
+
+  // Re-use cached coords so the user isn't prompted on every visit.
+  var cached = localStorage.getItem(STORAGE_KEY);
+  if (cached) {
+    try {
+      var coords = JSON.parse(cached);
+      if (typeof coords.lat === 'number' && typeof coords.lon === 'number') {
+        loadWeatherGrid(coords.lat, coords.lon);
+        return;
+      }
+    } catch (_) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }
+
+  // First visit — ask the browser, which will show the permission prompt.
+  if (!navigator.geolocation) return;
+
+  navigator.geolocation.getCurrentPosition(
+    function (pos) {
+      var lat = pos.coords.latitude;
+      var lon = pos.coords.longitude;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ lat: lat, lon: lon }));
+      loadWeatherGrid(lat, lon);
+    },
+    function () {
+      // User denied or geolocation unavailable — calendar works fine without weather.
+    },
+    { timeout: 10000 }
+  );
+});
+</script>
