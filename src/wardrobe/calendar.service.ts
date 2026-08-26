@@ -14,6 +14,7 @@ import { CalendarDay } from './view-models/calendar-day.view-model';
 import { WeekSchedule } from './view-models/week-schedule.view-model';
 import { I18nContext } from 'nestjs-i18n';
 import { WeekNavBoundaries } from './view-models/week-nav-boundaries';
+import { WeatherService } from '../weather/weather.service';
 
 @Injectable()
 export class CalendarService {
@@ -53,6 +54,7 @@ export class CalendarService {
     private readonly outfitRepository: EntityRepository<Outfit>,
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
+    private readonly weatherService: WeatherService,
   ) {}
 
   /**
@@ -158,13 +160,20 @@ export class CalendarService {
     calMonthParam: string | undefined,
     userId: number | undefined,
     i18n: I18nContext,
+    lat?: number,
+    lon?: number,
   ) {
     const anchor = this.parseWeekParam(weekParam);
-    const [weekSchedule, outfits] = await Promise.all([
+    const [weekSchedule, outfits, weatherForecast] = await Promise.all([
       this.findWeek(anchor, userId),
       this.findOutfitsForUser(userId),
+      lat != null && lon != null
+        ? this.weatherService.getForecast(lat, lon).catch((err) => {
+            this.logger.warn('Weather forecast unavailable', err);
+            return null;
+          })
+        : Promise.resolve(null),
     ]);
-
     const weekBounds = this.findWeekBounds(weekSchedule);
 
     const miniMonthCal = this.getMiniMonthCal(
@@ -205,6 +214,7 @@ export class CalendarService {
       nextMonthParam,
       prevMonthWeekParam,
       nextMonthWeekParam,
+      weatherForecast,
     };
   }
   // ---------------------------------------------------------------------------

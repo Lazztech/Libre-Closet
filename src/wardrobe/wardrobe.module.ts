@@ -13,7 +13,7 @@ import { CalendarService } from './calendar.service';
 import { CalendarController } from './calendar.controller';
 import { WardrobeController } from './wardrobe.controller';
 import { OutfitController } from './outfit.controller';
-import { WeatherModule } from 'src/weather/weather.module';
+import { WeatherModule } from '../weather/weather.module';
 
 @Module({
   imports: [
