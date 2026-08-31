@@ -395,4 +395,33 @@
   </dialog>
 </main>
 
+{{#if justCreated}}
+<div id="garment-saved-toast" class="toast toast-top toast-center z-20 top-36" aria-live="polite" _="init wait 4s then add .hidden to me">
+  <div class="alert alert-success shadow-md">
+    <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{{t 'lang.GARMENT_SAVED'}}</span>
+  </div>
+</div>
+{{/if}} {{#if justSavedPhoto}}
+<div id="photo-saved-toast" class="toast toast-top toast-center z-20 top-36" aria-live="polite" _="init wait 4s then add .hidden to me">
+  <div class="alert alert-success shadow-md">
+    <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{{t 'lang.PHOTO_SAVED'}}</span>
+  </div>
+</div>
+{{/if}}
+<script>
+  {{! Strip the one-shot save flags so refreshing or sharing this URL doesn't replay the toast }}
+  var savedFlagUrl = new URL(window.location.href);
+  if (savedFlagUrl.searchParams.has('created') || savedFlagUrl.searchParams.has('photoSaved')) {
+    savedFlagUrl.searchParams.delete('created');
+    savedFlagUrl.searchParams.delete('photoSaved');
+    window.history.replaceState({}, '', savedFlagUrl);
+  }
+</script>
+
 {{>dock}}
