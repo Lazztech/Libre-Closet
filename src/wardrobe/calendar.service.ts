@@ -15,6 +15,8 @@ import { WeekSchedule } from './view-models/week-schedule.view-model';
 import { I18nContext } from 'nestjs-i18n';
 import { WeekNavBoundaries } from './view-models/week-nav-boundaries';
 import { WeatherService } from '../weather/weather.service';
+import { WeatherForecastDay } from '../weather/dto/weather-forecast.dto';
+import { weatherCodeToDescription } from '../weather/weathercode.util';
 
 @Injectable()
 export class CalendarService {
@@ -192,7 +194,7 @@ export class CalendarService {
       nextMonthWeekParam,
     } = miniMonthCal;
 
-    const days = this.calDays(weekSchedule, i18n, weekBounds);
+    const days = this.calDays(weekSchedule, i18n, weekBounds, weatherForecast);
 
     return {
       pageTitle: i18n.t('lang.CALENDAR_PAGE_TITLE'),
@@ -214,7 +216,6 @@ export class CalendarService {
       nextMonthParam,
       prevMonthWeekParam,
       nextMonthWeekParam,
-      weatherForecast,
     };
   }
   // ---------------------------------------------------------------------------
@@ -306,32 +307,51 @@ export class CalendarService {
     weekSchedule: WeekSchedule,
     i18n: I18nContext,
     weekBounds: WeekNavBoundaries,
+    weatherForecast: WeatherForecastDay[] | null,
   ) {
     const CHIP_HUES = [220, 240, 260];
+    const forecastByDate = new Map(
+      (weatherForecast ?? []).map((f) => [f.date, f]),
+    );
 
-    const days = weekSchedule.days.map((day) => ({
-      dayName: i18n.t(`lang.${this.DAY_I18N_KEYS[day.date.getUTCDay()]}`),
-      dayNum: day.date.getUTCDate(),
-      dateParam: this.toWeekParam(day.date),
-      isToday: this.toWeekParam(day.date) === weekBounds.todayStr,
-      entries: day.entries.map((entry, entryIndex) => {
-        const outfit = entry.outfit.unwrap();
-        const garmentPhotos = outfit.garments
-          .getItems()
-          .map((g) => g.photo?.fileName ?? null)
-          .filter((f): f is string => f !== null);
-        return {
-          id: entry.id,
-          wornAt: entry.wornAt ?? null,
-          outfit: {
-            id: outfit.id,
-            name: outfit.name || null,
-            garmentPhotos,
-            chipHue: CHIP_HUES[entryIndex % CHIP_HUES.length],
-          },
-        };
-      }),
-    }));
+    const days = weekSchedule.days.map((day) => {
+      const dateParam = this.toWeekParam(day.date);
+      const forecast = forecastByDate.get(dateParam) ?? null;
+      const { emoji, label } = forecast
+        ? weatherCodeToDescription(forecast.weathercode)
+        : { emoji: null, label: null };
+      return {
+        dayName: i18n.t(`lang.${this.DAY_I18N_KEYS[day.date.getUTCDay()]}`),
+        dayNum: day.date.getUTCDate(),
+        dateParam,
+        isToday: dateParam === weekBounds.todayStr,
+        weather: forecast
+          ? {
+              emoji,
+              label,
+              tempMax: Math.round(forecast.temperatureMax),
+              tempMin: Math.round(forecast.temperatureMin),
+            }
+          : null,
+        entries: day.entries.map((entry, entryIndex) => {
+          const outfit = entry.outfit.unwrap();
+          const garmentPhotos = outfit.garments
+            .getItems()
+            .map((g) => g.photo?.fileName ?? null)
+            .filter((f): f is string => f !== null);
+          return {
+            id: entry.id,
+            wornAt: entry.wornAt ?? null,
+            outfit: {
+              id: outfit.id,
+              name: outfit.name || null,
+              garmentPhotos,
+              chipHue: CHIP_HUES[entryIndex % CHIP_HUES.length],
+            },
+          };
+        }),
+      };
+    });
     return days;
   }
 

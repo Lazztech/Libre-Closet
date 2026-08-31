@@ -5,7 +5,6 @@ export interface OpenMeteoResponse {
     weathercode: number[];
     temperature_2m_max: number[];
     temperature_2m_min: number[];
-    precipitation_probability_max: number[];
   };
 }
 
@@ -15,5 +14,4 @@ export class WeatherForecastDay {
   weathercode: number;
   temperatureMax: number;
   temperatureMin: number;
-  precipitationProbabilityMax: number;
 }
