@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ...
 
+## 0.5.1 - 2026-09-10
+
+#### Added
+
+- Add explicit save confirmation to garment upload flow
+- Camera option for garment photo upload
+
+#### Fixed
+
+- Pre-select first garment in builder and fix Handlebars rendering
+
 ## 0.5.0 - 2026-06-26
 
 #### Added
