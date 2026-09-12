@@ -32,14 +32,20 @@ export class CalendarController {
   async index(
     @Query('week') weekParam: string | undefined,
     @Query('calMonth') calMonthParam: string | undefined,
+    @Query('lat') latParam: string | undefined,
+    @Query('lon') lonParam: string | undefined,
     @Req() req: FastifyRequest,
     @I18n() i18n: I18nContext,
   ) {
+    const lat = latParam != null ? parseFloat(latParam) : undefined;
+    const lon = lonParam != null ? parseFloat(lonParam) : undefined;
     return this.calendarService.buildIndexViewModel(
       weekParam,
       calMonthParam,
       this.userId(req),
       i18n,
+      Number.isFinite(lat) ? lat : undefined,
+      Number.isFinite(lon) ? lon : undefined,
     );
   }
 

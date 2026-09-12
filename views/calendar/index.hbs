@@ -61,7 +61,7 @@
     <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
 
       {{!-- Day header --}}
-      <div class="flex items-baseline gap-1.5 px-3 py-2 bg-base-300 border-b border-base-300">
+      <div class="flex items-center gap-1.5 px-3 py-2 bg-base-300 border-b border-base-300">
         <span class="text-xs font-semibold
                      {{#if this.isToday}}text-primary{{else}}text-base-content/50{{/if}}">
           {{this.dayName}}
@@ -69,6 +69,14 @@
         <span class="text-base font-bold {{#if this.isToday}}text-primary{{/if}}">
           {{this.dayNum}}
         </span>
+        {{#if this.weather}}
+        <span class="ml-auto flex items-center gap-1">
+          <span class="text-base leading-none" aria-hidden="true">{{this.weather.emoji}}</span>
+          <span class="text-[10px] text-base-content/50 tabular-nums whitespace-nowrap">
+            {{this.weather.tempMin}}° C - {{this.weather.tempMax}}° C
+          </span>
+        </span>
+        {{/if}}
       </div>
 
       {{!-- Outfit chips --}}
@@ -141,3 +149,68 @@
 </main>
 
 {{>dock}}
+
+<script>
+(function () {
+  function run() {
+    var STORAGE_KEY = 'lc_weather_coords';
+    var params = new URLSearchParams(window.location.search);
+
+    // Coords are already in the URL (the server baked in weather data) — nothing to do.
+    if (params.has('lat') && params.has('lon')) return;
+
+    function loadWeatherGrid(lat, lon) {
+      params.set('lat', lat.toFixed(4));
+      params.set('lon', lon.toFixed(4));
+      var newUrl = window.location.pathname + '?' + params.toString();
+      // Keep the address bar in sync so week-nav links preserve the coords.
+      history.replaceState(null, '', newUrl);
+      // Swap only the week grid — avoids a full page reload.
+      htmx.ajax('GET', newUrl, {
+        target: '#week-grid',
+        swap: 'outerHTML',
+        select: '#week-grid',
+      });
+    }
+
+    // Re-use cached coords so the user isn't prompted on every visit.
+    var cached = localStorage.getItem(STORAGE_KEY);
+    if (cached) {
+      try {
+        var coords = JSON.parse(cached);
+        if (typeof coords.lat === 'number' && typeof coords.lon === 'number') {
+          loadWeatherGrid(coords.lat, coords.lon);
+          return;
+        }
+      } catch (_) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    // First visit — ask the browser, which will show the permission prompt.
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        var lat = pos.coords.latitude;
+        var lon = pos.coords.longitude;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ lat: lat, lon: lon }));
+        loadWeatherGrid(lat, lon);
+      },
+      function () {
+        // User denied or geolocation unavailable — calendar works fine without weather.
+      },
+      { timeout: 10000 }
+    );
+  }
+
+  // On the first full page load htmx is deferred and not yet defined, so wait
+  // for DOMContentLoaded. On hx-boost navigation this script is re-executed by
+  // HTMX and htmx is already loaded, so run immediately.
+  if (typeof htmx !== 'undefined') {
+    run();
+  } else {
+    document.addEventListener('DOMContentLoaded', run);
+  }
+})();
+</script>
