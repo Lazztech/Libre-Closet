@@ -125,7 +125,7 @@
       <div class="flex flex-wrap gap-2">
         {{#each availableCategories}}
         <label class="cursor-pointer">
-          <input type="radio" name="modal-category" value="{{this.value}}" class="hidden peer"
+          <input type="radio" name="modal-category" value="{{this.value}}" class="sr-only peer"
             {{#ifEquals this.value ../search.category}}checked{{/ifEquals}}>
           <span class="badge badge-outline peer-checked:badge-primary capitalize select-none">{{this.label}}</span>
         </label>
@@ -139,7 +139,7 @@
       <div class="flex flex-wrap gap-2">
         {{#each colors}}
         <label class="cursor-pointer">
-          <input type="radio" name="modal-color" value="{{this}}" class="hidden peer"
+          <input type="radio" name="modal-color" value="{{this}}" class="sr-only peer"
             {{#ifEquals this ../search.color}}checked{{/ifEquals}}>
           <span class="badge badge-outline peer-checked:badge-secondary capitalize select-none">{{this}}</span>
         </label>
@@ -154,7 +154,7 @@
       <div class="flex flex-wrap gap-2">
         {{#each availableSizes}}
         <label class="cursor-pointer">
-          <input type="radio" name="modal-size" value="{{this}}" class="hidden peer"
+          <input type="radio" name="modal-size" value="{{this}}" class="sr-only peer"
             {{#ifEquals this ../search.size}}checked{{/ifEquals}}>
           <span class="badge badge-outline peer-checked:badge-accent select-none">{{this}}</span>
         </label>
