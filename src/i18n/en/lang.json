@@ -21,7 +21,7 @@
   "FEATURE_DOCKER_TITLE": "One-command deploy",
   "FEATURE_DOCKER_DESC": "Self-host in seconds with Docker on any Linux server, NAS, or Raspberry Pi. Your data stays on your infrastructure - no vendor lock-in, no monthly bills.",
   "FEATURE_I18N_TITLE": "Multilingual",
-  "FEATURE_I18N_DESC": "Available in English, Italian, French, Russian, German, and Spanish with community-contributed translations. Use Libre Closet in your preferred language.",
+  "FEATURE_I18N_DESC": "Available in English, Italian, French, Russian, German, Spanish, and Danish with community-contributed translations. Use Libre Closet in your preferred language.",
   "FEATURE_SHARING_TITLE": "Wardrobe sharing",
   "FEATURE_SHARING_DESC": "Share your wardrobe with friends, family, or a personal stylist. Grant VIEW access for browsing or MANAGE access for collaborative editing - you control the permissions.",
   "WHY_SELF_HOST_TITLE": "Why self-host your wardrobe?",

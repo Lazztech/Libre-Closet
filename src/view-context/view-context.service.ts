@@ -32,6 +32,7 @@ export class ViewContextService {
       fr: 'fr_FR',
       it: 'it_IT',
       de: 'de_DE',
+      da: 'da_DK',
     };
 
     const siteUrl = this.configService.get<string>('SITE_URL') ?? host;
