@@ -1,0 +1,3 @@
+build_from:
+  amd64: node:22
+  aarch64: node:22
