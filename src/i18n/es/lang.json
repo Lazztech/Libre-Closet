@@ -291,8 +291,8 @@
   "REGISTER_OG_DESC": "Cree su cuenta gratuita de Libre Closet. Organizador de armario autoalojado y de código abierto. Sin suscripción, sin anuncios, sin rastreo.",
   "SUPPORT": "Apoyar",
   "SUPPORTER_TITLE": "Una nota de Gian, el fundador",
-  "SUPPORTER_MESSAGE": "Libre Closet es gratuito, de código abierto y siempre lo será. Si te ha facilitado un poco la vida, puedes apoyar su desarrollo con una donación única.",
-  "SUPPORTER_SIGNATURE": "— Gian, fundador de Libre Closet",
+  "SUPPORTER_MESSAGE": "Libre Closet es gratuito, de código abierto y nunca limitará funciones para quienes se autohospedan. Si te ha facilitado un poco la vida, te pedimos que consideres apoyarnos. Somos un pequeño grupo de ingenieros que donan su tiempo, y tu apoyo nos ayuda a encontrar tiempo para mejorar las herramientas que te hacen la vida más cómoda.",
+  "SUPPORTER_SIGNATURE": "— Gian, fundador y desarrollador de Lazztech LLC",
   "SUPPORTER_CTA": "Apoyar en Ko-fi",
   "SUPPORTER_DISMISS": "Ahora no"
 }

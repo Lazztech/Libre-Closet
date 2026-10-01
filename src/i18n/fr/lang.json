@@ -291,8 +291,8 @@
   "REGISTER_OG_DESC": "Créez votre compte Libre Closet gratuit. Organisateur de garde-robe auto-hébergé et open-source. Sans abonnement, sans publicité, sans suivi.",
   "SUPPORT": "Soutenir",
   "SUPPORTER_TITLE": "Un mot de Gian, le fondateur",
-  "SUPPORTER_MESSAGE": "Libre Closet est gratuit, open source, et le restera toujours. S'il vous a simplifié la vie, vous pouvez soutenir son développement avec un don ponctuel.",
-  "SUPPORTER_SIGNATURE": "— Gian, fondateur de Libre Closet",
+  "SUPPORTER_MESSAGE": "Libre Closet est gratuit, open source et ne verrouillera jamais de fonctionnalités pour les auto-hébergeurs ! S'il vous a simplifié un peu la vie, nous vous invitons à envisager de nous soutenir. Nous sommes un petit groupe d'ingénieurs qui donnent de leur temps, et votre soutien nous aide à dégager du temps pour améliorer les outils qui vous rendent la vie plus pratique.",
+  "SUPPORTER_SIGNATURE": "— Gian, fondateur et développeur de Lazztech LLC",
   "SUPPORTER_CTA": "Soutenir sur Ko-fi",
   "SUPPORTER_DISMISS": "Pas maintenant"
 }
