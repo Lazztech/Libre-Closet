@@ -1,0 +1,33 @@
+<dialog
+  id="supporter-modal"
+  class="modal modal-bottom sm:modal-middle"
+  _="init if sessionStorage.lc_supporter_seen is empty then set sessionStorage.lc_supporter_seen to 'true' then if localStorage.lc_supporter is empty and localStorage.lc_supporter_dismissed is empty then wait 10s then call me.showModal() end end"
+>
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">{{t 'lang.SUPPORTER_TITLE'}}</h3>
+    <p class="py-4">{{t 'lang.SUPPORTER_MESSAGE'}}</p>
+    <p class="text-sm text-base-content/60">{{t 'lang.SUPPORTER_SIGNATURE'}}</p>
+    <div class="modal-action">
+      <a
+        href="https://ko-fi.com/lazztech"
+        target="_blank"
+        rel="noopener"
+        class="btn btn-primary"
+        _="on click set localStorage.lc_supporter to 'true' then call #supporter-modal.close()"
+        >{{t 'lang.SUPPORTER_CTA'}}</a
+      >
+      <button
+        type="button"
+        class="btn"
+        _="on click set localStorage.lc_supporter_dismissed to 'true' then call #supporter-modal.close()"
+      >
+        {{t 'lang.SUPPORTER_DISMISS'}}
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button _="on click set localStorage.lc_supporter_dismissed to 'true'">
+      close
+    </button>
+  </form>
+</dialog>

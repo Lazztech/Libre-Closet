@@ -288,5 +288,11 @@
   "LOGIN_OG_TITLE": "Iniciar Sesión — Libre Closet",
   "LOGIN_OG_DESC": "Inicie sesión en su cuenta de Libre Closet para gestionar su armario, crear conjuntos y programar looks.",
   "REGISTER_OG_TITLE": "Registrarse — Libre Closet",
-  "REGISTER_OG_DESC": "Cree su cuenta gratuita de Libre Closet. Organizador de armario autoalojado y de código abierto. Sin suscripción, sin anuncios, sin rastreo."
+  "REGISTER_OG_DESC": "Cree su cuenta gratuita de Libre Closet. Organizador de armario autoalojado y de código abierto. Sin suscripción, sin anuncios, sin rastreo.",
+  "SUPPORT": "Apoyar",
+  "SUPPORTER_TITLE": "Una nota de Gian, el fundador",
+  "SUPPORTER_MESSAGE": "Libre Closet es gratuito, de código abierto y siempre lo será. Si te ha facilitado un poco la vida, puedes apoyar su desarrollo con una donación única.",
+  "SUPPORTER_SIGNATURE": "— Gian, fundador de Libre Closet",
+  "SUPPORTER_CTA": "Apoyar en Ko-fi",
+  "SUPPORTER_DISMISS": "Ahora no"
 }

@@ -49,11 +49,22 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
       <div class="hidden flex-none ml-auto lg:block pt-1">
         <ul class="menu menu-horizontal">
           <!-- Navbar menu content here -->
-          {{#if authEnabled}} {{#if user}}
+          {{#if supporterPromptEnabled}}
+          <li>
+            <a
+              href="https://ko-fi.com/lazztech"
+              target="_blank"
+              rel="noopener"
+              _="on click set localStorage.lc_supporter to 'true'"
+              >❤ {{t 'lang.SUPPORT'}}</a
+            >
+          </li>
+          {{/if}} {{#if authEnabled}} {{#if user}}
           <li><a href="/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
           <li><a href="/auth/profile">{{user.email}}</a></li>
-          {{else}}
-          {{#unless signupsDisabled}}<li><a href="/auth/register">{{t 'lang.REGISTER'}}</a></li>{{/unless}}
+          {{else}} {{#unless signupsDisabled}}
+          <li><a href="/auth/register">{{t 'lang.REGISTER'}}</a></li>
+          {{/unless}}
           <li><a href="/auth/login">{{t 'lang.LOGIN'}}</a></li>
           {{/if}} {{/if}}
         </ul>
@@ -68,11 +79,22 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
     ></label>
     <ul class="menu bg-base-200 min-h-full w-80 p-4 pt-8">
       <!-- Sidebar content here -->
-      {{#if authEnabled}} {{#if user}}
+      {{#if supporterPromptEnabled}}
+      <li>
+        <a
+          href="https://ko-fi.com/lazztech"
+          target="_blank"
+          rel="noopener"
+          _="on click set localStorage.lc_supporter to 'true'"
+          >❤ {{t 'lang.SUPPORT'}}</a
+        >
+      </li>
+      {{/if}} {{#if authEnabled}} {{#if user}}
       <li><a href="/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
       <li><a href="/auth/profile">{{user.email}}</a></li>
-      {{else}}
-      {{#unless signupsDisabled}}<li><a href="/auth/register">{{t 'lang.REGISTER'}}</a></li>{{/unless}}
+      {{else}} {{#unless signupsDisabled}}
+      <li><a href="/auth/register">{{t 'lang.REGISTER'}}</a></li>
+      {{/unless}}
       <li><a href="/auth/login">{{t 'lang.LOGIN'}}</a></li>
       {{/if}} {{/if}}
     </ul>

@@ -288,5 +288,11 @@
   "LOGIN_OG_TITLE": "Accedi — Libre Closet",
   "LOGIN_OG_DESC": "Accedi al tuo account Libre Closet per gestire il tuo guardaroba, creare outfit e pianificare i look.",
   "REGISTER_OG_TITLE": "Registrati — Libre Closet",
-  "REGISTER_OG_DESC": "Crea il tuo account gratuito Libre Closet. Organizzatore di guardaroba self-hosted e open-source. Nessun abbonamento, nessuna pubblicità, nessun tracciamento."
+  "REGISTER_OG_DESC": "Crea il tuo account gratuito Libre Closet. Organizzatore di guardaroba self-hosted e open-source. Nessun abbonamento, nessuna pubblicità, nessun tracciamento.",
+  "SUPPORT": "Sostieni",
+  "SUPPORTER_TITLE": "Un messaggio da Gian, il fondatore",
+  "SUPPORTER_MESSAGE": "Libre Closet è gratuito, open source e lo sarà sempre. Se ti ha semplificato un po' la vita, puoi sostenere il suo sviluppo con una donazione una tantum.",
+  "SUPPORTER_SIGNATURE": "— Gian, fondatore di Libre Closet",
+  "SUPPORTER_CTA": "Sostieni su Ko-fi",
+  "SUPPORTER_DISMISS": "Non ora"
 }

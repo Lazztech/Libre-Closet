@@ -288,5 +288,11 @@
   "LOGIN_OG_TITLE": "Anmelden — Libre Closet",
   "LOGIN_OG_DESC": "Melden Sie sich bei Ihrem Libre Closet-Konto an, um Ihre Garderobe zu verwalten, Outfits zu erstellen und Looks zu planen.",
   "REGISTER_OG_TITLE": "Registrieren — Libre Closet",
-  "REGISTER_OG_DESC": "Erstellen Sie Ihr kostenloses Libre Closet-Konto. Selbst gehosteter, quelloffener Kleiderschrank-Organizer. Kein Abonnement, keine Werbung, kein Tracking."
+  "REGISTER_OG_DESC": "Erstellen Sie Ihr kostenloses Libre Closet-Konto. Selbst gehosteter, quelloffener Kleiderschrank-Organizer. Kein Abonnement, keine Werbung, kein Tracking.",
+  "SUPPORT": "Unterstützen",
+  "SUPPORTER_TITLE": "Eine Nachricht von Gian, dem Gründer",
+  "SUPPORTER_MESSAGE": "Libre Closet ist kostenlos, quelloffen und wird es immer bleiben. Wenn es dir das Leben etwas erleichtert hat, kannst du die weitere Entwicklung mit einer einmaligen Spende unterstützen.",
+  "SUPPORTER_SIGNATURE": "— Gian, Gründer von Libre Closet",
+  "SUPPORTER_CTA": "Auf Ko-fi unterstützen",
+  "SUPPORTER_DISMISS": "Jetzt nicht"
 }

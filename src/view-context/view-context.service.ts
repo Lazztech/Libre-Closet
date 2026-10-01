@@ -48,6 +48,9 @@ export class ViewContextService {
       authEnabled: this.configService.get<boolean>('AUTH_ENABLED'),
       signupsDisabled: this.configService.get<boolean>('DISABLE_REGISTRATION'),
       pwaEnabled: this.configService.get<boolean>('PWA_ENABLED'),
+      supporterPromptEnabled: this.configService.get<boolean>(
+        'SUPPORTER_PROMPT_ENABLED',
+      ),
       locale,
       canonicalUrl,
       ogUrl: canonicalUrl,
