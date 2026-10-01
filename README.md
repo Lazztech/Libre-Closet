@@ -91,7 +91,7 @@ Note, these screenshots are taken of the web application viewed as an installed 
 - **Optional auth** - run open for personal use or enable JWT accounts for multi-user
 - **S3 or local storage** - local disk by default, swap to any S3-compatible provider
 - **SQLite or PostgreSQL** - SQLite by default, PostgreSQL for scale
-- **Multi-language** - UI available in English, Italian, French, Russian, German, and Spanish
+- **Multi-language** - UI available in English, Italian, French, Russian, German, Spanish, and Danish
 
 ---
 
