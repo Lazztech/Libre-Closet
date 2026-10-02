@@ -65,7 +65,9 @@ async function bootstrap() {
       (typeof payload === 'string' || Buffer.isBuffer(payload))
     ) {
       const prefix = ingressPath.replace(/\/$/, '');
-      const escapedPrefix = prefix.slice(1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escapedPrefix = prefix
+        .slice(1)
+        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const rootPath = new RegExp(`(["'=])/(?!/|${escapedPrefix}/)`, 'g');
       const html = Buffer.isBuffer(payload) ? payload.toString() : payload;
       return html.replace(rootPath, `$1${prefix}/`);
