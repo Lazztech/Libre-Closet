@@ -42,9 +42,9 @@
       <h2 class="card-title">{{outfit.name}}</h2>
       {{#if outfit.notes}}
       <p class="text-base-content/60 text-sm">{{outfit.notes}}</p>
-      {{/if}} {{#if outfit.garments.length}}
+      {{/if}} {{#if garments.length}}
       <div class="flex flex-wrap gap-2">
-        {{#each outfit.garments}} {{#if this.photo}}
+        {{#each garments}} {{#if this.photo}}
         <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}"
           class="size-20 rounded-box object-cover shadow-sm" />
         {{else}}

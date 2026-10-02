@@ -32,6 +32,7 @@ export class ViewContextService {
       fr: 'fr_FR',
       it: 'it_IT',
       de: 'de_DE',
+      da: 'da_DK',
     };
 
     const siteUrl = this.configService.get<string>('SITE_URL') ?? host;
@@ -48,6 +49,10 @@ export class ViewContextService {
       authEnabled: this.configService.get<boolean>('AUTH_ENABLED'),
       signupsDisabled: this.configService.get<boolean>('DISABLE_REGISTRATION'),
       pwaEnabled: this.configService.get<boolean>('PWA_ENABLED'),
+      showSupporterPrompt:
+        this.configService.get<boolean>('SUPPORTER_PROMPT_ENABLED') &&
+        path !== '/' &&
+        !path.startsWith('/auth'),
       locale,
       canonicalUrl,
       ogUrl: canonicalUrl,

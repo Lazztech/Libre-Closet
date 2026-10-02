@@ -11,6 +11,7 @@ import { DalModule } from './dal/dal.module';
 import { NotificationModule } from './notification/notification.module';
 import { FileModule } from './file/file.module';
 import { EmailModule } from './email/email.module';
+import { WeatherModule } from './weather/weather.module';
 import { AcceptLanguageResolver, I18nModule } from 'nestjs-i18n';
 import { OpenGraphModule } from './open-graph/open-graph.module';
 import { WardrobeModule } from './wardrobe/wardrobe.module';
@@ -74,6 +75,7 @@ import { ViewContextModule } from './view-context/view-context.module';
         AUTH_ENABLED: Joi.boolean().default(false),
         DISABLE_REGISTRATION: Joi.boolean().default(false),
         PWA_ENABLED: Joi.boolean().default(false),
+        SUPPORTER_PROMPT_ENABLED: Joi.boolean().default(true),
         ACCESS_TOKEN_SECRET: Joi.string().default('ChangeMe!'),
         PUBLIC_VAPID_KEY: Joi.optional().default(
           'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U',
@@ -183,6 +185,7 @@ import { ViewContextModule } from './view-context/view-context.module';
     EmailModule,
     NotificationModule,
     OpenGraphModule,
+    WeatherModule,
     WardrobeModule,
     WardrobeShareModule,
     ViewContextModule,

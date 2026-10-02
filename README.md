@@ -54,6 +54,7 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 #### Release
 
+- `v0.5.1 - 2026-09-10`: Save confirmations, Camera option for garment photo upload, and outfit builder fix
 - `v0.5.0 - June 26, 2026`: Added garment color combination support, washing details, acquisition date, archival, and cloning
 - `v0.4.1 - June 15, 2026`: Fixed disable register functionality
 - `v0.4.0 - June 13, 2026`: Added wardrobe sharing from one user to another with either view only or edit permissions
@@ -104,7 +105,7 @@ Note, these screenshots are taken of the web application viewed as an installed 
 - **Optional auth** - run open for personal use or enable JWT accounts for multi-user
 - **S3 or local storage** - local disk by default, swap to any S3-compatible provider
 - **SQLite or PostgreSQL** - SQLite by default, PostgreSQL for scale
-- **Multi-language** - UI available in English, Italian, French, Russian, German, and Spanish
+- **Multi-language** - UI available in English, Italian, French, Russian, German, Spanish, and Danish
 
 ---
 
@@ -163,6 +164,7 @@ npm run start:prod
 | `AUTH_ENABLED`                     | Enable JWT user accounts and login             | `false`        | `true`                                                                                    |
 | `DISABLE_REGISTRATION`             | Disallows user sign ups when true              | `false`        | `true`                                                                                    |
 | `PWA_ENABLED`                      | Enable service worker and PWA install prompt   | `false`        | `true`                                                                                    |
+| `SUPPORTER_PROMPT_ENABLED`         | Show the "support the project" nudge modal     | `true`         | `false`                                                                                   |
 | `ACCESS_TOKEN_SECRET`              | JWT signing secret - **change for production** | `ChangeMe!`    | `u9n8c2y847rfctb23468tcb689f243`                                                          |
 | `DATABASE_TYPE`                    | `sqlite` or `postgres`                         | `sqlite`       | `postgres`                                                                                |
 | `DATABASE_HOST`                    | Postgres host                                  | -              | `192.168.10.5`                                                                            |

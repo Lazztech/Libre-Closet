@@ -93,6 +93,7 @@ export class OpenGraphService {
         ogDescription: `From ${createdBy?.email}`,
         ogImage,
         outfit,
+        garments: outfit?.garments.getItems() ?? [],
         createdBy,
       };
     }
