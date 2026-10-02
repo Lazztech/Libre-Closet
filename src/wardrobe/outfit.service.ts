@@ -161,10 +161,16 @@ export class OutfitService {
       category: string,
       items: Garment[],
       selectedId: number | null,
+      defaultFirst = false,
     ) => {
       const selectedIdx =
         selectedId != null ? items.findIndex((g) => g.id === selectedId) : -1;
-      const idx = selectedIdx >= 0 ? selectedIdx + 1 : 0;
+      let idx = 0;
+      if (selectedIdx >= 0) {
+        idx = selectedIdx + 1;
+      } else if (defaultFirst && items.length > 0) {
+        idx = 1;
+      }
       return this.buildRow(category, items, idx, i18n);
     };
 
@@ -178,7 +184,7 @@ export class OutfitService {
             slot.garmentId != null
               ? (items.find((g) => g.id === slot.garmentId) ?? null)
               : null;
-          return toRow(slot.category, items, selected?.id ?? null);
+          return toRow(slot.category, items, selected?.id ?? null, false);
         });
     }
 
@@ -195,7 +201,7 @@ export class OutfitService {
     return orderedKeys.map((cat) => {
       const items = grouped[cat]!;
       const selected = items.find((g) => selectedIds.includes(g.id)) ?? null;
-      return toRow(cat, items, selected?.id ?? null);
+      return toRow(cat, items, selected?.id ?? null, true);
     });
   }
 
