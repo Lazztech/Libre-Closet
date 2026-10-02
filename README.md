@@ -96,7 +96,7 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 ## Self-hosting
 
-Libre Closet requires just one, easy to deploy docker container!
+Libre Closet requires just one, easy to deploy and host docker container!
 
 ### Docker (recommended)
 
