@@ -16,6 +16,7 @@ import { I18nContext } from 'nestjs-i18n';
 import { WeekNavBoundaries } from './view-models/week-nav-boundaries';
 import { WeatherService } from '../weather/weather.service';
 import { WeatherForecastDay } from '../weather/dto/weather-forecast.dto';
+import { TemperatureUnit } from '../weather/temperature-unit.util';
 import { weatherCodeToDescription } from '../weather/weathercode.util';
 
 @Injectable()
@@ -164,16 +165,19 @@ export class CalendarService {
     i18n: I18nContext,
     lat?: number,
     lon?: number,
+    temperatureUnit: TemperatureUnit = 'celsius',
   ) {
     const anchor = this.parseWeekParam(weekParam);
     const [weekSchedule, outfits, weatherForecast] = await Promise.all([
       this.findWeek(anchor, userId),
       this.findOutfitsForUser(userId),
       lat != null && lon != null
-        ? this.weatherService.getForecast(lat, lon).catch((err) => {
-            this.logger.warn('Weather forecast unavailable', err);
-            return null;
-          })
+        ? this.weatherService
+            .getForecast(lat, lon, temperatureUnit)
+            .catch((err) => {
+              this.logger.warn('Weather forecast unavailable', err);
+              return null;
+            })
         : Promise.resolve(null),
     ]);
     const weekBounds = this.findWeekBounds(weekSchedule);
@@ -194,7 +198,13 @@ export class CalendarService {
       nextMonthWeekParam,
     } = miniMonthCal;
 
-    const days = this.calDays(weekSchedule, i18n, weekBounds, weatherForecast);
+    const days = this.calDays(
+      weekSchedule,
+      i18n,
+      weekBounds,
+      weatherForecast,
+      temperatureUnit,
+    );
 
     return {
       pageTitle: i18n.t('lang.CALENDAR_PAGE_TITLE'),
@@ -308,18 +318,24 @@ export class CalendarService {
     i18n: I18nContext,
     weekBounds: WeekNavBoundaries,
     weatherForecast: WeatherForecastDay[] | null,
+    temperatureUnit: TemperatureUnit,
   ) {
     const CHIP_HUES = [220, 240, 260];
     const forecastByDate = new Map(
       (weatherForecast ?? []).map((f) => [f.date, f]),
     );
+    const tempUnit = i18n.t(
+      temperatureUnit === 'fahrenheit'
+        ? 'lang.WEATHER_TEMP_UNIT_F'
+        : 'lang.WEATHER_TEMP_UNIT_C',
+    );
 
     const days = weekSchedule.days.map((day) => {
       const dateParam = this.toWeekParam(day.date);
       const forecast = forecastByDate.get(dateParam) ?? null;
-      const { emoji, label } = forecast
+      const { emoji, labelKey } = forecast
         ? weatherCodeToDescription(forecast.weathercode)
-        : { emoji: null, label: null };
+        : { emoji: null, labelKey: null };
       return {
         dayName: i18n.t(`lang.${this.DAY_I18N_KEYS[day.date.getUTCDay()]}`),
         dayNum: day.date.getUTCDate(),
@@ -328,9 +344,10 @@ export class CalendarService {
         weather: forecast
           ? {
               emoji,
-              label,
+              label: i18n.t(`lang.${labelKey}`),
               tempMax: Math.round(forecast.temperatureMax),
               tempMin: Math.round(forecast.temperatureMin),
+              tempUnit,
             }
           : null,
         entries: day.entries.map((entry, entryIndex) => {

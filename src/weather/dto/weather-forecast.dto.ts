@@ -8,7 +8,8 @@ export interface OpenMeteoResponse {
   };
 }
 
-/** A single day of forecast data, zipped from the Open-Meteo parallel arrays */
+/** A single day of forecast data, zipped from the Open-Meteo parallel arrays.
+ * Temperatures are in the unit requested by the caller (see WeatherService). */
 export class WeatherForecastDay {
   date: string;
   weathercode: number;
