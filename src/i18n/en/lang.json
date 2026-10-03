@@ -21,7 +21,7 @@
   "FEATURE_DOCKER_TITLE": "One-command deploy",
   "FEATURE_DOCKER_DESC": "Self-host in seconds with Docker on any Linux server, NAS, or Raspberry Pi. Your data stays on your infrastructure - no vendor lock-in, no monthly bills.",
   "FEATURE_I18N_TITLE": "Multilingual",
-  "FEATURE_I18N_DESC": "Available in English, Italian, French, Russian, German, and Spanish with community-contributed translations. Use Libre Closet in your preferred language.",
+  "FEATURE_I18N_DESC": "Available in English, Italian, French, Russian, German, Spanish, and Danish with community-contributed translations. Use Libre Closet in your preferred language.",
   "FEATURE_SHARING_TITLE": "Wardrobe sharing",
   "FEATURE_SHARING_DESC": "Share your wardrobe with friends, family, or a personal stylist. Grant VIEW access for browsing or MANAGE access for collaborative editing - you control the permissions.",
   "WHY_SELF_HOST_TITLE": "Why self-host your wardrobe?",
@@ -290,5 +290,11 @@
   "LOGIN_OG_TITLE": "Sign In — Libre Closet",
   "LOGIN_OG_DESC": "Sign in to your Libre Closet account to manage your wardrobe, build outfits, and schedule looks.",
   "REGISTER_OG_TITLE": "Register — Libre Closet",
-  "REGISTER_OG_DESC": "Create your free Libre Closet account. Self-hosted, open-source wardrobe organizer. No subscription, no ads, no tracking."
+  "REGISTER_OG_DESC": "Create your free Libre Closet account. Self-hosted, open-source wardrobe organizer. No subscription, no ads, no tracking.",
+  "SUPPORT": "Support",
+  "SUPPORTER_TITLE": "A note from Gian, the founder",
+  "SUPPORTER_MESSAGE": "Libre Closet is free, open source, and will never be feature gated for selfhosters! If it's made your life a little easier, we ask that you please consider supporting us. We're a small group of engineers building on donated time and your support helps us to make the time to improve the tools that make your life more convenient.",
+  "SUPPORTER_SIGNATURE": "— Gian, Lazztech LLC Founder and Developer",
+  "SUPPORTER_CTA": "Support on Ko-fi",
+  "SUPPORTER_DISMISS": "Not now"
 }
