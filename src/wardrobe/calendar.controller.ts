@@ -16,6 +16,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
+import { temperatureUnitFromAcceptLanguage } from '../weather/temperature-unit.util';
 import { CalendarService } from './calendar.service';
 
 @UseGuards(ConditionalAuthGuard)
@@ -46,6 +47,7 @@ export class CalendarController {
       i18n,
       Number.isFinite(lat) ? lat : undefined,
       Number.isFinite(lon) ? lon : undefined,
+      temperatureUnitFromAcceptLanguage(req.headers['accept-language']),
     );
   }
 

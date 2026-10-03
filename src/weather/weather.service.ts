@@ -7,6 +7,7 @@ import {
   OpenMeteoResponse,
   WeatherForecastDay,
 } from './dto/weather-forecast.dto';
+import { TemperatureUnit } from './temperature-unit.util';
 
 const OPEN_METEO_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 
@@ -14,7 +15,11 @@ const OPEN_METEO_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 export class WeatherService {
   private readonly logger = new Logger(WeatherService.name);
 
-  async getForecast(lat: number, lon: number): Promise<WeatherForecastDay[]> {
+  async getForecast(
+    lat: number,
+    lon: number,
+    unit: TemperatureUnit = 'celsius',
+  ): Promise<WeatherForecastDay[]> {
     const url = new URL(OPEN_METEO_BASE_URL);
     url.searchParams.set('latitude', String(lat));
     url.searchParams.set('longitude', String(lon));
@@ -22,6 +27,7 @@ export class WeatherService {
       'daily',
       'weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
     );
+    url.searchParams.set('temperature_unit', unit);
     url.searchParams.set('timezone', 'auto');
     url.searchParams.set('forecast_days', '14');
 
