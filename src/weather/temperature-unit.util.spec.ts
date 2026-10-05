@@ -1,4 +1,7 @@
-import { temperatureUnitFromAcceptLanguage } from './temperature-unit.util';
+import {
+  temperatureUnitFromAcceptLanguage,
+  usesTwelveHourClock,
+} from './temperature-unit.util';
 
 describe('temperatureUnitFromAcceptLanguage', () => {
   it('resolves en-US to fahrenheit', () => {
@@ -51,5 +54,26 @@ describe('temperatureUnitFromAcceptLanguage', () => {
   it('falls back to celsius for malformed headers', () => {
     expect(temperatureUnitFromAcceptLanguage(',,,')).toBe('celsius');
     expect(temperatureUnitFromAcceptLanguage('  ')).toBe('celsius');
+  });
+});
+
+describe('usesTwelveHourClock', () => {
+  it('is true for US-region locales', () => {
+    expect(usesTwelveHourClock('en-US')).toBe(true);
+    expect(usesTwelveHourClock('EN-us')).toBe(true);
+    expect(usesTwelveHourClock('en-US,en;q=0.9')).toBe(true);
+  });
+
+  it('is false for other regions and region-less tags', () => {
+    expect(usesTwelveHourClock('en-GB,en;q=0.9')).toBe(false);
+    expect(usesTwelveHourClock('de-DE')).toBe(false);
+    expect(usesTwelveHourClock('en')).toBe(false);
+  });
+
+  it('is false for missing, empty, or malformed headers', () => {
+    expect(usesTwelveHourClock(undefined)).toBe(false);
+    expect(usesTwelveHourClock('')).toBe(false);
+    expect(usesTwelveHourClock('*')).toBe(false);
+    expect(usesTwelveHourClock(',,,')).toBe(false);
   });
 });

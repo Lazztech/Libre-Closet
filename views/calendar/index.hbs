@@ -111,7 +111,15 @@
           {{this.dayNum}}
         </span>
         {{#if this.weather}}
-        <span class="ml-auto flex items-center gap-1">
+        <button
+          type="button"
+          class="ml-auto flex items-center gap-1 px-1.5 py-0.5 -mr-1.5 rounded-full cursor-pointer hover:bg-base-100/50 transition-colors"
+          hx-get="{{this.weather.detailsUrl}}"
+          hx-target="#weather-modal-container"
+          hx-swap="innerHTML"
+          aria-haspopup="dialog"
+          aria-label="{{this.weather.label}}"
+        >
           <span
             class="text-base leading-none"
             aria-hidden="true"
@@ -124,7 +132,7 @@
             {{this.weather.tempMin}}{{this.weather.tempUnit}} -
             {{this.weather.tempMax}}{{this.weather.tempUnit}}
           </span>
-        </span>
+        </button>
         {{/if}}
       </div>
 
@@ -210,6 +218,10 @@
     {{!-- /card --}} {{/each}}
   </div>
 </main>
+
+{{!-- Weather modal target — lives outside #week-grid so week-nav swaps don't
+wipe it --}}
+<div id="weather-modal-container"></div>
 
 {{>dock}}
 

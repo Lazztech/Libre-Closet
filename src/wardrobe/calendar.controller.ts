@@ -16,7 +16,10 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
-import { temperatureUnitFromAcceptLanguage } from '../weather/temperature-unit.util';
+import {
+  temperatureUnitFromAcceptLanguage,
+  usesTwelveHourClock,
+} from '../weather/temperature-unit.util';
 import { CalendarService } from './calendar.service';
 
 @UseGuards(ConditionalAuthGuard)
@@ -49,6 +52,29 @@ export class CalendarController {
       Number.isFinite(lon) ? lon : undefined,
       temperatureUnitFromAcceptLanguage(req.headers['accept-language']),
     );
+  }
+
+  @Get('weather')
+  async weatherDetails(
+    @Query('date') dateParam: string | undefined,
+    @Query('lat') latParam: string | undefined,
+    @Query('lon') lonParam: string | undefined,
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
+    @I18n() i18n: I18nContext,
+  ) {
+    const lat = latParam != null ? parseFloat(latParam) : undefined;
+    const lon = lonParam != null ? parseFloat(lonParam) : undefined;
+    const viewModel = await this.calendarService.buildWeatherModalViewModel(
+      dateParam,
+      Number.isFinite(lat) ? lat : undefined,
+      Number.isFinite(lon) ? lon : undefined,
+      i18n,
+      temperatureUnitFromAcceptLanguage(req.headers['accept-language']),
+      usesTwelveHourClock(req.headers['accept-language']),
+      req.headers['accept-language'],
+    );
+    return reply.viewPartial('calendar/weather_modal', viewModel);
   }
 
   @Post()
