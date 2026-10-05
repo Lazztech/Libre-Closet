@@ -16,6 +16,10 @@ Crafted and engineered with care and intention by [Lazztech LLC](https://lazz.te
 
 ## Significant News
 
+**`v0.6.0` Weather Forcasting - October 5, 2026**
+
+You can see an overview of the weather forecast for your area when you're scheduling out your outfits. Want to know more about a specific important date? Tap on the weather preview label on the calendar day card and you'll see more detail about the weather forecast for that day!
+
 **`v0.4.0` Wardrobe Sharing - June 13, 2026**
 
 You can now share your Libre Closet wardrobe with your friends, or for the stylists out there, you may now use this tool to manage your client's wardrobes!
@@ -26,7 +30,7 @@ Or from the same wardrobe sharing page, if you would like grant someone else per
 
 #### Release
 
-- `v0.6.0 - TBD`:
+- `v0.6.0 - October 5, 2026`:
 - `v0.5.1 - September 10, 2026`: Save confirmations, Camera option for garment photo upload, and outfit builder fix
 - `v0.5.0 - June 26, 2026`: Added garment color combination support, washing details, acquisition date, archival, and cloning
 - `v0.4.1 - June 15, 2026`: Fixed disable register functionality
@@ -71,6 +75,7 @@ Note, these screenshots are taken of the web application viewed as an installed 
 - **Customizable categories** - custom category support with filtering and input suggestion as you type
 - **Outfit builder** - combine garments into saved looks with the Clueless inspired outfit builder
 - **Outfit Scheduling** - schedule out multiple outfits for given days through the week and get a view of what you've worn
+- **Weather Forecasting** - see weather forecasts while scheduling outfits for your important upcoming days
 - **Image Background Removal** - Images automatically have their backgrounds removed and optimized WebP upon upload
 - **Offline-ready PWA** - install to home screen, works without internet
 - **Optional auth** - run open for personal use or enable JWT accounts for multi-user
@@ -96,7 +101,7 @@ We've [refactored the server](https://github.com/Lazztech/Libre-Closet/pull/79) 
 
 ## Self-hosting
 
-Libre Closet requires just one, easy to deploy and host docker container!
+Libre Closet requires just one, easy to deploy and host docker container! It defaults to sqlite, and local filestorage so you don't need to worry about the headache of hosting and maintaining a postgres db and redis instance.
 
 ### Docker (recommended)
 
