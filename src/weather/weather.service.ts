@@ -1,8 +1,11 @@
 import {
+  Inject,
   Injectable,
   Logger,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import {
   NominatimReverseResponse,
   OpenMeteoDayResponse,
@@ -16,18 +19,34 @@ import { weatherCodeToDescription } from './weathercode.util';
 const OPEN_METEO_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 const NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org/reverse';
 
+/** Fallback forecast TTL when WEATHER_CACHE_TTL_MS is not configured. */
+const DEFAULT_FORECAST_TTL_MS = 30 * 60 * 1000;
+/** Location labels are effectively immutable; cache them for a full day. */
+const LOCATION_TTL_MS = 24 * 60 * 60 * 1000;
+
 @Injectable()
 export class WeatherService {
   private readonly logger = new Logger(WeatherService.name);
+  private readonly forecastTtlMs: number;
 
-  /** Reverse-geocode labels keyed by rounded coords + language. */
-  private readonly locationCache = new Map<string, string | null>();
+  constructor(
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    configService: ConfigService,
+  ) {
+    this.forecastTtlMs =
+      configService.get<number>('WEATHER_CACHE_TTL_MS') ??
+      DEFAULT_FORECAST_TTL_MS;
+  }
 
   async getForecast(
     lat: number,
     lon: number,
     unit: TemperatureUnit = 'celsius',
   ): Promise<WeatherForecastDay[]> {
+    const cacheKey = `weather:forecast:${lat.toFixed(3)}:${lon.toFixed(3)}:${unit}`;
+    const cached = await this.cacheManager.get<WeatherForecastDay[]>(cacheKey);
+    if (cached) return cached;
+
     const url = this.openMeteoUrl(
       lat,
       lon,
@@ -36,13 +55,15 @@ export class WeatherService {
     );
     const data = await this.fetchOpenMeteo<OpenMeteoResponse>(url);
 
-    return data.daily.time.map((date, i) => ({
+    const forecast = data.daily.time.map((date, i) => ({
       date,
       weathercode: data.daily.weathercode[i],
       temperatureMax: data.daily.temperature_2m_max[i],
       temperatureMin: data.daily.temperature_2m_min[i],
       precipitationProbabilityMax: data.daily.precipitation_probability_max[i],
     }));
+    await this.cacheManager.set(cacheKey, forecast, this.forecastTtlMs);
+    return forecast;
   }
 
   /**
@@ -55,6 +76,10 @@ export class WeatherService {
     date: string,
     unit: TemperatureUnit = 'celsius',
   ): Promise<WeatherDayForecast | null> {
+    const cacheKey = `weather:day:${lat.toFixed(3)}:${lon.toFixed(3)}:${date}:${unit}`;
+    const cached = await this.cacheManager.get<WeatherDayForecast>(cacheKey);
+    if (cached) return cached;
+
     const url = this.openMeteoUrl(
       lat,
       lon,
@@ -77,7 +102,7 @@ export class WeatherService {
         temperature: Math.round(data.hourly.temperature_2m[i]),
       }));
 
-    return {
+    const dayForecast: WeatherDayForecast = {
       date,
       weathercode: data.daily.weathercode[dayIndex],
       temperatureMax: data.daily.temperature_2m_max[dayIndex],
@@ -86,6 +111,8 @@ export class WeatherService {
         data.daily.precipitation_probability_max[dayIndex] ?? 0,
       hours,
     };
+    await this.cacheManager.set(cacheKey, dayForecast, this.forecastTtlMs);
+    return dayForecast;
   }
 
   /**
@@ -99,10 +126,11 @@ export class WeatherService {
     lon: number,
     language?: string,
   ): Promise<string | null> {
-    const cacheKey = `${lat.toFixed(2)}|${lon.toFixed(2)}|${language ?? ''}`;
-    if (this.locationCache.has(cacheKey)) {
-      return this.locationCache.get(cacheKey) ?? null;
-    }
+    const cacheKey = `weather:location:${lat.toFixed(2)}:${lon.toFixed(2)}:${language ?? ''}`;
+    const cached = await this.cacheManager.get<{ label: string | null }>(
+      cacheKey,
+    );
+    if (cached) return cached.label;
 
     const url = new URL(NOMINATIM_BASE_URL);
     url.searchParams.set('lat', String(lat));
@@ -121,26 +149,37 @@ export class WeatherService {
       });
       if (response.ok) {
         const data = (await response.json()) as NominatimReverseResponse;
-        const a = data.address ?? {};
-        const locality =
-          a.city ??
-          a.town ??
-          a.village ??
-          a.municipality ??
-          a.county ??
-          data.name;
-        const region = a.state ?? a.country;
-        label =
-          locality && region && locality.toLowerCase() === region.toLowerCase()
-            ? locality
-            : [locality, region].filter(Boolean).join(', ') || null;
+        label = this.labelFromNominatim(data);
       }
     } catch (err) {
       this.logger.warn('Reverse geocoding unavailable', err);
     }
 
-    this.locationCache.set(cacheKey, label);
+    // Wrapper object distinguishes cached "not found" (null label) from a
+    // cache miss, which get() reports as undefined/null.
+    await this.cacheManager.set(cacheKey, { label }, LOCATION_TTL_MS);
     return label;
+  }
+
+  /** Builds a "locality, region" label from a Nominatim reverse-geocode
+   * response, collapsing the two when they're identical (e.g. New York). */
+  private labelFromNominatim(data: NominatimReverseResponse): string | null {
+    const a = data.address ?? {};
+    const locality =
+      a.city ?? a.town ?? a.village ?? a.municipality ?? a.county ?? data.name;
+    const region = a.state ?? a.country;
+    return this.joinLocalityRegion(locality, region);
+  }
+
+  /** Joins locality and region, collapsing identical values (e.g. New York). */
+  private joinLocalityRegion(
+    locality?: string,
+    region?: string,
+  ): string | null {
+    if (locality && region && locality.toLowerCase() === region.toLowerCase()) {
+      return locality;
+    }
+    return [locality, region].filter(Boolean).join(', ') || null;
   }
 
   private openMeteoUrl(
