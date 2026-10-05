@@ -30,7 +30,7 @@ Or from the same wardrobe sharing page, if you would like grant someone else per
 
 #### Release
 
-- `v0.6.0 - October 5, 2026`:
+- `v0.6.0 - October 5, 2026`: Weather forecast info for outfit scheduling, Danish language support, and bug fixes
 - `v0.5.1 - September 10, 2026`: Save confirmations, Camera option for garment photo upload, and outfit builder fix
 - `v0.5.0 - June 26, 2026`: Added garment color combination support, washing details, acquisition date, archival, and cloning
 - `v0.4.1 - June 15, 2026`: Fixed disable register functionality
