@@ -15,7 +15,11 @@ import { WeekSchedule } from './view-models/week-schedule.view-model';
 import { I18nContext } from 'nestjs-i18n';
 import { WeekNavBoundaries } from './view-models/week-nav-boundaries';
 import { WeatherService } from '../weather/weather.service';
-import { WeatherForecastDay } from '../weather/dto/weather-forecast.dto';
+import {
+  WeatherDayForecast,
+  WeatherForecastDay,
+} from '../weather/dto/weather-forecast.dto';
+import { TemperatureUnit } from '../weather/temperature-unit.util';
 import { weatherCodeToDescription } from '../weather/weathercode.util';
 
 @Injectable()
@@ -164,16 +168,19 @@ export class CalendarService {
     i18n: I18nContext,
     lat?: number,
     lon?: number,
+    temperatureUnit: TemperatureUnit = 'celsius',
   ) {
     const anchor = this.parseWeekParam(weekParam);
     const [weekSchedule, outfits, weatherForecast] = await Promise.all([
       this.findWeek(anchor, userId),
       this.findOutfitsForUser(userId),
       lat != null && lon != null
-        ? this.weatherService.getForecast(lat, lon).catch((err) => {
-            this.logger.warn('Weather forecast unavailable', err);
-            return null;
-          })
+        ? this.weatherService
+            .getForecast(lat, lon, temperatureUnit)
+            .catch((err) => {
+              this.logger.warn('Weather forecast unavailable', err);
+              return null;
+            })
         : Promise.resolve(null),
     ]);
     const weekBounds = this.findWeekBounds(weekSchedule);
@@ -194,7 +201,15 @@ export class CalendarService {
       nextMonthWeekParam,
     } = miniMonthCal;
 
-    const days = this.calDays(weekSchedule, i18n, weekBounds, weatherForecast);
+    const days = this.calDays(
+      weekSchedule,
+      i18n,
+      weekBounds,
+      weatherForecast,
+      temperatureUnit,
+      lat,
+      lon,
+    );
 
     return {
       pageTitle: i18n.t('lang.CALENDAR_PAGE_TITLE'),
@@ -218,6 +233,57 @@ export class CalendarService {
       nextMonthWeekParam,
     };
   }
+  /**
+   * Assembles the view-model for the single-day weather modal (rendered as an
+   * htmx partial). Returns `{ forecast: null }` when the date is invalid,
+   * coords are missing, or the forecast is unavailable.
+   */
+  async buildWeatherModalViewModel(
+    dateParam: string | undefined,
+    lat: number | undefined,
+    lon: number | undefined,
+    i18n: I18nContext,
+    temperatureUnit: TemperatureUnit = 'celsius',
+    twelveHourClock = false,
+    language?: string,
+  ) {
+    const isValidDate = !!dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam);
+    const [forecast, location]: [WeatherDayForecast | null, string | null] =
+      isValidDate && lat != null && lon != null
+        ? await Promise.all([
+            this.weatherService
+              .getDayForecast(lat, lon, dateParam, temperatureUnit)
+              .catch((err) => {
+                this.logger.warn('Weather day forecast unavailable', err);
+                return null;
+              }),
+            this.weatherService.getLocationLabel(lat, lon, language),
+          ])
+        : [null, null];
+
+    if (!forecast) return { forecast: null };
+
+    const { emoji, labelKey } = weatherCodeToDescription(forecast.weathercode);
+    const weekday = new Date(`${forecast.date}T00:00:00Z`).getUTCDay();
+    return {
+      forecast: {
+        emoji,
+        label: i18n.t(`lang.${labelKey}`),
+        dayName: i18n.t(`lang.${this.DAY_I18N_KEYS[weekday]}`),
+        dayNum: Number(forecast.date.slice(8, 10)),
+        location,
+        tempMax: Math.round(forecast.temperatureMax),
+        tempMin: Math.round(forecast.temperatureMin),
+        precipitationProbabilityMax: forecast.precipitationProbabilityMax,
+        tempUnit: this.tempUnitLabel(i18n, temperatureUnit),
+        hours: forecast.hours.map((h) => ({
+          ...h,
+          hour: twelveHourClock ? this.toTwelveHourClock(h.hour) : h.hour,
+        })),
+      },
+    };
+  }
+
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
@@ -226,6 +292,23 @@ export class CalendarService {
     if (!param) return new Date();
     const d = new Date(param);
     return isNaN(d.getTime()) ? new Date() : d;
+  }
+
+  /** Localized temperature-unit label (°C / °F) for the resolved locale. */
+  private tempUnitLabel(i18n: I18nContext, unit: TemperatureUnit): string {
+    return i18n.t(
+      unit === 'fahrenheit'
+        ? 'lang.WEATHER_TEMP_UNIT_F'
+        : 'lang.WEATHER_TEMP_UNIT_C',
+    );
+  }
+
+  /** Converts a 24-hour "HH:MM" time to a 12-hour "H:MM AM/PM" display. */
+  private toTwelveHourClock(hour: string): string {
+    const [h, m] = hour.split(':').map(Number);
+    const suffix = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m).padStart(2, '0')} ${suffix}`;
   }
 
   /** Formats a Date as YYYY-MM-DD for use in query params and hidden inputs. */
@@ -308,18 +391,22 @@ export class CalendarService {
     i18n: I18nContext,
     weekBounds: WeekNavBoundaries,
     weatherForecast: WeatherForecastDay[] | null,
+    temperatureUnit: TemperatureUnit,
+    lat?: number,
+    lon?: number,
   ) {
     const CHIP_HUES = [220, 240, 260];
     const forecastByDate = new Map(
       (weatherForecast ?? []).map((f) => [f.date, f]),
     );
+    const tempUnit = this.tempUnitLabel(i18n, temperatureUnit);
 
     const days = weekSchedule.days.map((day) => {
       const dateParam = this.toWeekParam(day.date);
       const forecast = forecastByDate.get(dateParam) ?? null;
-      const { emoji, label } = forecast
+      const { emoji, labelKey } = forecast
         ? weatherCodeToDescription(forecast.weathercode)
-        : { emoji: null, label: null };
+        : { emoji: null, labelKey: null };
       return {
         dayName: i18n.t(`lang.${this.DAY_I18N_KEYS[day.date.getUTCDay()]}`),
         dayNum: day.date.getUTCDate(),
@@ -328,9 +415,11 @@ export class CalendarService {
         weather: forecast
           ? {
               emoji,
-              label,
+              label: i18n.t(`lang.${labelKey}`),
               tempMax: Math.round(forecast.temperatureMax),
               tempMin: Math.round(forecast.temperatureMin),
+              tempUnit,
+              detailsUrl: `/calendar/weather?date=${dateParam}&lat=${lat}&lon=${lon}`,
             }
           : null,
         entries: day.entries.map((entry, entryIndex) => {

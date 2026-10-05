@@ -85,6 +85,10 @@ import { ViewContextModule } from './view-context/view-context.module';
         ),
         SITE_URL: Joi.string().default('https://librecloset.lazz.tech'),
         ICON_NAME: Joi.string().default('lazztech_icon.webp'),
+        WEATHER_CACHE_TTL_MS: Joi.number()
+          .integer()
+          .min(60000)
+          .default(1800000),
         DATA_PATH: Joi.string().default(path.join(process.cwd(), 'data')),
         DATABASE_TYPE: Joi.string()
           .valid('sqlite', 'postgres')

@@ -1,0 +1,89 @@
+{{!-- Single-day weather forecast modal, fetched via htmx into
+#weather-modal-container. Rendered with `modal-open` so it shows on swap; closes
+by removing itself (close button or backdrop click). --}}
+<div
+  class="modal modal-open"
+  id="weather-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="weather-modal-title"
+  _="on click if the target is me then remove me"
+>
+  <div class="modal-box">
+    {{#if forecast}}
+    <div class="flex items-center gap-3">
+      <span class="text-3xl leading-none" aria-hidden="true"
+        >{{forecast.emoji}}</span
+      >
+      <div>
+        <h3 id="weather-modal-title" class="font-semibold">
+          {{forecast.label}}
+        </h3>
+        <p class="text-xs text-base-content/50">
+          {{forecast.dayName}} {{forecast.dayNum}}
+        </p>
+        {{#if forecast.location}}
+        <p class="text-xs text-base-content/50 mt-0.5">
+          <span aria-hidden="true">📍</span> {{forecast.location}}
+        </p>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+      <div class="bg-base-200 rounded-lg py-2">
+        <p class="text-[10px] uppercase tracking-wide text-base-content/50">
+          {{t 'lang.WEATHER_HIGH'}}
+        </p>
+        <p class="text-sm font-semibold tabular-nums">
+          {{forecast.tempMax}}{{forecast.tempUnit}}
+        </p>
+      </div>
+      <div class="bg-base-200 rounded-lg py-2">
+        <p class="text-[10px] uppercase tracking-wide text-base-content/50">
+          {{t 'lang.WEATHER_LOW'}}
+        </p>
+        <p class="text-sm font-semibold tabular-nums">
+          {{forecast.tempMin}}{{forecast.tempUnit}}
+        </p>
+      </div>
+      <div class="bg-base-200 rounded-lg py-2">
+        <p class="text-[10px] uppercase tracking-wide text-base-content/50">
+          {{t 'lang.WEATHER_PRECIPITATION'}}
+        </p>
+        <p class="text-sm font-semibold tabular-nums">
+          {{forecast.precipitationProbabilityMax}}%
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-4 gap-1.5 mt-4 text-center">
+      {{#each forecast.hours}}
+      <div class="bg-base-200/60 rounded-lg py-1.5">
+        <span class="block text-base leading-none" aria-hidden="true"
+          >{{this.emoji}}</span
+        >
+        <span class="block text-xs font-medium tabular-nums"
+          >{{this.temperature}}{{@root.forecast.tempUnit}}</span
+        >
+        <span class="block text-[10px] text-base-content/40 tabular-nums"
+          >{{this.hour}}</span
+        >
+      </div>
+      {{/each}}
+    </div>
+    {{else}}
+    <p class="text-sm text-base-content/60">{{t 'lang.WEATHER_UNAVAILABLE'}}</p>
+    {{/if}}
+
+    <div class="modal-action">
+      <button
+        type="button"
+        class="btn btn-sm"
+        _="on click remove the closest .modal"
+      >
+        {{t 'lang.CLOSE'}}
+      </button>
+    </div>
+  </div>
+</div>
