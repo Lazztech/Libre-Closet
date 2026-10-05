@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Weather on calendar page for aiding in outfit scheduling
 - Danish language support
 
+#### Fixed
+
+- Bug in v0.4.0 migration that lost outfit_garments table data
+
 ## 0.5.1 - 2026-09-10
 
 #### Added
