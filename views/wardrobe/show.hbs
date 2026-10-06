@@ -24,6 +24,138 @@
     <h1 class="text-2xl font-bold flex-1">{{garment.name}}</h1>
   </div>
 
+  {{!-- Garment mannequin canvas --}}
+  <section class="mb-6 flex justify-center">
+    <div
+      id="garment-canvas"
+      class="relative w-[200px] h-[400px] overflow-hidden rounded-box border border-base-300 bg-base-200 touch-none select-none"
+      aria-label="{{garment.name}} mannequin preview"
+    >
+      <img
+        src="/settings/mannequin"
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 z-0 w-full h-full object-contain pointer-events-none select-none"
+        draggable="false"
+        onerror="this.style.display='none'"
+      />
+
+      {{#if canvasGarment.garment.photo}}
+      <div
+        id="garment-canvas-item"
+        class="absolute left-0 top-0 z-10 w-[72%] cursor-move touch-none"
+        data-x="{{canvasGarment.x}}"
+        data-y="{{canvasGarment.y}}"
+        data-rotation="{{canvasGarment.rotation}}"
+        data-scale="{{canvasGarment.scale}}" data-can-edit="{{canEdit}}"
+        style="left: calc({{canvasGarment.x}} / 10 * 1%); top: calc({{canvasGarment.y}} / 10 * 1%); transform: translate(-50%, -50%) rotate({{canvasGarment.rotation}}deg) scale({{canvasGarment.scale}}); transform-origin: center center;"
+      >
+        <div class="absolute -top-9 left-1/2 -translate-x-1/2 flex gap-1">
+          <button type="button" class="btn btn-xs btn-circle garment-rotate-down" aria-label="Rotate left">↶</button>
+          <button type="button" class="btn btn-xs btn-circle garment-rotate-up" aria-label="Rotate right">↷</button>
+          <button type="button" class="btn btn-xs btn-circle garment-scale-down" aria-label="Scale down">−</button>
+          <button type="button" class="btn btn-xs btn-circle garment-scale-up" aria-label="Scale up">+</button>
+        </div>
+        <img
+          src="/file/nobg/{{canvasGarment.garment.photo.fileName}}"
+          alt="{{canvasGarment.garment.name}}"
+          class="block w-full h-auto pointer-events-none select-none"
+          draggable="false"
+        />
+      </div>
+      {{else}}
+      <div class="absolute inset-0 z-10 flex items-center justify-center px-4 text-center text-sm text-base-content/40">
+        No photo
+      </div>
+      {{/if}}
+    </div>
+  </section>
+
+  {{#if canvasGarment.garment.photo}}
+  <script>
+    (() => {
+      const canvas = document.getElementById('garment-canvas');
+      const item = document.getElementById('garment-canvas-item');
+      if (!canvas || !item || item.dataset.canEdit !== 'true') return;
+
+      const CANVAS_SIZE = 1000;
+      let drag = null;
+      let saveTimer = null;
+
+      const point = (event) => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: ((event.clientX - rect.left) / rect.width) * CANVAS_SIZE,
+          y: ((event.clientY - rect.top) / rect.height) * CANVAS_SIZE,
+        };
+      };
+
+      const render = () => {
+        const x = Number(item.dataset.x);
+        const y = Number(item.dataset.y);
+        const rotation = Number(item.dataset.rotation);
+        const scale = Number(item.dataset.scale);
+        item.style.left = `${x / 10}%`;
+        item.style.top = `${y / 10}%`;
+        item.style.transform = `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`;
+      };
+
+      const save = () => {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(async () => {
+          await fetch('/wardrobe/{{garment.id}}/canvas-transform{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              x: Number(item.dataset.x),
+              y: Number(item.dataset.y),
+              rotation: Number(item.dataset.rotation),
+              scale: Number(item.dataset.scale),
+            }),
+          });
+        }, 150);
+      };
+
+      item.addEventListener('pointerdown', (event) => {
+        if (event.target.closest('button')) return;
+        event.preventDefault();
+        item.setPointerCapture(event.pointerId);
+        const p = point(event);
+        drag = { startX: p.x, startY: p.y, originalX: Number(item.dataset.x), originalY: Number(item.dataset.y) };
+      });
+
+      item.addEventListener('pointermove', (event) => {
+        if (!drag) return;
+        const p = point(event);
+        item.dataset.x = String(drag.originalX + p.x - drag.startX);
+        item.dataset.y = String(drag.originalY + p.y - drag.startY);
+        render();
+      });
+
+      const stop = () => { if (drag) { drag = null; save(); } };
+      item.addEventListener('pointerup', stop);
+      item.addEventListener('pointercancel', stop);
+
+      const changeRotation = (amount) => {
+        item.dataset.rotation = String(Number(item.dataset.rotation) + amount);
+        render();
+        save();
+      };
+      const changeScale = (amount) => {
+        item.dataset.scale = String(Math.max(0.1, Math.min(3, Number(item.dataset.scale) + amount)));
+        render();
+        save();
+      };
+      item.querySelector('.garment-rotate-down')?.addEventListener('click', () => changeRotation(-5));
+      item.querySelector('.garment-rotate-up')?.addEventListener('click', () => changeRotation(5));
+      item.querySelector('.garment-scale-down')?.addEventListener('click', () => changeScale(-0.05));
+      item.querySelector('.garment-scale-up')?.addEventListener('click', () => changeScale(0.05));
+
+      render();
+    })();
+  </script>
+  {{/if}}
+
   {{#if garment.photo}}
   <figure
     class="relative rounded-box overflow-hidden mb-6 bg-base-200 aspect-square w-full max-w-sm mx-auto"

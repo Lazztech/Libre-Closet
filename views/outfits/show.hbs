@@ -23,50 +23,99 @@
 
   {{#if outfit.notes}}
   <p class="text-base-content/60 text-sm mb-6 px-1">{{outfit.notes}}</p>
-  {{/if}} {{!-- Garments grid --}}
-  <h2 class="font-semibold mb-3">{{t 'lang.GARMENTS_IN_OUTFIT'}}</h2>
-  {{#if garments.length}}
-  <div class="flex flex-wrap gap-3 mb-8">
-    {{#each garments}}
-    <a
-      href="/wardrobe/{{this.id}}"
-      class="flex flex-col items-center gap-1 w-24"
+  {{/if}} {{!-- Outfit canvas --}}
+  <section class="mb-8">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-semibold">{{t 'lang.GARMENTS_IN_OUTFIT'}}</h2>
+      <span id="outfit-canvas-status" class="text-xs text-base-content/50" aria-live="polite"></span>
+    </div>
+
+    {{#if canvasGarments.length}}
+    <div
+      id="outfit-canvas"
+      class="relative w-[200px] h-[400px] mx-auto overflow-hidden rounded-box border border-base-300 bg-base-200 touch-none select-none"
+      data-outfit-id="{{outfit.id}}"
+      aria-label="Outfit canvas"
     >
-      {{#if this.photo}}
       <img
-        src="/file/nobg/{{this.photo.fileName}}"
-        alt="{{this.name}}"
-        class="size-20 rounded-box object-cover shadow-sm"
+        src="/settings/mannequin"
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 z-0 w-full h-full object-contain pointer-events-none select-none"
+        draggable="false"
+        onerror="this.style.display='none'"
       />
-      {{else}}
+      {{#each canvasGarments}}
       <div
-        class="size-20 rounded-box bg-base-200 flex items-center justify-center"
+        class="outfit-canvas-item absolute left-0 top-0 z-10 w-[72%] cursor-move touch-none"
+        data-slot-index="{{slotIndex}}"
+        data-x="{{position.x}}"
+        data-y="{{position.y}}"
+        data-rotation="{{rotation}}"
+        data-scale="{{scale}}"
+        data-z-index="{{zIndex}}"
+        style="z-index: {{zIndex}}; left: calc({{position.x}} / 10 * 1%); top: calc({{position.y}} / 10 * 1%); transform: translate(-50%, -50%) rotate({{rotation}}deg) scale({{scale}}); transform-origin: center center;"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-8 text-base-content/30"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3"
-          />
-        </svg>
+        {{#if garment.photo}}
+        <img
+          src="/file/nobg/{{garment.photo.fileName}}"
+          alt="{{garment.name}}"
+          class="block w-full pointer-events-none select-none"
+          draggable="false"
+        />
+        {{else}}
+        <div class="aspect-square rounded-box bg-base-300 flex items-center justify-center text-xs text-base-content/40 text-center p-2">
+          {{garment.name}}
+        </div>
+        {{/if}}
+        <div class="outfit-canvas-controls hidden absolute -top-8 left-1/2 -translate-x-1/2 items-center gap-1">
+          <button type="button" class="btn btn-xs btn-circle outfit-rotate-down" aria-label="Rotate left">↶</button>
+          <button type="button" class="btn btn-xs btn-circle outfit-rotate-up" aria-label="Rotate right">↷</button>
+          <button type="button" class="btn btn-xs btn-circle outfit-scale-down" aria-label="Scale down">−</button>
+          <button type="button" class="btn btn-xs btn-circle outfit-scale-up" aria-label="Scale up">+</button>
+          <button type="button" class="btn btn-xs btn-circle outfit-layer-down" aria-label="Send backward" title="Send backward">↓</button>
+          <button type="button" class="btn btn-xs btn-circle outfit-layer-up" aria-label="Bring forward" title="Bring forward">↑</button>
+        </div>
       </div>
-      {{/if}}
-      <span class="text-xs text-center line-clamp-2 leading-tight"
-        >{{this.name}}</span
+      {{/each}}
+    </div>
+
+    <p class="text-xs text-base-content/50 mt-2">
+      Drag garments to position them. Select a garment to rotate or scale it.
+    </p>
+    {{else}}
+    <p class="text-base-content/40 text-sm italic mb-8">No garments added yet.</p>
+    {{/if}}
+  </section>
+
+  {{!-- Garment list --}}
+  {{#if garments.length}}
+  <details class="mb-8">
+    <summary class="cursor-pointer text-sm font-medium">Garments</summary>
+    <div class="flex flex-wrap gap-3 pt-3">
+      {{#each garments}}
+      <a
+        href="/wardrobe/{{this.id}}"
+        class="flex flex-col items-center gap-1 w-24"
       >
-    </a>
-    {{/each}}
-  </div>
-  {{else}}
-  <p class="text-base-content/40 text-sm italic mb-8">No garments added yet.</p>
-  {{/if}} {{!-- Actions --}}
+        {{#if this.photo}}
+        <img
+          src="/file/nobg/{{this.photo.fileName}}"
+          alt="{{this.name}}"
+          class="size-20 rounded-box object-cover shadow-sm"
+        />
+        {{else}}
+        <div class="size-20 rounded-box bg-base-200 flex items-center justify-center">
+          <span class="text-xs text-base-content/30">{{this.name}}</span>
+        </div>
+        {{/if}}
+        <span class="text-xs text-center line-clamp-2 leading-tight">{{this.name}}</span>
+      </a>
+      {{/each}}
+    </div>
+  </details>
+  {{/if}}
+  {{!-- Actions --}}
   <div class="divider"></div>
   <div class="flex gap-3 justify-between items-center">
     <a href="/outfits/{{outfit.id}}/edit?returnTo=/outfits/{{outfit.id}}" class="btn btn-outline btn-sm">
@@ -131,5 +180,230 @@
     </button>
   </div>
 </main>
+
+<style>
+  #outfit-canvas {
+    --outfit-canvas-size: 1000;
+  }
+
+  .outfit-canvas-item {
+    transform-origin: center center;
+  }
+
+  .outfit-canvas-item.is-selected {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .outfit-canvas-item.is-selected .outfit-canvas-controls {
+    display: flex;
+  }
+</style>
+
+<script>
+  (() => {
+    const canvas = document.getElementById('outfit-canvas');
+    if (!canvas) return;
+
+    const status = document.getElementById('outfit-canvas-status');
+    const outfitId = canvas.dataset.outfitId;
+    const canvasSize = 1000;
+    let selected = null;
+    let drag = null;
+    let saveTimer = null;
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    const render = (item) => {
+      const x = Number(item.dataset.x);
+      const y = Number(item.dataset.y);
+      const rotation = Number(item.dataset.rotation);
+      const scale = Number(item.dataset.scale);
+
+      item.style.left = `${x / canvasSize * 100}%`;
+      item.style.top = `${y / canvasSize * 100}%`;
+      item.style.transform =
+        `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`;
+    };
+
+    const select = (item) => {
+      if (selected) selected.classList.remove('is-selected');
+      selected = item;
+      if (selected) selected.classList.add('is-selected');
+    };
+
+    const canvasPoint = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: ((event.clientX - rect.left) / rect.width) * canvasSize,
+        y: ((event.clientY - rect.top) / rect.height) * canvasSize,
+      };
+    };
+
+    const save = (item) => {
+      clearTimeout(saveTimer);
+      status.textContent = 'Saving…';
+
+      saveTimer = setTimeout(async () => {
+        try {
+          const response = await fetch(
+            `/outfits/${outfitId}/slots/${item.dataset.slotIndex}/transform`,
+            {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                x: Number(item.dataset.x),
+                y: Number(item.dataset.y),
+                rotation: Number(item.dataset.rotation),
+                scale: Number(item.dataset.scale),
+              }),
+            },
+          );
+
+          if (!response.ok) throw new Error('Failed to save transform');
+          status.textContent = 'Saved';
+          setTimeout(() => {
+            if (status.textContent === 'Saved') status.textContent = '';
+          }, 1200);
+        } catch (error) {
+          console.error(error);
+          status.textContent = 'Could not save';
+        }
+      }, 250);
+    };
+
+    const saveLayer = async (item, direction) => {
+      status.textContent = 'Saving…';
+      try {
+        const response = await fetch(
+          `/outfits/${outfitId}/slots/${item.dataset.slotIndex}/layer`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ direction }),
+          },
+        );
+
+        if (!response.ok) throw new Error('Failed to save layer order');
+        const data = await response.json();
+        (data.slots ?? []).forEach((slot, index) => {
+          const layerItem = canvas.querySelector(
+            `.outfit-canvas-item[data-slot-index="${index}"]`,
+          );
+          if (!layerItem) return;
+          const zIndex = Number(slot.zIndex ?? index);
+          layerItem.dataset.zIndex = String(zIndex);
+          layerItem.style.zIndex = String(zIndex);
+        });
+
+        status.textContent = 'Saved';
+        setTimeout(() => {
+          if (status.textContent === 'Saved') status.textContent = '';
+        }, 1200);
+      } catch (error) {
+        console.error(error);
+        status.textContent = 'Could not save';
+      }
+    };
+
+    canvas.querySelectorAll('.outfit-canvas-item').forEach((item) => {
+      render(item);
+
+      item.addEventListener('pointerdown', (event) => {
+        if (event.target.closest('.outfit-canvas-controls')) return;
+
+        event.preventDefault();
+        select(item);
+
+        const point = canvasPoint(event);
+        drag = {
+          item,
+          pointerId: event.pointerId,
+          startX: point.x,
+          startY: point.y,
+          originalX: Number(item.dataset.x),
+          originalY: Number(item.dataset.y),
+        };
+
+        item.setPointerCapture(event.pointerId);
+      });
+
+      item.addEventListener('pointermove', (event) => {
+        if (!drag || drag.item !== item) return;
+
+        const point = canvasPoint(event);
+        item.dataset.x = clamp(
+          drag.originalX + point.x - drag.startX,
+          0,
+          canvasSize,
+        );
+        item.dataset.y = clamp(
+          drag.originalY + point.y - drag.startY,
+          0,
+          canvasSize,
+        );
+
+        render(item);
+      });
+
+      const finishDrag = () => {
+        if (!drag || drag.item !== item) return;
+        save(item);
+        drag = null;
+      };
+
+      item.addEventListener('pointerup', finishDrag);
+      item.addEventListener('pointercancel', finishDrag);
+
+      item.querySelector('.outfit-rotate-down')?.addEventListener('click', () => {
+        item.dataset.rotation = Number(item.dataset.rotation) - 5;
+        render(item);
+        save(item);
+      });
+
+      item.querySelector('.outfit-rotate-up')?.addEventListener('click', () => {
+        item.dataset.rotation = Number(item.dataset.rotation) + 5;
+        render(item);
+        save(item);
+      });
+
+      item.querySelector('.outfit-scale-down')?.addEventListener('click', () => {
+        item.dataset.scale = clamp(
+          Number(item.dataset.scale) - 0.05,
+          0.1,
+          3,
+        );
+        render(item);
+        save(item);
+      });
+
+      item.querySelector('.outfit-scale-up')?.addEventListener('click', () => {
+        item.dataset.scale = clamp(
+          Number(item.dataset.scale) + 0.05,
+          0.1,
+          3,
+        );
+        render(item);
+        save(item);
+      });
+
+      item.querySelector('.outfit-layer-down')?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        select(item);
+        saveLayer(item, 'down');
+      });
+
+      item.querySelector('.outfit-layer-up')?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        select(item);
+        saveLayer(item, 'up');
+      });
+    });
+
+    canvas.addEventListener('pointerdown', (event) => {
+      if (event.target === canvas) select(null);
+    });
+  })();
+</script>
 
 {{>dock}}

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,6 +7,7 @@ import {
   HttpCode,
   Logger,
   Param,
+  Patch,
   ParseIntPipe,
   Post,
   Query,
@@ -41,7 +43,14 @@ export class OutfitController {
   @Render('outfits/index')
   async index(@Req() req: FastifyRequest) {
     const outfits = await this.outfitService.findAll(this.userId(req));
-    return { outfits };
+    const canvasGarments = await Promise.all(
+      outfits.map((outfit) => this.outfitService.buildCanvasGarments(outfit)),
+    );
+    const outfitCards = outfits.map((outfit, index) => ({
+      outfit,
+      canvasGarments: canvasGarments[index],
+    }));
+    return { outfits, outfitCards };
   }
 
   @Get('new')
@@ -131,7 +140,55 @@ export class OutfitController {
   ) {
     const outfit = await this.outfitService.findOne(id, this.userId(req));
     const garments = outfit.garments.getItems();
-    return { outfit, garments };
+    const canvasGarments = await this.outfitService.buildCanvasGarments(outfit);
+    return { outfit, garments, canvasGarments };
+  }
+
+  @Patch(':id/slots/:slotIndex/transform')
+  async updateSlotTransform(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('slotIndex', ParseIntPipe) slotIndex: number,
+    @Body()
+    body: {
+      x?: number;
+      y?: number;
+      rotation?: number;
+      scale?: number;
+    },
+    @Req() req: FastifyRequest,
+  ) {
+    return this.outfitService.updateSlotTransform(
+      id,
+      slotIndex,
+      {
+        x: Number(body.x),
+        y: Number(body.y),
+        rotation: Number(body.rotation),
+        scale: Number(body.scale),
+      },
+      this.userId(req),
+    );
+  }
+
+  @Patch(':id/slots/:slotIndex/layer')
+  async updateSlotLayer(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('slotIndex', ParseIntPipe) slotIndex: number,
+    @Body() body: { direction?: 'up' | 'down' },
+    @Req() req: FastifyRequest,
+  ) {
+    if (body.direction !== 'up' && body.direction !== 'down') {
+      throw new BadRequestException('Invalid layer direction');
+    }
+
+    const outfit = await this.outfitService.updateSlotLayer(
+      id,
+      slotIndex,
+      body.direction,
+      this.userId(req),
+    );
+
+    return { ok: true, slots: outfit.slots };
   }
 
   @Get(':id/edit')
@@ -178,9 +235,14 @@ export class OutfitController {
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
   ) {
+    const existingOutfit = await this.outfitService.findOne(
+      id,
+      this.userId(req),
+    );
     const slots = this.outfitService.parseSlotsFromBody(
       body.category,
       body.garmentId,
+      existingOutfit.slots,
     );
 
     await this.outfitService.update(
