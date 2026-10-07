@@ -18,7 +18,6 @@ import { ConfigService } from '@nestjs/config';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { GarmentCategory } from './garment-category.enum';
 import { CanvasSettingsService } from './canvas-settings.service';
-import { GarmentService } from './garment.service';
 
 @Controller('settings')
 export class SettingsController {
