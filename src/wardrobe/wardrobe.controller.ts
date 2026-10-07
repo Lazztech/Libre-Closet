@@ -390,12 +390,16 @@ export class WardrobeController {
       throw new BadRequestException('Invalid garment canvas transform');
     }
 
-    await this.garmentService.updateCanvasTransform(id, {
-      x,
-      y,
-      rotation,
-      scale,
-    }, userId);
+    await this.garmentService.updateCanvasTransform(
+      id,
+      {
+        x,
+        y,
+        rotation,
+        scale,
+      },
+      userId,
+    );
 
     return { ok: true };
   }

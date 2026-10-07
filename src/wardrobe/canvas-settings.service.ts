@@ -20,14 +20,62 @@ export interface CanvasSettings {
 
 export const DEFAULT_CANVAS_SETTINGS: CanvasSettings = {
   categories: {
-    [GarmentCategory.ACCESSORIES]: { x: 680, y: 330, rotation: 0, scale: 0.7, zIndex: 60 },
-    [GarmentCategory.BAGS]: { x: 730, y: 560, rotation: 0, scale: 0.8, zIndex: 50 },
-    [GarmentCategory.OUTERWEAR]: { x: 500, y: 350, rotation: 0, scale: 1, zIndex: 40 },
-    [GarmentCategory.DRESSES]: { x: 500, y: 500, rotation: 0, scale: 1, zIndex: 30 },
-    [GarmentCategory.TOPS]: { x: 500, y: 330, rotation: 0, scale: 1, zIndex: 20 },
-    [GarmentCategory.BOTTOMS]: { x: 500, y: 610, rotation: 0, scale: 1, zIndex: 20 },
-    [GarmentCategory.FOOTWEAR]: { x: 500, y: 820, rotation: 0, scale: 0.75, zIndex: 10 },
-    [GarmentCategory.OTHER]: { x: 500, y: 500, rotation: 0, scale: 1, zIndex: 20 },
+    [GarmentCategory.ACCESSORIES]: {
+      x: 680,
+      y: 330,
+      rotation: 0,
+      scale: 0.7,
+      zIndex: 60,
+    },
+    [GarmentCategory.BAGS]: {
+      x: 730,
+      y: 560,
+      rotation: 0,
+      scale: 0.8,
+      zIndex: 50,
+    },
+    [GarmentCategory.OUTERWEAR]: {
+      x: 500,
+      y: 350,
+      rotation: 0,
+      scale: 1,
+      zIndex: 40,
+    },
+    [GarmentCategory.DRESSES]: {
+      x: 500,
+      y: 500,
+      rotation: 0,
+      scale: 1,
+      zIndex: 30,
+    },
+    [GarmentCategory.TOPS]: {
+      x: 500,
+      y: 330,
+      rotation: 0,
+      scale: 1,
+      zIndex: 20,
+    },
+    [GarmentCategory.BOTTOMS]: {
+      x: 500,
+      y: 610,
+      rotation: 0,
+      scale: 1,
+      zIndex: 20,
+    },
+    [GarmentCategory.FOOTWEAR]: {
+      x: 500,
+      y: 820,
+      rotation: 0,
+      scale: 0.75,
+      zIndex: 10,
+    },
+    [GarmentCategory.OTHER]: {
+      x: 500,
+      y: 500,
+      rotation: 0,
+      scale: 1,
+      zIndex: 20,
+    },
   },
 };
 
@@ -89,7 +137,10 @@ export class CanvasSettingsService {
     return this.mannequinPath;
   }
 
-  private merge(base: CanvasSettings, value: Partial<CanvasSettings>): CanvasSettings {
+  private merge(
+    base: CanvasSettings,
+    value: Partial<CanvasSettings>,
+  ): CanvasSettings {
     const categories: Record<string, CanvasCategorySetting> = {};
     for (const category of Object.values(GarmentCategory)) {
       categories[category] = {

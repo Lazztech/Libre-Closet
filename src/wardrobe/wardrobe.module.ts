@@ -25,8 +25,18 @@ import { SettingsController } from './settings.controller';
     MikroOrmModule.forFeature([Garment, Outfit, OutfitCalendar, User]),
     WeatherModule,
   ],
-  controllers: [WardrobeController, OutfitController, CalendarController, SettingsController],
-  providers: [GarmentService, OutfitService, CalendarService, CanvasSettingsService],
+  controllers: [
+    WardrobeController,
+    OutfitController,
+    CalendarController,
+    SettingsController,
+  ],
+  providers: [
+    GarmentService,
+    OutfitService,
+    CalendarService,
+    CanvasSettingsService,
+  ],
   exports: [GarmentService, OutfitService, CalendarService],
 })
 export class WardrobeModule {}

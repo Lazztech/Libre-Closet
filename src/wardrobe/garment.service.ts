@@ -142,7 +142,11 @@ export class GarmentService {
     }
 
     const settings = await this.canvasSettingsService.getSettings();
-    const defaults = getDefaultGarmentTransform(dto.category, undefined, settings);
+    const defaults = getDefaultGarmentTransform(
+      dto.category,
+      undefined,
+      settings,
+    );
     const garment = this.garmentRepository.create({
       name: dto.name,
       category: dto.category,
@@ -204,7 +208,11 @@ export class GarmentService {
     }
 
     const settings = await this.canvasSettingsService.getSettings();
-    const defaults = getDefaultGarmentTransform(dto.category, undefined, settings);
+    const defaults = getDefaultGarmentTransform(
+      dto.category,
+      undefined,
+      settings,
+    );
     const garment = this.garmentRepository.create({
       name: dto.name,
       category: dto.category,
@@ -414,6 +422,4 @@ export class GarmentService {
     await this.garmentRepository.getEntityManager().flush();
     return garment;
   }
-
-
 }

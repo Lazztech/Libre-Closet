@@ -87,7 +87,10 @@ export class OutfitService {
         id: { $in: garmentIds },
       });
       outfit.garments.set(garments);
-      outfit.slots = await this.applyGarmentCanvasDefaults(dto.slots ?? [], garments);
+      outfit.slots = await this.applyGarmentCanvasDefaults(
+        dto.slots ?? [],
+        garments,
+      );
     }
 
     if (userId != null) {
@@ -120,7 +123,10 @@ export class OutfitService {
         id: { $in: garmentIds },
       });
       outfit.garments.set(garments);
-      outfit.slots = await this.applyGarmentCanvasDefaults(dto.slots ?? [], garments);
+      outfit.slots = await this.applyGarmentCanvasDefaults(
+        dto.slots ?? [],
+        garments,
+      );
     }
 
     await this.outfitRepository.getEntityManager().flush();
@@ -193,15 +199,15 @@ export class OutfitService {
     garments: Garment[],
   ): Promise<OutfitSlot[]> {
     const settings = await this.canvasSettingsService.getSettings();
-    const garmentsById = new Map(garments.map((garment) => [garment.id, garment]));
+    const garmentsById = new Map(
+      garments.map((garment) => [garment.id, garment]),
+    );
     const usedZIndexes = new Set(
       slots
         .map((slot) => slot.zIndex)
         .filter((z): z is number => Number.isFinite(z)),
     );
-    let nextZIndex = usedZIndexes.size
-      ? Math.max(...usedZIndexes) + 1
-      : 0;
+    let nextZIndex = usedZIndexes.size ? Math.max(...usedZIndexes) + 1 : 0;
 
     return slots.map((slot) => {
       if (slot.garmentId == null) return slot;
@@ -209,7 +215,11 @@ export class OutfitService {
       const garment = garmentsById.get(slot.garmentId);
       if (!garment) return slot;
 
-      const defaults = getDefaultGarmentTransform(garment.category, garment, settings);
+      const defaults = getDefaultGarmentTransform(
+        garment.category,
+        garment,
+        settings,
+      );
 
       return {
         ...slot,
@@ -233,7 +243,11 @@ export class OutfitService {
 
         const garment = garmentsById.get(slot.garmentId);
         if (!garment) return null;
-        const defaults = getDefaultGarmentTransform(garment.category, garment, settings);
+        const defaults = getDefaultGarmentTransform(
+          garment.category,
+          garment,
+          settings,
+        );
 
         return {
           slotIndex: index,
@@ -248,7 +262,9 @@ export class OutfitService {
         };
       })
       .filter(
-        (item): item is {
+        (
+          item,
+        ): item is {
           slotIndex: number;
           garment: Garment;
           position: { x: number; y: number };
@@ -324,7 +340,9 @@ export class OutfitService {
     const currentZ = current.zIndex ?? slotIndex;
     const candidates = slots
       .map((slot, index) => ({ slot, index, z: slot.zIndex ?? index }))
-      .filter(({ slot, index }) => slot.garmentId != null && index !== slotIndex);
+      .filter(
+        ({ slot, index }) => slot.garmentId != null && index !== slotIndex,
+      );
 
     if (direction === 'up') {
       const above = candidates

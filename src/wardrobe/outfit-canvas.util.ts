@@ -1,5 +1,8 @@
 import { GarmentCategory } from './garment-category.enum';
-import { CanvasSettings, DEFAULT_CANVAS_SETTINGS } from './canvas-settings.service';
+import {
+  CanvasSettings,
+  DEFAULT_CANVAS_SETTINGS,
+} from './canvas-settings.service';
 
 export interface OutfitCanvasTransform {
   x: number;
@@ -21,7 +24,10 @@ export function getDefaultGarmentTransform(
   garment?: GarmentCanvasDefaults,
   settings?: CanvasSettings,
 ): OutfitCanvasTransform {
-  const categoryDefault = getCategoryDefaultGarmentTransform(category, settings);
+  const categoryDefault = getCategoryDefaultGarmentTransform(
+    category,
+    settings,
+  );
   return {
     x: garment?.canvasPositionX ?? categoryDefault.x,
     y: garment?.canvasPositionY ?? categoryDefault.y,
@@ -35,6 +41,7 @@ export function getCategoryDefaultGarmentTransform(
   category: string,
   settings: CanvasSettings = DEFAULT_CANVAS_SETTINGS,
 ): OutfitCanvasTransform {
-  const value = settings.categories[category] ?? settings.categories[GarmentCategory.OTHER];
+  const value =
+    settings.categories[category] ?? settings.categories[GarmentCategory.OTHER];
   return { ...value };
 }

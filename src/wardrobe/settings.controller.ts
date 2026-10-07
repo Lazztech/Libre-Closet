@@ -55,7 +55,10 @@ export class SettingsController {
       const rotation = Number(body[`${category}__rotation`]);
       const scale = Number(body[`${category}__scale`]);
       const zIndex = Number(body[`${category}__zIndex`]);
-      if (![x, y, rotation, scale, zIndex].every(Number.isFinite) || scale <= 0) {
+      if (
+        ![x, y, rotation, scale, zIndex].every(Number.isFinite) ||
+        scale <= 0
+      ) {
         throw new BadRequestException(`Invalid settings for ${category}`);
       }
       categories[category] = { x, y, rotation, scale, zIndex };
@@ -67,7 +70,10 @@ export class SettingsController {
 
   @UseGuards(ConditionalAuthGuard)
   @Post('mannequin')
-  async uploadMannequin(@Req() req: FastifyRequest, @Res() reply: FastifyReply) {
+  async uploadMannequin(
+    @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
+  ) {
     const upload = await req.file();
     await this.canvasSettings.storeMannequin(upload);
     return reply.redirect('/settings', 303);
