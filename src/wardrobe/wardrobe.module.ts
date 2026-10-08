@@ -14,6 +14,8 @@ import { CalendarController } from './calendar.controller';
 import { WardrobeController } from './wardrobe.controller';
 import { OutfitController } from './outfit.controller';
 import { WeatherModule } from '../weather/weather.module';
+import { CanvasSettingsService } from './canvas-settings.service';
+import { SettingsController } from './settings.controller';
 
 @Module({
   imports: [
@@ -23,8 +25,18 @@ import { WeatherModule } from '../weather/weather.module';
     MikroOrmModule.forFeature([Garment, Outfit, OutfitCalendar, User]),
     WeatherModule,
   ],
-  controllers: [WardrobeController, OutfitController, CalendarController],
-  providers: [GarmentService, OutfitService, CalendarService],
+  controllers: [
+    WardrobeController,
+    OutfitController,
+    CalendarController,
+    SettingsController,
+  ],
+  providers: [
+    GarmentService,
+    OutfitService,
+    CalendarService,
+    CanvasSettingsService,
+  ],
   exports: [GarmentService, OutfitService, CalendarService],
 })
 export class WardrobeModule {}

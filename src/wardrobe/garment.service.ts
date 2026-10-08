@@ -18,6 +18,8 @@ import { UpdateGarmentDto } from './dto/update-garment.dto';
 import { SearchGarmentDto } from './dto/search-garment.dto';
 import { GarmentCategory } from './garment-category.enum';
 import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
+import { getDefaultGarmentTransform } from './outfit-canvas.util';
+import { CanvasSettingsService } from './canvas-settings.service';
 
 const CANONICAL_SIZES = [
   'XX-Small',
@@ -43,6 +45,7 @@ export class GarmentService {
     private readonly userRepository: EntityRepository<User>,
     private readonly fileService: FileService,
     private readonly shareService: WardrobeShareService,
+    private readonly canvasSettingsService: CanvasSettingsService,
   ) {}
 
   resolveCategoryLabel(value: string, i18n: I18nContext): string {
@@ -138,9 +141,19 @@ export class GarmentService {
       }
     }
 
+    const settings = await this.canvasSettingsService.getSettings();
+    const defaults = getDefaultGarmentTransform(
+      dto.category,
+      undefined,
+      settings,
+    );
     const garment = this.garmentRepository.create({
       name: dto.name,
       category: dto.category,
+      canvasPositionX: defaults.x,
+      canvasPositionY: defaults.y,
+      canvasRotation: defaults.rotation,
+      canvasScale: defaults.scale,
       brand: dto.brand,
       color: dto.color,
       size: this.normalizeSize(dto.size),
@@ -194,9 +207,19 @@ export class GarmentService {
       }
     }
 
+    const settings = await this.canvasSettingsService.getSettings();
+    const defaults = getDefaultGarmentTransform(
+      dto.category,
+      undefined,
+      settings,
+    );
     const garment = this.garmentRepository.create({
       name: dto.name,
       category: dto.category,
+      canvasPositionX: defaults.x,
+      canvasPositionY: defaults.y,
+      canvasRotation: defaults.rotation,
+      canvasScale: defaults.scale,
       brand: dto.brand,
       color: dto.color as any,
       size: this.normalizeSize(dto.size),
@@ -378,5 +401,25 @@ export class GarmentService {
     if (['xs', 'xsmall'].includes(s)) return 'X-Small';
     if (['xxs', '2xs', '2xsmall', 'xxsmall'].includes(s)) return 'XX-Small';
     return input.trim();
+  }
+  async updateCanvasTransform(
+    id: number,
+    transform: {
+      x: number;
+      y: number;
+      rotation: number;
+      scale: number;
+    },
+    userId?: number,
+  ): Promise<Garment> {
+    const garment = await this.findOne(id, userId);
+
+    garment.canvasPositionX = transform.x;
+    garment.canvasPositionY = transform.y;
+    garment.canvasRotation = transform.rotation;
+    garment.canvasScale = transform.scale;
+
+    await this.garmentRepository.getEntityManager().flush();
+    return garment;
   }
 }

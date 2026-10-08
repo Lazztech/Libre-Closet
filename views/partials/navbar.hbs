@@ -59,7 +59,8 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
               >❤ {{t 'lang.SUPPORT'}}</a
             >
           </li>
-          {{/if}} {{#if authEnabled}} {{#if user}}
+          {{/if}}
+          {{#if authEnabled}} {{#if user}}
           <li><a href="/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
           <li><a href="/auth/profile">{{user.email}}</a></li>
           {{else}} {{#unless signupsDisabled}}
@@ -89,7 +90,9 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
           >❤ {{t 'lang.SUPPORT'}}</a
         >
       </li>
-      {{/if}} {{#if authEnabled}} {{#if user}}
+      {{/if}}
+      <li><a href="/settings">⚙ Settings</a></li>
+      {{#if authEnabled}} {{#if user}}
       <li><a href="/auth/logout">{{t 'lang.LOGOUT'}}</a></li>
       <li><a href="/auth/profile">{{user.email}}</a></li>
       {{else}} {{#unless signupsDisabled}}
