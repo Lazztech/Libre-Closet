@@ -40,6 +40,13 @@ export class WardrobeController {
     return (req['user'] as Payload | undefined)?.userId;
   }
 
+  private colorOptions(i18n: I18nContext) {
+    return (Object.values(GarmentColor) as string[]).map((value) => ({
+      value,
+      label: this.garmentService.resolveColorLabel(value, i18n),
+    }));
+  }
+
   @Get()
   @Render('wardrobe/index')
   async index(
@@ -89,9 +96,13 @@ export class WardrobeController {
     return {
       garments,
       availableCategories,
-      colors: Object.values(GarmentColor),
+      colors: this.colorOptions(i18n),
+      colorValues: Object.values(GarmentColor),
       availableSizes: filters.sizes,
       search: query,
+      searchColorLabel: query.color
+        ? this.garmentService.resolveColorLabel(query.color, i18n)
+        : null,
       sharedWardrobes,
       viewOwner: viewOwner ?? null,
       canEdit,
@@ -124,7 +135,8 @@ export class WardrobeController {
     }));
     return {
       categories,
-      colors: Object.values(GarmentColor),
+      colors: this.colorOptions(i18n),
+      colorValues: Object.values(GarmentColor),
       garment: null,
       viewOwner,
     };
@@ -219,6 +231,7 @@ export class WardrobeController {
         garment.category,
         i18n,
       ),
+      colorsLabel: this.garmentService.resolveColorLabels(garment.color, i18n),
       canEdit,
       canDelete,
       canClone,
@@ -269,7 +282,8 @@ export class WardrobeController {
     return {
       garment,
       categories,
-      colors: colorEnumValues,
+      colors: this.colorOptions(i18n),
+      colorValues: colorEnumValues,
       customColors,
       viewOwner: viewOwner ?? null,
     };
@@ -302,7 +316,8 @@ export class WardrobeController {
       isClone: true,
       cloneName: garment.name ? `${garment.name} (cloned)` : undefined,
       categories,
-      colors: Object.values(GarmentColor),
+      colors: this.colorOptions(i18n),
+      colorValues: Object.values(GarmentColor),
       viewOwner: viewOwner ?? null,
     };
   }

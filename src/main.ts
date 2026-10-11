@@ -169,13 +169,6 @@ async function bootstrap() {
       return arr.includes(item) ? options.fn(this) : options.inverse(this);
     },
   );
-  hbs.registerHelper('formatColors', function (value: string | undefined) {
-    if (!value) return '';
-    return value
-      .split(',')
-      .map((s) => s.trim())
-      .join(', ');
-  });
   hbs.registerHelper(
     'ifEquals',
     function (arg1: unknown, arg2: unknown, options: HelperOptions) {

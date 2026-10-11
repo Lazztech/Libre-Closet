@@ -79,7 +79,7 @@
     {{#if search.color}}
     <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&size={{search.size}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
       class="badge badge-secondary badge-sm gap-1 cursor-pointer capitalize no-underline">
-      {{search.color}} &times;
+      {{searchColorLabel}} &times;
     </a>
     {{/if}}
     {{#if search.size}}
@@ -139,9 +139,9 @@
       <div class="flex flex-wrap gap-2">
         {{#each colors}}
         <label class="cursor-pointer">
-          <input type="radio" name="modal-color" value="{{this}}" class="hidden peer"
-            {{#ifEquals this ../search.color}}checked{{/ifEquals}}>
-          <span class="badge badge-outline peer-checked:badge-secondary capitalize select-none">{{this}}</span>
+          <input type="radio" name="modal-color" value="{{this.value}}" class="hidden peer"
+            {{#ifEquals this.value ../search.color}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-secondary capitalize select-none">{{this.label}}</span>
         </label>
         {{/each}}
       </div>
