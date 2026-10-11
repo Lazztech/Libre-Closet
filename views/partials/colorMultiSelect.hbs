@@ -1,5 +1,5 @@
 <script>
-  window.KNOWN_COLORS = new Set({{{json colors}}});
+  window.KNOWN_COLORS = new Set({{{json colorValues}}});
 </script>
 <div class="form-control w-full min-w-0">
   <label class="label">
@@ -24,10 +24,10 @@
           <div class="ms-options">
             {{#each colors}}
             <label class="ms-option">
-              <input type="checkbox" name="color" value="{{this}}"
-                {{#ifInArray this ../garment.color}}checked{{/ifInArray}}>
-              <span class="ms-swatch ms-swatch--{{this}}"></span>
-              <span class="capitalize">{{this}}</span>
+              <input type="checkbox" name="color" value="{{this.value}}" data-label="{{this.label}}"
+                {{#ifInArray this.value ../garment.color}}checked{{/ifInArray}}>
+              <span class="ms-swatch ms-swatch--{{this.value}}"></span>
+              <span class="capitalize">{{this.label}}</span>
             </label>
             {{/each}}
 

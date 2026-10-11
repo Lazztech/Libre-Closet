@@ -17,6 +17,7 @@ import { CreateGarmentDto } from './dto/create-garment.dto';
 import { UpdateGarmentDto } from './dto/update-garment.dto';
 import { SearchGarmentDto } from './dto/search-garment.dto';
 import { GarmentCategory } from './garment-category.enum';
+import { GarmentColor } from './garment-color.enum';
 import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
 
 const CANONICAL_SIZES = [
@@ -51,6 +52,23 @@ export class GarmentService {
       return i18n.t(`lang.CATEGORY_${normalized.toUpperCase()}`);
     }
     return value;
+  }
+
+  resolveColorLabel(value: string, i18n: I18nContext): string {
+    const normalized = value.toLowerCase();
+    if ((Object.values(GarmentColor) as string[]).includes(normalized)) {
+      return i18n.t(`lang.COLOR_${normalized.toUpperCase()}`);
+    }
+    return value;
+  }
+
+  resolveColorLabels(value: string | undefined, i18n: I18nContext): string {
+    if (!value) return '';
+    return value
+      .split(',')
+      .map((color) => this.resolveColorLabel(color.trim(), i18n))
+      .filter(Boolean)
+      .join(', ');
   }
 
   async findAll(
