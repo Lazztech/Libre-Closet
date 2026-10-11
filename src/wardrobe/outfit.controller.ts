@@ -21,6 +21,7 @@ import { Payload } from '../auth/dto/payload.dto';
 import { OutfitService } from './outfit.service';
 import { GarmentService } from './garment.service';
 import { CalendarService } from './calendar.service';
+import { suggestOutfit } from './suggest-outfit';
 
 @UseGuards(ConditionalAuthGuard)
 @Controller('outfits')
@@ -42,6 +43,18 @@ export class OutfitController {
   async index(@Req() req: FastifyRequest) {
     const outfits = await this.outfitService.findAll(this.userId(req));
     return { outfits };
+  }
+
+  // Must stay above @Get(':id'), which would otherwise swallow "suggest".
+  @Get('suggest')
+  @Render('outfits/suggest')
+  async suggest(@Req() req: FastifyRequest) {
+    const userId = this.userId(req);
+    const [garments, lastWorn] = await Promise.all([
+      this.garmentService.findAll(userId),
+      this.calendarService.lastWornByGarment(userId),
+    ]);
+    return { garments: suggestOutfit(garments, lastWorn) };
   }
 
   @Get('new')

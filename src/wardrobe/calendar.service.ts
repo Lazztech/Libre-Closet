@@ -157,6 +157,30 @@ export class CalendarService {
   }
 
   /**
+   * Latest wear date per garment id. An entry counts as worn on `wornAt`, or on
+   * its planned date if never ticked, so forgetting to tap "worn" doesn't make
+   * the same outfit resurface. Entries planned up to a day ahead count too
+   * (don't suggest what's already scheduled for tomorrow).
+   */
+  async lastWornByGarment(userId?: number): Promise<Map<number, Date>> {
+    const ownerFilter =
+      userId != null ? { owner: { id: userId } } : { owner: null };
+    const entries = await this.calendarRepository.find(
+      { ...ownerFilter, date: { $lte: new Date(Date.now() + 864e5) } },
+      { populate: ['outfit.garments'] },
+    );
+    const last = new Map<number, Date>();
+    for (const e of entries) {
+      const when = e.wornAt ?? e.date;
+      for (const garment of e.outfit.getEntity().garments.getItems()) {
+        const prev = last.get(garment.id);
+        if (!prev || when > prev) last.set(garment.id, when);
+      }
+    }
+    return last;
+  }
+
+  /**
    * Assembles the full view-model for the calendar index page.
    * Encapsulates all date math, month-navigation, and entry transformation
    * so the controller only handles the HTTP layer.

@@ -1,0 +1,47 @@
+{{>navbar}}
+
+{{!-- ponytail: English strings hardcoded; move to lang.json (all locales) if this ships upstream. --}}
+<main class="p-4 pt-20 pb-24">
+  <div class="flex items-center justify-between mb-6 px-2">
+    <h1 class="text-2xl font-bold">Today's pick</h1>
+    <a href="/outfits/suggest" class="btn btn-ghost btn-sm">Shuffle</a>
+  </div>
+
+  {{#if garments.length}}
+  <div class="flex flex-wrap gap-3 justify-center mb-6">
+    {{#each garments}}
+    <div class="card bg-base-100 shadow-sm w-40">
+      <div class="card-body p-2 items-center text-center">
+        {{#if this.photo}}
+        <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}" class="size-32 rounded object-cover" />
+        {{else}}
+        <div class="size-32 rounded bg-base-200"></div>
+        {{/if}}
+        <p class="text-xs truncate w-full">{{this.name}}</p>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <form method="post" action="/outfits" class="flex flex-col items-center gap-3">
+    {{#each garments}}
+    <input type="hidden" name="category" value="{{this.category}}" />
+    <input type="hidden" name="garmentId" value="{{this.id}}" />
+    {{/each}}
+    <input type="hidden" name="returnTo" value="/calendar" />
+    {{!-- Local date, not UTC: Jakarta mornings are still "yesterday" in UTC. --}}
+    <input type="date" name="scheduleDate" class="input input-bordered" required />
+    <script>
+      document.currentScript.previousElementSibling.value = new Date().toLocaleDateString('sv');
+    </script>
+    <button type="submit" class="btn btn-primary">Wear this</button>
+  </form>
+  {{else}}
+  <div class="flex flex-col items-center gap-4 pt-20 text-base-content/40">
+    <p>Add some tops and bottoms to your wardrobe first.</p>
+    <a href="/wardrobe" class="btn btn-primary btn-sm">Wardrobe</a>
+  </div>
+  {{/if}}
+</main>
+
+{{>dock}}
