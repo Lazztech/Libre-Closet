@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,6 +9,7 @@ import {
   Logger,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   Render,
@@ -20,6 +22,8 @@ import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
 import { GarmentCategory } from './garment-category.enum';
 import { GarmentColor } from './garment-color.enum';
+import { getDefaultGarmentTransform } from './outfit-canvas.util';
+import { CanvasSettingsService } from './canvas-settings.service';
 import { GarmentService } from './garment.service';
 import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
 import { SharePermission } from '../dal/entity/wardrobe-share.entity';
@@ -34,6 +38,7 @@ export class WardrobeController {
   constructor(
     private readonly garmentService: GarmentService,
     private readonly shareService: WardrobeShareService,
+    private readonly canvasSettingsService: CanvasSettingsService,
   ) {}
 
   private userId(req: any): number | undefined {
@@ -225,6 +230,14 @@ export class WardrobeController {
       viewOwner: viewOwner ?? null,
       justCreated: created === '1',
       justSavedPhoto: photoSaved === '1',
+      canvasGarment: {
+        garment,
+        ...getDefaultGarmentTransform(
+          garment.category,
+          garment,
+          await this.canvasSettingsService.getSettings(),
+        ),
+      },
     };
   }
 
@@ -340,6 +353,55 @@ export class WardrobeController {
       userId,
     );
     return reply.redirect(`/wardrobe/${cloned.id}`, 302);
+  }
+
+  @Patch(':id/canvas-transform')
+  async updateCanvasTransform(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    body: {
+      x?: number;
+      y?: number;
+      rotation?: number;
+      scale?: number;
+    },
+    @Req() req: FastifyRequest,
+  ) {
+    const userId = this.userId(req);
+    const viewOwner = undefined;
+    const garment = await this.garmentService.findOne(id, userId, viewOwner);
+
+    if (userId != null && garment.owner?.id !== userId) {
+      throw new ForbiddenException();
+    }
+
+    const x = Number(body.x);
+    const y = Number(body.y);
+    const rotation = Number(body.rotation);
+    const scale = Number(body.scale);
+
+    if (
+      !Number.isFinite(x) ||
+      !Number.isFinite(y) ||
+      !Number.isFinite(rotation) ||
+      !Number.isFinite(scale) ||
+      scale <= 0
+    ) {
+      throw new BadRequestException('Invalid garment canvas transform');
+    }
+
+    await this.garmentService.updateCanvasTransform(
+      id,
+      {
+        x,
+        y,
+        rotation,
+        scale,
+      },
+      userId,
+    );
+
+    return { ok: true };
   }
 
   @Post(':id')

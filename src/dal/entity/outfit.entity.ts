@@ -11,9 +11,18 @@ import { Garment } from './garment.entity';
 import { ShareableId } from './shareableId.entity';
 import { User } from './user.entity';
 
+export interface OutfitSlotPosition {
+  x: number;
+  y: number;
+}
+
 export interface OutfitSlot {
   category: string;
   garmentId: number | null;
+  position?: OutfitSlotPosition;
+  rotation?: number;
+  scale?: number;
+  zIndex?: number;
 }
 
 @Entity()

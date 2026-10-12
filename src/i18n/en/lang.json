@@ -227,6 +227,7 @@
     "EMAIL_MUST_MATCH": "Emails must match"
   },
   "WARDROBE_SHARING": "Wardrobe Sharing",
+  "CANVAS_SETTINGS": "Canvas Settings",
   "SHARE_WARDROBE": "Share Your Wardrobe",
   "SHARE_WARDROBE_DESC": "Invite someone to view or manage your wardrobe.",
   "PERMISSION_VIEW": "View only",

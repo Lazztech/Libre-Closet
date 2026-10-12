@@ -54,6 +54,21 @@
       {{#each (filterErrors validationErrors "password")}}
       <p class="text-error">{{this}}</p>
       {{/each}}
+      
+      <label class="label">Admin Approval Code</label>
+      <label class="input {{#if errorMessage}}input-error{{/if}}">
+        <input
+          id="secretCode"
+          name="secretCode"
+          type="password"
+          value="{{input.secretCode}}"
+          required
+          placeholder="Enter the passcode provided by the admin"
+        />
+      </label>
+      {{#if errorMessage}}
+      <p class="text-error">{{errorMessage}}</p>
+      {{/if}}
 
       <label class="label">{{t 'lang.CONFIRM_PASSWORD'}}</label>
       <label class="input {{#if (filterErrors validationErrors "confirmPassword")}}input-error{{/if}}">

@@ -45,6 +45,22 @@ export class Garment extends ShareableId {
 
   @Property({ default: false })
   public archived = false;
+
+  /**
+   * Default canvas transform for this garment on the 1000x1000 outfit canvas.
+   * Outfit slots may override these values.
+   */
+  @Property({ default: 500 })
+  public canvasPositionX = 500;
+
+  @Property({ default: 500 })
+  public canvasPositionY = 500;
+
+  @Property({ default: 0 })
+  public canvasRotation = 0;
+
+  @Property({ default: 1 })
+  public canvasScale = 1;
   @Property({ nullable: true, columnType: 'text' })
   public washingDetails?: string;
 

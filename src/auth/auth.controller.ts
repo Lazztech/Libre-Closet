@@ -48,15 +48,25 @@ export class AuthController {
         ...((reply as any).locals ?? {}),
       });
     }
-
-    const jwt = await this.authService.register(body.email, body.password);
-    reply.setCookie('access_token', jwt, {
-      path: '/',
-      maxAge: 365 * 24 * 60 * 60 * 1000, // 365 days
-      httpOnly: true, // Prevents client-side JS from reading it
-    });
-    return reply.redirect('/auth/profile', 302);
-  }
+    
+  const allowedSecretCode = process.env.REGISTRATION_SECRET_CODE;
+      
+      if (allowedSecretCode && (body as any).secretCode !== allowedSecretCode) {
+        return reply.view('auth/register', {
+          layout: 'layout',
+          input: body,
+          errorMessage: 'Registration requires a valid Admin Approval Code.',
+          ...((reply as any).locals ?? {}),
+        });
+      }
+      const jwt = await this.authService.register(body.email, body.password);
+      reply.setCookie('access_token', jwt, {
+        path: '/',
+        maxAge: 365 * 24 * 60 * 60 * 1000, 
+        httpOnly: true,
+      });
+      return reply.redirect('/auth/profile', 302);
+    }
 
   @UseGuards(RegistrationGuard)
   @Render('auth/register')
