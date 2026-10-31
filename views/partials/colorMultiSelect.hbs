@@ -1,5 +1,14 @@
 <script>
-  window.KNOWN_COLORS = new Set({{{json colors}}});
+  window.KNOWN_COLORS = new Set([
+    {{#each colors}}
+    {{#if this.name}}"{{this.name}}".toLowerCase(),{{else}}"{{this}}".toLowerCase(),{{/if}}
+    {{/each}}
+  ]);
+  window.COLOR_MAP = {
+    {{#each colors}}
+    {{#if this.name}}["{{this.name}}".toLowerCase()]: "{{this.hex}}",{{/if}}
+    {{/each}}
+  };
 </script>
 <div class="form-control w-full min-w-0">
   <label class="label">
@@ -24,10 +33,17 @@
           <div class="ms-options">
             {{#each colors}}
             <label class="ms-option">
+              {{#if this.name}}
+              <input type="checkbox" name="color" value="{{this.name}}"
+                {{#ifInArray this.name ../garment.color}}checked{{/ifInArray}}>
+              <span class="ms-swatch" style="background: {{this.hex}}; display: inline-block;"></span>
+              <span class="capitalize">{{this.name}}</span>
+              {{else}}
               <input type="checkbox" name="color" value="{{this}}"
                 {{#ifInArray this ../garment.color}}checked{{/ifInArray}}>
               <span class="ms-swatch ms-swatch--{{this}}"></span>
               <span class="capitalize">{{this}}</span>
+              {{/if}}
             </label>
             {{/each}}
 

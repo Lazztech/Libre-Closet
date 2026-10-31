@@ -14,6 +14,7 @@ import { AppModule } from './app.module';
 import { Logger } from 'nestjs-pino';
 import { ViewContextService } from './view-context/view-context.service';
 import { GarmentColor } from './wardrobe/garment-color.enum';
+import { LOOKUPS } from './wardrobe/additional-properties';
 
 async function bootstrap() {
   // https://docs.nestjs.com/security/rate-limiting#proxies
@@ -177,6 +178,26 @@ async function bootstrap() {
       .join(', ');
   });
   hbs.registerHelper(
+    'renderColorSwatches',
+    function (value: string | undefined) {
+      if (!value) return '';
+      const names = value
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const html = names
+        .map((name) => {
+          const item = LOOKUPS.colorsByName.get(name.toLowerCase());
+          const swatch = item?.hex
+            ? `<span class="ms-swatch" style="background:${item.hex};"></span>`
+            : `<span class="ms-swatch ms-swatch--${name.toLowerCase()}"></span>`;
+          return `<span class="inline-flex items-center gap-1.5 font-medium">${swatch}<span class="capitalize">${name}</span></span>`;
+        })
+        .join(' ');
+      return new hbs.handlebars.SafeString(html);
+    },
+  );
+  hbs.registerHelper(
     'ifEquals',
     function (arg1: unknown, arg2: unknown, options: HelperOptions) {
       return arg1 == arg2 ? options.fn(this) : options.inverse(this);
@@ -199,6 +220,57 @@ async function bootstrap() {
     function (arr: unknown[], value: unknown, options) {
       if (!Array.isArray(arr)) return options.inverse(this);
       return arr.includes(value) ? options.fn(this) : options.inverse(this);
+    },
+  );
+  const CURRENCY_LOCALES: Record<string, string> = {
+    INR: 'en-IN',
+    USD: 'en-US',
+    EUR: 'de-DE',
+    GBP: 'en-GB',
+    JPY: 'ja-JP',
+    CAD: 'en-CA',
+    AUD: 'en-AU',
+  };
+  const formatCurrency = function (
+    value: number | string | undefined,
+    currencyArg?: string,
+  ) {
+    if (value == null || value === '') return '';
+    const num = Number(value);
+    if (isNaN(num)) return String(value);
+    const curr = currencyArg || process.env.CURRENCY || 'USD';
+    const locale = CURRENCY_LOCALES[curr] ?? 'en-US';
+    try {
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency: curr,
+        minimumFractionDigits: Number.isInteger(num) ? 0 : 2,
+        maximumFractionDigits: 2,
+      }).format(num);
+    } catch {
+      return `${curr} ${num.toFixed(2)}`;
+    }
+  };
+  hbs.registerHelper('formatCurrency', formatCurrency);
+  hbs.registerHelper('formatInr', formatCurrency);
+  hbs.registerHelper(
+    'renderRatingStars',
+    function (rating: number | undefined) {
+      if (!rating) return '';
+      const r = Math.min(5, Math.max(0, Number(rating)));
+      const full = '★'.repeat(r);
+      const empty = '☆'.repeat(5 - r);
+      return new hbs.handlebars.SafeString(
+        `<span class="text-amber-500 font-semibold tracking-wider text-base">${full}</span><span class="text-base-content/30 text-base">${empty}</span>`,
+      );
+    },
+  );
+  hbs.registerHelper(
+    'ifGte',
+    function (arg1: unknown, arg2: unknown, options: HelperOptions) {
+      return Number(arg1) >= Number(arg2)
+        ? options.fn(this)
+        : options.inverse(this);
     },
   );
 

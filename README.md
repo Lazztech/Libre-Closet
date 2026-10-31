@@ -71,8 +71,9 @@ Note, these screenshots are taken of the web application viewed as an installed 
 
 ## Features
 
-- **Garment catalog** - name, category, brand, size, colors, notes, photo
-- **Customizable categories** - custom category support with filtering and input suggestion as you type
+- **Garment catalog & properties** - name, category, sub-category, brand, size, colors, notes, photo, rating, seasons, occasions, cost, purchase link, look, fit, and print
+- **Categories & Sub-categories** - rich pre-defined sub-categories dynamically scoped per category (Tops, Bottoms, Outerwear, Footwear, Accessories, Headwear, Innerwear, Other) with custom category input suggestions as you type
+- **Filter modal & search** - search and filter garments by category, sub-category, color, size, season, occasion, minimum star rating, and archive status
 - **Outfit builder** - combine garments into saved looks with the Clueless inspired outfit builder
 - **Outfit Scheduling** - schedule out multiple outfits for given days through the week and get a view of what you've worn
 - **Weather Forecasting** - see weather forecasts while scheduling outfits for your important upcoming days
@@ -152,6 +153,7 @@ npm run start:prod
 | Variable                           | Description                                    | Default        | Example                                                                                   |
 | ---------------------------------- | ---------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------- |
 | `APP_NAME`                         | Display name shown in the UI and navbar        | `Libre Closet` | `My awesome Closet manager`                                                               |
+| `CURRENCY`                         | Currency code for garment costs (e.g. USD, EUR, GBP, INR) | `USD`        | `INR`                                                                                     |
 | `DATA_PATH`                        | Directory for SQLite DB and uploaded files     | `./data`       | `./libre-closet-data`                                                                     |
 | `AUTH_ENABLED`                     | Enable JWT user accounts and login             | `false`        | `true`                                                                                    |
 | `DISABLE_REGISTRATION`             | Disallows user sign ups when true              | `false`        | `true`                                                                                    |

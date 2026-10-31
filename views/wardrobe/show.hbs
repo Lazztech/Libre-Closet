@@ -21,7 +21,15 @@
         />
       </svg>
     </a>
-    <h1 class="text-2xl font-bold flex-1">{{garment.name}}</h1>
+    <div class="flex-1 min-w-0">
+      <h1 class="text-2xl font-bold truncate">{{garment.name}}</h1>
+      {{#if garment.rating}}
+      <div class="flex items-center gap-1 mt-0.5" title="{{garment.rating}} of 5 stars">
+        {{renderRatingStars garment.rating}}
+        <span class="text-xs text-base-content/60 font-semibold ml-1">({{garment.rating}}/5)</span>
+      </div>
+      {{/if}}
+    </div>
   </div>
 
   {{#if garment.photo}}
@@ -227,6 +235,12 @@
         <span class="text-base-content/60 text-sm">{{t 'lang.CATEGORY'}}</span>
         <span class="capitalize font-medium">{{categoryLabel}}</span>
       </div>
+      {{#if garment.subCategory}}
+      <div class="flex justify-between">
+        <span class="text-base-content/60 text-sm">{{t 'lang.SUB_CATEGORY'}}</span>
+        <span class="font-medium">{{garment.subCategory}}</span>
+      </div>
+      {{/if}}
       {{#if garment.brand}}
       <div class="flex justify-between">
         <span class="text-base-content/60 text-sm">{{t 'lang.BRAND'}}</span>
@@ -238,13 +252,116 @@
         <span class="font-medium">{{garment.size}}</span>
       </div>
       {{/if}}       {{#if garment.color}}
-      <div class="flex justify-between">
+      <div class="flex justify-between items-center">
         <span class="text-base-content/60 text-sm">{{t 'lang.COLOR'}}</span>
-        <span class="capitalize font-medium"
-          >{{formatColors garment.color}}</span
-        >
+        <div class="flex flex-wrap items-center gap-2 justify-end">
+          {{#if colorsList.length}}
+            {{#each colorsList}}
+            <span class="inline-flex items-center gap-1.5 font-medium">
+              {{#if this.hex}}
+              <span class="ms-swatch" style="background: {{this.hex}};"></span>
+              {{else}}
+              <span class="ms-swatch ms-swatch--{{this.swatchClass}}"></span>
+              {{/if}}
+              <span class="capitalize">{{this.name}}</span>
+            </span>
+            {{/each}}
+          {{else}}
+            {{renderColorSwatches garment.color}}
+          {{/if}}
+        </div>
       </div>
-      {{/if}} {{#if garment.washingDetails}}
+      {{/if}}
+
+      {{#if garment.rating}}
+      <div class="flex justify-between items-center">
+        <span class="text-base-content/60 text-sm">{{t 'lang.RATING'}}</span>
+        <div class="flex items-center gap-1">
+          {{renderRatingStars garment.rating}}
+          <span class="text-xs font-semibold text-base-content/70 ml-1">({{garment.rating}}/5)</span>
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if garment.cost}}
+      <div class="flex justify-between items-center">
+        <span class="text-base-content/60 text-sm">{{t 'lang.COST'}}</span>
+        <span class="font-medium">{{formatCurrency garment.cost currency}}</span>
+      </div>
+      {{/if}}
+
+      <div class="flex justify-between items-center">
+        <span class="text-base-content/60 text-sm">{{t 'lang.WEARS'}}</span>
+        <span class="font-medium">{{wearsCount}}</span>
+      </div>
+
+      {{#if garment.cost}}
+      <div class="flex justify-between items-center">
+        <span class="text-base-content/60 text-sm">{{t 'lang.COST_PER_WEAR'}}</span>
+        <span class="font-medium">
+          {{#if costPerWear}}
+            {{formatCurrency costPerWear currency}}
+          {{else}}
+            —
+          {{/if}}
+        </span>
+      </div>
+      {{/if}}
+
+      {{#if garment.purchaseLink}}
+      <div class="flex justify-between items-center">
+        <span class="text-base-content/60 text-sm">{{t 'lang.PURCHASE_LINK'}}</span>
+        <a href="{{garment.purchaseLink}}" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-outline btn-primary gap-1">
+          {{t 'lang.OPEN_LINK'}}
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      {{/if}}
+
+      {{#if seasonsList.length}}
+      <div class="flex justify-between items-center">
+        <span class="text-base-content/60 text-sm">{{t 'lang.SEASONS'}}</span>
+        <div class="flex flex-wrap gap-1 justify-end">
+          {{#each seasonsList}}
+          <span class="badge badge-sm badge-outline font-medium">{{this}}</span>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if occasionsList.length}}
+      <div class="flex justify-between items-center">
+        <span class="text-base-content/60 text-sm">{{t 'lang.OCCASIONS'}}</span>
+        <div class="flex flex-wrap gap-1 justify-end">
+          {{#each occasionsList}}
+          <span class="badge badge-sm badge-secondary badge-outline text-xs">{{this}}</span>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if garment.print}}
+      <div class="flex justify-between">
+        <span class="text-base-content/60 text-sm">{{t 'lang.PRINT'}}</span>
+        <span class="font-medium">{{garment.print}}</span>
+      </div>
+      {{/if}}
+
+      {{#if garment.look}}
+      <div class="flex justify-between">
+        <span class="text-base-content/60 text-sm">{{t 'lang.LOOK'}}</span>
+        <span class="font-medium">{{garment.look}}</span>
+      </div>
+      {{/if}}
+
+      {{#if garment.fit}}
+      <div class="flex justify-between">
+        <span class="text-base-content/60 text-sm">{{t 'lang.FIT'}}</span>
+        <span class="font-medium">{{garment.fit}}</span>
+      </div>
+      {{/if}}
+
+ {{#if garment.washingDetails}}
       <div class="flex flex-col gap-1">
         <span class="text-base-content/60 text-sm">{{t 'lang.WASHING_DETAILS'}}</span>
         <p class="text-sm">{{garment.washingDetails}}</p>

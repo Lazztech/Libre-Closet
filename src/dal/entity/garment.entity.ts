@@ -28,6 +28,9 @@ export class Garment extends ShareableId {
   @Property()
   public category!: string;
 
+  @Property({ nullable: true })
+  public subCategory?: string;
+
   @Enum({ nullable: true })
   public color?: GarmentColor;
 
@@ -64,4 +67,28 @@ export class Garment extends ShareableId {
 
   @ManyToMany(() => Outfit, (outfit) => outfit.garments)
   public outfits = new Collection<Outfit>(this);
+
+  @Property({ nullable: true })
+  public rating?: number;
+
+  @Property({ nullable: true })
+  public seasons?: string;
+
+  @Property({ nullable: true })
+  public occasions?: string;
+
+  @Property({ nullable: true })
+  public purchaseLink?: string;
+
+  @Property({ nullable: true, columnType: 'numeric(12,2)' })
+  public cost?: number;
+
+  @Property({ nullable: true })
+  public print?: string;
+
+  @Property({ nullable: true })
+  public look?: string;
+
+  @Property({ nullable: true })
+  public fit?: string;
 }

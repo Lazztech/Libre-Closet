@@ -307,5 +307,17 @@
   "SUPPORTER_MESSAGE": "Libre Closet es gratuito, de código abierto y nunca limitará funciones para quienes se autohospedan. Si te ha facilitado un poco la vida, te pedimos que consideres apoyarnos. Somos un pequeño grupo de ingenieros que donan su tiempo, y tu apoyo nos ayuda a encontrar tiempo para mejorar las herramientas que te hacen la vida más cómoda.",
   "SUPPORTER_SIGNATURE": "- Gian, fundador y desarrollador de Lazztech LLC",
   "SUPPORTER_CTA": "Apoyar en Ko-fi",
-  "SUPPORTER_DISMISS": "Ahora no"
+  "SUPPORTER_DISMISS": "Ahora no",
+  "SUB_CATEGORY": "Subcategoría",
+  "SELECT_SUB_CATEGORY": "Seleccionar subcategoría…",
+  "SELECT_CATEGORY_FIRST": "Selecciona una categoría primero…",
+  "NO_PREDEFINED_SUBCATEGORIES": "No hay subcategorías disponibles",
+  "CATEGORY_PANTS": "Pantalones",
+  "CATEGORY_SKIRTS": "Faldas",
+  "CATEGORY_SHOES": "Zapatos",
+  "CATEGORY_HEADWEAR": "Prendas para la cabeza",
+  "CATEGORY_JEWELRY": "Joyería",
+  "PURCHASE_LINK": "Enlace de compra",
+  "WEARS": "Veces usada",
+  "COST_PER_WEAR": "Coste por uso"
 }

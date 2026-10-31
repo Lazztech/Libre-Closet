@@ -42,9 +42,23 @@ export class ViewContextService {
       'Self-hosted wardrobe organizer. Catalog clothes with photos, build outfits, and install as an offline PWA. Free and open-source. No subscription, no ads.';
     const ogImage = `${baseUrl}/assets/lazztech_icon.png`;
 
+    const currency = this.configService.get<string>('CURRENCY', 'INR');
+    const currencySymbolMap: Record<string, string> = {
+      INR: '₹',
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      JPY: '¥',
+      CAD: 'CA$',
+      AUD: 'A$',
+    };
+    const currencySymbol = currencySymbolMap[currency] || currency;
+
     const context: Record<string, any> = {
       appName,
       siteUrl,
+      currency,
+      currencySymbol,
       baseUrl: req.url === '/' ? '' : req.url,
       authEnabled: this.configService.get<boolean>('AUTH_ENABLED'),
       signupsDisabled: this.configService.get<boolean>('DISABLE_REGISTRATION'),

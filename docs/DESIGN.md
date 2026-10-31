@@ -60,18 +60,29 @@ Represents a single clothing item owned by a user.
 | `shareableId` | `string` UK | Inherited from `ShareableId`; used for public share URLs  |
 | `name`        | `string`    | User-provided label, e.g. "Black Linen Blazer"            |
 | `category`    | `enum`      | See `GarmentCategory` enum below                          |
+| `subCategory` | `string?`   | Optional pre-defined sub-category scoped to category      |
 | `brand`       | `string?`   | Optional brand name                                       |
 | `colors`      | `string[]`  | One or more color labels                                  |
 | `size`        | `string?`   | Free-text size (XS/S/M/L/XL or numeric)                   |
 | `notes`       | `string?`   | Free-text notes                                           |
 | `photo`       | `File` FK   | One-to-one relation to the existing `File` entity         |
 | `owner`       | `User?` FK  | Many-to-one; nullable — omitted when `AUTH_ENABLED=false` |
+| `rating`        | `number?`   | Optional 1-5 star rating                                  |
+| `seasons`       | `string?`   | Optional comma-separated seasons                          |
+| `occasions`     | `string?`   | Optional comma-separated occasions                        |
+| `purchaseLink`  | `string?`   | Optional purchase link / source URL                       |
+| `cost`          | `number?`   | Optional item cost (`numeric(12,2)`)                       |
+| `print`         | `string?`   | Optional print classification                             |
+| `look`          | `string?`   | Optional style aesthetic                                  |
+| `fit`           | `string?`   | Optional fit type                                         |
 | `outfits`     | `Outfit[]`  | Many-to-many back-reference                               |
 | `flagged`     | `boolean?`  | Inherited from `ShareableId`                              |
 | `banned`      | `boolean?`  | Inherited from `ShareableId`                              |
 
 **`GarmentCategory` enum** (initial set, extensible):
-`tops`, `bottoms`, `dresses`, `outerwear`, `footwear`, `accessories`, `bags`, `activewear`, `swimwear`, `underwear`, `other`
+`tops`, `bottoms`, `outerwear`, `footwear`, `accessories`, `activewear`, `swimwear`, `underwear`, `headwear`, `innerwear`, `other`
+
+Each category has a strictly defined list of pre-defined sub-categories (e.g. `Tops` -> `T-shirt`, `Vest`, `Blouse`, etc.; `Bottoms` -> `Shorts`, `Jeans`, `Trousers`, etc.; `Footwear` -> `Sneakers`, `Boots`, etc.). Sub-category selection in the UI dynamically presents only the valid options for the selected category.
 
 #### `Outfit`
 
@@ -116,10 +127,19 @@ erDiagram
         string shareableId UK
         string name
         string category
+        string subCategory "nullable"
         string brand
         json colors
         string size
         string notes
+        number rating "nullable"
+        string seasons "nullable"
+        string occasions "nullable"
+        string purchaseLink "nullable"
+        number cost "nullable"
+        string print "nullable"
+        string look "nullable"
+        string fit "nullable"
         number photoId FK
         number ownerId "FK nullable"
         boolean flagged

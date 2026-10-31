@@ -26,7 +26,7 @@
   <div class="flex flex-wrap gap-4 justify-center">
     {{#each garments}}
     <a href="/wardrobe/{{this.id}}{{#if ../viewOwner}}?ownerId={{../viewOwner}}{{/if}}" class="card bg-base-100 w-40 sm:w-44 shadow-sm hover:shadow-md transition-shadow cursor-pointer {{#if this.archived}}opacity-50{{/if}}">
-      <figure class="aspect-square bg-base-200">
+      <figure class="aspect-square bg-base-200 relative">
         {{#if this.photo}}
         <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}" class="object-cover w-full h-full" />
         {{else}}
@@ -36,10 +36,18 @@
           </svg>
         </div>
         {{/if}}
+        {{#if this.cost}}
+        <span class="badge badge-sm badge-neutral absolute top-2 right-2 font-semibold shadow-sm">{{formatCurrency this.cost ../currency}}</span>
+        {{/if}}
       </figure>
       <div class="card-body p-3">
-        <h2 class="card-title text-sm">{{this.name}}</h2>
-        <p class="text-xs text-base-content/60 capitalize">{{this.category}}</p>
+        <h2 class="card-title text-sm truncate">{{this.name}}</h2>
+        <div class="flex items-center justify-between mt-0.5">
+          <p class="text-xs text-base-content/60 capitalize truncate">{{this.category}}{{#if this.subCategory}} &middot; {{this.subCategory}}{{/if}}</p>
+          {{#if this.rating}}
+          <span class="text-xs text-amber-500 font-bold ml-1 flex-shrink-0">★ {{this.rating}}</span>
+          {{/if}}
+        </div>
       </div>
     </a>
     {{/each}}
@@ -71,27 +79,51 @@
     </button>
 
     {{#if search.category}}
-    <a href="/wardrobe?keyword={{search.keyword}}&color={{search.color}}&size={{search.size}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+    <a href="/wardrobe?keyword={{search.keyword}}&subCategory={{search.subCategory}}&color={{search.color}}&size={{search.size}}&season={{search.season}}&occasion={{search.occasion}}&rating={{search.rating}}&archived={{search.archived}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
       class="badge badge-primary badge-sm gap-1 cursor-pointer capitalize no-underline">
       {{search.category}} &times;
     </a>
     {{/if}}
+    {{#if search.subCategory}}
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&color={{search.color}}&size={{search.size}}&season={{search.season}}&occasion={{search.occasion}}&rating={{search.rating}}&archived={{search.archived}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+      class="badge badge-accent badge-sm gap-1 cursor-pointer capitalize no-underline">
+      {{search.subCategory}} &times;
+    </a>
+    {{/if}}
     {{#if search.color}}
-    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&size={{search.size}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&subCategory={{search.subCategory}}&size={{search.size}}&season={{search.season}}&occasion={{search.occasion}}&rating={{search.rating}}&archived={{search.archived}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
       class="badge badge-secondary badge-sm gap-1 cursor-pointer capitalize no-underline">
       {{search.color}} &times;
     </a>
     {{/if}}
     {{#if search.size}}
-    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&color={{search.color}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&subCategory={{search.subCategory}}&color={{search.color}}&season={{search.season}}&occasion={{search.occasion}}&rating={{search.rating}}&archived={{search.archived}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
       class="badge badge-accent badge-sm gap-1 cursor-pointer no-underline">
       {{search.size}} &times;
     </a>
     {{/if}}
     {{#if search.archived}}
-    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&color={{search.color}}&size={{search.size}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&subCategory={{search.subCategory}}&color={{search.color}}&size={{search.size}}&season={{search.season}}&occasion={{search.occasion}}&rating={{search.rating}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
       class="badge badge-warning badge-sm gap-1 cursor-pointer no-underline">
       {{t 'lang.ARCHIVED'}} &times;
+    </a>
+    {{/if}}
+    {{#if search.season}}
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&subCategory={{search.subCategory}}&color={{search.color}}&size={{search.size}}&archived={{search.archived}}&occasion={{search.occasion}}&rating={{search.rating}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+      class="badge badge-info badge-sm gap-1 cursor-pointer no-underline">
+      {{search.season}} &times;
+    </a>
+    {{/if}}
+    {{#if search.occasion}}
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&subCategory={{search.subCategory}}&color={{search.color}}&size={{search.size}}&archived={{search.archived}}&season={{search.season}}&rating={{search.rating}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+      class="badge badge-secondary badge-sm gap-1 cursor-pointer no-underline">
+      {{search.occasion}} &times;
+    </a>
+    {{/if}}
+    {{#if search.rating}}
+    <a href="/wardrobe?keyword={{search.keyword}}&category={{search.category}}&subCategory={{search.subCategory}}&color={{search.color}}&size={{search.size}}&archived={{search.archived}}&season={{search.season}}&occasion={{search.occasion}}{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+      class="badge badge-accent badge-sm gap-1 cursor-pointer no-underline">
+      ★ {{search.rating}}+ &times;
     </a>
     {{/if}}
   </div>
@@ -99,9 +131,13 @@
   {{!-- Search input row --}}
   <form method="get" action="/wardrobe" id="search-form" class="flex gap-2">
     <input type="hidden" name="category" id="active-category" value="{{search.category}}">
+    <input type="hidden" name="subCategory" id="active-subCategory" value="{{search.subCategory}}">
     <input type="hidden" name="color" id="active-color" value="{{search.color}}">
     <input type="hidden" name="size" id="active-size" value="{{search.size}}">
     <input type="hidden" name="archived" id="active-archived" value="{{search.archived}}">
+    <input type="hidden" name="season" id="active-season" value="{{search.season}}">
+    <input type="hidden" name="occasion" id="active-occasion" value="{{search.occasion}}">
+    <input type="hidden" name="rating" id="active-rating" value="{{search.rating}}">
     {{#if viewOwner}}<input type="hidden" name="ownerId" value="{{viewOwner}}">{{/if}}
     <input
       type="text"
@@ -119,15 +155,29 @@
   <div class="modal-box">
     <h3 class="font-bold text-lg mb-4">{{t 'lang.FILTERS'}}</h3>
 
-    {{!-- Garment Type --}}
+    {{!-- Category --}}
     <div class="mb-5">
-      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.GARMENT_TYPE'}}</h4>
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.CATEGORY'}}</h4>
       <div class="flex flex-wrap gap-2">
         {{#each availableCategories}}
         <label class="cursor-pointer">
           <input type="radio" name="modal-category" value="{{this.value}}" class="hidden peer"
             {{#ifEquals this.value ../search.category}}checked{{/ifEquals}}>
           <span class="badge badge-outline peer-checked:badge-primary capitalize select-none">{{this.label}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Sub-category --}}
+    <div class="mb-5" id="modal-subcategory-group">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.SUB_CATEGORY'}}</h4>
+      <div class="flex flex-wrap gap-2" id="modal-subcategories-list">
+        {{#each availableSubCategories}}
+        <label class="cursor-pointer modal-subcat-item">
+          <input type="radio" name="modal-subCategory" value="{{this}}" class="hidden peer"
+            {{#ifEquals this ../search.subCategory}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-accent select-none">{{this}}</span>
         </label>
         {{/each}}
       </div>
@@ -163,6 +213,48 @@
     </div>
     {{/if}}
 
+    {{!-- Season --}}
+    <div class="mb-5">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.SEASONS'}}</h4>
+      <div class="flex flex-wrap gap-2">
+        {{#each availableSeasons}}
+        <label class="cursor-pointer">
+          <input type="radio" name="modal-season" value="{{this}}" class="hidden peer"
+            {{#ifEquals this ../search.season}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-info select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Occasion --}}
+    <div class="mb-5">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.OCCASIONS'}}</h4>
+      <div class="flex flex-wrap gap-2">
+        {{#each availableOccasions}}
+        <label class="cursor-pointer">
+          <input type="radio" name="modal-occasion" value="{{this}}" class="hidden peer"
+            {{#ifEquals this ../search.occasion}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-secondary select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Rating --}}
+    <div class="mb-5">
+      <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.RATING'}}</h4>
+      <div class="flex flex-wrap gap-2">
+        {{#each ratingOptions}}
+        <label class="cursor-pointer">
+          <input type="radio" name="modal-rating" value="{{this}}" class="hidden peer"
+            {{#ifEquals this ../search.rating}}checked{{/ifEquals}}>
+          <span class="badge badge-outline peer-checked:badge-warning select-none">★ {{this}} & up</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
     {{!-- Archived --}}
     <div class="mb-5">
       <h4 class="font-medium text-sm text-base-content/60 uppercase tracking-wide mb-2">{{t 'lang.ARCHIVED'}}</h4>
@@ -180,18 +272,34 @@
           for el in <input[name='modal-category']/>
             set el.checked to false
           end
+          for el in <input[name='modal-subCategory']/>
+            set el.checked to false
+          end
           for el in <input[name='modal-color']/>
             set el.checked to false
           end
           for el in <input[name='modal-size']/>
             set el.checked to false
           end
+          for el in <input[name='modal-season']/>
+            set el.checked to false
+          end
+          for el in <input[name='modal-occasion']/>
+            set el.checked to false
+          end
+          for el in <input[name='modal-rating']/>
+            set el.checked to false
+          end
           for el in <input[name='modal-archived']/>
             set el.checked to false
           end
           set #active-category.value to ''
+          set #active-subCategory.value to ''
           set #active-color.value to ''
           set #active-size.value to ''
+          set #active-season.value to ''
+          set #active-occasion.value to ''
+          set #active-rating.value to ''
           set #active-archived.value to ''
           call #filter-modal.close()
           call #search-form.submit()">
@@ -203,18 +311,34 @@
           set category to ''
           get the first <input[name='modal-category']:checked/>
           if it then set category to it.value end
+          set subCategory to ''
+          get the first <input[name='modal-subCategory']:checked/>
+          if it then set subCategory to it.value end
           set color to ''
           get the first <input[name='modal-color']:checked/>
           if it then set color to it.value end
           set size to ''
           get the first <input[name='modal-size']:checked/>
           if it then set size to it.value end
+          set season to ''
+          get the first <input[name='modal-season']:checked/>
+          if it then set season to it.value end
+          set occasion to ''
+          get the first <input[name='modal-occasion']:checked/>
+          if it then set occasion to it.value end
+          set rating to ''
+          get the first <input[name='modal-rating']:checked/>
+          if it then set rating to it.value end
           set archived to ''
           get the first <input[name='modal-archived']:checked/>
           if it then set archived to 'true' end
           set #active-category.value to category
+          set #active-subCategory.value to subCategory
           set #active-color.value to color
           set #active-size.value to size
+          set #active-season.value to season
+          set #active-occasion.value to occasion
+          set #active-rating.value to rating
           set #active-archived.value to archived
           call #filter-modal.close()
           call #search-form.submit()">
@@ -226,5 +350,78 @@
     <button>close</button>
   </form>
 </dialog>
+
+<script>
+  (function () {
+    let subcatsMap = {};
+    try {
+      subcatsMap = {{{subcategoriesJson}}};
+    } catch (e) {
+      console.warn('Could not parse subcategories map', e);
+    }
+    const allWardrobeSubcats = [{{#each availableSubCategories}}"{{this}}",{{/each}}];
+    const initialSubCategory = "{{search.subCategory}}";
+
+    function getSelectedCategory() {
+      const checked = document.querySelector('input[name="modal-category"]:checked');
+      return checked ? checked.value.toLowerCase().trim() : '';
+    }
+
+    function renderSubcategories() {
+      const selectedCat = getSelectedCategory();
+      const listEl = document.getElementById('modal-subcategories-list');
+      if (!listEl) return;
+
+      let subcatNames = [];
+      if (selectedCat && subcatsMap[selectedCat]) {
+        subcatNames = subcatsMap[selectedCat];
+      } else if (!selectedCat) {
+        subcatNames = allWardrobeSubcats;
+      }
+
+      const currentCheckedEl = document.querySelector('input[name="modal-subCategory"]:checked');
+      const currentVal = currentCheckedEl ? currentCheckedEl.value : initialSubCategory;
+
+      listEl.innerHTML = '';
+      if (!subcatNames || subcatNames.length === 0) {
+        const span = document.createElement('span');
+        span.className = 'text-xs text-base-content/50 italic py-1';
+        span.textContent = selectedCat
+          ? '{{t "lang.NO_PREDEFINED_SUBCATEGORIES"}}'
+          : '{{t "lang.SELECT_CATEGORY_FIRST"}}';
+        listEl.appendChild(span);
+        return;
+      }
+
+      subcatNames.forEach((name) => {
+        const label = document.createElement('label');
+        label.className = 'cursor-pointer modal-subcat-item';
+
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'modal-subCategory';
+        radio.value = name;
+        radio.className = 'hidden peer';
+        if (currentVal && name.toLowerCase() === currentVal.toLowerCase()) {
+          radio.checked = true;
+        }
+
+        const badge = document.createElement('span');
+        badge.className = 'badge badge-outline peer-checked:badge-accent select-none';
+        badge.textContent = name;
+
+        label.appendChild(radio);
+        label.appendChild(badge);
+        listEl.appendChild(label);
+      });
+    }
+
+    document.querySelectorAll('input[name="modal-category"]').forEach((el) => {
+      el.addEventListener('change', renderSubcategories);
+    });
+
+    renderSubcategories();
+  })();
+</script>
 
 {{>dock}}

@@ -307,5 +307,17 @@
   "SUPPORTER_MESSAGE": "Libre Closet ist kostenlos, Open Source und wird für Selbst-Hoster niemals durch eine Paywall eingeschränkt! Wenn es dir das Leben ein wenig erleichtert hat, bitten wir dich, eine Unterstützung in Betracht zu ziehen. Wir sind eine kleine Gruppe von Entwicklern, die ihre Zeit dafür spenden, und deine Unterstützung hilft uns, Zeit zu finden, um die Werkzeuge zu verbessern, die dein Leben bequemer machen.",
   "SUPPORTER_SIGNATURE": "- Gian, Gründer und Entwickler von Lazztech LLC",
   "SUPPORTER_CTA": "Auf Ko-fi unterstützen",
-  "SUPPORTER_DISMISS": "Jetzt nicht"
+  "SUPPORTER_DISMISS": "Jetzt nicht",
+  "SUB_CATEGORY": "Unterkategorie",
+  "SELECT_SUB_CATEGORY": "Unterkategorie auswählen…",
+  "SELECT_CATEGORY_FIRST": "Wählen Sie zuerst eine Kategorie…",
+  "NO_PREDEFINED_SUBCATEGORIES": "Keine Unterkategorien verfügbar",
+  "CATEGORY_PANTS": "Hosen",
+  "CATEGORY_SKIRTS": "Röcke",
+  "CATEGORY_SHOES": "Schuhe",
+  "CATEGORY_HEADWEAR": "Kopfbedeckung",
+  "CATEGORY_JEWELRY": "Schmuck",
+  "PURCHASE_LINK": "Kauflink",
+  "WEARS": "Getragen",
+  "COST_PER_WEAR": "Kosten pro Tragen"
 }

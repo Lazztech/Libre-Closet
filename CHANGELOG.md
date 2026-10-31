@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- ...
+#### Added
+
+- Sub-category garment property with dynamic, pre-defined selection scoped to each category (e.g., T-shirt/Sweater for Tops, Shorts/Jeans/Trousers for Bottoms, Sneakers/Boots for Footwear)
+- Expanded categories list with Headwear and Innerwear
+- Database migrations for SQLite and PostgreSQL adding nullable columns for sub-category and new garment properties without data loss
+- Multi-language localization support for sub-category, garment properties, and new category labels across all 7 supported languages (English, Danish, German, Spanish, French, Italian, Russian)
+- Extended garment properties: Rating (1-5 stars), Seasons, Occasions, Cost, Purchase link, Look, Fit, and Print
+- Filter modal in wardrobe view with Category, Sub-category, season, occasion, and minimum star rating filters
+- Wears count (number of times worn in outfits) and dynamic Cost Per Wear displayed in garment details view
+- Color swatch dots rendered beside color names in garment details view
+- Configurable currency via `CURRENCY` environment variable with localized currency formatting
+- Expanded color palette with 24 curated swatches and hex color dot previews
 
 ## 0.6.0 2026-10-5
 

@@ -72,6 +72,7 @@ import { ViewContextModule } from './view-context/view-context.module';
           .default('production'),
         PORT: Joi.number().default(3000),
         APP_NAME: Joi.string().default('Boilerplate'),
+        CURRENCY: Joi.string().default('USD'),
         AUTH_ENABLED: Joi.boolean().default(false),
         DISABLE_REGISTRATION: Joi.boolean().default(false),
         PWA_ENABLED: Joi.boolean().default(false),

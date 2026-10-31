@@ -2,140 +2,325 @@
 
 <main class="p-4 pt-20 pb-24 max-w-lg mx-auto">
   <div class="flex items-center gap-3 mb-6">
-    <a
-      href="{{#if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
-      class="btn btn-ghost btn-sm btn-circle"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        class="size-4"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-        />
+    <a href="{{#if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
+      class="btn btn-ghost btn-sm btn-circle">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+        class="size-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
       </svg>
     </a>
     <h1 class="text-2xl font-bold">
-      {{#if isClone}}{{t 'lang.CLONE_GARMENT'}}{{else if garment}}{{t 'lang.EDIT_GARMENT'}}{{else}}{{t 'lang.NEW_GARMENT'}}{{/if}}
+      {{#if isClone}}{{t 'lang.CLONE_GARMENT'}}{{else if garment}}{{t 'lang.EDIT_GARMENT'}}{{else}}{{t
+      'lang.NEW_GARMENT'}}{{/if}}
     </h1>
   </div>
 
-  <form
-    method="POST"
+  <form method="POST"
     action="{{#if isClone}}/wardrobe/{{garment.id}}/clone{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
-    class="flex flex-col gap-4"
-  >
+    class="flex flex-col gap-4">
     <div class="form-control">
-      <label class="label"
-        ><span class="label-text">{{t 'lang.NAME'}}</span></label
-      >
-      <input
-        type="text"
-        name="name"
-        class="input input-bordered"
+      <label class="label"><span class="label-text">{{t 'lang.NAME'}}</span></label>
+      <input type="text" name="name" class="input input-bordered"
         value="{{#if isClone}}{{cloneName}}{{else if garment}}{{garment.name}}{{/if}}"
-        placeholder="e.g. Black Linen Blazer"
-      />
+        placeholder="e.g. Black Linen Blazer" />
     </div>
 
     <div class="form-control">
-      <label class="label"
-        ><span class="label-text">{{t 'lang.CATEGORY'}} *</span></label
-      >
-      <input
-        type="text"
-        name="category"
-        list="category-suggestions"
-        class="input input-bordered w-full"
-        value="{{#if garment}}{{garment.category}}{{/if}}"
-        required
-        placeholder="{{t 'lang.TYPE_OR_SELECT_CATEGORY'}}"
-        autocomplete="off"
-      />
+      <label class="label"><span class="label-text">{{t 'lang.CATEGORY'}} *</span></label>
+      <input type="text" name="category" id="garment-category-input" list="category-suggestions" class="input input-bordered w-full"
+        value="{{#if garment}}{{garment.category}}{{/if}}" required placeholder="{{t 'lang.TYPE_OR_SELECT_CATEGORY'}}"
+        autocomplete="off" />
       <datalist id="category-suggestions">
         {{#each categories}}
-        <option value="{{this.value}}"></option>
+        <option value="{{this.value}}">{{this.label}}</option>
         {{/each}}
       </datalist>
     </div>
 
-    <div class="form-control">
-      <label class="label"
-        ><span class="label-text">{{t 'lang.BRAND'}}</span></label
-      >
-      <input
-        type="text"
-        name="brand"
-        class="input input-bordered"
-        value="{{#if garment}}{{garment.brand}}{{/if}}"
-        placeholder="e.g. Levi's"
-      />
+    <div class="form-control" id="subcategory-container">
+      <label class="label"><span class="label-text font-medium">{{t 'lang.SUB_CATEGORY'}}</span></label>
+      <select name="subCategory" id="garment-subcategory-select" class="select select-bordered w-full">
+        <option value="">{{t 'lang.SELECT_SUB_CATEGORY'}}</option>
+      </select>
     </div>
 
-    {{> colorMultiSelect colors=colors garment=garment}}
+    <div class="form-control">
+      <label class="label"><span class="label-text">{{t 'lang.BRAND'}}</span></label>
+      <input type="text" name="brand" class="input input-bordered" value="{{#if garment}}{{garment.brand}}{{/if}}"
+        placeholder="e.g. Levi's" />
+    </div>
+
+    {{> colorMultiSelect colors=colors garment=garment customColors=customColors}}
 
     <div class="form-control">
-      <label class="label"
-        ><span class="label-text">{{t 'lang.SIZE'}}</span></label
-      >
-      <input
-        type="text"
-        name="size"
-        class="input input-bordered"
-        value="{{#if garment}}{{garment.size}}{{/if}}"
-        placeholder="M, 32, One Size…"
-      />
+      <label class="label"><span class="label-text">{{t 'lang.SIZE'}}</span></label>
+      <input type="text" name="size" class="input input-bordered" value="{{#if garment}}{{garment.size}}{{/if}}"
+        placeholder="M, 32, One Size…" />
+    </div>
+
+    {{!-- Rating Stars --}}
+    <div class="form-control">
+      <div class="flex justify-between items-center mb-1">
+        <label class="label p-0"><span class="label-text font-medium">{{t 'lang.RATING'}}</span></label>
+        <button type="button" id="clear-rating-btn"
+          class="text-xs text-base-content/50 hover:text-base-content underline" style="display: none;">{{t
+          'lang.CLEAR'}}</button>
+      </div>
+      <input type="hidden" name="rating" id="rating-input" value="{{#if garment}}{{garment.rating}}{{/if}}" />
+      <div class="flex items-center gap-1.5 cursor-pointer py-1" id="star-rating-container">
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="1" title="1 star">★</button>
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="2" title="2 stars">★</button>
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="3" title="3 stars">★</button>
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="4" title="4 stars">★</button>
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="5" title="5 stars">★</button>
+        <span id="rating-text" class="text-xs text-base-content/60 ml-2 font-medium"></span>
+      </div>
+    </div>
+
+    {{!-- Cost & Purchase Source --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="form-control">
+        <label class="label"><span class="label-text font-medium">{{t 'lang.COST'}} ({{#if
+            currencySymbol}}{{currencySymbol}}{{else}}${{/if}} {{#if
+            currency}}{{currency}}{{else}}USD{{/if}})</span></label>
+        <div class="relative">
+          <span
+            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-base-content/60 font-semibold">{{#if
+            currencySymbol}}{{currencySymbol}}{{else}}${{/if}}</span>
+          <label>
+            <input type="number" step="0.01" min="0" name="cost" class="input input-bordered w-full pl-8"
+              value="{{#if garment}}{{garment.cost}}{{/if}}" placeholder="0.00" />
+          </label>
+        </div>
+      </div>
+      <div class="form-control">
+        <label class="label"><span class="label-text font-medium">{{t 'lang.PURCHASE_LINK'}}</span></label>
+        <label>
+          <input type="url" name="purchaseLink" class="input input-bordered w-full"
+            value="{{#if garment}}{{garment.purchaseLink}}{{/if}}" placeholder="https://..." />
+        </label>
+      </div>
+    </div>
+
+    {{!-- Seasons (Multi-select) --}}
+    <div class="form-control">
+      <label class="label"><span class="label-text font-medium">{{t 'lang.SEASONS'}}</span></label>
+      <div class="flex flex-wrap gap-2">
+        {{#each seasons}}
+        <label class="cursor-pointer">
+          <input type="checkbox" name="seasons" value="{{this.name}}" class="hidden peer" {{#ifInArray this.name
+            ../garment.seasons}}checked{{/ifInArray}} />
+          <span
+            class="badge badge-lg badge-outline peer-checked:badge-primary peer-checked:font-semibold select-none transition-all py-3 px-4">{{this.name}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Occasions (Multi-select) --}}
+    <div class="form-control">
+      <label class="label"><span class="label-text font-medium">{{t 'lang.OCCASIONS'}}</span></label>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each occasions}}
+        <label class="cursor-pointer">
+          <input type="checkbox" name="occasions" value="{{this.name}}" class="hidden peer" {{#ifInArray this.name
+            ../garment.occasions}}checked{{/ifInArray}} />
+          <span
+            class="badge badge-sm badge-outline peer-checked:badge-secondary peer-checked:font-semibold select-none transition-all py-2 px-2.5 text-xs">{{this.name}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Look, Fit & Print --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="form-control">
+        <label class="label"><span class="label-text font-medium">{{t 'lang.LOOK'}}</span></label>
+        <label>
+          <select name="look" class="select select-bordered w-full">
+            <option value="">{{t 'lang.SELECT_LOOK'}}</option>
+            {{#each looks}}
+            <option value="{{this.name}}" {{#ifEquals this.name ../garment.look}}selected{{/ifEquals}}>{{this.name}}
+            </option>
+            {{/each}}
+          </select>
+        </label>
+      </div>
+      <div class="form-control">
+        <label class="label"><span class="label-text font-medium">{{t 'lang.FIT'}}</span></label>
+        <label>
+          <select name="fit" class="select select-bordered w-full">
+            <option value="">{{t 'lang.SELECT_FIT'}}</option>
+            {{#each fits}}
+            <option value="{{this.name}}" {{#ifEquals this.name ../garment.fit}}selected{{/ifEquals}}>{{this.name}}
+            </option>
+            {{/each}}
+          </select>
+        </label>
+      </div>
+      <div class="form-control">
+        <label class="label"><span class="label-text font-medium">{{t 'lang.PRINT'}}</span></label>
+        <label>
+          <select name="print" class="select select-bordered w-full">
+            <option value="">{{t 'lang.SELECT_PRINT'}}</option>
+            {{#each prints}}
+            <option value="{{this.name}}" {{#ifEquals this.name ../garment.print}}selected{{/ifEquals}}>{{this.name}}
+            </option>
+            {{/each}}
+          </select>
+        </label>
+      </div>
     </div>
 
     <div class="form-control">
       <label class="label"><span class="label-text">{{t 'lang.WASHING_DETAILS'}}</span></label>
-      <textarea
-        name="washingDetails"
-        class="textarea textarea-bordered"
-        rows="3"
-        placeholder="Wash at 30°C, do not tumble dry, do not iron…"
-      >{{#if garment}}{{garment.washingDetails}}{{/if}}</textarea>
+      <textarea name="washingDetails" class="textarea textarea-bordered" rows="3"
+        placeholder="Wash at 30°C, do not tumble dry, do not iron…">{{#if garment}}{{garment.washingDetails}}{{/if}}</textarea>
     </div>
 
     <div class="form-control">
       <label class="label"><span class="label-text">{{t 'lang.DATE_AQUIRED'}}</span></label>
-      <input
-        type="date"
-        name="dateAquired"
-        class="input input-bordered"
-        value="{{formatDate garment.dateAquired}}"
-      />
+      <input type="date" name="dateAquired" class="input input-bordered" value="{{formatDate garment.dateAquired}}" />
     </div>
 
     <div class="form-control">
       <label class="label"><span class="label-text">{{t 'lang.NOTES'}}</span></label>
-      <textarea
-        name="notes"
-        class="textarea textarea-bordered"
-        rows="3"
-        placeholder="Any notes about this garment…"
-      >
-{{#if garment}}{{garment.notes}}{{/if}}</textarea
-      >
+      <textarea name="notes" class="textarea textarea-bordered" rows="3" placeholder="Any notes about this garment…">
+{{#if garment}}{{garment.notes}}{{/if}}</textarea>
     </div>
 
     <div class="flex gap-2 mt-2">
-      <a
-        href="{{#if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
-        class="btn btn-ghost flex-1"
-        >{{t 'lang.CANCEL'}}</a
-      >
+      <a href="{{#if garment}}/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{else}}/wardrobe{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}{{/if}}"
+        class="btn btn-ghost flex-1">{{t 'lang.CANCEL'}}</a>
       <button type="submit" class="btn btn-primary flex-1">
         {{t 'lang.SAVE'}}
       </button>
     </div>
   </form>
 </main>
+
+<script>
+  (function () {
+    const container = document.getElementById('star-rating-container');
+    const input = document.getElementById('rating-input');
+    const clearBtn = document.getElementById('clear-rating-btn');
+    const textEl = document.getElementById('rating-text');
+    if (!container || !input) return;
+
+    const stars = container.querySelectorAll('.star-btn');
+    const labels = ['', '1 star - Poor', '2 stars - Fair', '3 stars - Good', '4 stars - Very Good', '5 stars - Excellent'];
+
+    function updateDisplay(val) {
+      stars.forEach(btn => {
+        const btnVal = parseInt(btn.dataset.val, 10);
+        if (val && btnVal <= val) {
+          btn.classList.add('text-amber-500');
+          btn.classList.remove('text-base-content/25');
+        } else {
+          btn.classList.remove('text-amber-500');
+          btn.classList.add('text-base-content/25');
+        }
+      });
+      if (textEl) textEl.textContent = val ? labels[val] : '';
+      if (clearBtn) clearBtn.style.display = val ? 'inline-block' : 'none';
+    }
+
+    const initialVal = input.value ? parseInt(input.value, 10) : 0;
+    updateDisplay(initialVal);
+
+    stars.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const val = parseInt(btn.dataset.val, 10);
+        input.value = val;
+        updateDisplay(val);
+      });
+      btn.addEventListener('mouseenter', () => {
+        const val = parseInt(btn.dataset.val, 10);
+        updateDisplay(val);
+      });
+    });
+
+    container.addEventListener('mouseleave', () => {
+      const curVal = input.value ? parseInt(input.value, 10) : 0;
+      updateDisplay(curVal);
+    });
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        updateDisplay(0);
+      });
+    }
+  })();
+
+  (function () {
+    const categoryInput = document.getElementById('garment-category-input');
+    const subcategorySelect = document.getElementById('garment-subcategory-select');
+    if (!categoryInput || !subcategorySelect) return;
+
+    let subcategoriesMap = {};
+    try {
+      subcategoriesMap = {{{subcategoriesJson}}};
+    } catch (e) {
+      console.warn('Could not parse subcategories map', e);
+    }
+    const initialSubcategory = "{{#if garment}}{{garment.subCategory}}{{/if}}";
+
+    function updateSubcategories(selectedCategory, desiredValue) {
+      const normalizedCat = (selectedCategory || '').trim().toLowerCase();
+      const list = subcategoriesMap[normalizedCat] || [];
+
+      subcategorySelect.innerHTML = '';
+
+      if (list.length === 0) {
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = selectedCategory
+          ? '{{t "lang.NO_PREDEFINED_SUBCATEGORIES"}}'
+          : '{{t "lang.SELECT_CATEGORY_FIRST"}}';
+        subcategorySelect.appendChild(defaultOpt);
+        subcategorySelect.disabled = true;
+        return;
+      }
+
+      subcategorySelect.disabled = false;
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = '{{t "lang.SELECT_SUB_CATEGORY"}}';
+      subcategorySelect.appendChild(placeholder);
+
+      let matched = false;
+      list.forEach((subName) => {
+        const opt = document.createElement('option');
+        opt.value = subName;
+        opt.textContent = subName;
+        if (desiredValue && subName.toLowerCase() === desiredValue.toLowerCase()) {
+          opt.selected = true;
+          matched = true;
+        }
+        subcategorySelect.appendChild(opt);
+      });
+
+      if (!matched && desiredValue) {
+        subcategorySelect.value = '';
+      }
+    }
+
+    updateSubcategories(categoryInput.value, initialSubcategory);
+
+    categoryInput.addEventListener('input', () => {
+      updateSubcategories(categoryInput.value, subcategorySelect.value);
+    });
+    categoryInput.addEventListener('change', () => {
+      updateSubcategories(categoryInput.value, subcategorySelect.value);
+    });
+  })();
+</script>
 
 {{>dock}}

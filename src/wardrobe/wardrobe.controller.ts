@@ -25,6 +25,16 @@ import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
 import { SharePermission } from '../dal/entity/wardrobe-share.entity';
 import type { SearchGarmentDto } from './dto/search-garment.dto';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import {
+  SEASONS,
+  OCCASIONS,
+  COLORS,
+  LOOKUPS,
+  GARMENT_PRINT,
+  GARMENT_LOOK,
+  GARMENT_FITS,
+  SUBCATEGORIES_BY_CATEGORY,
+} from './additional-properties';
 
 @UseGuards(ConditionalAuthGuard)
 @Controller('wardrobe')
@@ -38,6 +48,19 @@ export class WardrobeController {
 
   private userId(req: any): number | undefined {
     return (req['user'] as Payload | undefined)?.userId;
+  }
+
+  private getPropertiesFormContext() {
+    return {
+      seasons: SEASONS,
+      occasions: OCCASIONS,
+      colors: COLORS,
+      prints: GARMENT_PRINT,
+      looks: GARMENT_LOOK,
+      fits: GARMENT_FITS,
+      subcategoriesByCategory: SUBCATEGORIES_BY_CATEGORY,
+      subcategoriesJson: JSON.stringify(SUBCATEGORIES_BY_CATEGORY),
+    };
   }
 
   @Get()
@@ -82,15 +105,26 @@ export class WardrobeController {
       this.garmentService.findAll(userId, query, viewOwner),
       this.garmentService.findAvailableFilters(viewOwner ?? userId),
     ]);
-    const availableCategories = filters.categories.map((value) => ({
-      value,
-      label: this.garmentService.resolveCategoryLabel(value, i18n),
-    }));
+    const enumValues = Object.values(GarmentCategory) as string[];
+    const customCategories = filters.categories.filter(
+      (c) => !enumValues.includes(c),
+    );
+    const availableCategories = [...enumValues, ...customCategories].map(
+      (value) => ({
+        value,
+        label: this.garmentService.resolveCategoryLabel(value, i18n),
+      }),
+    );
     return {
       garments,
       availableCategories,
+      availableSubCategories: filters.subCategories,
+      subcategoriesJson: JSON.stringify(SUBCATEGORIES_BY_CATEGORY),
       colors: Object.values(GarmentColor),
       availableSizes: filters.sizes,
+      availableSeasons: SEASONS.map((s) => s.name),
+      availableOccasions: OCCASIONS.map((o) => o.name),
+      ratingOptions: [5, 4, 3, 2, 1],
       search: query,
       sharedWardrobes,
       viewOwner: viewOwner ?? null,
@@ -127,6 +161,7 @@ export class WardrobeController {
       colors: Object.values(GarmentColor),
       garment: null,
       viewOwner,
+      ...this.getPropertiesFormContext(),
     };
   }
 
@@ -136,12 +171,21 @@ export class WardrobeController {
     body: {
       name?: string;
       category: string;
+      subCategory?: string;
       brand?: string;
       color?: string | string[];
       size?: string;
       notes?: string;
       washingDetails?: string;
       dateAquired?: string;
+      rating?: string | number;
+      seasons?: string | string[];
+      occasions?: string | string[];
+      purchaseLink?: string;
+      cost?: string | number;
+      print?: string;
+      look?: string;
+      fit?: string;
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
@@ -163,6 +207,30 @@ export class WardrobeController {
           .map((c) => c.trim())
           .filter(Boolean) ?? []);
 
+    const rawSeasons = Array.isArray(body.seasons)
+      ? body.seasons
+      : (body.seasons
+          ?.split(',')
+          .map((s) => s.trim())
+          .filter(Boolean) ?? []);
+
+    const rawOccasions = Array.isArray(body.occasions)
+      ? body.occasions
+      : (body.occasions
+          ?.split(',')
+          .map((o) => o.trim())
+          .filter(Boolean) ?? []);
+
+    const parsedRating =
+      body.rating != null && body.rating !== ''
+        ? parseInt(String(body.rating), 10)
+        : undefined;
+
+    const parsedCost =
+      body.cost != null && body.cost !== ''
+        ? parseFloat(String(body.cost))
+        : undefined;
+
     const garment = await this.garmentService.create(
       {
         name: body.name,
@@ -173,6 +241,15 @@ export class WardrobeController {
         notes: body.notes,
         washingDetails: body.washingDetails,
         dateAquired: body.dateAquired,
+        rating: parsedRating,
+        seasons: rawSeasons.join(','),
+        occasions: rawOccasions.join(','),
+        purchaseLink: body.purchaseLink?.trim() || undefined,
+        cost: parsedCost,
+        subCategory: body.subCategory?.trim() || undefined,
+        print: body.print?.trim() || undefined,
+        look: body.look?.trim() || undefined,
+        fit: body.fit?.trim() || undefined,
       },
       viewOwner ?? userId,
     );
@@ -213,12 +290,48 @@ export class WardrobeController {
       canClone = false;
     }
 
+    const wearsCount = await this.garmentService.getWearsCount(
+      garment.id,
+      viewOwner ?? userId,
+    );
+    const costPerWear =
+      garment.cost != null && wearsCount > 0
+        ? Number((Number(garment.cost) / wearsCount).toFixed(2))
+        : null;
+
+    const colorsList =
+      garment.color
+        ?.split(',')
+        .map((c) => c.trim())
+        .filter(Boolean)
+        .map((name) => {
+          const item = LOOKUPS.colorsByName.get(name.toLowerCase());
+          return {
+            name,
+            hex: item?.hex,
+            swatchClass: item ? undefined : name.toLowerCase(),
+          };
+        }) ?? [];
+
     return {
       garment,
       categoryLabel: this.garmentService.resolveCategoryLabel(
         garment.category,
         i18n,
       ),
+      colorsList,
+      wearsCount,
+      costPerWear,
+      seasonsList:
+        garment.seasons
+          ?.split(',')
+          .map((s) => s.trim())
+          .filter(Boolean) ?? [],
+      occasionsList:
+        garment.occasions
+          ?.split(',')
+          .map((o) => o.trim())
+          .filter(Boolean) ?? [],
       canEdit,
       canDelete,
       canClone,
@@ -256,22 +369,23 @@ export class WardrobeController {
       value,
       label: this.garmentService.resolveCategoryLabel(value, i18n),
     }));
-    const colorEnumValues = Object.values(GarmentColor) as string[];
+    const knownColorNames = new Set(COLORS.map((c) => c.name.toLowerCase()));
     const savedColors =
       garment.color
         ?.split(',')
         .map((c) => c.trim())
         .filter(Boolean) ?? [];
     const customColors = savedColors.filter(
-      (c) => !colorEnumValues.includes(c),
+      (c) => !knownColorNames.has(c.toLowerCase()),
     );
 
     return {
       garment,
       categories,
-      colors: colorEnumValues,
+      colors: COLORS,
       customColors,
       viewOwner: viewOwner ?? null,
+      ...this.getPropertiesFormContext(),
     };
   }
 
@@ -302,8 +416,9 @@ export class WardrobeController {
       isClone: true,
       cloneName: garment.name ? `${garment.name} (cloned)` : undefined,
       categories,
-      colors: Object.values(GarmentColor),
+      colors: COLORS,
       viewOwner: viewOwner ?? null,
+      ...this.getPropertiesFormContext(),
     };
   }
 
@@ -314,10 +429,21 @@ export class WardrobeController {
     body: {
       name?: string;
       category: string;
+      subCategory?: string;
       brand?: string;
-      color?: GarmentColor;
+      color?: GarmentColor | string[];
       size?: string;
       notes?: string;
+      washingDetails?: string;
+      dateAquired?: string;
+      rating?: string | number;
+      seasons?: string | string[];
+      occasions?: string | string[];
+      purchaseLink?: string;
+      cost?: string | number;
+      print?: string;
+      look?: string;
+      fit?: string;
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
@@ -327,6 +453,31 @@ export class WardrobeController {
     const viewOwner = ownerId ? parseInt(ownerId, 10) : undefined;
     // Verify the requesting user has access to the source garment
     await this.garmentService.findOne(id, userId, viewOwner);
+
+    const rawSeasons = Array.isArray(body.seasons)
+      ? body.seasons
+      : (body.seasons
+          ?.split(',')
+          .map((s) => s.trim())
+          .filter(Boolean) ?? []);
+
+    const rawOccasions = Array.isArray(body.occasions)
+      ? body.occasions
+      : (body.occasions
+          ?.split(',')
+          .map((o) => o.trim())
+          .filter(Boolean) ?? []);
+
+    const parsedRating =
+      body.rating != null && body.rating !== ''
+        ? parseInt(String(body.rating), 10)
+        : undefined;
+
+    const parsedCost =
+      body.cost != null && body.cost !== ''
+        ? parseFloat(String(body.cost))
+        : undefined;
+
     const cloned = await this.garmentService.clone(
       id,
       {
@@ -336,6 +487,17 @@ export class WardrobeController {
         color: Array.isArray(body.color) ? body.color.join(',') : body.color,
         size: body.size,
         notes: body.notes,
+        washingDetails: body.washingDetails,
+        dateAquired: body.dateAquired,
+        rating: parsedRating,
+        seasons: rawSeasons.join(','),
+        occasions: rawOccasions.join(','),
+        purchaseLink: body.purchaseLink?.trim() || undefined,
+        cost: parsedCost,
+        subCategory: body.subCategory?.trim() || undefined,
+        print: body.print?.trim() || undefined,
+        look: body.look?.trim() || undefined,
+        fit: body.fit?.trim() || undefined,
       },
       userId,
     );
@@ -349,12 +511,23 @@ export class WardrobeController {
     body: {
       name?: string;
       category?: string;
+      subCategory?: string;
       brand?: string;
-      color?: GarmentColor;
+      color?: GarmentColor | string[];
       size?: string;
       notes?: string;
       washingDetails?: string;
       dateAquired?: string;
+      rating?: string | number;
+      seasons?: string | string[];
+      occasions?: string | string[];
+      purchaseLink?: string;
+      cost?: string | number;
+      print?: string;
+      look?: string;
+      fit?: string;
+      pattern?: string;
+      style?: string;
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
@@ -368,6 +541,30 @@ export class WardrobeController {
       if (!canManage) throw new ForbiddenException();
     }
 
+    const rawSeasons = Array.isArray(body.seasons)
+      ? body.seasons
+      : (body.seasons
+          ?.split(',')
+          .map((s) => s.trim())
+          .filter(Boolean) ?? []);
+
+    const rawOccasions = Array.isArray(body.occasions)
+      ? body.occasions
+      : (body.occasions
+          ?.split(',')
+          .map((o) => o.trim())
+          .filter(Boolean) ?? []);
+
+    const parsedRating =
+      body.rating != null && body.rating !== ''
+        ? parseInt(String(body.rating), 10)
+        : undefined;
+
+    const parsedCost =
+      body.cost != null && body.cost !== ''
+        ? parseFloat(String(body.cost))
+        : undefined;
+
     await this.garmentService.update(
       id,
       {
@@ -379,6 +576,18 @@ export class WardrobeController {
         notes: body.notes,
         washingDetails: body.washingDetails,
         dateAquired: body.dateAquired,
+        rating: parsedRating,
+        seasons: rawSeasons.join(','),
+        occasions: rawOccasions.join(','),
+        purchaseLink: body.purchaseLink?.trim() || undefined,
+        cost: parsedCost,
+        subCategory:
+          body.subCategory !== undefined
+            ? body.subCategory.trim() || undefined
+            : undefined,
+        print: (body.print ?? body.pattern)?.trim() || undefined,
+        look: (body.look ?? body.style)?.trim() || undefined,
+        fit: body.fit?.trim() || undefined,
       },
       viewOwner ?? userId,
       userId,

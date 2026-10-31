@@ -11,6 +11,7 @@ import { I18nContext } from 'nestjs-i18n';
 import { Garment } from '../dal/entity/garment.entity';
 import { File } from '../dal/entity/file.entity';
 import { User } from '../dal/entity/user.entity';
+import { OutfitCalendar } from '../dal/entity/outfit-calendar.entity';
 import { FileService } from '../file/file-service.abstract';
 import { MultipartFile } from '@fastify/multipart';
 import { CreateGarmentDto } from './dto/create-garment.dto';
@@ -18,6 +19,7 @@ import { UpdateGarmentDto } from './dto/update-garment.dto';
 import { SearchGarmentDto } from './dto/search-garment.dto';
 import { GarmentCategory } from './garment-category.enum';
 import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
+import { normalizeSubCategory } from './additional-properties';
 
 const CANONICAL_SIZES = [
   'XX-Small',
@@ -41,6 +43,8 @@ export class GarmentService {
     private readonly garmentRepository: EntityRepository<Garment>,
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
+    @InjectRepository(OutfitCalendar)
+    private readonly calendarRepository: EntityRepository<OutfitCalendar>,
     private readonly fileService: FileService,
     private readonly shareService: WardrobeShareService,
   ) {}
@@ -59,17 +63,27 @@ export class GarmentService {
     viewOwner?: number,
   ): Promise<Garment[]> {
     const normalizedSize = this.normalizeSize(dto.size);
+    const parsedRating =
+      dto.rating != null && dto.rating !== '' ? Number(dto.rating) : undefined;
+    const targetSubCategory = dto.subCategory;
     const searchConditions: FilterQuery<Garment> = {
       ...(dto.category ? { category: dto.category } : {}),
-      ...(dto.color ? { color: dto.color } : {}),
+      ...(targetSubCategory ? { subCategory: targetSubCategory } : {}),
+      ...(dto.color ? { color: { $like: `%${dto.color}%` } } : {}),
       ...(normalizedSize ? { size: normalizedSize } : {}),
       ...(dto.archived !== 'true' ? { archived: false } : {}),
+      ...(dto.season ? { seasons: { $like: `%${dto.season}%` } } : {}),
+      ...(dto.occasion ? { occasions: { $like: `%${dto.occasion}%` } } : {}),
+      ...(parsedRating != null ? { rating: { $gte: parsedRating } } : {}),
       ...(dto.keyword
         ? {
             $or: [
               { name: { $like: `%${dto.keyword}%` } },
               { notes: { $like: `%${dto.keyword}%` } },
               { brand: { $like: `%${dto.keyword}%` } },
+              { print: { $like: `%${dto.keyword}%` } },
+              { look: { $like: `%${dto.keyword}%` } },
+              { subCategory: { $like: `%${dto.keyword}%` } },
             ],
           }
         : {}),
@@ -138,9 +152,12 @@ export class GarmentService {
       }
     }
 
+    const subCategory = normalizeSubCategory(dto.category, dto.subCategory);
+
     const garment = this.garmentRepository.create({
       name: dto.name,
       category: dto.category,
+      subCategory,
       brand: dto.brand,
       color: dto.color,
       size: this.normalizeSize(dto.size),
@@ -148,6 +165,14 @@ export class GarmentService {
       washingDetails: dto.washingDetails,
       dateAquired: dto.dateAquired ? new Date(dto.dateAquired) : undefined,
       photo: photo ?? undefined,
+      rating: dto.rating,
+      seasons: dto.seasons,
+      occasions: dto.occasions,
+      purchaseLink: dto.purchaseLink,
+      cost: dto.cost,
+      print: dto.print ?? dto.pattern,
+      look: dto.look ?? dto.style,
+      fit: dto.fit,
     });
 
     if (userId != null) {
@@ -161,13 +186,8 @@ export class GarmentService {
 
   async clone(
     sourceId: number,
-    dto: {
-      name?: string;
+    dto: Partial<CreateGarmentDto> & {
       category: string;
-      brand?: string;
-      color?: string;
-      size?: string;
-      notes?: string;
     },
     userId?: number,
   ): Promise<Garment> {
@@ -194,13 +214,31 @@ export class GarmentService {
       }
     }
 
+    const subCategory =
+      dto.subCategory !== undefined
+        ? normalizeSubCategory(dto.category, dto.subCategory)
+        : source.subCategory;
+
     const garment = this.garmentRepository.create({
       name: dto.name,
       category: dto.category,
+      subCategory,
       brand: dto.brand,
       color: dto.color as any,
       size: this.normalizeSize(dto.size),
       notes: dto.notes,
+      washingDetails: dto.washingDetails ?? source.washingDetails,
+      dateAquired: dto.dateAquired
+        ? new Date(dto.dateAquired)
+        : source.dateAquired,
+      rating: dto.rating ?? source.rating,
+      seasons: dto.seasons ?? source.seasons,
+      occasions: dto.occasions ?? source.occasions,
+      purchaseLink: dto.purchaseLink ?? source.purchaseLink,
+      cost: dto.cost ?? source.cost,
+      print: dto.print ?? dto.pattern ?? source.print,
+      look: dto.look ?? dto.style ?? source.look,
+      fit: dto.fit ?? source.fit,
       photo: photo ?? undefined,
     });
 
@@ -240,7 +278,13 @@ export class GarmentService {
       ...new Set(garments.map((g) => g.category).filter(Boolean)),
     ].sort();
 
-    return { brands, sizes, categories };
+    const subCategories = [
+      ...new Set(
+        garments.map((g) => g.subCategory).filter(Boolean) as string[],
+      ),
+    ].sort();
+
+    return { brands, sizes, categories, subCategories };
   }
 
   async update(
@@ -298,6 +342,17 @@ export class GarmentService {
 
     garment.name = dto.name ?? garment.name;
     garment.category = dto.category ?? garment.category;
+    if ('subCategory' in dto) {
+      garment.subCategory = normalizeSubCategory(
+        garment.category,
+        dto.subCategory,
+      );
+    } else if (dto.category && dto.category !== garment.category) {
+      garment.subCategory = normalizeSubCategory(
+        garment.category,
+        garment.subCategory,
+      );
+    }
     if ('brand' in dto) garment.brand = dto.brand;
     if ('color' in dto) garment.color = dto.color;
     if ('size' in dto) garment.size = this.normalizeSize(dto.size);
@@ -307,6 +362,16 @@ export class GarmentService {
       garment.dateAquired = dto.dateAquired
         ? new Date(dto.dateAquired)
         : undefined;
+    if ('rating' in dto) garment.rating = dto.rating;
+    if ('seasons' in dto) garment.seasons = dto.seasons;
+    if ('occasions' in dto) garment.occasions = dto.occasions;
+    if ('purchaseLink' in dto) garment.purchaseLink = dto.purchaseLink;
+    if ('cost' in dto) garment.cost = dto.cost;
+    if ('print' in dto) garment.print = dto.print;
+    else if ('pattern' in dto) garment.print = dto.pattern;
+    if ('look' in dto) garment.look = dto.look;
+    else if ('style' in dto) garment.look = dto.style;
+    if ('fit' in dto) garment.fit = dto.fit;
 
     await this.garmentRepository.getEntityManager().flush();
     return garment;
@@ -346,6 +411,22 @@ export class GarmentService {
       fileStream,
       photoFileName,
     );
+  }
+
+  async getWearsCount(garmentId: number, userId?: number): Promise<number> {
+    const qb = this.calendarRepository.createQueryBuilder('c');
+    qb.join('c.outfit', 'o')
+      .join('o.garments', 'g')
+      .where({
+        'g.id': garmentId,
+        'c.wornAt': { $ne: null },
+      });
+    if (userId != null) {
+      qb.andWhere({ 'c.owner': userId });
+    } else {
+      qb.andWhere({ 'c.owner': null });
+    }
+    return await qb.getCount();
   }
 
   async remove(id: number, userId?: number): Promise<void> {

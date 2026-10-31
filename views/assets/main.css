@@ -231,8 +231,7 @@ body {
 
 /* Swatch */
 .ms-swatch {
-  /* Change to display: block; to display color dots for each color */
-  display: none;
+  display: inline-block;
   width: 0.75rem;
   height: 0.75rem;
   min-width: 0.75rem;
