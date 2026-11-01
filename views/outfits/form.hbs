@@ -35,6 +35,8 @@
   >
     <input type="hidden" name="returnTo" value="{{returnTo}}" />
     {{#if returnToWeek}}<input type="hidden" name="returnToWeek" value="{{returnToWeek}}" />{{/if}}
+    {{#if returnToView}}<input type="hidden" name="returnToView" value="{{returnToView}}" />{{/if}}
+    {{#if returnToMonth}}<input type="hidden" name="returnToMonth" value="{{returnToMonth}}" />{{/if}}
     <div class="card bg-base-100 shadow-sm mb-4">
       <div
         id="outfit-rows-list"
@@ -99,6 +101,30 @@
       >
     </div>
 
+    {{!-- Rating Stars --}}
+    <div class="form-control">
+      <div class="flex justify-between items-center mb-1">
+        <label class="label p-0"><span class="label-text font-medium">{{t 'lang.RATING'}}</span></label>
+        <button type="button" id="clear-rating-btn"
+          class="text-xs text-base-content/50 hover:text-base-content underline" style="display: none;">{{t
+          'lang.CLEAR'}}</button>
+      </div>
+      <input type="hidden" name="rating" id="rating-input" value="{{#if outfit}}{{outfit.rating}}{{/if}}" />
+      <div class="flex items-center gap-1.5 cursor-pointer py-1" id="star-rating-container">
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="1" title="1 star">★</button>
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="2" title="2 stars">★</button>
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="3" title="3 stars">★</button>
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="4" title="4 stars">★</button>
+        <button type="button" class="star-btn text-2xl transition-transform hover:scale-110 focus:outline-none"
+          data-val="5" title="5 stars">★</button>
+        <span id="rating-text" class="text-xs text-base-content/60 ml-2 font-medium"></span>
+      </div>
+    </div>
+
     <div class="form-control">
       <label class="label">
         <span class="label-text">
@@ -153,5 +179,86 @@
   </div>
   {{/if}}
 </main>
+
+<dialog id="garment-picker-modal" class="modal">
+  <div class="modal-box max-w-lg p-0 overflow-hidden" id="garment-picker-container">
+    {{!-- Loaded dynamically via HTMX --}}
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
+
+<script>
+  (function () {
+    const container = document.getElementById('star-rating-container');
+    const input = document.getElementById('rating-input');
+    const clearBtn = document.getElementById('clear-rating-btn');
+    const textEl = document.getElementById('rating-text');
+    if (!container || !input) return;
+
+    const stars = container.querySelectorAll('.star-btn');
+    const labels = ['', '1 star - Poor', '2 stars - Fair', '3 stars - Good', '4 stars - Very Good', '5 stars - Excellent'];
+
+    function updateDisplay(val) {
+      stars.forEach(btn => {
+        const btnVal = parseInt(btn.dataset.val, 10);
+        if (val && btnVal <= val) {
+          btn.classList.add('text-amber-500');
+          btn.classList.remove('text-base-content/25');
+        } else {
+          btn.classList.remove('text-amber-500');
+          btn.classList.add('text-base-content/25');
+        }
+      });
+      if (textEl) textEl.textContent = val ? labels[val] : '';
+      if (clearBtn) clearBtn.style.display = val ? 'inline-block' : 'none';
+    }
+
+    const initialVal = input.value ? parseInt(input.value, 10) : 0;
+    updateDisplay(initialVal);
+
+    stars.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const val = parseInt(btn.dataset.val, 10);
+        input.value = val;
+        updateDisplay(val);
+      });
+      btn.addEventListener('mouseenter', () => {
+        const val = parseInt(btn.dataset.val, 10);
+        updateDisplay(val);
+      });
+    });
+
+    container.addEventListener('mouseleave', () => {
+      const currentVal = input.value ? parseInt(input.value, 10) : 0;
+      updateDisplay(currentVal);
+    });
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        input.value = '';
+        updateDisplay(0);
+      });
+    }
+  })();
+
+  window.filterPickerGarments = function(query) {
+    const q = (query || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('.picker-item-card');
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const text = (card.dataset.searchText || '').toLowerCase();
+      const match = !q || text.includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) visibleCount++;
+    });
+    const emptyEl = document.getElementById('picker-empty-state');
+    if (emptyEl) {
+      emptyEl.classList.toggle('hidden', visibleCount > 0);
+      emptyEl.classList.toggle('flex', visibleCount === 0);
+    }
+  };
+</script>
 
 {{>garmentModal}} {{>dock}}

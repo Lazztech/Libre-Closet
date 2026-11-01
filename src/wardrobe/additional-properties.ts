@@ -379,18 +379,19 @@ export const LOOKUPS = {
 export const SUBCATEGORIES_BY_CATEGORY: Record<string, string[]> = {
   tops: [
     'T-shirt',
-    'Full Sleeve T-shirt',
-    'Vest',
     'Polo',
-    'Tube Top',
-    'Crop Top',
+    'Full Sleeve T-shirt',
     'Shirt',
+    'Sweater',
     'Pullover',
     'Hoodie',
-    'Blouse',
-    'Sweater',
     'Activewear',
+    'Blouse',
+    'Crop Top',
     'Henly',
+    'Tube Top',
+    'Undertops',
+    'Vest',
     'Others',
   ],
   bottoms: [
@@ -404,6 +405,7 @@ export const SUBCATEGORIES_BY_CATEGORY: Record<string, string[]> = {
     'Tights',
     'Skirt',
     'Sharara',
+    'Underbottoms',
     'Others',
   ],
   outerwear: ['Coat', 'Blazer', 'Jacket', 'Zip-ups', 'Others'],
@@ -439,8 +441,58 @@ export const SUBCATEGORIES_BY_CATEGORY: Record<string, string[]> = {
     'Socks',
     'Others',
   ],
-  innerwear: ['Undertops', 'Underbottoms', 'Others'],
 };
+
+export const SUBCATEGORY_SORT_ORDER: readonly string[] = [
+  't-shirt',
+  'polo',
+  'full sleeve t-shirt',
+  'shirt',
+  'sweater',
+  'pullover',
+  'hoodie',
+];
+
+export function getSubCategoryRank(sub?: string | null): number {
+  if (!sub || !sub.trim()) return 999;
+  const normalized = sub.trim().toLowerCase();
+  const idx = SUBCATEGORY_SORT_ORDER.indexOf(normalized);
+  if (idx >= 0) {
+    return idx;
+  }
+  if (normalized === 'others' || normalized === 'other') return 800;
+  return 700;
+}
+
+export function compareSubCategories(
+  subA?: string | null,
+  subB?: string | null,
+  direction = 1,
+): number {
+  const hasA = subA != null && subA.trim() !== '';
+  const hasB = subB != null && subB.trim() !== '';
+  if (!hasA && !hasB) return 0;
+  if (!hasA) return 1;
+  if (!hasB) return -1;
+
+  const a = subA.trim();
+  const b = subB.trim();
+  const aLower = a.toLowerCase();
+  const bLower = b.toLowerCase();
+  if (aLower === bLower) return 0;
+
+  const rankA = getSubCategoryRank(aLower);
+  const rankB = getSubCategoryRank(bLower);
+
+  if (rankA !== rankB) {
+    return direction * (rankA - rankB);
+  }
+
+  return (
+    direction *
+    a.localeCompare(b, undefined, { sensitivity: 'base', numeric: true })
+  );
+}
 
 export function getSubcategoriesForCategory(
   category?: string | null,

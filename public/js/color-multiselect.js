@@ -36,7 +36,7 @@
       if (!checked.length) {
         pillsEl.innerHTML =
           '<span class="ms-placeholder">' +
-          (det.dataset.placeholder || 'Select…') +
+          (det.dataset.placeholder || 'Select') +
           '</span>';
         countEl.textContent = '0 selected';
         return;

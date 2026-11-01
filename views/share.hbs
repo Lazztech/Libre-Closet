@@ -39,7 +39,14 @@
   {{/if}} {{#if outfit}}
   <div class="card bg-base-100 w-full max-w-sm shadow-sm">
     <div class="card-body gap-4">
-      <h2 class="card-title">{{outfit.name}}</h2>
+      <div class="flex items-center justify-between">
+        <h2 class="card-title">{{outfit.name}}</h2>
+        {{#if outfit.rating}}
+        <div class="flex items-center gap-0.5" title="{{outfit.rating}} of 5 stars">
+          {{renderRatingStars outfit.rating}}
+        </div>
+        {{/if}}
+      </div>
       {{#if outfit.notes}}
       <p class="text-base-content/60 text-sm">{{outfit.notes}}</p>
       {{/if}} {{#if garments.length}}

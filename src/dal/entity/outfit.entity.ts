@@ -27,6 +27,9 @@ export class Outfit extends ShareableId {
   @Property({ nullable: true })
   public notes?: string;
 
+  @Property({ nullable: true })
+  public rating?: number;
+
   @Property({ type: 'json', nullable: true })
   public slots?: OutfitSlot[];
 

@@ -248,7 +248,7 @@ describe('GarmentService with Properties', () => {
     expect(garment.subCategory).toBeUndefined();
   });
 
-  it('supports subcategory on new categories such as headwear, innerwear', async () => {
+  it('supports Undertops on tops and Underbottoms on bottoms', async () => {
     const hat = await service.create(
       {
         name: 'Grey Hat',
@@ -259,15 +259,25 @@ describe('GarmentService with Properties', () => {
     );
     expect(hat.subCategory).toBe('Hat');
 
-    const inner = await service.create(
+    const undertop = await service.create(
       {
         name: 'Tank Top',
-        category: 'innerwear',
+        category: 'tops',
         subCategory: 'Undertops',
       },
       1,
     );
-    expect(inner.subCategory).toBe('Undertops');
+    expect(undertop.subCategory).toBe('Undertops');
+
+    const underbottom = await service.create(
+      {
+        name: 'Boxers',
+        category: 'bottoms',
+        subCategory: 'Underbottoms',
+      },
+      1,
+    );
+    expect(underbottom.subCategory).toBe('Underbottoms');
   });
 
   it('filters garments by subCategory in findAll', async () => {
@@ -298,5 +308,188 @@ describe('GarmentService with Properties', () => {
 
     expect(LOOKUPS.seasonsById.get(3)).toBe('Spring');
     expect(LOOKUPS.seasonsByName.get('spring')).toBe(3);
+  });
+
+  describe('sortGarments', () => {
+    it('sorts by category with subCategory, color, and name as tie-breakers', () => {
+      const garments = [
+        {
+          id: 1,
+          name: 'B Tee',
+          category: 'tops',
+          subCategory: 'T-shirt',
+          color: 'red',
+        },
+        {
+          id: 2,
+          name: 'A Tee',
+          category: 'tops',
+          subCategory: 'T-shirt',
+          color: 'blue',
+        },
+        {
+          id: 3,
+          name: 'Jeans',
+          category: 'bottoms',
+          subCategory: 'Jeans',
+          color: 'blue',
+        },
+        {
+          id: 4,
+          name: 'Shorts',
+          category: 'bottoms',
+          subCategory: 'Shorts',
+          color: 'khaki',
+        },
+      ] as unknown as Garment[];
+
+      const sorted = service.sortGarments(garments, 'category', 'asc');
+      // tops comes before bottoms in wear priority order.
+      // for tops: subCategory is both T-shirt, blue color comes before red color
+      // for bottoms: Jeans comes before Shorts (subCategory tie breaker)
+      expect(sorted.map((g) => g.id)).toEqual([2, 1, 3, 4]);
+    });
+
+    it('sorts by subCategory following priority order, then lexicographically, then others', () => {
+      const garments = [
+        { id: 1, name: 'Item 1', category: 'tops', subCategory: 'Hoodie' },
+        { id: 2, name: 'Item 2', category: 'tops', subCategory: 'T-shirt' },
+        { id: 3, name: 'Item 3', category: 'tops', subCategory: 'Blouse' },
+        { id: 4, name: 'Item 4', category: 'tops', subCategory: 'Sweater' },
+        { id: 5, name: 'Item 5', category: 'tops', subCategory: 'Activewear' },
+        { id: 6, name: 'Item 6', category: 'tops', subCategory: 'Polo' },
+        {
+          id: 7,
+          name: 'Item 7',
+          category: 'tops',
+          subCategory: 'Full Sleeve T-shirt',
+        },
+        { id: 8, name: 'Item 8', category: 'tops', subCategory: 'Shirt' },
+        { id: 9, name: 'Item 9', category: 'tops', subCategory: 'Pullover' },
+        { id: 10, name: 'Item 10', category: 'tops', subCategory: 'Others' },
+      ] as unknown as Garment[];
+
+      const sorted = service.sortGarments(garments, 'subCategory', 'asc');
+      // Expected order:
+      // 1. T-shirt (id: 2)
+      // 2. Polo (id: 6)
+      // 3. Full Sleeve T-shirt (id: 7)
+      // 4. Shirt (id: 8)
+      // 5. Sweater (id: 4)
+      // 6. Pullover (id: 9)
+      // 7. Hoodie (id: 1)
+      // After Hoodie (lexicographical):
+      // 8. Activewear (id: 5)
+      // 9. Blouse (id: 3)
+      // 10. Others (id: 10)
+      expect(sorted.map((g) => g.id)).toEqual([2, 6, 7, 8, 4, 9, 1, 5, 3, 10]);
+    });
+
+    it('sorts by subCategory with category, color, and name as tie-breakers', () => {
+      const garments = [
+        {
+          id: 1,
+          name: 'Item 1',
+          category: 'bottoms',
+          subCategory: 'Others',
+          color: 'red',
+        },
+        {
+          id: 2,
+          name: 'Item 2',
+          category: 'tops',
+          subCategory: 'Others',
+          color: 'blue',
+        },
+        {
+          id: 3,
+          name: 'Item 3',
+          category: 'tops',
+          subCategory: 'Blouse',
+          color: 'white',
+        },
+      ] as unknown as Garment[];
+
+      const sorted = service.sortGarments(garments, 'subCategory', 'asc');
+      // Blouse comes before Others.
+      // For Others: category tops comes before bottoms
+      expect(sorted.map((g) => g.id)).toEqual([3, 2, 1]);
+    });
+
+    it('sorts numbers correctly (rating descending and cost ascending) with nulls at the end', () => {
+      const garments = [
+        { id: 1, name: 'Unrated', rating: null, cost: 50 },
+        { id: 2, name: 'Three Star', rating: 3, cost: 20 },
+        { id: 3, name: 'Five Star', rating: 5, cost: 100 },
+        { id: 4, name: 'One Star', rating: 1, cost: 10 },
+      ] as unknown as Garment[];
+
+      const sortedByRating = service.sortGarments(garments, 'rating', 'desc');
+      // 5 -> 3 -> 1 -> null
+      expect(sortedByRating.map((g) => g.id)).toEqual([3, 2, 4, 1]);
+
+      const sortedByCost = service.sortGarments(garments, 'cost', 'asc');
+      // 10 -> 20 -> 50 -> 100
+      expect(sortedByCost.map((g) => g.id)).toEqual([4, 2, 1, 3]);
+    });
+
+    it('sorts words lexicographically with name', () => {
+      const garments = [
+        { id: 1, name: 'Zebra Tee' },
+        { id: 2, name: 'Apple Hoodie' },
+        { id: 3, name: 'Banana Shorts' },
+      ] as unknown as Garment[];
+
+      const sortedAsc = service.sortGarments(garments, 'name', 'asc');
+      expect(sortedAsc.map((g) => g.name)).toEqual([
+        'Apple Hoodie',
+        'Banana Shorts',
+        'Zebra Tee',
+      ]);
+
+      const sortedDesc = service.sortGarments(garments, 'name', 'desc');
+      expect(sortedDesc.map((g) => g.name)).toEqual([
+        'Zebra Tee',
+        'Banana Shorts',
+        'Apple Hoodie',
+      ]);
+    });
+
+    it('sorts garments by category in wear priority order (tops, bottoms, outerwear, footwear, headwear, accessories, other)', () => {
+      const garments = [
+        { id: 1, category: 'other', name: 'Scarf' },
+        { id: 2, category: 'accessories', name: 'Ring' },
+        { id: 3, category: 'bottoms', name: 'Jeans' },
+        { id: 4, category: 'footwear', name: 'Sneakers' },
+        { id: 5, category: 'tops', name: 'T-Shirt', subCategory: 'T-shirt' },
+        { id: 6, category: 'tops', name: 'Crop Top', subCategory: 'Crop Top' },
+        { id: 7, category: 'headwear', name: 'Cap' },
+        { id: 8, category: 'outerwear', name: 'Coat' },
+      ] as unknown as Garment[];
+
+      const sortedAsc = service.sortGarments(garments, 'category', 'asc');
+      expect(sortedAsc.map((g) => `${g.category}:${g.name}`)).toEqual([
+        'tops:T-Shirt', // subCategory T-shirt priority before Crop Top
+        'tops:Crop Top',
+        'bottoms:Jeans',
+        'outerwear:Coat',
+        'footwear:Sneakers',
+        'headwear:Cap',
+        'accessories:Ring',
+        'other:Scarf',
+      ]);
+
+      const sortedDesc = service.sortGarments(garments, 'category', 'desc');
+      expect(sortedDesc.map((g) => g.category)).toEqual([
+        'other',
+        'accessories',
+        'headwear',
+        'footwear',
+        'outerwear',
+        'bottoms',
+        'tops',
+        'tops',
+      ]);
+    });
   });
 });

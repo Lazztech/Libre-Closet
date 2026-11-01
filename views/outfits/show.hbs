@@ -21,6 +21,13 @@
     <h1 class="text-2xl font-bold flex-1">{{outfit.name}}</h1>
   </div>
 
+  {{#if outfit.rating}}
+  <div class="flex items-center gap-1 mb-3 px-1" title="{{outfit.rating}} of 5 stars">
+    {{renderRatingStars outfit.rating}}
+    <span class="text-xs text-base-content/60 font-semibold ml-1">({{outfit.rating}}/5)</span>
+  </div>
+  {{/if}}
+
   {{#if outfit.notes}}
   <p class="text-base-content/60 text-sm mb-6 px-1">{{outfit.notes}}</p>
   {{/if}} {{!-- Garments grid --}}

@@ -1,0 +1,413 @@
+<div class="p-4 border-b border-base-200 flex items-center justify-between sticky top-0 bg-base-100 z-10">
+  <div class="flex items-center gap-2">
+    <div>
+      <h3 class="font-bold text-lg leading-tight capitalize">{{categoryLabel}}</h3>
+      <p class="text-xs text-base-content/60">{{garments.length}} {{t 'lang.RESULTS'}}</p>
+    </div>
+  </div>
+  <button type="button" class="btn btn-sm btn-circle btn-ghost" onclick="document.getElementById('garment-picker-modal').close()">✕</button>
+</div>
+
+<div class="p-3 border-b border-base-200 bg-base-200/40 space-y-2">
+  <div class="relative">
+    <input
+      type="search"
+      id="picker-search-input"
+      class="input input-bordered input-sm w-full pl-8"
+      placeholder="{{t 'lang.SEARCH_PLACEHOLDER'}}"
+      autocomplete="off"
+      value="{{search.keyword}}"
+      oninput="const kw = document.getElementById('picker-filter-form-keyword'); if (kw) kw.value = this.value; window.filterPickerGarments && window.filterPickerGarments(this.value);"
+    />
+    <svg class="size-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+    </svg>
+  </div>
+
+  {{!-- Filter and Sort trigger toolbar --}}
+  <div class="flex flex-wrap items-center gap-2">
+    <button
+      type="button"
+      class="btn btn-ghost btn-xs gap-1 {{#if activeFilterCount}}btn-active text-primary{{/if}}"
+      onclick="window.togglePickerSection && window.togglePickerSection('filter')"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+      </svg>
+      {{t 'lang.FILTER_SEARCH'}}
+      {{#if activeFilterCount}}
+      <span class="badge badge-primary badge-xs">{{activeFilterCount}}</span>
+      {{/if}}
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-ghost btn-xs gap-1 {{#if activeSortLabel}}btn-active text-primary{{/if}}"
+      onclick="window.togglePickerSection && window.togglePickerSection('sort')"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+      </svg>
+      {{t 'lang.SORT_BY'}}
+    </button>
+
+    {{#if activeSortLabel}}
+    <button
+      type="button"
+      class="badge badge-neutral badge-sm gap-1 cursor-pointer no-underline"
+      title="{{t 'lang.CLEAR_SORT'}}"
+      hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.subCategory}}&subCategory={{search.subCategory}}{{/if}}{{#if search.color}}&color={{search.color}}{{/if}}{{#if search.size}}&size={{search.size}}{{/if}}{{#if search.season}}&season={{search.season}}{{/if}}{{#if search.occasion}}&occasion={{search.occasion}}{{/if}}{{#if search.rating}}&rating={{search.rating}}{{/if}}"
+      hx-target="#garment-picker-container"
+      hx-swap="innerHTML"
+    >
+      <span>{{activeSortLabel}}</span> &times;
+    </button>
+    {{/if}}
+
+    {{#if search.subCategory}}
+    <button
+      type="button"
+      class="badge badge-accent badge-sm gap-1 cursor-pointer capitalize no-underline"
+      hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.color}}&color={{search.color}}{{/if}}{{#if search.size}}&size={{search.size}}{{/if}}{{#if search.season}}&season={{search.season}}{{/if}}{{#if search.occasion}}&occasion={{search.occasion}}{{/if}}{{#if search.rating}}&rating={{search.rating}}{{/if}}{{#if search.sortBy}}&sortBy={{search.sortBy}}{{/if}}{{#if search.sortOrder}}&sortOrder={{search.sortOrder}}{{/if}}"
+      hx-target="#garment-picker-container"
+      hx-swap="innerHTML"
+    >
+      {{search.subCategory}} &times;
+    </button>
+    {{/if}}
+
+    {{#if search.color}}
+    <button
+      type="button"
+      class="badge badge-secondary badge-sm gap-1 cursor-pointer capitalize no-underline"
+      hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.subCategory}}&subCategory={{search.subCategory}}{{/if}}{{#if search.size}}&size={{search.size}}{{/if}}{{#if search.season}}&season={{search.season}}{{/if}}{{#if search.occasion}}&occasion={{search.occasion}}{{/if}}{{#if search.rating}}&rating={{search.rating}}{{/if}}{{#if search.sortBy}}&sortBy={{search.sortBy}}{{/if}}{{#if search.sortOrder}}&sortOrder={{search.sortOrder}}{{/if}}"
+      hx-target="#garment-picker-container"
+      hx-swap="innerHTML"
+    >
+      {{search.color}} &times;
+    </button>
+    {{/if}}
+
+    {{#if search.size}}
+    <button
+      type="button"
+      class="badge badge-accent badge-sm gap-1 cursor-pointer no-underline"
+      hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.subCategory}}&subCategory={{search.subCategory}}{{/if}}{{#if search.color}}&color={{search.color}}{{/if}}{{#if search.season}}&season={{search.season}}{{/if}}{{#if search.occasion}}&occasion={{search.occasion}}{{/if}}{{#if search.rating}}&rating={{search.rating}}{{/if}}{{#if search.sortBy}}&sortBy={{search.sortBy}}{{/if}}{{#if search.sortOrder}}&sortOrder={{search.sortOrder}}{{/if}}"
+      hx-target="#garment-picker-container"
+      hx-swap="innerHTML"
+    >
+      {{search.size}} &times;
+    </button>
+    {{/if}}
+
+    {{#if search.season}}
+    <button
+      type="button"
+      class="badge badge-outline badge-sm gap-1 cursor-pointer no-underline"
+      hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.subCategory}}&subCategory={{search.subCategory}}{{/if}}{{#if search.color}}&color={{search.color}}{{/if}}{{#if search.size}}&size={{search.size}}{{/if}}{{#if search.occasion}}&occasion={{search.occasion}}{{/if}}{{#if search.rating}}&rating={{search.rating}}{{/if}}{{#if search.sortBy}}&sortBy={{search.sortBy}}{{/if}}{{#if search.sortOrder}}&sortOrder={{search.sortOrder}}{{/if}}"
+      hx-target="#garment-picker-container"
+      hx-swap="innerHTML"
+    >
+      {{search.season}} &times;
+    </button>
+    {{/if}}
+
+    {{#if search.occasion}}
+    <button
+      type="button"
+      class="badge badge-outline badge-sm gap-1 cursor-pointer no-underline"
+      hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.subCategory}}&subCategory={{search.subCategory}}{{/if}}{{#if search.color}}&color={{search.color}}{{/if}}{{#if search.size}}&size={{search.size}}{{/if}}{{#if search.season}}&season={{search.season}}{{/if}}{{#if search.rating}}&rating={{search.rating}}{{/if}}{{#if search.sortBy}}&sortBy={{search.sortBy}}{{/if}}{{#if search.sortOrder}}&sortOrder={{search.sortOrder}}{{/if}}"
+      hx-target="#garment-picker-container"
+      hx-swap="innerHTML"
+    >
+      {{search.occasion}} &times;
+    </button>
+    {{/if}}
+
+    {{#if search.rating}}
+    <button
+      type="button"
+      class="badge badge-warning badge-sm gap-1 cursor-pointer no-underline"
+      hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.subCategory}}&subCategory={{search.subCategory}}{{/if}}{{#if search.color}}&color={{search.color}}{{/if}}{{#if search.size}}&size={{search.size}}{{/if}}{{#if search.season}}&season={{search.season}}{{/if}}{{#if search.occasion}}&occasion={{search.occasion}}{{/if}}{{#if search.sortBy}}&sortBy={{search.sortBy}}{{/if}}{{#if search.sortOrder}}&sortOrder={{search.sortOrder}}{{/if}}"
+      hx-target="#garment-picker-container"
+      hx-swap="innerHTML"
+    >
+      ★ {{search.rating}}+ &times;
+    </button>
+    {{/if}}
+  </div>
+</div>
+
+{{!-- Filter Panel (Collapsible) --}}
+<div id="picker-filter-panel" class="hidden border-b border-base-200 bg-base-200/50">
+  <form
+    id="picker-filter-form"
+    hx-get="/outfits/picker-modal"
+    hx-target="#garment-picker-container"
+    hx-swap="innerHTML"
+    class="p-4 space-y-3.5 max-h-[50vh] overflow-y-auto"
+  >
+    <input type="hidden" name="category" value="{{category}}" />
+    <input type="hidden" name="rowId" value="{{rowId}}" />
+    <input type="hidden" name="currentId" value="{{#if currentId}}{{currentId}}{{/if}}" />
+    <input type="hidden" name="sortBy" value="{{search.sortBy}}" />
+    <input type="hidden" name="sortOrder" value="{{search.sortOrder}}" />
+    <input type="hidden" name="keyword" id="picker-filter-form-keyword" value="{{search.keyword}}" />
+
+    {{#if availableSubCategories.length}}
+    <div>
+      <h4 class="font-medium text-xs text-base-content/60 uppercase tracking-wide mb-1.5">{{t 'lang.SUB_CATEGORY'}}</h4>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each availableSubCategories}}
+        <label class="cursor-pointer">
+          <input type="radio" name="subCategory" value="{{this}}" class="hidden peer" {{#ifEquals this ../search.subCategory}}checked{{/ifEquals}}>
+          <span class="badge badge-sm badge-outline peer-checked:badge-accent select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if colors.length}}
+    <div>
+      <h4 class="font-medium text-xs text-base-content/60 uppercase tracking-wide mb-1.5">{{t 'lang.COLOR'}}</h4>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each colors}}
+        <label class="cursor-pointer">
+          <input type="radio" name="color" value="{{this}}" class="hidden peer" {{#ifEquals this ../search.color}}checked{{/ifEquals}}>
+          <span class="badge badge-sm badge-outline peer-checked:badge-secondary select-none capitalize">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if availableSizes.length}}
+    <div>
+      <h4 class="font-medium text-xs text-base-content/60 uppercase tracking-wide mb-1.5">{{t 'lang.SIZE'}}</h4>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each availableSizes}}
+        <label class="cursor-pointer">
+          <input type="radio" name="size" value="{{this}}" class="hidden peer" {{#ifEquals this ../search.size}}checked{{/ifEquals}}>
+          <span class="badge badge-sm badge-outline peer-checked:badge-accent select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if availableSeasons.length}}
+    <div>
+      <h4 class="font-medium text-xs text-base-content/60 uppercase tracking-wide mb-1.5">{{t 'lang.SEASON'}}</h4>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each availableSeasons}}
+        <label class="cursor-pointer">
+          <input type="radio" name="season" value="{{this}}" class="hidden peer" {{#ifEquals this ../search.season}}checked{{/ifEquals}}>
+          <span class="badge badge-sm badge-outline peer-checked:badge-info select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if availableOccasions.length}}
+    <div>
+      <h4 class="font-medium text-xs text-base-content/60 uppercase tracking-wide mb-1.5">{{t 'lang.OCCASION'}}</h4>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each availableOccasions}}
+        <label class="cursor-pointer">
+          <input type="radio" name="occasion" value="{{this}}" class="hidden peer" {{#ifEquals this ../search.occasion}}checked{{/ifEquals}}>
+          <span class="badge badge-sm badge-outline peer-checked:badge-secondary select-none">{{this}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <div>
+      <h4 class="font-medium text-xs text-base-content/60 uppercase tracking-wide mb-1.5">{{t 'lang.RATING'}}</h4>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each ratingOptions}}
+        <label class="cursor-pointer">
+          <input type="radio" name="rating" value="{{this}}" class="hidden peer" {{#ifEquals this ../search.rating}}checked{{/ifEquals}}>
+          <span class="badge badge-sm badge-outline peer-checked:badge-warning select-none">★ {{this}} & up</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between pt-2 border-t border-base-300">
+      <button
+        type="button"
+        class="btn btn-ghost btn-xs"
+        hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.sortBy}}&sortBy={{search.sortBy}}{{/if}}{{#if search.sortOrder}}&sortOrder={{search.sortOrder}}{{/if}}"
+        hx-target="#garment-picker-container"
+        hx-swap="innerHTML"
+      >
+        {{t 'lang.CLEAR_FILTERS'}}
+      </button>
+      <button type="submit" class="btn btn-primary btn-xs">
+        {{t 'lang.APPLY_FILTERS'}}
+      </button>
+    </div>
+  </form>
+</div>
+
+{{!-- Sort Panel (Collapsible) --}}
+<div id="picker-sort-panel" class="hidden border-b border-base-200 bg-base-200/50">
+  <form
+    id="picker-sort-form"
+    hx-get="/outfits/picker-modal"
+    hx-target="#garment-picker-container"
+    hx-swap="innerHTML"
+    class="p-4 space-y-3.5 max-h-[50vh] overflow-y-auto"
+  >
+    <input type="hidden" name="category" value="{{category}}" />
+    <input type="hidden" name="rowId" value="{{rowId}}" />
+    <input type="hidden" name="currentId" value="{{#if currentId}}{{currentId}}{{/if}}" />
+    <input type="hidden" name="keyword" value="{{search.keyword}}" />
+    <input type="hidden" name="subCategory" value="{{search.subCategory}}" />
+    <input type="hidden" name="color" value="{{search.color}}" />
+    <input type="hidden" name="size" value="{{search.size}}" />
+    <input type="hidden" name="season" value="{{search.season}}" />
+    <input type="hidden" name="occasion" value="{{search.occasion}}" />
+    <input type="hidden" name="rating" value="{{search.rating}}" />
+
+    {{!-- Property selection --}}
+    <div>
+      <h4 class="font-medium text-xs text-base-content/60 uppercase tracking-wide mb-1.5">{{t 'lang.PROPERTIES'}}</h4>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each sortPropertyOptions}}
+        <label class="cursor-pointer">
+          <input
+            type="radio"
+            name="sortBy"
+            value="{{this.key}}"
+            class="hidden peer"
+            {{#ifEquals this.key ../currentSortBy}}checked{{/ifEquals}}
+            onchange="const d = ['rating', 'recently_added', 'dateAquired'].includes(this.value) ? 'desc' : 'asc'; const r = document.querySelector('#picker-sort-form input[name=sortOrder][value=' + d + ']'); if (r) r.checked = true;"
+          />
+          <span class="badge badge-sm badge-outline peer-checked:badge-primary select-none py-2.5 px-3">{{this.label}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Direction selection --}}
+    <div>
+      <h4 class="font-medium text-xs text-base-content/60 uppercase tracking-wide mb-1.5">{{t 'lang.SORT_DIRECTION'}}</h4>
+      <div class="flex flex-col gap-1.5">
+        <label class="cursor-pointer flex items-center gap-2 p-2 rounded-lg border border-base-300 hover:bg-base-100 has-[:checked]:border-primary has-[:checked]:bg-primary/5 transition-all">
+          <input type="radio" name="sortOrder" value="asc" class="radio radio-xs radio-primary"
+            {{#ifEquals currentSortOrder 'asc'}}checked{{/ifEquals}} />
+          <span class="text-xs font-medium">{{t 'lang.SORT_ASC'}}</span>
+        </label>
+        <label class="cursor-pointer flex items-center gap-2 p-2 rounded-lg border border-base-300 hover:bg-base-100 has-[:checked]:border-primary has-[:checked]:bg-primary/5 transition-all">
+          <input type="radio" name="sortOrder" value="desc" class="radio radio-xs radio-primary"
+            {{#ifEquals currentSortOrder 'desc'}}checked{{/ifEquals}} />
+          <span class="text-xs font-medium">{{t 'lang.SORT_DESC'}}</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between pt-2 border-t border-base-300">
+      <button
+        type="button"
+        class="btn btn-ghost btn-xs"
+        hx-get="/outfits/picker-modal?category={{uri category}}&rowId={{rowId}}&currentId={{#if currentId}}{{currentId}}{{/if}}{{#if search.keyword}}&keyword={{search.keyword}}{{/if}}{{#if search.subCategory}}&subCategory={{search.subCategory}}{{/if}}{{#if search.color}}&color={{search.color}}{{/if}}{{#if search.size}}&size={{search.size}}{{/if}}{{#if search.season}}&season={{search.season}}{{/if}}{{#if search.occasion}}&occasion={{search.occasion}}{{/if}}{{#if search.rating}}&rating={{search.rating}}{{/if}}"
+        hx-target="#garment-picker-container"
+        hx-swap="innerHTML"
+      >
+        {{t 'lang.CLEAR_SORT'}}
+      </button>
+      <button type="submit" class="btn btn-primary btn-xs">
+        {{t 'lang.APPLY_SORT'}}
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="p-4 max-h-[60vh] overflow-y-auto">
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="picker-items-grid">
+    {{!-- None / Clear card --}}
+    <div
+      class="picker-item-card border-2 border-dashed {{#unless currentId}}border-primary bg-primary/10{{else}}border-base-300 hover:border-primary/50{{/unless}} rounded-box p-3 flex flex-col items-center justify-center text-center cursor-pointer min-h-[140px] transition-all"
+      hx-get="/outfits/row-fragment?category={{uri category}}&garmentId=0&rowId={{rowId}}"
+      hx-target="#{{rowId}}"
+      hx-swap="outerHTML"
+      onclick="document.getElementById('garment-picker-modal').close()"
+      data-search-text="none empty clear"
+    >
+      <div class="size-12 rounded-full bg-base-200 flex items-center justify-center mb-2 text-base-content/40">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+        </svg>
+      </div>
+      <span class="text-xs font-semibold">{{t 'lang.CLEAR'}}</span>
+      <span class="text-[10px] text-base-content/50">{{t 'lang.CLEAR_SLOT'}}</span>
+      {{#unless currentId}}
+      <span class="badge badge-primary badge-xs mt-1">{{t 'lang.SELECTED'}}</span>
+      {{/unless}}
+    </div>
+
+    {{#each garments}}
+    <div
+      class="picker-item-card border {{#ifEquals this.id ../currentId}}border-primary ring-2 ring-primary/40 bg-primary/5{{else}}border-base-200 hover:border-primary/60 bg-base-100 hover:shadow-sm{{/ifEquals}} rounded-box p-2.5 flex flex-col items-center cursor-pointer transition-all relative group"
+      hx-get="/outfits/row-fragment?category={{uri ../category}}&garmentId={{this.id}}&rowId={{../rowId}}"
+      hx-target="#{{../rowId}}"
+      hx-swap="outerHTML"
+      onclick="document.getElementById('garment-picker-modal').close()"
+      data-search-text="{{this.name}} {{this.subCategory}} {{this.brand}} {{this.color}} {{this.size}}"
+    >
+      {{#ifEquals this.id ../currentId}}
+      <div class="absolute top-1.5 right-1.5 z-10 bg-primary text-primary-content rounded-full p-0.5 shadow">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5">
+          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      {{/ifEquals}}
+
+      {{#if this.rating}}
+      <div class="absolute top-1.5 left-1.5 z-10 bg-base-100/90 backdrop-blur-xs text-amber-500 font-bold text-[10px] px-1.5 py-0.5 rounded-full shadow-xs border border-base-200 flex items-center gap-0.5">
+        ★ {{this.rating}}
+      </div>
+      {{/if}}
+
+      <div class="size-20 rounded-lg overflow-hidden bg-base-200 flex items-center justify-center mb-2 shrink-0">
+        {{#if this.photo}}
+        <img src="/file/nobg/{{this.photo.fileName}}" alt="{{this.name}}" class="size-full object-cover group-hover:scale-105 transition-transform" />
+        {{else}}
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8 text-base-content/30">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+        </svg>
+        {{/if}}
+      </div>
+
+      <span class="text-xs font-semibold text-center truncate w-full" title="{{this.name}}">{{this.name}}</span>
+      {{#if this.subCategory}}
+      <span class="text-[10px] text-base-content/60 truncate max-w-full">{{this.subCategory}}</span>
+      {{else if this.brand}}
+      <span class="text-[10px] text-base-content/60 truncate max-w-full">{{this.brand}}</span>
+      {{/if}}
+    </div>
+    {{/each}}
+  </div>
+
+  <div id="picker-empty-state" class="{{#if garments.length}}hidden{{else}}flex{{/if}} flex-col items-center justify-center py-10 text-base-content/50 gap-2">
+    <p class="text-sm">{{t 'lang.NO_MATCHES'}}</p>
+  </div>
+</div>
+
+<script>
+  window.togglePickerSection = function(section) {
+    const filterPanel = document.getElementById('picker-filter-panel');
+    const sortPanel = document.getElementById('picker-sort-panel');
+    if (section === 'filter') {
+      if (sortPanel) sortPanel.classList.add('hidden');
+      if (filterPanel) filterPanel.classList.toggle('hidden');
+    } else if (section === 'sort') {
+      if (filterPanel) filterPanel.classList.add('hidden');
+      if (sortPanel) sortPanel.classList.toggle('hidden');
+    }
+  };
+</script>

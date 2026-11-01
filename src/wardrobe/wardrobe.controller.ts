@@ -18,7 +18,7 @@ import {
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ConditionalAuthGuard } from '../auth/conditional-auth.guard';
 import { Payload } from '../auth/dto/payload.dto';
-import { GarmentCategory } from './garment-category.enum';
+import { GarmentCategory, compareCategories } from './garment-category.enum';
 import { GarmentColor } from './garment-color.enum';
 import { GarmentService } from './garment.service';
 import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
@@ -109,12 +109,75 @@ export class WardrobeController {
     const customCategories = filters.categories.filter(
       (c) => !enumValues.includes(c),
     );
-    const availableCategories = [...enumValues, ...customCategories].map(
-      (value) => ({
+    const availableCategories = [...enumValues, ...customCategories]
+      .sort((a, b) => compareCategories(a, b, 1))
+      .map((value) => ({
         value,
         label: this.garmentService.resolveCategoryLabel(value, i18n),
-      }),
-    );
+      }));
+    const currentSortBy = query.sortBy || 'recently_added';
+    const defaultSortOrder = [
+      'rating',
+      'recently_added',
+      'dateAquired',
+    ].includes(currentSortBy)
+      ? 'desc'
+      : 'asc';
+    const currentSortOrder = query.sortOrder || defaultSortOrder;
+
+    let activeSortLabel: string | null = null;
+    if (query.sortBy && query.sortBy !== 'recently_added') {
+      const propMap: Record<string, string> = {
+        name: i18n.t('lang.NAME'),
+        category: i18n.t('lang.CATEGORY'),
+        subCategory: i18n.t('lang.SUB_CATEGORY'),
+        rating: i18n.t('lang.RATING'),
+        cost: i18n.t('lang.COST'),
+        brand: i18n.t('lang.BRAND'),
+        color: i18n.t('lang.COLOR'),
+        size: i18n.t('lang.SIZE'),
+        dateAquired: i18n.t('lang.DATE_AQUIRED'),
+        season: i18n.t('lang.SEASON'),
+        seasons: i18n.t('lang.SEASONS'),
+        occasion: i18n.t('lang.OCCASION'),
+        occasions: i18n.t('lang.OCCASIONS'),
+        print: i18n.t('lang.PRINT'),
+        look: i18n.t('lang.LOOK'),
+        fit: i18n.t('lang.FIT'),
+      };
+      const propLabel = propMap[query.sortBy] || query.sortBy;
+      let orderLabel = '';
+      if (['rating', 'cost'].includes(query.sortBy)) {
+        orderLabel =
+          currentSortOrder === 'desc' ? 'High to Low' : 'Low to High';
+      } else if (query.sortBy === 'dateAquired') {
+        orderLabel = currentSortOrder === 'desc' ? 'Newest' : 'Oldest';
+      } else if (['category', 'subCategory'].includes(query.sortBy)) {
+        orderLabel = currentSortOrder === 'desc' ? 'Reverse' : 'Priority';
+      } else {
+        orderLabel = currentSortOrder === 'desc' ? 'Z–A' : 'A–Z';
+      }
+      activeSortLabel = `${propLabel} (${orderLabel})`;
+    }
+
+    const sortPropertyOptions = [
+      { key: 'recently_added', label: i18n.t('lang.SORT_RECENTLY_ADDED') },
+      { key: 'category', label: i18n.t('lang.CATEGORY') },
+      { key: 'subCategory', label: i18n.t('lang.SUB_CATEGORY') },
+      { key: 'name', label: i18n.t('lang.NAME') },
+      { key: 'rating', label: i18n.t('lang.RATING') },
+      { key: 'cost', label: i18n.t('lang.COST') },
+      { key: 'brand', label: i18n.t('lang.BRAND') },
+      { key: 'color', label: i18n.t('lang.COLOR') },
+      { key: 'size', label: i18n.t('lang.SIZE') },
+      { key: 'dateAquired', label: i18n.t('lang.DATE_AQUIRED') },
+      { key: 'season', label: i18n.t('lang.SEASON') },
+      { key: 'occasion', label: i18n.t('lang.OCCASION') },
+      { key: 'print', label: i18n.t('lang.PRINT') },
+      { key: 'look', label: i18n.t('lang.LOOK') },
+      { key: 'fit', label: i18n.t('lang.FIT') },
+    ];
+
     return {
       garments,
       availableCategories,
@@ -126,6 +189,10 @@ export class WardrobeController {
       availableOccasions: OCCASIONS.map((o) => o.name),
       ratingOptions: [5, 4, 3, 2, 1],
       search: query,
+      currentSortBy,
+      currentSortOrder,
+      activeSortLabel,
+      sortPropertyOptions,
       sharedWardrobes,
       viewOwner: viewOwner ?? null,
       canEdit,
@@ -152,10 +219,12 @@ export class WardrobeController {
     const customCategories = filters.categories.filter(
       (c) => !enumValues.includes(c),
     );
-    const categories = [...enumValues, ...customCategories].map((value) => ({
-      value,
-      label: this.garmentService.resolveCategoryLabel(value, i18n),
-    }));
+    const categories = [...enumValues, ...customCategories]
+      .sort((a, b) => compareCategories(a, b, 1))
+      .map((value) => ({
+        value,
+        label: this.garmentService.resolveCategoryLabel(value, i18n),
+      }));
     return {
       categories,
       colors: Object.values(GarmentColor),
@@ -365,10 +434,12 @@ export class WardrobeController {
     const customCategories = filters.categories.filter(
       (c) => !enumValues.includes(c),
     );
-    const categories = [...enumValues, ...customCategories].map((value) => ({
-      value,
-      label: this.garmentService.resolveCategoryLabel(value, i18n),
-    }));
+    const categories = [...enumValues, ...customCategories]
+      .sort((a, b) => compareCategories(a, b, 1))
+      .map((value) => ({
+        value,
+        label: this.garmentService.resolveCategoryLabel(value, i18n),
+      }));
     const knownColorNames = new Set(COLORS.map((c) => c.name.toLowerCase()));
     const savedColors =
       garment.color
@@ -407,10 +478,12 @@ export class WardrobeController {
     const customCategories = filters.categories.filter(
       (c) => !enumValues.includes(c),
     );
-    const categories = [...enumValues, ...customCategories].map((value) => ({
-      value,
-      label: this.garmentService.resolveCategoryLabel(value, i18n),
-    }));
+    const categories = [...enumValues, ...customCategories]
+      .sort((a, b) => compareCategories(a, b, 1))
+      .map((value) => ({
+        value,
+        label: this.garmentService.resolveCategoryLabel(value, i18n),
+      }));
     return {
       garment,
       isClone: true,

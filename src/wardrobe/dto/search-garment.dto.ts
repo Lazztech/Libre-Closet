@@ -11,4 +11,6 @@ export interface SearchGarmentDto {
   season?: string;
   occasion?: string;
   rating?: number | string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }

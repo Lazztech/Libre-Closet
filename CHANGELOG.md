@@ -9,12 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
+- Calendar Month and Week view toggle: view scheduled outfits across the entire month in a responsive 7-column calendar grid or drill down into the week view
+- Calendar Jump to Date picker: navigate directly to any date in the past or future with instant jump
+- Calendar toolbar controls with Previous, Next, and Today quick-jump buttons
+- Multi-language localization for calendar view toggle, jump-to-date, and navigation controls across all 7 supported languages (English, Danish, German, Spanish, French, Italian, Russian)
 - Sub-category garment property with dynamic, pre-defined selection scoped to each category (e.g., T-shirt/Sweater for Tops, Shorts/Jeans/Trousers for Bottoms, Sneakers/Boots for Footwear)
-- Expanded categories list with Headwear and Innerwear
+- Expanded categories list with Headwear
 - Database migrations for SQLite and PostgreSQL adding nullable columns for sub-category and new garment properties without data loss
 - Multi-language localization support for sub-category, garment properties, and new category labels across all 7 supported languages (English, Danish, German, Spanish, French, Italian, Russian)
 - Extended garment properties: Rating (1-5 stars), Seasons, Occasions, Cost, Purchase link, Look, Fit, and Print
-- Filter modal in wardrobe view with Category, Sub-category, season, occasion, and minimum star rating filters
+- Filter modal and property sorting in wardrobe view with multi-tier priority tie-breaking (e.g. Category -> Sub-category -> Color -> Name, Rating -> Cost -> Name) and ascending/descending order controls
+- Outfit rating (1-5 stars) support with interactive star selector on outfit builder/editor, and star displays on outfit cards, show view, and shared views
+- Outfit garment picker modal with Filter Search and Sort By options, interactive filter panels (sub-category, color, size, season, occasion, rating), property sorting controls, active badge pills, live search, and slot clearing
+- Paginated Outfits view displaying the most recent 50 outfits first with an asynchronous "Load More" button for fetching subsequent batches via HTMX
+- Light and dark theme switcher with instant toggle, local storage persistence, and OS preference detection, accessible from both navbar and drawer
 - Wears count (number of times worn in outfits) and dynamic Cost Per Wear displayed in garment details view
 - Color swatch dots rendered beside color names in garment details view
 - Configurable currency via `CURRENCY` environment variable with localized currency formatting

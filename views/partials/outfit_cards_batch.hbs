@@ -1,0 +1,17 @@
+{{#each outfits}}
+{{>outfit_card this}}
+{{/each}}
+{{#if hasMore}}
+<div id="load-more-container" class="w-full flex justify-center mt-4">
+  <button
+    type="button"
+    class="btn btn-outline btn-primary gap-2"
+    hx-get="/outfits?offset={{nextOffset}}&limit={{limit}}&batch=true"
+    hx-target="#load-more-container"
+    hx-swap="outerHTML"
+  >
+    <span class="loading loading-spinner loading-xs htmx-indicator"></span>
+    {{t 'lang.LOAD_MORE'}}
+  </button>
+</div>
+{{/if}}

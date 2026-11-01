@@ -1,0 +1,20 @@
+<form
+  method="post"
+  action="/calendar/{{entryId}}/worn"
+  class="shrink-0"
+  hx-post="/calendar/{{entryId}}/worn"
+  hx-target="this"
+  hx-swap="outerHTML"
+  onclick="event.stopPropagation()"
+>
+  <input type="hidden" name="month" value="{{month}}" />
+  <input type="hidden" name="view" value="month" />
+  <input type="hidden" name="week" value="{{week}}" />
+  <button
+    type="submit"
+    class="{{btnClass}} transition-all"
+    title="{{title}}"
+  >
+    ✓
+  </button>
+</form>

@@ -1,232 +1,488 @@
 {{>navbar}}
 
 <main class="p-4 pt-20 pb-24">
-  {{!-- Responsive grid: 1 col → 2 col (400px+) → 4 col (lg) → 8 col horizontal
-  (2xl) --}}
-  <div
-    id="week-grid"
-    class="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8 gap-3"
-  >
-    {{!-- Slot 1: Mini month calendar ──────────────────────────────────── --}}
-    <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
-      {{!-- Month header with prev/next navigation --}}
-      <div
-        class="flex items-center justify-between px-3 py-2 bg-base-300 border-b border-base-300"
-      >
+  {{!-- Calendar Top Controls: Period Navigation, Jump to Date, and Week/Month View Toggle --}}
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+    {{!-- Left: Period navigation (Prev, Next, Today, and Period Heading) --}}
+    <div class="flex flex-wrap items-center gap-2">
+      <div class="join">
         <a
-          href="/calendar?week={{prevMonthWeekParam}}&calMonth={{prevMonthParam}}"
-          class="btn btn-ghost btn-xs btn-square"
-          aria-label="Previous month"
-          >‹</a
-        >
-        <p
-          class="text-xs font-semibold uppercase tracking-wide text-base-content/50"
-        >
-          {{monthName}} {{year}}
-        </p>
+          href="{{prevNavUrl}}"
+          class="btn btn-sm btn-outline join-item"
+          aria-label="{{t 'lang.CALENDAR_PREV'}}"
+          title="{{t 'lang.CALENDAR_PREV'}}"
+        >‹</a>
         <a
-          href="/calendar?week={{nextMonthWeekParam}}&calMonth={{nextMonthParam}}"
-          class="btn btn-ghost btn-xs btn-square"
-          aria-label="Next month"
-          >›</a
+          href="{{todayNavUrl}}"
+          class="btn btn-sm btn-outline join-item {{#if isCurrentPeriod}}btn-active{{/if}}"
         >
+          {{t 'lang.CALENDAR_TODAY'}}
+        </a>
+        <a
+          href="{{nextNavUrl}}"
+          class="btn btn-sm btn-outline join-item"
+          aria-label="{{t 'lang.CALENDAR_NEXT'}}"
+          title="{{t 'lang.CALENDAR_NEXT'}}"
+        >›</a>
       </div>
 
-      <div class="p-3 flex-1">
-        <table class="w-full table-fixed text-[10px] select-none">
-          <thead>
-            <tr>
-              <th
-                class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
-              >
-                {{t 'lang.CALENDAR_CAL_SUN_LETTER'}}
-              </th>
-              <th
-                class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
-              >
-                {{t 'lang.CALENDAR_CAL_MON_LETTER'}}
-              </th>
-              <th
-                class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
-              >
-                {{t 'lang.CALENDAR_CAL_TUE_LETTER'}}
-              </th>
-              <th
-                class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
-              >
-                {{t 'lang.CALENDAR_CAL_WED_LETTER'}}
-              </th>
-              <th
-                class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
-              >
-                {{t 'lang.CALENDAR_CAL_THU_LETTER'}}
-              </th>
-              <th
-                class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
-              >
-                {{t 'lang.CALENDAR_CAL_FRI_LETTER'}}
-              </th>
-              <th
-                class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
-              >
-                {{t 'lang.CALENDAR_CAL_SAT_LETTER'}}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each calendarWeeks}}
-            <tr>
-              {{#each this.days}}
-              <td class="text-center p-0">
-                <a
-                  href="/calendar?week={{../weekParam}}"
-                  class="flex items-center justify-center size-5 mx-auto my-0.5 rounded-full text-[10px] {{this.calCellClass}}"
-                  >{{this.dayNum}}</a
-                >
-              </td>
-              {{/each}}
-            </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      </div>
+      <h1 class="text-base sm:text-lg font-bold tracking-tight text-base-content ml-1">
+        {{periodHeading}}
+      </h1>
     </div>
 
-    {{!-- Slots 2–8: Day columns (Sun → Sat) ─────────────────────────── --}}
-    {{#each days}}
-    <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
-      {{!-- Day header --}}
-      <div
-        class="flex items-center gap-1.5 px-3 py-2 bg-base-300 border-b border-base-300"
+    {{!-- Right: Jump to Date + View Toggle (Week | Month) --}}
+    <div class="flex flex-wrap items-center gap-2">
+      {{!-- Jump to date input --}}
+      <form
+        id="jump-to-date-form"
+        class="flex items-center gap-1.5"
+        onsubmit="event.preventDefault(); window.lcGoToDate();"
       >
-        <span
-          class="text-xs font-semibold
-                     {{#if this.isToday}}text-primary{{else}}text-base-content/50{{/if}}"
-        >
-          {{this.dayName}}
-        </span>
-        <span
-          class="text-base font-bold {{#if this.isToday}}text-primary{{/if}}"
-        >
-          {{this.dayNum}}
-        </span>
-        {{#if this.weather}}
+        <input
+          type="date"
+          id="calendar-jump-date"
+          class="input input-sm input-bordered text-xs focus:outline-primary"
+          value="{{jumpDateValue}}"
+          aria-label="{{t 'lang.CALENDAR_GO_TO_DATE'}}"
+          onchange="window.lcGoToDate();"
+        />
         <button
-          type="button"
-          class="ml-auto flex items-center gap-1 px-1.5 py-0.5 -mr-1.5 rounded-full cursor-pointer hover:bg-base-100/50 transition-colors"
-          hx-get="{{this.weather.detailsUrl}}"
-          hx-target="#weather-modal-container"
-          hx-swap="innerHTML"
-          aria-haspopup="dialog"
-          aria-label="{{this.weather.label}}"
+          type="submit"
+          class="btn btn-sm btn-outline btn-square"
+          aria-label="{{t 'lang.CALENDAR_GO'}}"
+          title="{{t 'lang.CALENDAR_GO'}}"
         >
-          <span
-            class="text-base leading-none"
-            aria-hidden="true"
-            title="{{this.weather.label}}"
-            >{{this.weather.emoji}}</span
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-          <span
-            class="text-[10px] text-base-content/50 tabular-nums whitespace-nowrap"
-          >
-            {{this.weather.tempMin}}{{this.weather.tempUnit}} -
-            {{this.weather.tempMax}}{{this.weather.tempUnit}}
-          </span>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+            />
+          </svg>
         </button>
-        {{/if}}
-      </div>
+      </form>
 
-      {{!-- Outfit chips --}}
-      <div class="flex flex-col gap-1 p-3 flex-1">
-        {{#each this.entries}}
-        <div class="flex items-center gap-2 mb-1">
-          {{!-- Outfit bar: click navigates to edit page; × inside deletes --}}
-          <div
-            class="min-w-0 flex-1 text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1 leading-tight cursor-pointer"
-            style="{{#if this.wornAt}}background:hsl({{this.outfit.chipHue}} 65% 55% / 0.22);border-color:hsl({{this.outfit.chipHue}} 65% 60% / 0.45);color:hsl({{this.outfit.chipHue}} 80% 75%){{else}}background:hsl({{this.outfit.chipHue}} 55% 50% / 0.08);border-color:hsl({{this.outfit.chipHue}} 55% 55% / 0.22);color:hsl({{this.outfit.chipHue}} 50% 65%){{/if}}"
-            onclick="window.location.href='/outfits/{{this.outfit.id}}/edit?returnTo=/calendar&returnToWeek={{../dateParam}}'"
+      {{!-- Week / Month Toggle --}}
+      <div class="join border border-base-300 rounded-lg p-0.5 bg-base-200">
+        <a
+          href="{{weekViewUrl}}"
+          class="btn btn-xs sm:btn-sm join-item rounded-md border-0 {{#ifEquals view 'week'}}btn-primary shadow-sm font-semibold{{else}}btn-ghost text-base-content/70{{/ifEquals}}"
+        >
+          {{t 'lang.CALENDAR_VIEW_WEEK'}}
+        </a>
+        <a
+          href="{{monthViewUrl}}"
+          class="btn btn-xs sm:btn-sm join-item rounded-md border-0 {{#ifEquals view 'month'}}btn-primary shadow-sm font-semibold{{else}}btn-ghost text-base-content/70{{/ifEquals}}"
+        >
+          {{t 'lang.CALENDAR_VIEW_MONTH'}}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="calendar-view-container">
+    {{#ifEquals view 'month'}}
+    {{!-- Month View: Weekday headers --}}
+    <div class="grid grid-cols-7 gap-1 md:gap-2 mb-1.5 text-center">
+      {{#each weekDayNames}}
+      <div class="text-[11px] md:text-xs font-semibold text-base-content/60 uppercase py-1">
+        <span class="md:hidden">{{this.short}}</span>
+        <span class="hidden md:inline">{{this.full}}</span>
+      </div>
+      {{/each}}
+    </div>
+
+    {{!-- Month View: 7-column calendar grid for the whole month --}}
+    <div
+      id="month-grid"
+      class="grid grid-cols-7 gap-1 md:gap-2"
+    >
+      {{#each monthDays}}
+      <div
+        class="bg-base-200 rounded-lg md:rounded-xl p-1 md:p-2 min-w-0 flex flex-col min-h-[85px] sm:min-h-[105px] md:min-h-[135px] {{#if this.isToday}}ring-2 ring-primary bg-primary/5{{/if}} {{#unless this.inMonth}}opacity-40 bg-base-200/50{{/unless}} transition-all"
+      >
+        {{!-- Day header --}}
+        <div class="flex items-center justify-between gap-1 mb-1 min-w-0">
+          <a
+            href="/calendar?view=week&week={{this.dateParam}}"
+            class="size-5 sm:size-6 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-semibold transition-colors shrink-0 {{#if this.isToday}}bg-primary text-primary-content font-bold{{else}}text-base-content/70 hover:bg-base-300{{/if}}"
+            aria-label="{{this.dateParam}}"
+            title="{{t 'lang.CALENDAR_VIEW_WEEK'}}"
           >
-            {{!-- Left: garment thumbnails if available, else name/untitled
-            fallback --}} {{#if this.outfit.garmentPhotos.length}}
-            <span
-              class="flex items-center gap-0.5 min-w-0 overflow-hidden flex-1"
-            >
+            {{this.dayNum}}
+          </a>
+          {{#if this.weather}}
+          <button
+            type="button"
+            class="flex items-center gap-0.5 px-1 py-0.5 rounded cursor-pointer hover:bg-base-100/50 transition-colors shrink-0"
+            hx-get="{{this.weather.detailsUrl}}"
+            hx-target="#weather-modal-container"
+            hx-swap="innerHTML"
+            aria-haspopup="dialog"
+            aria-label="{{this.weather.label}}"
+          >
+            <span class="text-xs sm:text-sm leading-none" aria-hidden="true" title="{{this.weather.label}}">{{this.weather.emoji}}</span>
+            <span class="text-[10px] text-base-content/50 tabular-nums hidden lg:inline">{{this.weather.tempMax}}{{this.weather.tempUnit}}</span>
+          </button>
+          {{/if}}
+        </div>
+
+        {{!-- Outfit chips for this day --}}
+        <div class="flex flex-col gap-1 flex-1 min-w-0 overflow-hidden">
+          {{#each this.entries}}
+          <div
+            class="group relative min-w-0 text-left px-1.5 py-1 rounded-md text-[11px] font-medium border flex items-center gap-1 leading-tight cursor-pointer"
+            style="{{#if this.wornAt}}background:hsl({{this.outfit.chipHue}} 65% 55% / 0.22);border-color:hsl({{this.outfit.chipHue}} 65% 60% / 0.45);color:hsl({{this.outfit.chipHue}} 80% 75%){{else}}background:hsl({{this.outfit.chipHue}} 55% 50% / 0.08);border-color:hsl({{this.outfit.chipHue}} 55% 55% / 0.22);color:hsl({{this.outfit.chipHue}} 50% 65%){{/if}}"
+            onclick="window.location.href='/outfits/{{this.outfit.id}}/edit?returnTo=/calendar&returnToView=month&returnToMonth={{../../currentMonthParam}}'"
+          >
+            {{#if this.wornAt}}
+            <span class="text-success font-bold text-xs shrink-0" title="{{t 'lang.CALENDAR_WORN'}}">✓</span>
+            {{/if}}
+
+            {{#if this.outfit.garmentPhotos.length}}
+            <span class="flex items-center gap-0.5 min-w-0 overflow-hidden flex-1">
               {{#each this.outfit.garmentPhotos}}
               <img
                 src="/file/nobg/{{this}}"
                 alt=""
-                class="size-6 rounded object-cover shrink-0"
+                class="size-4.5 sm:size-5 md:size-6 rounded object-cover shrink-0"
               />
-              {{/each}} {{#if this.outfit.morePhotos}}<span
-                class="shrink-0 text-base-content/40 leading-none"
-                >…</span
-              >{{/if}}
+              {{/each}}
+              {{#if this.outfit.morePhotos}}<span class="shrink-0 text-base-content/40 leading-none">…</span>{{/if}}
             </span>
             {{else}}
-            <span class="truncate flex-1"
-              >{{#if this.outfit.name}}{{this.outfit.name}}{{else}}{{t
-              'lang.UNTITLED_OUTFIT'}}{{/if}}</span
+            <span class="truncate flex-1 font-medium">
+              {{#if this.outfit.name}}{{this.outfit.name}}{{else}}{{t 'lang.UNTITLED_OUTFIT'}}{{/if}}
+            </span>
+            {{/if}}
+
+            {{!-- Mark worn action --}}
+            <form
+              method="post"
+              action="/calendar/{{this.id}}/worn"
+              class="shrink-0"
+              hx-post="/calendar/{{this.id}}/worn"
+              hx-target="this"
+              hx-swap="outerHTML"
+              onclick="event.stopPropagation()"
             >
-            {{/if}} {{!-- Delete button inside the bar --}}
+              <input type="hidden" name="month" value="{{../../currentMonthParam}}" />
+              <input type="hidden" name="view" value="month" />
+              <input type="hidden" name="week" value="{{../dateParam}}" />
+              <button
+                type="submit"
+                class="size-4 sm:size-5 rounded-full flex items-center justify-center text-[10px] {{#if this.wornAt}}bg-success/20 text-success hover:bg-success/30{{else}}opacity-0 group-hover:opacity-100 bg-base-300 text-base-content/60 hover:text-base-content hover:bg-base-100{{/if}} transition-all"
+                title="{{#if this.wornAt}}{{t 'lang.CALENDAR_UNMARK_WORN'}}{{else}}{{t 'lang.CALENDAR_MARK_WORN'}}{{/if}}"
+              >
+                ✓
+              </button>
+            </form>
+
+            {{!-- Delete button inside chip --}}
             <form
               method="post"
               action="/calendar/{{this.id}}/delete"
               hx-post="/calendar/{{this.id}}/delete"
               hx-confirm="{{t 'lang.CALENDAR_DELETE_CONFIRM'}}"
-              hx-vals='{"week": "{{../dateParam}}"}'
+              hx-vals='{"month": "{{../../currentMonthParam}}", "view": "month", "week": "{{../dateParam}}"}'
+              onclick="event.stopPropagation()"
             >
+              <input type="hidden" name="month" value="{{../../currentMonthParam}}" />
+              <input type="hidden" name="view" value="month" />
               <input type="hidden" name="week" value="{{../dateParam}}" />
               <button
                 type="submit"
-                onclick="event.stopPropagation()"
-                class="text-base-content/30 hover:text-error w-5 h-5 flex items-center justify-center rounded hover:bg-error/10 shrink-0 transition-colors"
+                class="text-base-content/30 hover:text-error size-4 flex items-center justify-center rounded hover:bg-error/10 shrink-0 transition-colors"
                 aria-label="{{t 'lang.DELETE'}}"
               >
                 ×
               </button>
             </form>
           </div>
-          {{!-- Mark worn pill button, to the right of the bar --}}
-          <form
-            method="post"
-            action="/calendar/{{this.id}}/worn"
-            class="shrink-0"
-            hx-post="/calendar/{{this.id}}/worn"
-            hx-target="this"
-            hx-swap="outerHTML"
+          {{/each}}
+
+          {{!-- Build outfit link --}}
+          <a
+            href="/outfits/new?scheduleDate={{this.dateParam}}&returnTo=/calendar&returnToView=month&returnToMonth={{../currentMonthParam}}"
+            class="mt-auto pt-1 text-[11px] text-base-content/30 hover:text-base-content/70 select-none flex items-center gap-0.5 truncate"
           >
-            <input type="hidden" name="week" value="{{../dateParam}}" />
-            <button
-              type="submit"
-              class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap
-                   {{#if this.wornAt}}bg-success text-success-content{{else}}text-base-content/40 italic font-normal hover:text-base-content/70{{/if}}"
-            >
-              {{#if this.wornAt}}✓ {{t 'lang.CALENDAR_WORN'}}{{else}}{{t
-              'lang.CALENDAR_MARK_WORN_PROMPT'}}{{/if}}
-            </button>
-          </form>
+            <span>+</span>
+            <span class="hidden md:inline">{{t 'lang.BUILD_OUTFIT'}}</span>
+          </a>
         </div>
-        {{/each}} {{!-- Plan outfit --}}
-        <a
-          href="/outfits/new?scheduleDate={{this.dateParam}}&returnTo=/calendar"
-          class="mt-auto pt-2 text-xs text-base-content/30 hover:text-base-content/60 select-none"
-          >+ {{t 'lang.BUILD_OUTFIT'}}</a
-        >
       </div>
-      {{!-- /inner flex-col --}}
+      {{/each}}
     </div>
-    {{!-- /card --}} {{/each}}
+
+    {{else}}
+    {{!-- Week View: Responsive grid: 1 col → 2 col (400px+) → 4 col (lg) → 8 col horizontal (2xl) --}}
+    <div
+      id="week-grid"
+      class="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8 gap-3"
+    >
+      {{!-- Slot 1: Mini month calendar ──────────────────────────────────── --}}
+      <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
+        {{!-- Month header with prev/next navigation --}}
+        <div
+          class="flex items-center justify-between px-3 py-2 bg-base-300 border-b border-base-300"
+        >
+          <a
+            href="/calendar?view=week&week={{prevMonthWeekParam}}&calMonth={{prevMonthParam}}"
+            class="btn btn-ghost btn-xs btn-square"
+            aria-label="Previous month"
+            >‹</a
+          >
+          <a
+            href="/calendar?view=month&month={{calMonthParamFormatted}}"
+            class="text-xs font-semibold uppercase tracking-wide text-base-content/70 hover:text-primary transition-colors"
+            title="{{t 'lang.CALENDAR_VIEW_MONTH'}}"
+          >
+            {{monthName}} {{year}}
+          </a>
+          <a
+            href="/calendar?view=week&week={{nextMonthWeekParam}}&calMonth={{nextMonthParam}}"
+            class="btn btn-ghost btn-xs btn-square"
+            aria-label="Next month"
+            >›</a
+          >
+        </div>
+
+        <div class="p-3 flex-1">
+          <table class="w-full table-fixed text-[10px] select-none">
+            <thead>
+              <tr>
+                <th
+                  class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
+                >
+                  {{t 'lang.CALENDAR_CAL_SUN_LETTER'}}
+                </th>
+                <th
+                  class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
+                >
+                  {{t 'lang.CALENDAR_CAL_MON_LETTER'}}
+                </th>
+                <th
+                  class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
+                >
+                  {{t 'lang.CALENDAR_CAL_TUE_LETTER'}}
+                </th>
+                <th
+                  class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
+                >
+                  {{t 'lang.CALENDAR_CAL_WED_LETTER'}}
+                </th>
+                <th
+                  class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
+                >
+                  {{t 'lang.CALENDAR_CAL_THU_LETTER'}}
+                </th>
+                <th
+                  class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
+                >
+                  {{t 'lang.CALENDAR_CAL_FRI_LETTER'}}
+                </th>
+                <th
+                  class="text-center font-medium text-base-content/40 pb-0.5 w-[14.28%]"
+                >
+                  {{t 'lang.CALENDAR_CAL_SAT_LETTER'}}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each calendarWeeks}}
+              <tr>
+                {{#each this.days}}
+                <td class="text-center p-0">
+                  <a
+                    href="/calendar?view=week&week={{../weekParam}}"
+                    class="flex items-center justify-center size-5 mx-auto my-0.5 rounded-full text-[10px] {{this.calCellClass}}"
+                    >{{this.dayNum}}</a
+                  >
+                </td>
+                {{/each}}
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {{!-- Slots 2–8: Day columns (Sun → Sat) ─────────────────────────── --}}
+      {{#each days}}
+      <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
+        {{!-- Day header --}}
+        <div
+          class="flex items-center gap-1.5 px-3 py-2 bg-base-300 border-b border-base-300"
+        >
+          <span
+            class="text-xs font-semibold
+                       {{#if this.isToday}}text-primary{{else}}text-base-content/50{{/if}}"
+          >
+            {{this.dayName}}
+          </span>
+          <span
+            class="text-base font-bold {{#if this.isToday}}text-primary{{/if}}"
+          >
+            {{this.dayNum}}
+          </span>
+          {{#if this.weather}}
+          <button
+            type="button"
+            class="ml-auto flex items-center gap-1 px-1.5 py-0.5 -mr-1.5 rounded-full cursor-pointer hover:bg-base-100/50 transition-colors"
+            hx-get="{{this.weather.detailsUrl}}"
+            hx-target="#weather-modal-container"
+            hx-swap="innerHTML"
+            aria-haspopup="dialog"
+            aria-label="{{this.weather.label}}"
+          >
+            <span
+              class="text-base leading-none"
+              aria-hidden="true"
+              title="{{this.weather.label}}"
+              >{{this.weather.emoji}}</span
+            >
+            <span
+              class="text-[10px] text-base-content/50 tabular-nums whitespace-nowrap"
+            >
+              {{this.weather.tempMin}}{{this.weather.tempUnit}} -
+              {{this.weather.tempMax}}{{this.weather.tempUnit}}
+            </span>
+          </button>
+          {{/if}}
+        </div>
+
+        {{!-- Outfit chips --}}
+        <div class="flex flex-col gap-1 p-3 flex-1">
+          {{#each this.entries}}
+          <div class="flex items-center gap-2 mb-1">
+            {{!-- Outfit bar: click navigates to edit page; × inside deletes --}}
+            <div
+              class="min-w-0 flex-1 text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1 leading-tight cursor-pointer"
+              style="{{#if this.wornAt}}background:hsl({{this.outfit.chipHue}} 65% 55% / 0.22);border-color:hsl({{this.outfit.chipHue}} 65% 60% / 0.45);color:hsl({{this.outfit.chipHue}} 80% 75%){{else}}background:hsl({{this.outfit.chipHue}} 55% 50% / 0.08);border-color:hsl({{this.outfit.chipHue}} 55% 55% / 0.22);color:hsl({{this.outfit.chipHue}} 50% 65%){{/if}}"
+              onclick="window.location.href='/outfits/{{this.outfit.id}}/edit?returnTo=/calendar&returnToWeek={{../dateParam}}'"
+            >
+              {{!-- Left: garment thumbnails if available, else name/untitled fallback --}}
+              {{#if this.outfit.garmentPhotos.length}}
+              <span
+                class="flex items-center gap-0.5 min-w-0 overflow-hidden flex-1"
+              >
+                {{#each this.outfit.garmentPhotos}}
+                <img
+                  src="/file/nobg/{{this}}"
+                  alt=""
+                  class="size-6 rounded object-cover shrink-0"
+                />
+                {{/each}}
+                {{#if this.outfit.morePhotos}}<span
+                  class="shrink-0 text-base-content/40 leading-none"
+                  >…</span
+                >{{/if}}
+              </span>
+              {{else}}
+              <span class="truncate flex-1"
+                >{{#if this.outfit.name}}{{this.outfit.name}}{{else}}{{t
+                'lang.UNTITLED_OUTFIT'}}{{/if}}</span
+              >
+              {{/if}}
+              {{!-- Delete button inside the bar --}}
+              <form
+                method="post"
+                action="/calendar/{{this.id}}/delete"
+                hx-post="/calendar/{{this.id}}/delete"
+                hx-confirm="{{t 'lang.CALENDAR_DELETE_CONFIRM'}}"
+                hx-vals='{"week": "{{../dateParam}}"}'
+              >
+                <input type="hidden" name="week" value="{{../dateParam}}" />
+                <button
+                  type="submit"
+                  onclick="event.stopPropagation()"
+                  class="text-base-content/30 hover:text-error w-5 h-5 flex items-center justify-center rounded hover:bg-error/10 shrink-0 transition-colors"
+                  aria-label="{{t 'lang.DELETE'}}"
+                >
+                  ×
+                </button>
+              </form>
+            </div>
+            {{!-- Mark worn pill button, to the right of the bar --}}
+            <form
+              method="post"
+              action="/calendar/{{this.id}}/worn"
+              class="shrink-0"
+              hx-post="/calendar/{{this.id}}/worn"
+              hx-target="this"
+              hx-swap="outerHTML"
+            >
+              <input type="hidden" name="week" value="{{../dateParam}}" />
+              <button
+                type="submit"
+                class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap
+                     {{#if this.wornAt}}bg-success text-success-content{{else}}text-base-content/40 italic font-normal hover:text-base-content/70{{/if}}"
+              >
+                {{#if this.wornAt}}✓ {{t 'lang.CALENDAR_WORN'}}{{else}}{{t
+                'lang.CALENDAR_MARK_WORN_PROMPT'}}{{/if}}
+              </button>
+            </form>
+          </div>
+          {{/each}}
+
+          {{!-- Plan outfit --}}
+          <a
+            href="/outfits/new?scheduleDate={{this.dateParam}}&returnTo=/calendar"
+            class="mt-auto pt-2 text-xs text-base-content/30 hover:text-base-content/60 select-none"
+            >+ {{t 'lang.BUILD_OUTFIT'}}</a
+          >
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    {{/ifEquals}}
   </div>
 </main>
 
-{{!-- Weather modal target — lives outside #week-grid so week-nav swaps don't
-wipe it --}}
+{{!-- Weather modal target — lives outside view container so view-nav swaps don't wipe it --}}
 <div id="weather-modal-container"></div>
 
 {{>dock}}
 
 <script>
   (function () {
+    window.lcGoToDate = function () {
+      var input = document.getElementById('calendar-jump-date');
+      if (!input || !input.value) return;
+      var dateVal = input.value;
+      var params = new URLSearchParams(window.location.search);
+      var currentView = '{{view}}' || params.get('view') || 'week';
+      params.set('view', currentView);
+      if (currentView === 'month') {
+        params.set('month', dateVal.slice(0, 7));
+        params.set('date', dateVal);
+        params.delete('week');
+      } else {
+        params.set('week', dateVal);
+        params.set('date', dateVal);
+        params.delete('month');
+      }
+      var cachedCoords = localStorage.getItem('lc_weather_coords');
+      if (cachedCoords && !params.has('lat') && !params.has('lon')) {
+        try {
+          var coords = JSON.parse(cachedCoords);
+          if (typeof coords.lat === 'number' && typeof coords.lon === 'number') {
+            params.set('lat', coords.lat.toFixed(4));
+            params.set('lon', coords.lon.toFixed(4));
+          }
+        } catch (_) {}
+      }
+      window.location.href = '/calendar?' + params.toString();
+    };
+
     function run() {
       var STORAGE_KEY = 'lc_weather_coords';
       var params = new URLSearchParams(window.location.search);
@@ -240,11 +496,11 @@ wipe it --}}
         var newUrl = window.location.pathname + '?' + params.toString();
         // Keep the address bar in sync so week-nav links preserve the coords.
         history.replaceState(null, '', newUrl);
-        // Swap only the week grid — avoids a full page reload.
+        // Swap calendar view container — avoids a full page reload.
         htmx.ajax('GET', newUrl, {
-          target: '#week-grid',
+          target: '#calendar-view-container',
           swap: 'outerHTML',
-          select: '#week-grid',
+          select: '#calendar-view-container',
         });
       }
 

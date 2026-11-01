@@ -1,5 +1,6 @@
 <div
   class="outfit-row flex items-center gap-2 py-3"
+  id="{{row.rowId}}"
   data-category="{{row.value}}"
   data-index="{{row.currentIndex}}"
   data-count="{{row.garmentCount}}"
@@ -29,7 +30,7 @@
              set newIdx to idx - 1
              if newIdx < 0 then set newIdx to cnt end
            end
-           js(me, newIdx) htmx.ajax('GET', '/outfits/row-fragment?category=' + encodeURIComponent(me.dataset.category) + '&index=' + newIdx, {target: me, swap: 'outerHTML'}) end
+           js(me, newIdx) htmx.ajax('GET', '/outfits/row-fragment?category=' + encodeURIComponent(me.dataset.category) + '&index=' + newIdx + '&rowId=' + encodeURIComponent(me.id), {target: me, swap: 'outerHTML'}) end
          end
        end"
 >
@@ -58,7 +59,7 @@
   <button
     type="button"
     class="btn btn-ghost btn-sm btn-circle shrink-0"
-    hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.prevIndex}}"
+    hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.prevIndex}}&rowId={{row.rowId}}"
     hx-target="closest .outfit-row"
     hx-swap="outerHTML"
   >
@@ -104,23 +105,70 @@
     >
   </button>
   {{else}}
-  <div class="flex-1 flex flex-col items-center gap-1 min-w-0 overflow-hidden">
+  <button
+    type="button"
+    class="flex-1 flex flex-col items-center gap-1 min-w-0 overflow-hidden cursor-pointer group"
+    hx-get="/outfits/picker-modal?category={{uri row.value}}&currentId=&rowId={{row.rowId}}"
+    hx-target="#garment-picker-container"
+    hx-swap="innerHTML"
+    _="on htmx:afterOnLoad document.getElementById('garment-picker-modal').showModal()"
+    title="{{t 'lang.PICK_GARMENT'}}"
+  >
     <div
-      class="outfit-none size-14 rounded-box bg-base-200 flex items-center justify-center"
+      class="outfit-none size-14 rounded-box bg-base-200 border-2 border-dashed border-base-300 flex items-center justify-center text-base-content/40 group-hover:border-primary group-hover:text-primary transition-colors"
     >
-      <span class="text-xs text-base-content/40">—</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="size-5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 4.5v15m7.5-7.5h-15"
+        />
+      </svg>
     </div>
-    <span class="outfit-name text-xs truncate max-w-full text-center"></span>
-  </div>
+    <span class="outfit-name text-xs text-base-content/50 truncate max-w-full text-center group-hover:text-primary transition-colors"
+      >{{t 'lang.PICK_GARMENT'}}</span
+    >
+  </button>
   {{/if}}
   <button
     type="button"
     class="btn btn-ghost btn-sm btn-circle shrink-0"
-    hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.nextIndex}}"
+    hx-get="/outfits/row-fragment?category={{uri row.value}}&index={{row.nextIndex}}&rowId={{row.rowId}}"
     hx-target="closest .outfit-row"
     hx-swap="outerHTML"
   >
     &#8250;
+  </button>
+  <button
+    type="button"
+    class="btn btn-ghost btn-sm btn-circle shrink-0 text-base-content/70 hover:text-primary"
+    title="{{t 'lang.PICK_GARMENT'}}"
+    hx-get="/outfits/picker-modal?category={{uri row.value}}&currentId={{#if row.garmentId}}{{row.garmentId}}{{/if}}&rowId={{row.rowId}}"
+    hx-target="#garment-picker-container"
+    hx-swap="innerHTML"
+    _="on htmx:afterOnLoad document.getElementById('garment-picker-modal').showModal()"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-4"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"
+      />
+    </svg>
   </button>
   <input type="hidden" name="category" value="{{row.value}}" />
   <input
