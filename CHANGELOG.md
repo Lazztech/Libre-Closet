@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configurable currency via `CURRENCY` environment variable with localized currency formatting
 - Expanded color palette with 24 curated swatches and hex color dot previews
 
+#### Fixed
+
+- Use button element instead of anchor tag for drawer theme toggle to fix Lighthouse `crawlable-anchors` audit failure
+
 ## 0.6.0 2026-10-5
 
 #### Added

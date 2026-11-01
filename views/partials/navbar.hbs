@@ -98,10 +98,10 @@ https://daisyui.com/components/drawer/#navbar-menu-for-desktop--sidebar-drawer-f
     <ul class="menu bg-base-200 min-h-full w-80 p-4 pt-8">
       <!-- Sidebar content here -->
       <li>
-        <a href="javascript:void(0)" onclick="window.toggleTheme && window.toggleTheme()" class="flex items-center gap-2">
+        <button type="button" onclick="window.toggleTheme && window.toggleTheme()" class="flex items-center gap-2">
           <span class="[html[data-theme=dark]_&]:hidden">🌙 {{t 'lang.THEME_DARK'}}</span>
           <span class="hidden [html[data-theme=dark]_&]:inline">☀️ {{t 'lang.THEME_LIGHT'}}</span>
-        </a>
+        </button>
       </li>
       {{#if showSupporterPrompt}}
       <li>
