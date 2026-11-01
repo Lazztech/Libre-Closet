@@ -6,6 +6,7 @@ import { File } from '../dal/entity/file.entity';
 import { Garment } from '../dal/entity/garment.entity';
 import { Outfit } from '../dal/entity/outfit.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/core';
+import { orderOutfitGarments } from '../wardrobe/outfit.service';
 
 export interface OpenGraphTagValues {
   ogUrl: string;
@@ -93,7 +94,7 @@ export class OpenGraphService {
         ogDescription: `From ${createdBy?.email}`,
         ogImage,
         outfit,
-        garments: outfit?.garments.getItems() ?? [],
+        garments: outfit ? orderOutfitGarments(outfit) : [],
         createdBy,
       };
     }

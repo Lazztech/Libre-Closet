@@ -41,7 +41,7 @@
       <div
         id="outfit-rows-list"
         class="card-body p-3 divide-y divide-base-300"
-        _="init js(me) Sortable.create(me, { handle: '.drag-handle', animation: 150, ghostClass: 'opacity-40' }) end"
+        _="init js(me) if typeof Sortable !== 'undefined' and not Sortable.get(me) then Sortable.create(me, { handle: '.drag-handle', animation: 150, ghostClass: 'opacity-40' }) end end"
       >
         {{#each categoryRows}}{{> outfit_row row=this}}{{/each}}
       </div>
@@ -259,6 +259,28 @@
       emptyEl.classList.toggle('flex', visibleCount === 0);
     }
   };
+
+  (function initOutfitSortable() {
+    function setup() {
+      const list = document.getElementById('outfit-rows-list');
+      if (!list) return;
+      if (typeof Sortable === 'undefined') {
+        setTimeout(setup, 30);
+        return;
+      }
+      if (!Sortable.get(list)) {
+        Sortable.create(list, {
+          handle: '.drag-handle',
+          animation: 150,
+          ghostClass: 'opacity-40',
+        });
+      }
+    }
+    setup();
+    document.addEventListener('DOMContentLoaded', setup);
+    document.addEventListener('htmx:afterSwap', setup);
+    document.addEventListener('htmx:load', setup);
+  })();
 </script>
 
 {{>garmentModal}} {{>dock}}

@@ -22,6 +22,47 @@ import {
 export { CATEGORY_SORT_ORDER };
 export const CATEGORY_ANATOMICAL_ORDER: readonly string[] = CATEGORY_SORT_ORDER;
 
+export function orderOutfitGarments(outfit: Outfit): Garment[] {
+  const garments = outfit.garments?.getItems
+    ? outfit.garments.getItems()
+    : ((outfit.garments as any) || []);
+  if (!garments.length) return [];
+
+  // If slots are defined with garment selections, respect the user's custom preference
+  if (outfit.slots?.length) {
+    const garmentMap = new Map<number, Garment>();
+    for (const g of garments) {
+      garmentMap.set(g.id, g);
+    }
+
+    const ordered: Garment[] = [];
+    const seenIds = new Set<number>();
+
+    for (const slot of outfit.slots) {
+      if (
+        slot.garmentId != null &&
+        garmentMap.has(slot.garmentId) &&
+        !seenIds.has(slot.garmentId)
+      ) {
+        ordered.push(garmentMap.get(slot.garmentId)!);
+        seenIds.add(slot.garmentId);
+      }
+    }
+
+    // Any remaining garments in the outfit not specified in slots fall back to default category priority
+    const remaining = garments.filter((g) => !seenIds.has(g.id));
+    if (remaining.length > 0) {
+      remaining.sort((a, b) => compareCategories(a.category, b.category, 1));
+      ordered.push(...remaining);
+    }
+
+    return ordered;
+  }
+
+  // Default: order garments by CATEGORY_SORT_ORDER (wear priority)
+  return [...garments].sort((a, b) => compareCategories(a.category, b.category, 1));
+}
+
 export const DEFAULT_OUTFIT_BUILDER_CATEGORIES: string[] = [
   'tops',
   'bottoms',
@@ -43,18 +84,19 @@ export class OutfitService {
     private readonly garmentService: GarmentService,
   ) {}
 
+  getOrderedGarments(outfit: Outfit): Garment[] {
+    return orderOutfitGarments(outfit);
+  }
+
   async findAll(userId?: number): Promise<Outfit[]> {
-    if (userId != null) {
-      return this.outfitRepository.find(
-        { owner: { id: userId } },
-        { populate: ['garments', 'garments.photo'] },
-      );
+    const where = userId != null ? { owner: { id: userId } } : { owner: null };
+    const outfits = await this.outfitRepository.find(where, {
+      populate: ['garments', 'garments.photo'],
+    });
+    for (const outfit of outfits) {
+      (outfit as any).garments = this.getOrderedGarments(outfit);
     }
-    // AUTH_ENABLED=false: only return outfits that belong to no user
-    return this.outfitRepository.find(
-      { owner: null },
-      { populate: ['garments', 'garments.photo'] },
-    );
+    return outfits;
   }
 
   async findPaginated(
@@ -69,6 +111,9 @@ export class OutfitService {
       limit,
       offset,
     });
+    for (const outfit of outfits) {
+      (outfit as any).garments = this.getOrderedGarments(outfit);
+    }
     return {
       outfits,
       total,
@@ -211,9 +256,13 @@ export class OutfitService {
       return this.buildRow(category, items, idx, i18n);
     };
 
+    const sortCategories = (cats: string[]) => {
+      return [...cats].sort((a, b) => compareCategories(a, b, 1));
+    };
+
     // Slot-based path: preserves saved order and duplicate categories
     if (slots?.length) {
-      return slots
+      const rows = slots
         .filter((slot) => grouped[slot.category]?.length)
         .map((slot) => {
           const items = grouped[slot.category]!;
@@ -223,11 +272,32 @@ export class OutfitService {
               : null;
           return toRow(slot.category, items, selected?.id ?? null, false);
         });
-    }
 
-    const sortCategories = (cats: string[]) => {
-      return [...cats].sort((a, b) => compareCategories(a, b, 1));
-    };
+      // If any selected garments were not included in slots, append them sorted by category order
+      const handledGarmentIds = new Set(
+        slots.map((s) => s.garmentId).filter((id): id is number => id != null),
+      );
+      const missingGarmentCats = new Set<string>();
+      for (const id of selectedIds) {
+        if (!handledGarmentIds.has(id)) {
+          const g = garments.find((item) => item.id === id);
+          if (g && grouped[g.category]?.length) {
+            missingGarmentCats.add(g.category);
+          }
+        }
+      }
+      if (missingGarmentCats.size > 0) {
+        const sortedMissing = sortCategories(Array.from(missingGarmentCats));
+        for (const cat of sortedMissing) {
+          const items = grouped[cat]!;
+          const selected =
+            items.find((g) => selectedIds.includes(g.id)) ?? null;
+          rows.push(toRow(cat, items, selected?.id ?? null, false));
+        }
+      }
+
+      return rows;
+    }
 
     let orderedKeys: string[];
     if (defaultOnly) {

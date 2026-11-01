@@ -334,7 +334,7 @@ export class OutfitController {
     @Req() req: FastifyRequest,
   ) {
     const outfit = await this.outfitService.findOne(id, this.userId(req));
-    const garments = outfit.garments.getItems();
+    const garments = this.outfitService.getOrderedGarments(outfit);
     return { outfit, garments };
   }
 

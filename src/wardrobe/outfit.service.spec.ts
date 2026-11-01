@@ -5,6 +5,7 @@ import {
   OutfitService,
   CATEGORY_ANATOMICAL_ORDER,
   DEFAULT_OUTFIT_BUILDER_CATEGORIES,
+  orderOutfitGarments,
 } from './outfit.service';
 import { Outfit } from '../dal/entity/outfit.entity';
 import { Garment } from '../dal/entity/garment.entity';
@@ -309,6 +310,115 @@ describe('OutfitService - buildCategoryRows', () => {
       expect(result.outfits).toHaveLength(1);
       expect(result.total).toBe(1);
       expect(result.hasMore).toBe(false);
+    });
+  });
+
+  describe('orderOutfitGarments & custom preferences', () => {
+    const coat = { id: 10, category: 'outerwear', name: 'Winter Coat' } as Garment;
+    const shirt = { id: 20, category: 'tops', name: 'Cotton T-Shirt' } as Garment;
+    const jeans = { id: 30, category: 'bottoms', name: 'Blue Jeans' } as Garment;
+    const boots = { id: 40, category: 'footwear', name: 'Leather Boots' } as Garment;
+
+    it('orders garments by CATEGORY_SORT_ORDER by default when outfit has no slots', () => {
+      const outfit = {
+        id: 1,
+        garments: {
+          getItems: () => [boots, coat, jeans, shirt], // random db order
+        },
+      } as unknown as Outfit;
+
+      const ordered = orderOutfitGarments(outfit);
+      // Canonical order: tops -> bottoms -> outerwear -> footwear
+      expect(ordered.map((g) => g.id)).toEqual([20, 30, 10, 40]);
+      expect(ordered.map((g) => g.category)).toEqual([
+        'tops',
+        'bottoms',
+        'outerwear',
+        'footwear',
+      ]);
+    });
+
+    it('preserves the user custom slot preference over default category order (e.g. outerwear before tops)', () => {
+      const outfit = {
+        id: 2,
+        slots: [
+          { category: 'outerwear', garmentId: 10 },
+          { category: 'tops', garmentId: 20 },
+          { category: 'bottoms', garmentId: 30 },
+          { category: 'footwear', garmentId: 40 },
+        ],
+        garments: {
+          getItems: () => [shirt, jeans, coat, boots],
+        },
+      } as unknown as Outfit;
+
+      const ordered = orderOutfitGarments(outfit);
+      expect(ordered.map((g) => g.id)).toEqual([10, 20, 30, 40]);
+      expect(ordered.map((g) => g.category)).toEqual([
+        'outerwear',
+        'tops',
+        'bottoms',
+        'footwear',
+      ]);
+    });
+
+    it('appends unslotted garments in CATEGORY_SORT_ORDER after custom slotted garments', () => {
+      const outfit = {
+        id: 3,
+        slots: [
+          { category: 'footwear', garmentId: 40 },
+          { category: 'outerwear', garmentId: 10 },
+        ],
+        garments: {
+          getItems: () => [shirt, jeans, coat, boots],
+        },
+      } as unknown as Outfit;
+
+      const ordered = orderOutfitGarments(outfit);
+      // Custom slots: footwear (40), outerwear (10); Remaining: tops (20), bottoms (30) in default category order
+      expect(ordered.map((g) => g.id)).toEqual([40, 10, 20, 30]);
+    });
+
+    it('buildCategoryRows respects custom slot order when slots are passed', () => {
+      const garments = [shirt, jeans, coat, boots];
+      const slots = [
+        { category: 'outerwear', garmentId: 10 },
+        { category: 'tops', garmentId: 20 },
+        { category: 'bottoms', garmentId: 30 },
+      ];
+
+      const rows = service.buildCategoryRows(
+        garments,
+        [10, 20, 30],
+        mockI18n,
+        slots,
+      );
+
+      expect(rows.map((r) => r.value)).toEqual([
+        'outerwear',
+        'tops',
+        'bottoms',
+      ]);
+      expect(rows[0].currentGarment?.id).toBe(10);
+      expect(rows[1].currentGarment?.id).toBe(20);
+      expect(rows[2].currentGarment?.id).toBe(30);
+    });
+
+    it('buildCategoryRows appends any selected garments missing from slots in category order', () => {
+      const garments = [shirt, jeans, coat, boots];
+      // slots only has outerwear, but user also has boots (40) selected
+      const slots = [{ category: 'outerwear', garmentId: 10 }];
+
+      const rows = service.buildCategoryRows(
+        garments,
+        [10, 40],
+        mockI18n,
+        slots,
+      );
+
+      expect(rows.map((r) => r.value)).toEqual(['outerwear', 'footwear']);
+      expect(rows[0].currentGarment?.id).toBe(10);
+      expect(rows[1].currentGarment?.id).toBe(40);
     });
   });
 });

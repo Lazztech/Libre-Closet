@@ -31,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Fixed
 
 - Use button element instead of anchor tag for drawer theme toggle to fix Lighthouse `crawlable-anchors` audit failure
+- Fix SortableJS drag-and-drop initialization on outfit builder/editor rows by reordering script tags and adding resilient event listeners for direct visits and HTMX page transitions
+- Outfit garments ordering: honor user custom drag-and-drop slot arrangement across outfit show, card, and share views, while retaining wear priority CATEGORY_SORT_ORDER by default
+- Expand outfit row drag handle affordance to include category labels alongside the drag icon with grab cursor styling
 
 ## 0.6.0 2026-10-5
 

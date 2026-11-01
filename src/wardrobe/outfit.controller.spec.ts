@@ -37,6 +37,9 @@ describe('OutfitController', () => {
       remove: jest.fn(),
       buildCategoryRows: jest.fn().mockReturnValue([]),
       buildRow: jest.fn(),
+      getOrderedGarments: jest.fn((outfit) =>
+        outfit?.garments?.getItems ? outfit.garments.getItems() : [],
+      ),
     };
 
     mockGarmentService = {
@@ -116,6 +119,34 @@ describe('OutfitController', () => {
           limit: 50,
         },
       );
+    });
+  });
+
+  describe('show', () => {
+    it('calls getOrderedGarments and returns outfit with garments ordered by user preference', async () => {
+      const mockReq: any = { user: { userId: 5 } };
+      const dummyOutfit = {
+        id: 7,
+        name: 'Cool Outfit',
+        garments: {
+          getItems: () => [{ id: 10, name: 'Shirt' }],
+        },
+      };
+      mockOutfitService.findOne.mockResolvedValueOnce(dummyOutfit);
+      mockOutfitService.getOrderedGarments.mockReturnValueOnce([
+        { id: 10, name: 'Shirt' },
+      ]);
+
+      const result = await controller.show(7, mockReq);
+
+      expect(mockOutfitService.findOne).toHaveBeenCalledWith(7, 5);
+      expect(mockOutfitService.getOrderedGarments).toHaveBeenCalledWith(
+        dummyOutfit,
+      );
+      expect(result).toEqual({
+        outfit: dummyOutfit,
+        garments: [{ id: 10, name: 'Shirt' }],
+      });
     });
   });
 
