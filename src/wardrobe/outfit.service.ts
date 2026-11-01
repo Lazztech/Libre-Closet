@@ -25,7 +25,7 @@ export const CATEGORY_ANATOMICAL_ORDER: readonly string[] = CATEGORY_SORT_ORDER;
 export function orderOutfitGarments(outfit: Outfit): Garment[] {
   const garments = outfit.garments?.getItems
     ? outfit.garments.getItems()
-    : ((outfit.garments as any) || []);
+    : (outfit.garments as any) || [];
   if (!garments.length) return [];
 
   // If slots are defined with garment selections, respect the user's custom preference
@@ -60,7 +60,9 @@ export function orderOutfitGarments(outfit: Outfit): Garment[] {
   }
 
   // Default: order garments by CATEGORY_SORT_ORDER (wear priority)
-  return [...garments].sort((a, b) => compareCategories(a.category, b.category, 1));
+  return [...garments].sort((a, b) =>
+    compareCategories(a.category, b.category, 1),
+  );
 }
 
 export const DEFAULT_OUTFIT_BUILDER_CATEGORIES: string[] = [

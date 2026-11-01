@@ -314,10 +314,26 @@ describe('OutfitService - buildCategoryRows', () => {
   });
 
   describe('orderOutfitGarments & custom preferences', () => {
-    const coat = { id: 10, category: 'outerwear', name: 'Winter Coat' } as Garment;
-    const shirt = { id: 20, category: 'tops', name: 'Cotton T-Shirt' } as Garment;
-    const jeans = { id: 30, category: 'bottoms', name: 'Blue Jeans' } as Garment;
-    const boots = { id: 40, category: 'footwear', name: 'Leather Boots' } as Garment;
+    const coat = {
+      id: 10,
+      category: 'outerwear',
+      name: 'Winter Coat',
+    } as Garment;
+    const shirt = {
+      id: 20,
+      category: 'tops',
+      name: 'Cotton T-Shirt',
+    } as Garment;
+    const jeans = {
+      id: 30,
+      category: 'bottoms',
+      name: 'Blue Jeans',
+    } as Garment;
+    const boots = {
+      id: 40,
+      category: 'footwear',
+      name: 'Leather Boots',
+    } as Garment;
 
     it('orders garments by CATEGORY_SORT_ORDER by default when outfit has no slots', () => {
       const outfit = {
