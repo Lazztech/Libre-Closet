@@ -1,7 +1,6 @@
 import {
   Collection,
   Entity,
-  Enum,
   ManyToMany,
   ManyToOne,
   OneToOne,
@@ -31,8 +30,8 @@ export class Garment extends ShareableId {
   @Property({ nullable: true })
   public subCategory?: string;
 
-  @Enum({ nullable: true })
-  public color?: GarmentColor;
+  @Property({ nullable: true, columnType: 'text' })
+  public color?: string;
 
   @Property({ nullable: true })
   public brand?: string;

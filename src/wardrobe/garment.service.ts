@@ -489,7 +489,7 @@ export class GarmentService {
       category: dto.category,
       subCategory,
       brand: dto.brand,
-      color: dto.color as any,
+      color: dto.color,
       size: this.normalizeSize(dto.size),
       notes: dto.notes,
       washingDetails: dto.washingDetails ?? source.washingDetails,
