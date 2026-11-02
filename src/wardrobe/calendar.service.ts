@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { OutfitCalendar } from '../dal/entity/outfit-calendar.entity';
 import { Outfit } from '../dal/entity/outfit.entity';
+import { Garment } from '../dal/entity/garment.entity';
 import { User } from '../dal/entity/user.entity';
 import { CreateCalendarEntryDto } from './dto/create-calendar-entry.dto';
 import { CalendarDay } from './view-models/calendar-day.view-model';
@@ -326,26 +327,54 @@ export class CalendarService {
           ? weatherCodeToDescription(forecast.weathercode)
           : { emoji: null, labelKey: null };
 
-        const dayEntries = (entriesByDate.get(dayDateParam) ?? []).map(
-          (entry, entryIndex) => {
-            const outfit = entry.outfit.unwrap();
-            const garmentPhotos = outfit.garments
-              .getItems()
-              .map((g) => g.photo?.fileName ?? null)
-              .filter((f): f is string => f !== null);
-            return {
-              id: entry.id,
-              wornAt: entry.wornAt ?? null,
-              outfit: {
-                id: outfit.id,
-                name: outfit.name || null,
-                garmentPhotos: garmentPhotos.slice(0, 6),
-                morePhotos: garmentPhotos.length > 6,
-                chipHue: CHIP_HUES[entryIndex % CHIP_HUES.length],
-              },
-            };
-          },
-        );
+        const dayRawEntries = entriesByDate.get(dayDateParam) ?? [];
+        const dayEntries = dayRawEntries.map((entry, entryIndex) => {
+          const outfit = entry.outfit.unwrap();
+          const garments = outfit.garments.getItems();
+          const garmentPhotos = garments
+            .map((g) => g.photo?.fileName ?? null)
+            .filter((f): f is string => f !== null);
+          const { topPhoto, bottomPhoto } =
+            this.extractTopAndBottomPhotos(garments);
+          return {
+            id: entry.id,
+            wornAt: entry.wornAt ?? null,
+            outfit: {
+              id: outfit.id,
+              name: outfit.name || null,
+              garmentPhotos: garmentPhotos.slice(0, 6),
+              morePhotos: garmentPhotos.length > 6,
+              chipHue: CHIP_HUES[entryIndex % CHIP_HUES.length],
+              topPhoto,
+              bottomPhoto,
+            },
+          };
+        });
+
+        let mobilePreview = null;
+        if (dayRawEntries.length > 0) {
+          const latestRawEntry = dayRawEntries[dayRawEntries.length - 1];
+          const latestOutfit = latestRawEntry.outfit.unwrap();
+          const latestGarments = latestOutfit.garments.getItems();
+          const { topPhoto, bottomPhoto } =
+            this.extractTopAndBottomPhotos(latestGarments);
+          const entryIndex = dayRawEntries.length - 1;
+
+          mobilePreview = {
+            id: latestRawEntry.id,
+            outfitId: latestOutfit.id,
+            name: latestOutfit.name || null,
+            isWorn: !!latestRawEntry.wornAt,
+            chipHue: CHIP_HUES[entryIndex % CHIP_HUES.length],
+            topPhoto,
+            bottomPhoto,
+            hasAnyPhoto: !!(topPhoto || bottomPhoto),
+            hasMultiple: dayRawEntries.length > 1,
+            additionalCount: dayRawEntries.length - 1,
+            count: dayRawEntries.length,
+            editUrl: `/outfits/${latestOutfit.id}/edit?returnTo=/calendar&returnToView=month&returnToMonth=${currentMonthParam}`,
+          };
+        }
 
         monthDays.push({
           dateParam: dayDateParam,
@@ -363,6 +392,7 @@ export class CalendarService {
               }
             : null,
           entries: dayEntries,
+          mobilePreview,
         });
 
         cur.setUTCDate(cur.getUTCDate() + 1);
@@ -510,6 +540,53 @@ export class CalendarService {
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
+  /**
+   * Extracts the primary top and bottom garment photos for compact/mobile display.
+   * Prioritizes tops/outerwear/dresses for the top slot, and bottoms/footwear for the bottom slot.
+   */
+  private extractTopAndBottomPhotos(garments: Garment[]): {
+    topPhoto: string | null;
+    bottomPhoto: string | null;
+  } {
+    const tops = garments.filter((g) => {
+      const cat = g.category?.trim().toLowerCase();
+      return cat === 'tops' || cat === 'outerwear' || cat === 'dresses';
+    });
+    const bottoms = garments.filter((g) => {
+      const cat = g.category?.trim().toLowerCase();
+      return cat === 'bottoms' || cat === 'footwear';
+    });
+
+    const bestTop =
+      tops.find((g) => g.category?.trim().toLowerCase() === 'tops') ||
+      tops.find((g) => g.category?.trim().toLowerCase() === 'dresses') ||
+      tops[0] ||
+      null;
+
+    const bestBottom =
+      bottoms.find((g) => g.category?.trim().toLowerCase() === 'bottoms') ||
+      bottoms.find((g) => g.category?.trim().toLowerCase() === 'footwear') ||
+      bottoms[0] ||
+      null;
+
+    let topPhoto = bestTop?.photo?.fileName ?? null;
+    let bottomPhoto = bestBottom?.photo?.fileName ?? null;
+
+    if (!topPhoto) {
+      const firstWithPhoto = garments.find((g) => g.photo?.fileName);
+      topPhoto = firstWithPhoto?.photo?.fileName ?? null;
+    }
+
+    if (!bottomPhoto) {
+      const secondWithPhoto = garments.find(
+        (g) => g.photo?.fileName && g.photo.fileName !== topPhoto,
+      );
+      bottomPhoto = secondWithPhoto?.photo?.fileName ?? null;
+    }
+
+    return { topPhoto, bottomPhoto };
+  }
+
   /** Parses a YYYY-MM-DD query param into a Date, defaulting to today. */
   private parseWeekParam(param: string | undefined): Date {
     if (!param) return new Date();

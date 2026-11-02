@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Added
 
 - Calendar Month and Week view toggle: view scheduled outfits across the entire month in a responsive 7-column calendar grid or drill down into the week view
+- Mobile-optimized month calendar view displaying vertically stacked top and bottom garment photos per day with multi-outfit indicators
 - Calendar Jump to Date picker: navigate directly to any date in the past or future with instant jump
 - Calendar toolbar controls with Previous, Next, and Today quick-jump buttons
 - Multi-language localization for calendar view toggle, jump-to-date, and navigation controls across all 7 supported languages (English, Danish, German, Spanish, French, Italian, Russian)

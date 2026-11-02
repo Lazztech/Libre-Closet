@@ -187,6 +187,71 @@ describe('CalendarService', () => {
       expect(julyFirst).toBeDefined();
       expect(julyFirst.inMonth).toBe(true);
     });
+
+    it('builds mobilePreview with top and bottom garment photos and multiple indicator', async () => {
+      const mockGarments = [
+        {
+          id: 1,
+          category: 'tops',
+          photo: { fileName: 'top-shirt.webp' },
+        },
+        {
+          id: 2,
+          category: 'bottoms',
+          photo: { fileName: 'bottom-jeans.webp' },
+        },
+        {
+          id: 3,
+          category: 'footwear',
+          photo: { fileName: 'shoes.webp' },
+        },
+      ];
+      const mockOutfit1: any = {
+        id: 10,
+        name: 'Work Outfit',
+        garments: { getItems: () => mockGarments },
+      };
+      const mockOutfit2: any = {
+        id: 11,
+        name: 'Evening Outfit',
+        garments: { getItems: () => mockGarments },
+      };
+
+      const mockEntries: any = [
+        {
+          id: 101,
+          date: new Date('2026-11-04T00:00:00Z'),
+          outfit: { unwrap: () => mockOutfit1 },
+          wornAt: new Date('2026-11-04T08:00:00Z'),
+        },
+        {
+          id: 102,
+          date: new Date('2026-11-04T00:00:00Z'),
+          outfit: { unwrap: () => mockOutfit2 },
+          wornAt: null,
+        },
+      ];
+
+      mockCalendarRepo.find.mockResolvedValue(mockEntries);
+
+      const vm = await service.buildIndexViewModel(
+        'month',
+        undefined,
+        undefined,
+        '2026-11',
+        undefined,
+        1,
+        mockI18n,
+      );
+
+      const nov4 = vm.monthDays.find((d: any) => d.dateParam === '2026-11-04');
+      expect(nov4).toBeDefined();
+      expect(nov4.mobilePreview).toBeDefined();
+      expect(nov4.mobilePreview.topPhoto).toBe('top-shirt.webp');
+      expect(nov4.mobilePreview.bottomPhoto).toBe('bottom-jeans.webp');
+      expect(nov4.mobilePreview.hasMultiple).toBe(true);
+      expect(nov4.mobilePreview.additionalCount).toBe(1);
+    });
   });
 
   describe('buildIndexViewModel - Jump to Date', () => {
