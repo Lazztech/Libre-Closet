@@ -339,5 +339,14 @@
   "LOAD_MORE": "Carica altro",
   "TOGGLE_THEME": "Cambia tema",
   "THEME_LIGHT": "Modalità chiara",
-  "THEME_DARK": "Modalità scura"
+  "THEME_DARK": "Modalità scura",
+  "VIEW_OUTFITS": "Vedi outfit",
+  "OUTFITS_WITH_GARMENT": "Outfit con questo capo",
+  "NO_OUTFITS_FOR_GARMENT": "Questo capo non è ancora presente in nessun outfit.",
+  "WORN_ON": "Indossato il",
+  "NEVER_WORN": "mai indossato",
+  "CREATED_ON": "Creato il",
+  "SORT_NEWEST": "Più recenti prima",
+  "SORT_OLDEST": "Più vecchi prima",
+  "VIEW_IN_CALENDAR": "Vedi nel calendario"
 }

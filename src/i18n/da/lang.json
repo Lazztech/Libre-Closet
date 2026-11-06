@@ -341,5 +341,14 @@
   "LOAD_MORE": "Indlæs mere",
   "TOGGLE_THEME": "Skift tema",
   "THEME_LIGHT": "Lyst tema",
-  "THEME_DARK": "Mørkt tema"
+  "THEME_DARK": "Mørkt tema",
+  "VIEW_OUTFITS": "Se outfits",
+  "OUTFITS_WITH_GARMENT": "Outfits med dette tøjstykke",
+  "NO_OUTFITS_FOR_GARMENT": "Dette tøjstykke er ikke i nogen outfits endnu.",
+  "WORN_ON": "Båret den",
+  "NEVER_WORN": "aldrig brugt",
+  "CREATED_ON": "Oprettet den",
+  "SORT_NEWEST": "Nyeste først",
+  "SORT_OLDEST": "Ældste først",
+  "VIEW_IN_CALENDAR": "Vis i kalender"
 }

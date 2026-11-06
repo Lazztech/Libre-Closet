@@ -95,6 +95,10 @@ Represents a saved combination of garments.
 | `name`        | `string`    | User-provided label, e.g. "Summer Wedding Guest"          |
 | `notes`       | `string?`   | Free-text notes or occasion context                       |
 | `rating`      | `number?`   | Optional 1-5 star rating                                  |
+| `look`        | `string?`   | Style / aesthetic (e.g. Casual, Formal, Classic)          |
+| `occasions`   | `string?`   | Comma-separated occasions (e.g. Work, Date, Special)      |
+| `seasons`     | `string?`   | Comma-separated seasons (e.g. Summer, Autumn, Winter)     |
+| `createdAt`   | `Date`      | Creation timestamp used for chronology and wear tracking  |
 | `slots`       | `json?`     | Configured category slots array                           |
 | `garments`    | `Garment[]` | Many-to-many; the garments that make up this outfit       |
 | `owner`       | `User?` FK  | Many-to-one; nullable — omitted when `AUTH_ENABLED=false` |
@@ -153,6 +157,11 @@ erDiagram
         string shareableId UK
         string name
         string notes
+        number rating "nullable"
+        string look "nullable"
+        string occasions "nullable"
+        string seasons "nullable"
+        date createdAt
         number ownerId "FK nullable"
         boolean flagged
         boolean banned

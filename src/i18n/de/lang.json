@@ -339,5 +339,14 @@
   "LOAD_MORE": "Mehr laden",
   "TOGGLE_THEME": "Design wechseln",
   "THEME_LIGHT": "Heller Modus",
-  "THEME_DARK": "Dunkler Modus"
+  "THEME_DARK": "Dunkler Modus",
+  "VIEW_OUTFITS": "Outfits anzeigen",
+  "OUTFITS_WITH_GARMENT": "Outfits mit diesem Kleidungsstück",
+  "NO_OUTFITS_FOR_GARMENT": "Dieses Kleidungsstück ist noch in keinen Outfits enthalten.",
+  "WORN_ON": "Getragen am",
+  "NEVER_WORN": "nie getragen",
+  "CREATED_ON": "Erstellt am",
+  "SORT_NEWEST": "Neueste zuerst",
+  "SORT_OLDEST": "Älteste zuerst",
+  "VIEW_IN_CALENDAR": "Im Kalender anzeigen"
 }

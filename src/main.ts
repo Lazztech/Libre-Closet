@@ -273,6 +273,10 @@ async function bootstrap() {
         : options.inverse(this);
     },
   );
+  hbs.registerHelper('or', function (...args: unknown[]) {
+    const values = args.slice(0, -1);
+    return values.some(Boolean);
+  });
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }

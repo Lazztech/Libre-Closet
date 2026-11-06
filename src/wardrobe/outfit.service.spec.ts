@@ -228,6 +228,64 @@ describe('OutfitService - buildCategoryRows', () => {
       );
       expect(cleared.rating).toBeNull();
     });
+
+    it('creates an outfit with look, occasions, and seasons metadata', async () => {
+      const outfit = await service.create(
+        {
+          name: 'Autumn Casual',
+          look: 'Casual',
+          occasions: 'Work,Daily',
+          seasons: 'Autumn,Winter',
+        },
+        1,
+      );
+
+      expect(mockOutfitRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'Autumn Casual',
+          look: 'Casual',
+          occasions: 'Work,Daily',
+          seasons: 'Autumn,Winter',
+        }),
+      );
+      expect(outfit.look).toBe('Casual');
+      expect(outfit.occasions).toBe('Work,Daily');
+      expect(outfit.seasons).toBe('Autumn,Winter');
+    });
+
+    it('updates look, occasions, and seasons on an outfit', async () => {
+      const existingOutfit: any = {
+        id: 11,
+        name: 'Party Outfit',
+        look: 'Casual',
+        occasions: 'Date',
+        seasons: 'Summer',
+        owner: { id: 1 },
+        garments: {
+          getItems: jest.fn().mockReturnValue([]),
+          set: jest.fn(),
+        },
+      };
+      existingOutfit.__helper = {
+        assign: (data: any) => Object.assign(existingOutfit, data),
+      };
+      mockOutfitRepo.findOne.mockResolvedValue(existingOutfit);
+
+      const updated = await service.update(
+        11,
+        {
+          look: 'Formal',
+          occasions: 'Special,Party',
+          seasons: 'Spring,Summer',
+        },
+        1,
+      );
+
+      expect(updated.look).toBe('Formal');
+      expect(updated.occasions).toBe('Special,Party');
+      expect(updated.seasons).toBe('Spring,Summer');
+      expect(mockEm.flush).toHaveBeenCalled();
+    });
   });
 
   describe('buildRow and garment picker', () => {

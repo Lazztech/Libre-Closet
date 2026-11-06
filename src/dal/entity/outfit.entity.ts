@@ -1,4 +1,5 @@
 import {
+  BeforeCreate,
   Collection,
   Entity,
   ManyToMany,
@@ -29,6 +30,25 @@ export class Outfit extends ShareableId {
 
   @Property({ nullable: true })
   public rating?: number;
+
+  @Property({ nullable: true })
+  public seasons?: string;
+
+  @Property({ nullable: true })
+  public occasions?: string;
+
+  @Property({ nullable: true })
+  public look?: string;
+
+  @Property({ type: Date, nullable: true })
+  public createdAt?: Date = new Date();
+
+  @BeforeCreate()
+  private setCreatedAt() {
+    if (!this.createdAt) {
+      this.createdAt = new Date();
+    }
+  }
 
   @Property({ type: 'json', nullable: true })
   public slots?: OutfitSlot[];

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
+- Outfit extended metadata: Look, Occasion, and Season properties supported when building and editing outfits, displayed across outfit show and card views
+- Garment wear history and outfits browser: added "View Outfits" button on garment details view leading to a dedicated outfits list showing all outfits containing the garment
+- Outfit wear date tracking: displays specific dates when each outfit was worn, with direct navigation to the exact date in calendar view; unworn outfits explicitly indicate "Created on (date), never worn"
+- Chronological sorting controls for garment outfits: default descending order by creation date (newest first), with toggle to sort ascending (oldest first)
+- Database migrations for SQLite and PostgreSQL adding nullable `look`, `occasions`, `seasons`, and `created_at` columns to `outfit` table
+- Multi-language localization for outfit metadata and garment outfits view across all 7 supported languages (English, Danish, German, Spanish, French, Italian, Russian)
 - Calendar Month and Week view toggle: view scheduled outfits across the entire month in a responsive 7-column calendar grid or drill down into the week view
 - Mobile-optimized month calendar view displaying vertically stacked top and bottom garment photos per day with multi-outfit indicators
 - Calendar Jump to Date picker: navigate directly to any date in the past or future with instant jump

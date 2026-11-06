@@ -5,4 +5,7 @@ export interface CreateOutfitDto {
   notes?: string;
   rating?: number;
   slots?: OutfitSlot[];
+  look?: string;
+  occasions?: string;
+  seasons?: string;
 }

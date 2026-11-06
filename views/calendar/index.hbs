@@ -107,7 +107,8 @@
     >
       {{#each monthDays}}
       <div
-        class="bg-base-200 rounded-lg md:rounded-xl p-1 md:p-2 min-w-0 flex flex-col min-h-[85px] sm:min-h-[105px] md:min-h-[135px] {{#if this.isToday}}ring-2 ring-primary bg-primary/5{{/if}} {{#unless this.inMonth}}opacity-40 bg-base-200/50{{/unless}} transition-all"
+        id="calendar-day-{{this.dateParam}}"
+        class="bg-base-200 rounded-lg md:rounded-xl p-1 md:p-2 min-w-0 flex flex-col min-h-[85px] sm:min-h-[105px] md:min-h-[135px] {{#if this.isToday}}ring-2 ring-primary bg-primary/5{{/if}} {{#if this.isSelected}}ring-2 ring-primary ring-offset-1 ring-offset-base-100{{/if}} {{#unless this.inMonth}}opacity-40 bg-base-200/50{{/unless}} transition-all"
       >
         {{!-- Day header --}}
         <div class="flex items-center justify-between gap-1 mb-1 min-w-0">
@@ -369,7 +370,10 @@
 
       {{!-- Slots 2–8: Day columns (Sun → Sat) ─────────────────────────── --}}
       {{#each days}}
-      <div class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col">
+      <div
+        id="calendar-day-{{this.dateParam}}"
+        class="bg-base-200 rounded-xl overflow-hidden min-h-48 flex flex-col {{#if this.isSelected}}ring-2 ring-primary ring-offset-2 ring-offset-base-100{{/if}}"
+      >
         {{!-- Day header --}}
         <div
           class="flex items-center gap-1.5 px-3 py-2 bg-base-300 border-b border-base-300"

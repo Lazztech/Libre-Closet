@@ -328,6 +328,33 @@ export class WardrobeController {
     return reply.redirect(`/wardrobe/${garment.id}?${params}`, 302);
   }
 
+  @Get(':id/outfits')
+  @Render('wardrobe/outfits')
+  async garmentOutfits(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: FastifyRequest,
+    @Query('sort') sortParam: string | undefined,
+    @Query('ownerId') ownerId: string | undefined,
+  ) {
+    const userId = this.userId(req);
+    const viewOwner = ownerId ? parseInt(ownerId, 10) : undefined;
+    const sort: 'asc' | 'desc' = sortParam === 'asc' ? 'asc' : 'desc';
+
+    const data = await this.garmentService.findGarmentOutfitsWithWearHistory(
+      id,
+      userId,
+      viewOwner,
+      sort,
+    );
+
+    return {
+      garment: data.garment,
+      outfits: data.outfits,
+      sort,
+      viewOwner: viewOwner ?? null,
+    };
+  }
+
   @Get(':id')
   @Render('wardrobe/show')
   async show(

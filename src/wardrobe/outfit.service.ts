@@ -153,6 +153,10 @@ export class OutfitService {
       notes: dto.notes,
       rating: dto.rating,
       slots: dto.slots,
+      look: dto.look,
+      occasions: dto.occasions,
+      seasons: dto.seasons,
+      createdAt: new Date(),
     });
 
     const garmentIds =
@@ -188,6 +192,9 @@ export class OutfitService {
       notes: dto.notes ?? outfit.notes,
       rating: dto.rating !== undefined ? (dto.rating as any) : outfit.rating,
       slots: dto.slots ?? outfit.slots,
+      look: dto.look !== undefined ? dto.look : outfit.look,
+      occasions: dto.occasions !== undefined ? dto.occasions : outfit.occasions,
+      seasons: dto.seasons !== undefined ? dto.seasons : outfit.seasons,
     });
 
     if (dto.slots !== undefined) {

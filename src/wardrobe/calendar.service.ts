@@ -380,6 +380,7 @@ export class CalendarService {
           dateParam: dayDateParam,
           dayNum: cur.getUTCDate(),
           isToday: dayDateParam === todayStr,
+          isSelected: !!dateParam && dayDateParam === dateParam,
           inMonth: cur.getUTCMonth() === calMonth,
           weather: forecast
             ? {
@@ -443,6 +444,9 @@ export class CalendarService {
       temperatureUnit,
       lat,
       lon,
+      dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)
+        ? dateParam
+        : undefined,
     );
 
     const prevWeekParam = this.toWeekParam(weekBounds.prevWeek);
@@ -694,6 +698,7 @@ export class CalendarService {
     temperatureUnit: TemperatureUnit,
     lat?: number,
     lon?: number,
+    selectedDateParam?: string,
   ) {
     const CHIP_HUES = [220, 240, 260];
     const forecastByDate = new Map(
@@ -712,6 +717,7 @@ export class CalendarService {
         dayNum: day.date.getUTCDate(),
         dateParam,
         isToday: dateParam === weekBounds.todayStr,
+        isSelected: !!selectedDateParam && dateParam === selectedDateParam,
         weather: forecast
           ? {
               emoji,

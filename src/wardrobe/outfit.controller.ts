@@ -26,6 +26,7 @@ import { GarmentColor } from './garment-color.enum';
 import {
   SEASONS,
   OCCASIONS,
+  GARMENT_LOOK,
   getSubcategoriesForCategory,
   compareSubCategories,
 } from './additional-properties';
@@ -108,6 +109,9 @@ export class OutfitController {
       returnToMonth: returnToMonth || null,
       categoryRows,
       allCategoryRows,
+      seasons: SEASONS,
+      occasions: OCCASIONS,
+      looks: GARMENT_LOOK,
     };
   }
 
@@ -149,6 +153,9 @@ export class OutfitController {
       returnToWeek?: string;
       returnToView?: string;
       returnToMonth?: string;
+      look?: string;
+      occasions?: string | string[];
+      seasons?: string | string[];
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
@@ -159,12 +166,28 @@ export class OutfitController {
     );
     const rating = this.parseRating(body.rating);
 
+    const rawSeasons = Array.isArray(body.seasons)
+      ? body.seasons
+      : (body.seasons
+          ?.split(',')
+          .map((s) => s.trim())
+          .filter(Boolean) ?? []);
+    const rawOccasions = Array.isArray(body.occasions)
+      ? body.occasions
+      : (body.occasions
+          ?.split(',')
+          .map((s) => s.trim())
+          .filter(Boolean) ?? []);
+
     const outfit = await this.outfitService.create(
       {
         name: body.name,
         notes: body.notes,
         rating: rating ?? undefined,
         slots,
+        look: body.look?.trim() || undefined,
+        occasions: rawOccasions.length > 0 ? rawOccasions.join(',') : undefined,
+        seasons: rawSeasons.length > 0 ? rawSeasons.join(',') : undefined,
       },
       this.userId(req),
     );
@@ -335,7 +358,20 @@ export class OutfitController {
   ) {
     const outfit = await this.outfitService.findOne(id, this.userId(req));
     const garments = this.outfitService.getOrderedGarments(outfit);
-    return { outfit, garments };
+    return {
+      outfit,
+      garments,
+      seasonsList:
+        outfit.seasons
+          ?.split(',')
+          .map((s) => s.trim())
+          .filter(Boolean) ?? [],
+      occasionsList:
+        outfit.occasions
+          ?.split(',')
+          .map((o) => o.trim())
+          .filter(Boolean) ?? [],
+    };
   }
 
   @Get(':id/edit')
@@ -373,6 +409,9 @@ export class OutfitController {
         undefined,
         false,
       ),
+      seasons: SEASONS,
+      occasions: OCCASIONS,
+      looks: GARMENT_LOOK,
     };
   }
 
@@ -391,6 +430,9 @@ export class OutfitController {
       returnToWeek?: string;
       returnToView?: string;
       returnToMonth?: string;
+      look?: string;
+      occasions?: string | string[];
+      seasons?: string | string[];
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
@@ -401,9 +443,48 @@ export class OutfitController {
     );
     const rating = this.parseRating(body.rating);
 
+    const rawSeasons =
+      body.seasons !== undefined
+        ? Array.isArray(body.seasons)
+          ? body.seasons
+          : body.seasons
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+        : undefined;
+
+    const rawOccasions =
+      body.occasions !== undefined
+        ? Array.isArray(body.occasions)
+          ? body.occasions
+          : body.occasions
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+        : undefined;
+
     await this.outfitService.update(
       id,
-      { name: body.name, notes: body.notes, rating, slots },
+      {
+        name: body.name,
+        notes: body.notes,
+        rating,
+        slots,
+        look:
+          body.look !== undefined ? body.look.trim() || undefined : undefined,
+        occasions:
+          rawOccasions !== undefined
+            ? rawOccasions.length > 0
+              ? rawOccasions.join(',')
+              : undefined
+            : undefined,
+        seasons:
+          rawSeasons !== undefined
+            ? rawSeasons.length > 0
+              ? rawSeasons.join(',')
+              : undefined
+            : undefined,
+      },
       this.userId(req),
     );
     if (body.scheduleDate) {

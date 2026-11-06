@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { I18nContext } from 'nestjs-i18n';
 import { Garment } from '../dal/entity/garment.entity';
+import { Outfit } from '../dal/entity/outfit.entity';
 import { File } from '../dal/entity/file.entity';
 import { User } from '../dal/entity/user.entity';
 import { OutfitCalendar } from '../dal/entity/outfit-calendar.entity';
@@ -19,6 +20,7 @@ import { UpdateGarmentDto } from './dto/update-garment.dto';
 import { SearchGarmentDto } from './dto/search-garment.dto';
 import { GarmentCategory, compareCategories } from './garment-category.enum';
 import { WardrobeShareService } from '../wardrobe-share/wardrobe-share.service';
+import { orderOutfitGarments } from './outfit.service';
 import {
   normalizeSubCategory,
   compareSubCategories,
@@ -44,6 +46,8 @@ export class GarmentService {
   constructor(
     @InjectRepository(Garment)
     private readonly garmentRepository: EntityRepository<Garment>,
+    @InjectRepository(Outfit)
+    private readonly outfitRepository: EntityRepository<Outfit>,
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
     @InjectRepository(OutfitCalendar)
@@ -692,6 +696,119 @@ export class GarmentService {
       qb.andWhere({ 'c.owner': null });
     }
     return await qb.getCount();
+  }
+
+  async findGarmentOutfitsWithWearHistory(
+    garmentId: number,
+    userId?: number,
+    viewOwner?: number,
+    sort: 'asc' | 'desc' = 'desc',
+  ): Promise<{
+    garment: Garment;
+    outfits: Array<{
+      id: number;
+      name?: string;
+      rating?: number;
+      notes?: string;
+      look?: string;
+      occasions?: string;
+      seasons?: string;
+      createdAt?: Date;
+      createdAtStr: string;
+      garments: Garment[];
+      wornDates: Array<{ date: Date; dateStr: string }>;
+      isWorn: boolean;
+    }>;
+  }> {
+    const garment = await this.findOne(garmentId, userId, viewOwner);
+    const effectiveOwnerId = viewOwner ?? userId;
+
+    const where: FilterQuery<Outfit> = {
+      garments: { id: garment.id },
+      ...(effectiveOwnerId != null
+        ? { owner: { id: effectiveOwnerId } }
+        : { owner: null }),
+    };
+
+    const outfits = await this.outfitRepository.find(where, {
+      populate: ['garments', 'garments.photo'],
+    });
+
+    outfits.sort((a, b) => {
+      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      if (timeA !== timeB) {
+        return sort === 'asc' ? timeA - timeB : timeB - timeA;
+      }
+      return sort === 'asc' ? a.id - b.id : b.id - a.id;
+    });
+
+    const wornDatesByOutfitId = new Map<
+      number,
+      Array<{ date: Date; dateStr: string }>
+    >();
+
+    if (outfits.length > 0) {
+      const outfitIds = outfits.map((o) => o.id);
+      const calendarWhere: FilterQuery<OutfitCalendar> = {
+        outfit: { id: { $in: outfitIds } },
+        wornAt: { $ne: null },
+        ...(effectiveOwnerId != null
+          ? { owner: { id: effectiveOwnerId } }
+          : { owner: null }),
+      };
+
+      const entries = await this.calendarRepository.find(calendarWhere, {
+        orderBy: { date: 'desc' },
+      });
+
+      for (const entry of entries) {
+        const oId = entry.outfit.id;
+        if (!wornDatesByOutfitId.has(oId)) {
+          wornDatesByOutfitId.set(oId, []);
+        }
+        const dateStr =
+          entry.date instanceof Date
+            ? entry.date.toISOString().split('T')[0]
+            : String(entry.date).split('T')[0];
+
+        const list = wornDatesByOutfitId.get(oId)!;
+        if (!list.some((item) => item.dateStr === dateStr)) {
+          list.push({ date: entry.date, dateStr });
+        }
+      }
+    }
+
+    const outfitItems = outfits.map((outfit) => {
+      const orderedGarments = orderOutfitGarments(outfit);
+      const wornDates = wornDatesByOutfitId.get(outfit.id) ?? [];
+      const isWorn = wornDates.length > 0;
+      const createdAtDate = outfit.createdAt ?? new Date();
+      const createdAtStr =
+        createdAtDate instanceof Date
+          ? createdAtDate.toISOString().split('T')[0]
+          : String(createdAtDate).split('T')[0];
+
+      return {
+        id: outfit.id,
+        name: outfit.name,
+        rating: outfit.rating,
+        notes: outfit.notes,
+        look: outfit.look,
+        occasions: outfit.occasions,
+        seasons: outfit.seasons,
+        createdAt: outfit.createdAt,
+        createdAtStr,
+        garments: orderedGarments,
+        wornDates,
+        isWorn,
+      };
+    });
+
+    return {
+      garment,
+      outfits: outfitItems,
+    };
   }
 
   async remove(id: number, userId?: number): Promise<void> {

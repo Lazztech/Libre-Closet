@@ -355,5 +355,14 @@
   "LOAD_MORE": "Load More",
   "TOGGLE_THEME": "Toggle theme",
   "THEME_LIGHT": "Light mode",
-  "THEME_DARK": "Dark mode"
+  "THEME_DARK": "Dark mode",
+  "VIEW_OUTFITS": "View Outfits",
+  "OUTFITS_WITH_GARMENT": "Outfits with this garment",
+  "NO_OUTFITS_FOR_GARMENT": "This garment is not in any outfits yet.",
+  "WORN_ON": "Worn on",
+  "NEVER_WORN": "never worn",
+  "CREATED_ON": "Created on",
+  "SORT_NEWEST": "Newest first",
+  "SORT_OLDEST": "Oldest first",
+  "VIEW_IN_CALENDAR": "View in calendar"
 }

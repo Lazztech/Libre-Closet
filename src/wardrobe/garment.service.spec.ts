@@ -1,6 +1,7 @@
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Garment } from '../dal/entity/garment.entity';
+import { Outfit } from '../dal/entity/outfit.entity';
 import { User } from '../dal/entity/user.entity';
 import { OutfitCalendar } from '../dal/entity/outfit-calendar.entity';
 import { FileService } from '../file/file-service.abstract';
@@ -11,6 +12,7 @@ import { SEASONS, OCCASIONS, COLORS, LOOKUPS } from './additional-properties';
 describe('GarmentService with Properties', () => {
   let service: GarmentService;
   let garmentRepo: any;
+  let outfitRepo: any;
   let userRepo: any;
   let calendarRepo: any;
   let fileService: any;
@@ -25,6 +27,9 @@ describe('GarmentService with Properties', () => {
       })),
       find: jest.fn().mockResolvedValue([]),
       findOne: jest.fn(),
+    };
+    outfitRepo = {
+      find: jest.fn().mockResolvedValue([]),
     };
     userRepo = {
       findOneOrFail: jest
@@ -58,6 +63,10 @@ describe('GarmentService with Properties', () => {
         {
           provide: getRepositoryToken(Garment),
           useValue: garmentRepo,
+        },
+        {
+          provide: getRepositoryToken(Outfit),
+          useValue: outfitRepo,
         },
         {
           provide: getRepositoryToken(User),
@@ -299,6 +308,104 @@ describe('GarmentService with Properties', () => {
     const wears = await service.getWearsCount(1, 1);
     expect(wears).toBe(3);
     expect(calendarRepo.createQueryBuilder).toHaveBeenCalledWith('c');
+  });
+
+  describe('findGarmentOutfitsWithWearHistory', () => {
+    it('returns outfits containing the garment sorted by creation date descending by default with wear dates', async () => {
+      const mockGarment = {
+        id: 10,
+        name: 'Blue Jeans',
+        category: 'bottoms',
+        owner: { id: 1 },
+      };
+      garmentRepo.findOne.mockResolvedValue(mockGarment);
+
+      const outfit1 = {
+        id: 1,
+        name: 'Older Worn Outfit',
+        createdAt: new Date('2026-05-01T10:00:00Z'),
+        garments: { getItems: () => [mockGarment] },
+        slots: [],
+      };
+      const outfit2 = {
+        id: 2,
+        name: 'Newer Unworn Outfit',
+        createdAt: new Date('2026-06-01T10:00:00Z'),
+        garments: { getItems: () => [mockGarment] },
+        slots: [],
+      };
+
+      outfitRepo.find.mockResolvedValue([outfit1, outfit2]);
+
+      calendarRepo.find = jest.fn().mockResolvedValue([
+        {
+          id: 100,
+          outfit: { id: 1 },
+          date: new Date('2026-05-15T00:00:00Z'),
+          wornAt: new Date('2026-05-15T09:00:00Z'),
+        },
+        {
+          id: 101,
+          outfit: { id: 1 },
+          date: new Date('2026-05-20T00:00:00Z'),
+          wornAt: new Date('2026-05-20T09:00:00Z'),
+        },
+      ]);
+
+      const result = await service.findGarmentOutfitsWithWearHistory(10, 1);
+
+      expect(result.garment).toBe(mockGarment);
+      expect(result.outfits.length).toBe(2);
+
+      // Default sort is descending by createdAt (outfit2 created in June, outfit1 created in May)
+      expect(result.outfits[0].id).toBe(2);
+      expect(result.outfits[0].isWorn).toBe(false);
+      expect(result.outfits[0].createdAtStr).toBe('2026-06-01');
+      expect(result.outfits[0].wornDates).toEqual([]);
+
+      expect(result.outfits[1].id).toBe(1);
+      expect(result.outfits[1].isWorn).toBe(true);
+      expect(result.outfits[1].wornDates.map((w) => w.dateStr)).toEqual([
+        '2026-05-15',
+        '2026-05-20',
+      ]);
+    });
+
+    it('sorts outfits by creation date ascending when sort=asc', async () => {
+      const mockGarment = {
+        id: 10,
+        name: 'Blue Jeans',
+        category: 'bottoms',
+        owner: { id: 1 },
+      };
+      garmentRepo.findOne.mockResolvedValue(mockGarment);
+
+      const outfit1 = {
+        id: 1,
+        name: 'Older Outfit',
+        createdAt: new Date('2026-05-01T10:00:00Z'),
+        garments: { getItems: () => [mockGarment] },
+      };
+      const outfit2 = {
+        id: 2,
+        name: 'Newer Outfit',
+        createdAt: new Date('2026-06-01T10:00:00Z'),
+        garments: { getItems: () => [mockGarment] },
+      };
+
+      outfitRepo.find.mockResolvedValue([outfit2, outfit1]);
+      calendarRepo.find = jest.fn().mockResolvedValue([]);
+
+      const result = await service.findGarmentOutfitsWithWearHistory(
+        10,
+        1,
+        undefined,
+        'asc',
+      );
+
+      expect(result.outfits[0].id).toBe(1);
+      expect(result.outfits[1].id).toBe(2);
+    });
   });
 
   it('exposes accurate properties lookup dictionaries', () => {

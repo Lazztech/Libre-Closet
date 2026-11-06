@@ -338,5 +338,14 @@
   "LOAD_MORE": "Загрузить еще",
   "TOGGLE_THEME": "Переключить тему",
   "THEME_LIGHT": "Светлая тема",
-  "THEME_DARK": "Темная тема"
+  "THEME_DARK": "Темная тема",
+  "VIEW_OUTFITS": "Посмотреть образы",
+  "OUTFITS_WITH_GARMENT": "Образы с этой вещью",
+  "NO_OUTFITS_FOR_GARMENT": "Эта вещь пока не используется ни в одном образе.",
+  "WORN_ON": "Надето",
+  "NEVER_WORN": "ни разу не надето",
+  "CREATED_ON": "Создано",
+  "SORT_NEWEST": "Сначала новые",
+  "SORT_OLDEST": "Сначала старые",
+  "VIEW_IN_CALENDAR": "Посмотреть в календаре"
 }

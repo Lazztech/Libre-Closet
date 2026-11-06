@@ -125,6 +125,50 @@
       </div>
     </div>
 
+    {{!-- Look --}}
+    <div class="form-control">
+      <label class="label"><span class="label-text font-medium">{{t 'lang.LOOK'}}</span></label>
+      <label>
+        <select name="look" class="select select-bordered w-full">
+          <option value="">{{t 'lang.SELECT_LOOK'}}</option>
+          {{#each looks}}
+          <option value="{{this.name}}" {{#ifEquals this.name ../outfit.look}}selected{{/ifEquals}}>{{this.name}}
+          </option>
+          {{/each}}
+        </select>
+      </label>
+    </div>
+
+    {{!-- Seasons (Multi-select) --}}
+    <div class="form-control">
+      <label class="label"><span class="label-text font-medium">{{t 'lang.SEASONS'}}</span></label>
+      <div class="flex flex-wrap gap-2">
+        {{#each seasons}}
+        <label class="cursor-pointer">
+          <input type="checkbox" name="seasons" value="{{this.name}}" class="hidden peer" {{#ifInArray this.name
+            ../outfit.seasons}}checked{{/ifInArray}} />
+          <span
+            class="badge badge-lg badge-outline peer-checked:badge-primary peer-checked:font-semibold select-none transition-all py-3 px-4">{{this.name}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Occasions (Multi-select) --}}
+    <div class="form-control">
+      <label class="label"><span class="label-text font-medium">{{t 'lang.OCCASIONS'}}</span></label>
+      <div class="flex flex-wrap gap-1.5">
+        {{#each occasions}}
+        <label class="cursor-pointer">
+          <input type="checkbox" name="occasions" value="{{this.name}}" class="hidden peer" {{#ifInArray this.name
+            ../outfit.occasions}}checked{{/ifInArray}} />
+          <span
+            class="badge badge-outline peer-checked:badge-secondary peer-checked:font-semibold select-none transition-all py-2.5 px-3 text-xs">{{this.name}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </div>
+
     <div class="form-control">
       <label class="label">
         <span class="label-text">

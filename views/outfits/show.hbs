@@ -29,8 +29,39 @@
   {{/if}}
 
   {{#if outfit.notes}}
-  <p class="text-base-content/60 text-sm mb-6 px-1">{{outfit.notes}}</p>
-  {{/if}} {{!-- Garments grid --}}
+  <p class="text-base-content/60 text-sm mb-4 px-1">{{outfit.notes}}</p>
+  {{/if}}
+
+  {{#if outfit.look}}
+  <div class="flex items-center gap-2 mb-2 px-1">
+    <span class="text-xs text-base-content/60 font-medium">{{t 'lang.LOOK'}}:</span>
+    <span class="badge badge-sm badge-outline font-medium">{{outfit.look}}</span>
+  </div>
+  {{/if}}
+
+  {{#if seasonsList.length}}
+  <div class="flex items-center gap-2 mb-2 px-1">
+    <span class="text-xs text-base-content/60 font-medium">{{t 'lang.SEASONS'}}:</span>
+    <div class="flex flex-wrap gap-1">
+      {{#each seasonsList}}
+      <span class="badge badge-sm badge-primary badge-outline font-medium">{{this}}</span>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if occasionsList.length}}
+  <div class="flex items-center gap-2 mb-4 px-1">
+    <span class="text-xs text-base-content/60 font-medium">{{t 'lang.OCCASIONS'}}:</span>
+    <div class="flex flex-wrap gap-1">
+      {{#each occasionsList}}
+      <span class="badge badge-sm badge-secondary badge-outline text-xs">{{this}}</span>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Garments grid --}}
   <h2 class="font-semibold mb-3">{{t 'lang.GARMENTS_IN_OUTFIT'}}</h2>
   {{#if garments.length}}
   <div class="flex flex-wrap gap-3 mb-8">
