@@ -1,0 +1,178 @@
+{{>navbar}}
+
+<main class="p-4 pt-20 pb-24 max-w-xl mx-auto">
+  <div class="flex items-center justify-between gap-3 mb-6">
+    <div class="flex items-center gap-3 min-w-0">
+      <a
+        href="/wardrobe/{{garment.id}}{{#if viewOwner}}?ownerId={{viewOwner}}{{/if}}"
+        class="btn btn-ghost btn-sm btn-circle"
+        title="{{t 'lang.BACK'}}"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="size-4"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+          />
+        </svg>
+      </a>
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold truncate">{{t 'lang.OUTFITS'}}</h1>
+        <p class="text-xs text-base-content/60 truncate">{{garment.name}}</p>
+      </div>
+    </div>
+
+    {{#if outfits.length}}
+    {{!-- Sort order selector --}}
+    <div class="flex items-center gap-1.5 shrink-0">
+      <span class="text-xs text-base-content/60 font-medium">{{t 'lang.SORT_BY'}}:</span>
+      <div class="join border border-base-300 rounded-lg p-0.5 bg-base-200">
+        <a
+          href="/wardrobe/{{garment.id}}/outfits?sort=desc{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+          class="btn btn-xs join-item rounded-md border-0 {{#ifEquals sort 'desc'}}btn-primary shadow-sm font-semibold{{else}}btn-ghost text-base-content/70{{/ifEquals}}"
+          title="{{t 'lang.SORT_NEWEST'}}"
+        >
+          {{t 'lang.SORT_NEWEST'}}
+        </a>
+        <a
+          href="/wardrobe/{{garment.id}}/outfits?sort=asc{{#if viewOwner}}&ownerId={{viewOwner}}{{/if}}"
+          class="btn btn-xs join-item rounded-md border-0 {{#ifEquals sort 'asc'}}btn-primary shadow-sm font-semibold{{else}}btn-ghost text-base-content/70{{/ifEquals}}"
+          title="{{t 'lang.SORT_OLDEST'}}"
+        >
+          {{t 'lang.SORT_OLDEST'}}
+        </a>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+
+  {{#if outfits.length}}
+  <div class="flex flex-col gap-4" id="garment-outfits-list">
+    {{#each outfits}}
+    <div class="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md transition-shadow">
+      <div class="card-body p-4">
+        {{!-- Dates section: strictly worn dates, or 'Created on (date), never worn' --}}
+        <div class="flex flex-wrap items-center gap-1.5 mb-2 pb-2 border-b border-base-200">
+          {{#if this.isWorn}}
+            <span class="text-xs font-semibold text-base-content/70 uppercase tracking-wide mr-1">{{t 'lang.WORN_ON'}}:</span>
+            {{#each this.wornDates}}
+            <a
+              href="/calendar?date={{this.dateStr}}"
+              class="badge badge-primary badge-outline text-xs gap-1 hover:badge-primary transition-colors cursor-pointer py-2 px-2.5 font-medium"
+              title="{{t 'lang.VIEW_IN_CALENDAR'}}"
+              onclick="event.stopPropagation();"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+              </svg>
+              {{this.dateStr}}
+            </a>
+            {{/each}}
+          {{else}}
+            <span class="text-xs text-base-content/60 italic font-medium">Created on {{this.createdAtStr}}, never worn</span>
+          {{/if}}
+        </div>
+
+        {{!-- Outfit header: Name, Rating, and Metadata --}}
+        <div class="cursor-pointer" onclick="window.location = '/outfits/{{this.id}}'">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <a href="/outfits/{{this.id}}" class="card-title text-base hover:underline truncate">
+              {{#if this.name}}{{this.name}}{{else}}{{t 'lang.OUTFIT'}} #{{this.id}}{{/if}}
+            </a>
+            {{#if this.rating}}
+            <span class="text-xs text-amber-500 font-bold shrink-0">★ {{this.rating}}</span>
+            {{/if}}
+          </div>
+
+          {{!-- Metadata pills if present --}}
+          {{#if (or this.looks this.look this.occasions this.seasons)}}
+          <div class="flex flex-wrap gap-1 mb-2">
+            {{#if this.looksList.length}}
+            {{#each this.looksList}}
+            <span class="badge badge-xs badge-accent badge-outline font-medium">{{this}}</span>
+            {{/each}}
+            {{else if (or this.looks this.look)}}
+            <span class="badge badge-xs badge-accent badge-outline font-medium">{{or this.looks this.look}}</span>
+            {{/if}}
+            {{#if this.seasonsList.length}}
+            {{#each this.seasonsList}}
+            <span class="badge badge-xs badge-primary badge-outline font-medium">{{this}}</span>
+            {{/each}}
+            {{else if this.seasons}}
+            <span class="badge badge-xs badge-primary badge-outline font-medium">{{this.seasons}}</span>
+            {{/if}}
+            {{#if this.occasionsList.length}}
+            {{#each this.occasionsList}}
+            <span class="badge badge-xs badge-secondary badge-outline font-medium">{{this}}</span>
+            {{/each}}
+            {{else if this.occasions}}
+            <span class="badge badge-xs badge-secondary badge-outline font-medium">{{this.occasions}}</span>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if this.notes}}
+          <p class="text-xs text-base-content/60 line-clamp-2 mb-2">{{this.notes}}</p>
+          {{/if}}
+
+          {{!-- Garments list in a horizontal row --}}
+          <div class="flex items-center gap-2 overflow-x-auto py-1 scrollbar-thin">
+            {{#each this.garments}}
+            <div class="flex flex-col items-center shrink-0 w-20 p-1 rounded-lg bg-base-200/50 {{#ifEquals this.id ../../garment.id}}ring-2 ring-primary ring-offset-1 ring-offset-base-100{{/ifEquals}}">
+              {{#if this.photo}}
+              <img
+                src="/file/nobg/{{this.photo.fileName}}"
+                alt="{{this.name}}"
+                class="size-16 rounded-md object-cover"
+              />
+              {{else}}
+              <div class="size-16 rounded-md bg-base-200 flex items-center justify-center text-base-content/30">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.251 2.251 0 0 1 2.012 1.244l.256.512a2.251 2.251 0 0 0 2.013 1.244h3.218a2.251 2.251 0 0 0 2.013-1.244l.256-.512a2.251 2.251 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+                </svg>
+              </div>
+              {{/if}}
+              <span class="text-[11px] text-center truncate w-full mt-1 leading-tight {{#ifEquals this.id ../../garment.id}}font-semibold text-primary{{/ifEquals}}">
+                {{this.name}}
+              </span>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{else}}
+  <div class="flex flex-col items-center justify-center gap-4 pt-16 text-base-content/40 text-center">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1"
+      stroke="currentColor"
+      class="size-16"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+      />
+    </svg>
+    <p class="text-sm font-medium">{{t 'lang.NO_OUTFITS_FOR_GARMENT'}}</p>
+    <a href="/outfits/new" class="btn btn-primary btn-sm">
+      + {{t 'lang.BUILD_OUTFIT'}}
+    </a>
+  </div>
+  {{/if}}
+</main>
+
+{{>dock}}
+

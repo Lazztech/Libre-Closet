@@ -1,7 +1,6 @@
 import {
   Collection,
   Entity,
-  Enum,
   ManyToMany,
   ManyToOne,
   OneToOne,
@@ -28,8 +27,11 @@ export class Garment extends ShareableId {
   @Property()
   public category!: string;
 
-  @Enum({ nullable: true })
-  public color?: GarmentColor;
+  @Property({ nullable: true })
+  public subCategory?: string;
+
+  @Property({ nullable: true, columnType: 'text' })
+  public color?: string;
 
   @Property({ nullable: true })
   public brand?: string;
@@ -64,4 +66,36 @@ export class Garment extends ShareableId {
 
   @ManyToMany(() => Outfit, (outfit) => outfit.garments)
   public outfits = new Collection<Outfit>(this);
+
+  @Property({ nullable: true })
+  public rating?: number;
+
+  @Property({ nullable: true })
+  public seasons?: string;
+
+  @Property({ nullable: true })
+  public occasions?: string;
+
+  @Property({ nullable: true })
+  public purchaseLink?: string;
+
+  @Property({ nullable: true, columnType: 'numeric(12,2)' })
+  public cost?: number;
+
+  @Property({ nullable: true })
+  public print?: string;
+
+  @Property({ nullable: true })
+  public looks?: string;
+
+  public get look(): string | undefined {
+    return this.looks;
+  }
+
+  public set look(val: string | undefined) {
+    this.looks = val;
+  }
+
+  @Property({ nullable: true })
+  public fit?: string;
 }

@@ -7,7 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- ...
+#### Added
+
+- Outfit extended metadata: Looks, Occasions, and Seasons properties supported when building and editing outfits, displayed across outfit show and card views
+- Garment wear history and outfits browser: added "View Outfits" button on garment details view leading to a dedicated outfits list showing all outfits containing the garment
+- Outfit wear date tracking: displays specific dates when each outfit was worn, with direct navigation to the exact date in calendar view; unworn outfits explicitly indicate "Created on (date), never worn"
+- Chronological sorting controls for garment outfits: default descending order by creation date (newest first), with toggle to sort ascending (oldest first)
+- Database migrations for SQLite and PostgreSQL adding nullable `look`, `occasions`, `seasons`, and `created_at` columns to `outfit` table
+- Multi-language localization for outfit metadata and garment outfits view across all 7 supported languages (English, Danish, German, Spanish, French, Italian, Russian)
+- Calendar Month and Week view toggle: view scheduled outfits across the entire month in a responsive 7-column calendar grid or drill down into the week view
+- Mobile-optimized month calendar view displaying vertically stacked top and bottom garment photos per day with multi-outfit indicators
+- Calendar Jump to Date picker: navigate directly to any date in the past or future with instant jump
+- Calendar toolbar controls with Previous, Next, and Today quick-jump buttons
+- Multi-language localization for calendar view toggle, jump-to-date, and navigation controls across all 7 supported languages (English, Danish, German, Spanish, French, Italian, Russian)
+- Sub-category garment property with dynamic, pre-defined selection scoped to each category (e.g., T-shirt/Sweater for Tops, Shorts/Jeans/Trousers for Bottoms, Sneakers/Boots for Footwear)
+- Expanded categories list with Headwear
+- Database migrations for SQLite and PostgreSQL adding nullable columns for sub-category and new garment properties without data loss
+- Multi-language localization support for sub-category, garment properties, and new category labels across all 7 supported languages (English, Danish, German, Spanish, French, Italian, Russian)
+- Extended garment properties: Rating (1-5 stars), Seasons, Occasions, Cost, Purchase link, Look, Fit, and Print
+- Filter modal and property sorting in wardrobe view with multi-tier priority tie-breaking (e.g. Category -> Sub-category -> Color -> Name, Rating -> Cost -> Name) and ascending/descending order controls
+- Outfit rating (1-5 stars) support with interactive star selector on outfit builder/editor, and star displays on outfit cards, show view, and shared views
+- Outfit garment picker modal with Filter Search and Sort By options, interactive filter panels (sub-category, color, size, season, occasion, rating), property sorting controls, active badge pills, live search, and slot clearing
+- Paginated Outfits view displaying the most recent 50 outfits first with an asynchronous "Load More" button for fetching subsequent batches via HTMX
+- Light and dark theme switcher with instant toggle, local storage persistence, and OS preference detection, accessible from both navbar and drawer
+- Wears count (number of times worn in outfits) and dynamic Cost Per Wear displayed in garment details view
+- Color swatch dots rendered beside color names in garment details view
+- Configurable currency via `CURRENCY` environment variable with localized currency formatting
+- Expanded color palette with 24 curated swatches and hex color dot previews
+
+#### Fixed
+
+- Use button element instead of anchor tag for drawer theme toggle to fix Lighthouse `crawlable-anchors` audit failure
+- Fix SortableJS drag-and-drop initialization on outfit builder/editor rows by reordering script tags and adding resilient event listeners for direct visits and HTMX page transitions
+- Outfit garments ordering: honor user custom drag-and-drop slot arrangement across outfit show, card, and share views, while retaining wear priority CATEGORY_SORT_ORDER by default
+- Expand outfit row drag handle affordance to include category labels alongside the drag icon with grab cursor styling
 
 ## 0.6.0 2026-10-5
 

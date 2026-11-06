@@ -2,6 +2,7 @@ import { MultipartFile } from '@fastify/multipart';
 export interface CreateGarmentDto {
   name?: string;
   category: string;
+  subCategory?: string;
   brand?: string;
   color?: string;
   size?: string;
@@ -9,4 +10,15 @@ export interface CreateGarmentDto {
   washingDetails?: string;
   dateAquired?: string;
   files?: AsyncIterableIterator<MultipartFile>;
+  rating?: number;
+  seasons?: string;
+  occasions?: string;
+  purchaseLink?: string;
+  cost?: number;
+  print?: string;
+  looks?: string;
+  look?: string;
+  fit?: string;
+  pattern?: string;
+  style?: string;
 }

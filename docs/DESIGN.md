@@ -54,24 +54,35 @@ The following entities extend the existing boilerplate schema. Existing entities
 
 Represents a single clothing item owned by a user.
 
-| Field         | Type        | Notes                                                     |
-| ------------- | ----------- | --------------------------------------------------------- |
-| `id`          | `number` PK | Auto-increment                                            |
-| `shareableId` | `string` UK | Inherited from `ShareableId`; used for public share URLs  |
-| `name`        | `string`    | User-provided label, e.g. "Black Linen Blazer"            |
-| `category`    | `enum`      | See `GarmentCategory` enum below                          |
-| `brand`       | `string?`   | Optional brand name                                       |
-| `colors`      | `string[]`  | One or more color labels                                  |
-| `size`        | `string?`   | Free-text size (XS/S/M/L/XL or numeric)                   |
-| `notes`       | `string?`   | Free-text notes                                           |
-| `photo`       | `File` FK   | One-to-one relation to the existing `File` entity         |
-| `owner`       | `User?` FK  | Many-to-one; nullable — omitted when `AUTH_ENABLED=false` |
-| `outfits`     | `Outfit[]`  | Many-to-many back-reference                               |
-| `flagged`     | `boolean?`  | Inherited from `ShareableId`                              |
-| `banned`      | `boolean?`  | Inherited from `ShareableId`                              |
+| Field          | Type        | Notes                                                     |
+| -------------- | ----------- | --------------------------------------------------------- |
+| `id`           | `number` PK | Auto-increment                                            |
+| `shareableId`  | `string` UK | Inherited from `ShareableId`; used for public share URLs  |
+| `name`         | `string`    | User-provided label, e.g. "Black Linen Blazer"            |
+| `category`     | `enum`      | See `GarmentCategory` enum below                          |
+| `subCategory`  | `string?`   | Optional pre-defined sub-category scoped to category      |
+| `brand`        | `string?`   | Optional brand name                                       |
+| `colors`       | `string[]`  | One or more color labels                                  |
+| `size`         | `string?`   | Free-text size (XS/S/M/L/XL or numeric)                   |
+| `notes`        | `string?`   | Free-text notes                                           |
+| `photo`        | `File` FK   | One-to-one relation to the existing `File` entity         |
+| `owner`        | `User?` FK  | Many-to-one; nullable — omitted when `AUTH_ENABLED=false` |
+| `rating`       | `number?`   | Optional 1-5 star rating                                  |
+| `seasons`      | `string?`   | Optional comma-separated seasons                          |
+| `occasions`    | `string?`   | Optional comma-separated occasions                        |
+| `purchaseLink` | `string?`   | Optional purchase link / source URL                       |
+| `cost`         | `number?`   | Optional item cost (`numeric(12,2)`)                      |
+| `print`        | `string?`   | Optional print classification                             |
+| `looks`        | `string?`   | Optional multi-select style aesthetic (comma-separated)   |
+| `fit`          | `string?`   | Optional fit type                                         |
+| `outfits`      | `Outfit[]`  | Many-to-many back-reference                               |
+| `flagged`      | `boolean?`  | Inherited from `ShareableId`                              |
+| `banned`       | `boolean?`  | Inherited from `ShareableId`                              |
 
 **`GarmentCategory` enum** (initial set, extensible):
-`tops`, `bottoms`, `dresses`, `outerwear`, `footwear`, `accessories`, `bags`, `activewear`, `swimwear`, `underwear`, `other`
+`tops`, `bottoms`, `outerwear`, `footwear`, `headwear`, `accessories`, `activewear`, `swimwear`, `underwear`, `other`
+
+Each category has a strictly defined list of pre-defined sub-categories (e.g. `Tops` -> `T-shirt`, `Vest`, `Blouse`, etc.; `Bottoms` -> `Shorts`, `Jeans`, `Trousers`, etc.; `Footwear` -> `Sneakers`, `Boots`, etc.). Sub-category selection in the UI dynamically presents only the valid options for the selected category.
 
 #### `Outfit`
 
@@ -83,6 +94,12 @@ Represents a saved combination of garments.
 | `shareableId` | `string` UK | Inherited from `ShareableId`; used for public share URLs  |
 | `name`        | `string`    | User-provided label, e.g. "Summer Wedding Guest"          |
 | `notes`       | `string?`   | Free-text notes or occasion context                       |
+| `rating`      | `number?`   | Optional 1-5 star rating                                  |
+| `looks`       | `string?`   | Multi-select style/aesthetic (comma-separated, e.g. Casual,Formal) |
+| `occasions`   | `string?`   | Comma-separated occasions (e.g. Work, Date, Special)      |
+| `seasons`     | `string?`   | Comma-separated seasons (e.g. Summer, Autumn, Winter)     |
+| `createdAt`   | `Date`      | Creation timestamp used for chronology and wear tracking  |
+| `slots`       | `json?`     | Configured category slots array                           |
 | `garments`    | `Garment[]` | Many-to-many; the garments that make up this outfit       |
 | `owner`       | `User?` FK  | Many-to-one; nullable — omitted when `AUTH_ENABLED=false` |
 | `flagged`     | `boolean?`  | Inherited from `ShareableId`                              |
@@ -116,10 +133,19 @@ erDiagram
         string shareableId UK
         string name
         string category
+        string subCategory "nullable"
         string brand
         json colors
         string size
         string notes
+        number rating "nullable"
+        string seasons "nullable"
+        string occasions "nullable"
+        string purchaseLink "nullable"
+        number cost "nullable"
+        string print "nullable"
+        string looks "nullable"
+        string fit "nullable"
         number photoId FK
         number ownerId "FK nullable"
         boolean flagged
@@ -131,6 +157,11 @@ erDiagram
         string shareableId UK
         string name
         string notes
+        number rating "nullable"
+        string looks "nullable"
+        string occasions "nullable"
+        string seasons "nullable"
+        date createdAt
         number ownerId "FK nullable"
         boolean flagged
         boolean banned

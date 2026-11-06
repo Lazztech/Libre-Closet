@@ -54,6 +54,16 @@ body {
   min-height: 100dvh; /* Use dynamic viewport height */
 }
 
+/* Invert images in dark theme, keep original in light theme */
+html[data-theme="dark"] .theme-invert {
+  filter: invert(1);
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) .theme-invert {
+    filter: invert(1);
+  }
+}
+
 /* color-multiselect.css
    DaisyUI v5 compatible — uses --color-* variables throughout */
 
@@ -231,8 +241,7 @@ body {
 
 /* Swatch */
 .ms-swatch {
-  /* Change to display: block; to display color dots for each color */
-  display: none;
+  display: inline-block;
   width: 0.75rem;
   height: 0.75rem;
   min-width: 0.75rem;

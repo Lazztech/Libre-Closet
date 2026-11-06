@@ -5,6 +5,21 @@ https://nestjs-i18n.com/quick-start --}}
 <html lang="{{locale}}">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme');
+        if (!theme) {
+          theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+      window.toggleTheme = function() {
+        var current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        var next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch(e) {}
+      };
+    </script>
     <meta
       name="viewport"
       content="viewport-fit=cover, width=device-width, initial-scale=1.0"
@@ -55,8 +70,8 @@ https://nestjs-i18n.com/quick-start --}}
     performed. https://htmx.org/docs/#installing
     https://blog.wesleyac.com/posts/why-not-javascript-cdn }}
     <script defer src="/modules/htmx.min.js"></script>
-    <script defer src="/modules/_hyperscript.min.js"></script>
     <script defer src="/modules/Sortable.min.js"></script>
+    <script defer src="/modules/_hyperscript.min.js"></script>
     <script defer src="/modules/sse.js"></script>
     <script defer src="/js/color-multiselect.js" defer></script>
     <script type="importmap">

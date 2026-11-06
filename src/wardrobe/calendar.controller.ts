@@ -40,7 +40,10 @@ export class CalendarController {
   @Get()
   @Render('calendar/index')
   async index(
+    @Query('view') viewParam: string | undefined,
+    @Query('date') dateParam: string | undefined,
     @Query('week') weekParam: string | undefined,
+    @Query('month') monthParam: string | undefined,
     @Query('calMonth') calMonthParam: string | undefined,
     @Query('lat') latParam: string | undefined,
     @Query('lon') lonParam: string | undefined,
@@ -51,7 +54,10 @@ export class CalendarController {
     const lon = lonParam != null ? parseFloat(lonParam) : undefined;
     const acceptLanguage = this.acceptLanguage(req);
     return this.calendarService.buildIndexViewModel(
+      viewParam,
+      dateParam,
       weekParam,
+      monthParam,
       calMonthParam,
       this.userId(req),
       i18n,
@@ -88,7 +94,14 @@ export class CalendarController {
   @Post()
   async create(
     @Body()
-    body: { date: string; outfitId: string; notes?: string; week?: string },
+    body: {
+      date: string;
+      outfitId: string;
+      notes?: string;
+      week?: string;
+      view?: string;
+      month?: string;
+    },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
   ) {
@@ -103,35 +116,61 @@ export class CalendarController {
     if (req.headers['hx-request'] === 'true') {
       return reply.status(204).send();
     }
-    return reply.redirect(`/calendar?week=${body.week ?? body.date}`, 302);
+    const redirectUrl =
+      body.view === 'month'
+        ? `/calendar?view=month&month=${body.month ?? body.date.slice(0, 7)}`
+        : `/calendar?view=week&week=${body.week ?? body.date}`;
+    return reply.redirect(redirectUrl, 302);
   }
 
   @Post(':id/delete')
   @HttpCode(200)
   async remove(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { week?: string },
+    @Body() body: { week?: string; view?: string; month?: string },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
   ) {
     await this.calendarService.remove(id, this.userId(req));
-    reply.header('HX-Redirect', `/calendar?week=${body.week ?? ''}`);
+    const redirectUrl =
+      body.view === 'month'
+        ? `/calendar?view=month&month=${body.month ?? ''}`
+        : `/calendar?view=week&week=${body.week ?? ''}`;
+    reply.header('HX-Redirect', redirectUrl);
     return reply.send();
   }
 
   @Post(':id/worn')
   async toggleWorn(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { week?: string },
+    @Body() body: { week?: string; view?: string; month?: string },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
     @I18n() i18n: I18nContext,
   ) {
     const entry = await this.calendarService.toggleWorn(id, this.userId(req));
     const week = body.week ?? '';
+    const view = body.view ?? 'week';
+    const month = body.month ?? '';
 
     if (req.headers['hx-request']) {
       const isWorn = !!entry.wornAt;
+      if (view === 'month') {
+        const btnClass = isWorn
+          ? 'size-4 sm:size-5 rounded-full flex items-center justify-center text-[10px] bg-success/20 text-success hover:bg-success/30'
+          : 'size-4 sm:size-5 rounded-full flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 bg-base-300 text-base-content/60 hover:text-base-content hover:bg-base-100';
+        const title = isWorn
+          ? i18n.t('lang.CALENDAR_UNMARK_WORN')
+          : i18n.t('lang.CALENDAR_MARK_WORN');
+        return reply.viewPartial('partials/calendar_worn_button_month', {
+          entryId: id,
+          month,
+          week,
+          btnClass,
+          title,
+          isWorn,
+        });
+      }
       const btnClass = isWorn
         ? 'bg-success text-success-content'
         : 'text-base-content/40 italic font-normal hover:text-base-content/70';
@@ -147,6 +186,10 @@ export class CalendarController {
     }
 
     // Non-HTMX fallback: full redirect
-    return reply.redirect(`/calendar?week=${week}`, 303);
+    const redirectUrl =
+      view === 'month'
+        ? `/calendar?view=month&month=${month}`
+        : `/calendar?view=week&week=${week}`;
+    return reply.redirect(redirectUrl, 303);
   }
 }
