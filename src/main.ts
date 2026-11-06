@@ -158,45 +158,41 @@ async function bootstrap() {
   });
   hbs.registerHelper(
     'ifInArray',
-    function (
-      item: string,
-      value: string | string[] | undefined,
-      options: Handlebars.HelperOptions,
-    ) {
+    function (item: string, value: unknown, options: Handlebars.HelperOptions) {
       if (!value) return options.inverse(this);
-      const arr = Array.isArray(value)
-        ? value
-        : value.split(',').map((s) => s.trim());
+      let arr: string[] = [];
+      if (Array.isArray(value)) {
+        arr = value.map(String);
+      } else if (typeof value === 'string') {
+        arr = value.split(',').map((s) => s.trim());
+      }
       return arr.includes(item) ? options.fn(this) : options.inverse(this);
     },
   );
-  hbs.registerHelper('formatColors', function (value: string | undefined) {
-    if (!value) return '';
+  hbs.registerHelper('formatColors', function (value: unknown) {
+    if (!value || typeof value !== 'string') return '';
     return value
       .split(',')
       .map((s) => s.trim())
       .join(', ');
   });
-  hbs.registerHelper(
-    'renderColorSwatches',
-    function (value: string | undefined) {
-      if (!value) return '';
-      const names = value
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-      const html = names
-        .map((name) => {
-          const item = LOOKUPS.colorsByName.get(name.toLowerCase());
-          const swatch = item?.hex
-            ? `<span class="ms-swatch" style="background:${item.hex};"></span>`
-            : `<span class="ms-swatch ms-swatch--${name.toLowerCase()}"></span>`;
-          return `<span class="inline-flex items-center gap-1.5 font-medium">${swatch}<span class="capitalize">${name}</span></span>`;
-        })
-        .join(' ');
-      return new hbs.handlebars.SafeString(html);
-    },
-  );
+  hbs.registerHelper('renderColorSwatches', function (value: unknown) {
+    if (!value || typeof value !== 'string') return '';
+    const names = value
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const html = names
+      .map((name) => {
+        const item = LOOKUPS.colorsByName.get(name.toLowerCase());
+        const swatch = item?.hex
+          ? `<span class="ms-swatch" style="background:${item.hex};"></span>`
+          : `<span class="ms-swatch ms-swatch--${name.toLowerCase()}"></span>`;
+        return `<span class="inline-flex items-center gap-1.5 font-medium">${swatch}<span class="capitalize">${name}</span></span>`;
+      })
+      .join(' ');
+    return new hbs.handlebars.SafeString(html);
+  });
   hbs.registerHelper(
     'ifEquals',
     function (arg1: unknown, arg2: unknown, options: HelperOptions) {
@@ -275,7 +271,7 @@ async function bootstrap() {
   );
   hbs.registerHelper('or', function (...args: unknown[]) {
     const values = args.slice(0, -1);
-    return values.some(Boolean);
+    return values.find(Boolean) ?? false;
   });
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
