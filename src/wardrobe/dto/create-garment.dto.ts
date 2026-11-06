@@ -16,6 +16,7 @@ export interface CreateGarmentDto {
   purchaseLink?: string;
   cost?: number;
   print?: string;
+  looks?: string;
   look?: string;
   fit?: string;
   pattern?: string;

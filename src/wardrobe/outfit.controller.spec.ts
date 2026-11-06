@@ -147,6 +147,7 @@ describe('OutfitController', () => {
       expect(result).toEqual({
         outfit: dummyOutfit,
         garments: [{ id: 10, name: 'Shirt' }],
+        looksList: [],
         seasonsList: [],
         occasionsList: [],
       });
@@ -154,7 +155,7 @@ describe('OutfitController', () => {
   });
 
   describe('create and update with metadata', () => {
-    it('creates an outfit parsing look, occasions, and seasons arrays', async () => {
+    it('creates an outfit parsing looks, occasions, and seasons arrays', async () => {
       const mockReq: any = { user: { userId: 5 } };
       mockOutfitService.create.mockResolvedValueOnce({ id: 99 });
 
@@ -163,7 +164,7 @@ describe('OutfitController', () => {
           name: 'Weekend Trip',
           notes: 'Sunny and breezy',
           rating: '4',
-          look: 'Casual',
+          looks: ['Casual', 'Classic'],
           occasions: ['Work', 'Everyday'],
           seasons: ['Spring', 'Summer'],
           category: ['tops'],
@@ -177,7 +178,7 @@ describe('OutfitController', () => {
         expect.objectContaining({
           name: 'Weekend Trip',
           rating: 4,
-          look: 'Casual',
+          looks: 'Casual,Classic',
           occasions: 'Work,Everyday',
           seasons: 'Spring,Summer',
         }),
@@ -186,7 +187,7 @@ describe('OutfitController', () => {
       expect(mockReply.redirect).toHaveBeenCalledWith('/outfits/99', 302);
     });
 
-    it('updates an outfit parsing look, occasions, and seasons', async () => {
+    it('updates an outfit parsing looks array, occasions, and seasons', async () => {
       const mockReq: any = { user: { userId: 5 } };
       mockOutfitService.update.mockResolvedValueOnce({ id: 99 });
 
@@ -194,7 +195,7 @@ describe('OutfitController', () => {
         99,
         {
           name: 'Weekend Trip Updated',
-          look: 'Formal',
+          looks: ['Formal', 'Business'],
           occasions: 'Date,Special',
           seasons: 'Autumn',
           category: ['tops'],
@@ -208,7 +209,7 @@ describe('OutfitController', () => {
         99,
         expect.objectContaining({
           name: 'Weekend Trip Updated',
-          look: 'Formal',
+          looks: 'Formal,Business',
           occasions: 'Date,Special',
           seasons: 'Autumn',
         }),

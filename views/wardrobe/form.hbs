@@ -137,20 +137,23 @@
       </div>
     </div>
 
-    {{!-- Look, Fit & Print --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <div class="form-control">
-        <label class="label"><span class="label-text font-medium">{{t 'lang.LOOK'}}</span></label>
-        <label>
-          <select name="look" class="select select-bordered w-full">
-            <option value="">{{t 'lang.SELECT_LOOK'}}</option>
-            {{#each looks}}
-            <option value="{{this.name}}" {{#ifEquals this.name ../garment.look}}selected{{/ifEquals}}>{{this.name}}
-            </option>
-            {{/each}}
-          </select>
+    {{!-- Looks (Multi-select) --}}
+    <div class="form-control">
+      <label class="label"><span class="label-text font-medium">{{t 'lang.LOOKS'}}</span></label>
+      <div class="flex flex-wrap gap-1.5 p-2 bg-base-200/50 rounded-lg min-h-[42px] items-center">
+        {{#each looks}}
+        <label class="cursor-pointer">
+          <input type="checkbox" name="looks" value="{{this.name}}" class="hidden peer" {{#ifInArray this.name
+            (or ../garment.looks ../garment.look)}}checked{{/ifInArray}} />
+          <span
+            class="badge badge-sm badge-outline peer-checked:badge-accent peer-checked:font-semibold select-none transition-all py-2 px-2.5 text-xs">{{this.name}}</span>
         </label>
+        {{/each}}
       </div>
+    </div>
+
+    {{!-- Fit & Print --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div class="form-control">
         <label class="label"><span class="label-text font-medium">{{t 'lang.FIT'}}</span></label>
         <label>

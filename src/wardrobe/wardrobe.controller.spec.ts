@@ -78,4 +78,32 @@ describe('WardrobeController - garmentOutfits', () => {
     expect(result.sort).toBe('asc');
     expect(result.viewOwner).toBe(20);
   });
+
+  it('updates garment joining multi-select looks into comma-separated string', async () => {
+    mockGarmentService.update = jest.fn().mockResolvedValue({});
+    const mockReq: any = { user: { userId: 5 } };
+    const mockReply: any = { redirect: jest.fn() };
+
+    await controller.update(
+      10,
+      {
+        name: 'Classic Shirt',
+        looks: ['Casual', 'Vintage'],
+      },
+      mockReq,
+      mockReply,
+      undefined,
+    );
+
+    expect(mockGarmentService.update).toHaveBeenCalledWith(
+      10,
+      expect.objectContaining({
+        name: 'Classic Shirt',
+        looks: 'Casual,Vintage',
+      }),
+      5,
+      5,
+    );
+    expect(mockReply.redirect).toHaveBeenCalledWith('/wardrobe/10', 302);
+  });
 });

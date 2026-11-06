@@ -142,7 +142,8 @@ export class WardrobeController {
         occasion: i18n.t('lang.OCCASION'),
         occasions: i18n.t('lang.OCCASIONS'),
         print: i18n.t('lang.PRINT'),
-        look: i18n.t('lang.LOOK'),
+        looks: i18n.t('lang.LOOKS'),
+        look: i18n.t('lang.LOOKS'),
         fit: i18n.t('lang.FIT'),
       };
       const propLabel = propMap[query.sortBy] || query.sortBy;
@@ -174,7 +175,7 @@ export class WardrobeController {
       { key: 'season', label: i18n.t('lang.SEASON') },
       { key: 'occasion', label: i18n.t('lang.OCCASION') },
       { key: 'print', label: i18n.t('lang.PRINT') },
-      { key: 'look', label: i18n.t('lang.LOOK') },
+      { key: 'looks', label: i18n.t('lang.LOOKS') },
       { key: 'fit', label: i18n.t('lang.FIT') },
     ];
 
@@ -253,7 +254,8 @@ export class WardrobeController {
       purchaseLink?: string;
       cost?: string | number;
       print?: string;
-      look?: string;
+      look?: string | string[];
+      looks?: string | string[];
       fit?: string;
     },
     @Req() req: FastifyRequest,
@@ -290,6 +292,13 @@ export class WardrobeController {
           .map((o) => o.trim())
           .filter(Boolean) ?? []);
 
+    const rawLooks = Array.isArray(body.look ?? body.looks)
+      ? (body.look ?? body.looks)
+      : ((body.look ?? body.looks)
+          ?.split(',')
+          .map((l) => l.trim())
+          .filter(Boolean) ?? []);
+
     const parsedRating =
       body.rating != null && body.rating !== ''
         ? parseInt(String(body.rating), 10)
@@ -317,7 +326,8 @@ export class WardrobeController {
         cost: parsedCost,
         subCategory: body.subCategory?.trim() || undefined,
         print: body.print?.trim() || undefined,
-        look: body.look?.trim() || undefined,
+        looks: rawLooks.length > 0 ? rawLooks.join(',') : undefined,
+        look: rawLooks.length > 0 ? rawLooks.join(',') : undefined,
         fit: body.fit?.trim() || undefined,
       },
       viewOwner ?? userId,
@@ -427,6 +437,11 @@ export class WardrobeController {
         garment.occasions
           ?.split(',')
           .map((o) => o.trim())
+          .filter(Boolean) ?? [],
+      looksList:
+        (garment.looks ?? garment.look)
+          ?.split(',')
+          .map((l) => l.trim())
           .filter(Boolean) ?? [],
       canEdit,
       canDelete,
@@ -542,7 +557,8 @@ export class WardrobeController {
       purchaseLink?: string;
       cost?: string | number;
       print?: string;
-      look?: string;
+      look?: string | string[];
+      looks?: string | string[];
       fit?: string;
     },
     @Req() req: FastifyRequest,
@@ -566,6 +582,13 @@ export class WardrobeController {
       : (body.occasions
           ?.split(',')
           .map((o) => o.trim())
+          .filter(Boolean) ?? []);
+
+    const rawLooks = Array.isArray(body.look ?? body.looks)
+      ? (body.look ?? body.looks)
+      : ((body.look ?? body.looks)
+          ?.split(',')
+          .map((l) => l.trim())
           .filter(Boolean) ?? []);
 
     const parsedRating =
@@ -596,7 +619,8 @@ export class WardrobeController {
         cost: parsedCost,
         subCategory: body.subCategory?.trim() || undefined,
         print: body.print?.trim() || undefined,
-        look: body.look?.trim() || undefined,
+        looks: rawLooks.length > 0 ? rawLooks.join(',') : undefined,
+        look: rawLooks.length > 0 ? rawLooks.join(',') : undefined,
         fit: body.fit?.trim() || undefined,
       },
       userId,
@@ -624,10 +648,11 @@ export class WardrobeController {
       purchaseLink?: string;
       cost?: string | number;
       print?: string;
-      look?: string;
+      look?: string | string[];
+      looks?: string | string[];
       fit?: string;
       pattern?: string;
-      style?: string;
+      style?: string | string[];
     },
     @Req() req: FastifyRequest,
     @Res() reply: FastifyReply,
@@ -654,6 +679,18 @@ export class WardrobeController {
           ?.split(',')
           .map((o) => o.trim())
           .filter(Boolean) ?? []);
+
+    const rawLooks =
+      body.look !== undefined ||
+      body.looks !== undefined ||
+      body.style !== undefined
+        ? Array.isArray(body.look ?? body.looks ?? body.style)
+          ? (body.look ?? body.looks ?? body.style)
+          : (body.look ?? body.looks ?? body.style)
+              .split(',')
+              .map((l: string) => l.trim())
+              .filter(Boolean)
+        : undefined;
 
     const parsedRating =
       body.rating != null && body.rating !== ''
@@ -686,7 +723,18 @@ export class WardrobeController {
             ? body.subCategory.trim() || undefined
             : undefined,
         print: (body.print ?? body.pattern)?.trim() || undefined,
-        look: (body.look ?? body.style)?.trim() || undefined,
+        looks:
+          rawLooks !== undefined
+            ? rawLooks.length > 0
+              ? rawLooks.join(',')
+              : undefined
+            : undefined,
+        look:
+          rawLooks !== undefined
+            ? rawLooks.length > 0
+              ? rawLooks.join(',')
+              : undefined
+            : undefined,
         fit: body.fit?.trim() || undefined,
       },
       viewOwner ?? userId,

@@ -355,10 +355,19 @@
       </div>
       {{/if}}
 
-      {{#if garment.look}}
+      {{#if looksList.length}}
+      <div class="flex justify-between items-start gap-2">
+        <span class="text-base-content/60 text-sm">{{t 'lang.LOOKS'}}</span>
+        <div class="flex flex-wrap gap-1 justify-end">
+          {{#each looksList}}
+          <span class="badge badge-sm badge-accent badge-outline text-xs">{{this}}</span>
+          {{/each}}
+        </div>
+      </div>
+      {{else if (or garment.looks garment.look)}}
       <div class="flex justify-between">
-        <span class="text-base-content/60 text-sm">{{t 'lang.LOOK'}}</span>
-        <span class="font-medium">{{garment.look}}</span>
+        <span class="text-base-content/60 text-sm">{{t 'lang.LOOKS'}}</span>
+        <span class="font-medium">{{or garment.looks garment.look}}</span>
       </div>
       {{/if}}
 

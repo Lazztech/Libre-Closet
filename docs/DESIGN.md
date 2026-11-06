@@ -73,7 +73,7 @@ Represents a single clothing item owned by a user.
 | `purchaseLink` | `string?`   | Optional purchase link / source URL                       |
 | `cost`         | `number?`   | Optional item cost (`numeric(12,2)`)                      |
 | `print`        | `string?`   | Optional print classification                             |
-| `look`         | `string?`   | Optional style aesthetic                                  |
+| `looks`        | `string?`   | Optional multi-select style aesthetic (comma-separated)   |
 | `fit`          | `string?`   | Optional fit type                                         |
 | `outfits`      | `Outfit[]`  | Many-to-many back-reference                               |
 | `flagged`      | `boolean?`  | Inherited from `ShareableId`                              |
@@ -95,7 +95,7 @@ Represents a saved combination of garments.
 | `name`        | `string`    | User-provided label, e.g. "Summer Wedding Guest"          |
 | `notes`       | `string?`   | Free-text notes or occasion context                       |
 | `rating`      | `number?`   | Optional 1-5 star rating                                  |
-| `look`        | `string?`   | Style / aesthetic (e.g. Casual, Formal, Classic)          |
+| `looks`       | `string?`   | Multi-select style/aesthetic (comma-separated, e.g. Casual,Formal) |
 | `occasions`   | `string?`   | Comma-separated occasions (e.g. Work, Date, Special)      |
 | `seasons`     | `string?`   | Comma-separated seasons (e.g. Summer, Autumn, Winter)     |
 | `createdAt`   | `Date`      | Creation timestamp used for chronology and wear tracking  |
@@ -144,7 +144,7 @@ erDiagram
         string purchaseLink "nullable"
         number cost "nullable"
         string print "nullable"
-        string look "nullable"
+        string looks "nullable"
         string fit "nullable"
         number photoId FK
         number ownerId "FK nullable"
@@ -158,7 +158,7 @@ erDiagram
         string name
         string notes
         number rating "nullable"
-        string look "nullable"
+        string looks "nullable"
         string occasions "nullable"
         string seasons "nullable"
         date createdAt

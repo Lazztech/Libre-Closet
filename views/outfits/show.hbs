@@ -32,10 +32,19 @@
   <p class="text-base-content/60 text-sm mb-4 px-1">{{outfit.notes}}</p>
   {{/if}}
 
-  {{#if outfit.look}}
+  {{#if looksList.length}}
   <div class="flex items-center gap-2 mb-2 px-1">
-    <span class="text-xs text-base-content/60 font-medium">{{t 'lang.LOOK'}}:</span>
-    <span class="badge badge-sm badge-outline font-medium">{{outfit.look}}</span>
+    <span class="text-xs text-base-content/60 font-medium">{{t 'lang.LOOKS'}}:</span>
+    <div class="flex flex-wrap gap-1">
+      {{#each looksList}}
+      <span class="badge badge-sm badge-accent badge-outline font-medium">{{this}}</span>
+      {{/each}}
+    </div>
+  </div>
+  {{else if (or outfit.looks outfit.look)}}
+  <div class="flex items-center gap-2 mb-2 px-1">
+    <span class="text-xs text-base-content/60 font-medium">{{t 'lang.LOOKS'}}:</span>
+    <span class="badge badge-sm badge-accent badge-outline font-medium">{{or outfit.looks outfit.look}}</span>
   </div>
   {{/if}}
 

@@ -81,6 +81,9 @@ export class GarmentService {
       ...(dto.archived !== 'true' ? { archived: false } : {}),
       ...(dto.season ? { seasons: { $like: `%${dto.season}%` } } : {}),
       ...(dto.occasion ? { occasions: { $like: `%${dto.occasion}%` } } : {}),
+      ...(dto.looks || dto.look
+        ? { looks: { $like: `%${dto.looks ?? dto.look}%` } }
+        : {}),
       ...(parsedRating != null ? { rating: { $gte: parsedRating } } : {}),
       ...(dto.keyword
         ? {
@@ -89,7 +92,7 @@ export class GarmentService {
               { notes: { $like: `%${dto.keyword}%` } },
               { brand: { $like: `%${dto.keyword}%` } },
               { print: { $like: `%${dto.keyword}%` } },
-              { look: { $like: `%${dto.keyword}%` } },
+              { looks: { $like: `%${dto.keyword}%` } },
               { subCategory: { $like: `%${dto.keyword}%` } },
             ],
           }
@@ -349,9 +352,10 @@ export class GarmentService {
           if (res !== 0) return res;
           return (g2.id ?? 0) - (g1.id ?? 0);
 
+        case 'looks':
         case 'look':
-          // 1. look, 2. category, 3. name, 4. id
-          res = compareStrings(g1.look, g2.look, dir);
+          // 1. looks, 2. category, 3. name, 4. id
+          res = compareStrings(g1.looks ?? g1.look, g2.looks ?? g2.look, dir);
           if (res !== 0) return res;
           res = compareCategories(g1.category, g2.category, dir);
           if (res !== 0) return res;
@@ -440,7 +444,8 @@ export class GarmentService {
       purchaseLink: dto.purchaseLink,
       cost: dto.cost,
       print: dto.print ?? dto.pattern,
-      look: dto.look ?? dto.style,
+      looks: dto.looks ?? dto.look ?? dto.style,
+      look: dto.looks ?? dto.look ?? dto.style,
       fit: dto.fit,
     });
 
@@ -506,7 +511,8 @@ export class GarmentService {
       purchaseLink: dto.purchaseLink ?? source.purchaseLink,
       cost: dto.cost ?? source.cost,
       print: dto.print ?? dto.pattern ?? source.print,
-      look: dto.look ?? dto.style ?? source.look,
+      looks: dto.looks ?? dto.look ?? dto.style ?? source.looks ?? source.look,
+      look: dto.looks ?? dto.look ?? dto.style ?? source.looks ?? source.look,
       fit: dto.fit ?? source.fit,
       photo: photo ?? undefined,
     });
@@ -638,8 +644,16 @@ export class GarmentService {
     if ('cost' in dto) garment.cost = dto.cost;
     if ('print' in dto) garment.print = dto.print;
     else if ('pattern' in dto) garment.print = dto.pattern;
-    if ('look' in dto) garment.look = dto.look;
-    else if ('style' in dto) garment.look = dto.style;
+    if ('looks' in dto) {
+      garment.looks = dto.looks;
+      garment.look = dto.looks;
+    } else if ('look' in dto) {
+      garment.looks = dto.look;
+      garment.look = dto.look;
+    } else if ('style' in dto) {
+      garment.looks = dto.style;
+      garment.look = dto.style;
+    }
     if ('fit' in dto) garment.fit = dto.fit;
 
     await this.garmentRepository.getEntityManager().flush();
@@ -711,6 +725,8 @@ export class GarmentService {
       rating?: number;
       notes?: string;
       look?: string;
+      looks?: string;
+      looksList: string[];
       occasions?: string;
       seasons?: string;
       createdAt?: Date;
@@ -794,9 +810,25 @@ export class GarmentService {
         name: outfit.name,
         rating: outfit.rating,
         notes: outfit.notes,
-        look: outfit.look,
+        look: outfit.looks ?? outfit.look,
+        looks: outfit.looks ?? outfit.look,
+        looksList:
+          (outfit.looks ?? outfit.look)
+            ?.split(',')
+            .map((l) => l.trim())
+            .filter(Boolean) ?? [],
         occasions: outfit.occasions,
+        occasionsList:
+          outfit.occasions
+            ?.split(',')
+            .map((o) => o.trim())
+            .filter(Boolean) ?? [],
         seasons: outfit.seasons,
+        seasonsList:
+          outfit.seasons
+            ?.split(',')
+            .map((s) => s.trim())
+            .filter(Boolean) ?? [],
         createdAt: outfit.createdAt,
         createdAtStr,
         garments: orderedGarments,

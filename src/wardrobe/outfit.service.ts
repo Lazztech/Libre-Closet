@@ -153,7 +153,8 @@ export class OutfitService {
       notes: dto.notes,
       rating: dto.rating,
       slots: dto.slots,
-      look: dto.look,
+      looks: dto.looks ?? dto.look,
+      look: dto.looks ?? dto.look,
       occasions: dto.occasions,
       seasons: dto.seasons,
       createdAt: new Date(),
@@ -192,7 +193,18 @@ export class OutfitService {
       notes: dto.notes ?? outfit.notes,
       rating: dto.rating !== undefined ? (dto.rating as any) : outfit.rating,
       slots: dto.slots ?? outfit.slots,
-      look: dto.look !== undefined ? dto.look : outfit.look,
+      looks:
+        dto.looks !== undefined
+          ? dto.looks
+          : dto.look !== undefined
+            ? dto.look
+            : (outfit.looks ?? outfit.look),
+      look:
+        dto.looks !== undefined
+          ? dto.looks
+          : dto.look !== undefined
+            ? dto.look
+            : (outfit.looks ?? outfit.look),
       occasions: dto.occasions !== undefined ? dto.occasions : outfit.occasions,
       seasons: dto.seasons !== undefined ? dto.seasons : outfit.seasons,
     });

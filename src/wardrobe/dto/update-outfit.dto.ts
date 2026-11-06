@@ -5,6 +5,7 @@ export interface UpdateOutfitDto {
   notes?: string;
   rating?: number;
   slots?: OutfitSlot[];
+  looks?: string;
   look?: string;
   occasions?: string;
   seasons?: string;

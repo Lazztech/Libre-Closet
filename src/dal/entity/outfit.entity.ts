@@ -38,7 +38,15 @@ export class Outfit extends ShareableId {
   public occasions?: string;
 
   @Property({ nullable: true })
-  public look?: string;
+  public looks?: string;
+
+  public get look(): string | undefined {
+    return this.looks;
+  }
+
+  public set look(val: string | undefined) {
+    this.looks = val;
+  }
 
   @Property({ type: Date, nullable: true })
   public createdAt?: Date = new Date();

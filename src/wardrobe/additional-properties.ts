@@ -327,6 +327,8 @@ export const GARMENT_LOOK: PropertyItem[] = [
   },
 ];
 
+export const GARMENT_LOOKS: PropertyItem[] = GARMENT_LOOK;
+
 export const GARMENT_FITS: PropertyItem[] = [
   {
     id: 1,

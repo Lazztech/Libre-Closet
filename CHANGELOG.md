@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 
-- Outfit extended metadata: Look, Occasion, and Season properties supported when building and editing outfits, displayed across outfit show and card views
+- Outfit extended metadata: Looks, Occasions, and Seasons properties supported when building and editing outfits, displayed across outfit show and card views
 - Garment wear history and outfits browser: added "View Outfits" button on garment details view leading to a dedicated outfits list showing all outfits containing the garment
 - Outfit wear date tracking: displays specific dates when each outfit was worn, with direct navigation to the exact date in calendar view; unworn outfits explicitly indicate "Created on (date), never worn"
 - Chronological sorting controls for garment outfits: default descending order by creation date (newest first), with toggle to sort ascending (oldest first)

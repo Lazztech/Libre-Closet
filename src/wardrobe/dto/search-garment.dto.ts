@@ -10,6 +10,8 @@ export interface SearchGarmentDto {
   archived?: string;
   season?: string;
   occasion?: string;
+  looks?: string;
+  look?: string;
   rating?: number | string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';

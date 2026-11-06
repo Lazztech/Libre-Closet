@@ -86,7 +86,15 @@ export class Garment extends ShareableId {
   public print?: string;
 
   @Property({ nullable: true })
-  public look?: string;
+  public looks?: string;
+
+  public get look(): string | undefined {
+    return this.looks;
+  }
+
+  public set look(val: string | undefined) {
+    this.looks = val;
+  }
 
   @Property({ nullable: true })
   public fit?: string;

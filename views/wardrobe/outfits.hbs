@@ -92,15 +92,27 @@
           </div>
 
           {{!-- Metadata pills if present --}}
-          {{#if (or this.look this.occasions this.seasons)}}
+          {{#if (or this.looks this.look this.occasions this.seasons)}}
           <div class="flex flex-wrap gap-1 mb-2">
-            {{#if this.look}}
-            <span class="badge badge-xs badge-outline font-medium">{{this.look}}</span>
+            {{#if this.looksList.length}}
+            {{#each this.looksList}}
+            <span class="badge badge-xs badge-accent badge-outline font-medium">{{this}}</span>
+            {{/each}}
+            {{else if (or this.looks this.look)}}
+            <span class="badge badge-xs badge-accent badge-outline font-medium">{{or this.looks this.look}}</span>
             {{/if}}
-            {{#if this.seasons}}
+            {{#if this.seasonsList.length}}
+            {{#each this.seasonsList}}
+            <span class="badge badge-xs badge-primary badge-outline font-medium">{{this}}</span>
+            {{/each}}
+            {{else if this.seasons}}
             <span class="badge badge-xs badge-primary badge-outline font-medium">{{this.seasons}}</span>
             {{/if}}
-            {{#if this.occasions}}
+            {{#if this.occasionsList.length}}
+            {{#each this.occasionsList}}
+            <span class="badge badge-xs badge-secondary badge-outline font-medium">{{this}}</span>
+            {{/each}}
+            {{else if this.occasions}}
             <span class="badge badge-xs badge-secondary badge-outline font-medium">{{this.occasions}}</span>
             {{/if}}
           </div>

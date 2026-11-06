@@ -153,7 +153,8 @@ export class OutfitController {
       returnToWeek?: string;
       returnToView?: string;
       returnToMonth?: string;
-      look?: string;
+      look?: string | string[];
+      looks?: string | string[];
       occasions?: string | string[];
       seasons?: string | string[];
     },
@@ -178,6 +179,12 @@ export class OutfitController {
           ?.split(',')
           .map((s) => s.trim())
           .filter(Boolean) ?? []);
+    const rawLooks = Array.isArray(body.looks ?? body.look)
+      ? (body.looks ?? body.look)
+      : ((body.looks ?? body.look)
+          ?.split(',')
+          .map((l) => l.trim())
+          .filter(Boolean) ?? []);
 
     const outfit = await this.outfitService.create(
       {
@@ -185,7 +192,8 @@ export class OutfitController {
         notes: body.notes,
         rating: rating ?? undefined,
         slots,
-        look: body.look?.trim() || undefined,
+        looks: rawLooks.length > 0 ? rawLooks.join(',') : undefined,
+        look: rawLooks.length > 0 ? rawLooks.join(',') : undefined,
         occasions: rawOccasions.length > 0 ? rawOccasions.join(',') : undefined,
         seasons: rawSeasons.length > 0 ? rawSeasons.join(',') : undefined,
       },
@@ -361,6 +369,11 @@ export class OutfitController {
     return {
       outfit,
       garments,
+      looksList:
+        (outfit.looks ?? outfit.look)
+          ?.split(',')
+          .map((l) => l.trim())
+          .filter(Boolean) ?? [],
       seasonsList:
         outfit.seasons
           ?.split(',')
@@ -430,7 +443,8 @@ export class OutfitController {
       returnToWeek?: string;
       returnToView?: string;
       returnToMonth?: string;
-      look?: string;
+      look?: string | string[];
+      looks?: string | string[];
       occasions?: string | string[];
       seasons?: string | string[];
     },
@@ -459,7 +473,17 @@ export class OutfitController {
           ? body.occasions
           : body.occasions
               .split(',')
-              .map((s) => s.trim())
+              .map((o) => o.trim())
+              .filter(Boolean)
+        : undefined;
+
+    const rawLooks =
+      body.looks !== undefined || body.look !== undefined
+        ? Array.isArray(body.looks ?? body.look)
+          ? (body.looks ?? body.look)
+          : (body.looks ?? body.look)
+              .split(',')
+              .map((l: string) => l.trim())
               .filter(Boolean)
         : undefined;
 
@@ -470,8 +494,18 @@ export class OutfitController {
         notes: body.notes,
         rating,
         slots,
+        looks:
+          rawLooks !== undefined
+            ? rawLooks.length > 0
+              ? rawLooks.join(',')
+              : undefined
+            : undefined,
         look:
-          body.look !== undefined ? body.look.trim() || undefined : undefined,
+          rawLooks !== undefined
+            ? rawLooks.length > 0
+              ? rawLooks.join(',')
+              : undefined
+            : undefined,
         occasions:
           rawOccasions !== undefined
             ? rawOccasions.length > 0
